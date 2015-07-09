@@ -1,8 +1,10 @@
 ﻿//Copyright © 2014 Sony Computer Entertainment America LLC. See License.txt.
 
 using System;
+using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.ComponentModel.Composition.Hosting;
+using System.ComponentModel.Composition.Primitives;
 using System.Threading;
 using System.Windows.Forms;
 
@@ -44,7 +46,7 @@ namespace TextureEditor
             DomNodeType.BaseOfAllTypes.AddAdapterCreator(new AdapterCreator<CustomTypeDescriptorNodeAdapter>());
 
             // Create a type catalog with the types of components we want in the application
-            var catalog = new TypeCatalog(
+            var AtfCatalog = new TypeCatalog(
 
                 typeof(CommandService),                 // handles commands in menus and toolbars
                 typeof(ControlHostService),             // docking control host
@@ -70,7 +72,25 @@ namespace TextureEditor
                 typeof(Editor)                          // component that manages UI documents
                 );
 
-            // Set up the MEF container with these components
+			TypeCatalog LECoreCatalog = new TypeCatalog(
+				typeof( ResourceLister ),
+				typeof( ThumbnailService ),
+				typeof( ResourceMetadataEditor )
+				);
+
+			TypeCatalog thisAssemCatalog = new TypeCatalog(
+				typeof( ResourceMetadataService )
+				//typeof( ResourceConverter )
+				);
+
+            List<ComposablePartCatalog> catalogs = new List<ComposablePartCatalog>();
+			catalogs.Add(AtfCatalog);
+            catalogs.Add(LECoreCatalog);
+            catalogs.Add(thisAssemCatalog);
+
+			AggregateCatalog catalog = new AggregateCatalog(catalogs);
+
+			// Set up the MEF container with these components
             var container = new CompositionContainer(catalog);
 
             // Configure the main Form
@@ -81,7 +101,7 @@ namespace TextureEditor
             toolStripContainer.Dock = DockStyle.Fill;
             var mainForm = new MainForm(toolStripContainer)
             {
-                Text = "DOM Property Editor".Localize(),
+                Text = "Texture Editor".Localize(),
                 Icon = GdiUtil.CreateIcon(ResourceUtil.GetImage(Sce.Atf.Resources.AtfIconImage))
             };
 
@@ -90,6 +110,8 @@ namespace TextureEditor
             batch.AddPart(mainForm);
             // batch.AddPart(new WebHelpCommands("https://github.com/SonyWWS/ATF/wiki/ATF-DOM-Tree-Editor-Sample".Localize()));
             container.Compose(batch);
+
+			Globals.InitializeComponents( container );
 
             // Initialize components that require it. Initialization often can't be done in the constructor,
             //  or even after imports have been satisfied by MEF, since we allow circular dependencies between

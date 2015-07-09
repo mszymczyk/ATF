@@ -1,3 +1,3 @@
-..\..\..\DevTools\DomGen\bin\DomGen.exe game.xsd Schema.cs GameWorld DomPropertyEditorSample
+..\..\..\DevTools\DomGen\bin\DomGen.exe textureEditor.xsd Schema.cs TextureEditor TextureEditor
 
 

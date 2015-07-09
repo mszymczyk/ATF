@@ -1,0 +1,69 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<xs:schema 
+    targetNamespace="TextureEditor"
+    elementFormDefault="qualified"
+    xmlns="TextureEditor"    
+    xmlns:xs="http://www.w3.org/2001/XMLSchema"
+>
+
+  <!--  sample resource (asset) meta-data types   -->
+  <xs:complexType name="resourceMetadataType">
+    <xs:annotation>
+      <xs:appinfo>
+        <ResourceMetadata  metadataFileExt =".metadata" resourceFileExts =".*"/>
+        <scea.dom.editors.attribute
+          name="uri"
+          displayName="URI"
+          description="URI"
+          category="Metadata"/>
+
+        <scea.dom.editors.attribute
+          name="keywords"
+          displayName="Keywords"
+          description="Keywords"
+          category="Metadata"/>
+      </xs:appinfo>
+    </xs:annotation>
+    <xs:attribute name="uri" type="xs:anyURI" />
+    <xs:attribute name="keywords" type="xs:string" />
+  </xs:complexType>
+
+  <xs:complexType name="textureMetadataType">
+    <xs:annotation>
+      <xs:appinfo>
+        <ResourceMetadata metadataFileExt =".metadata" resourceFileExts =".dds;.tga;.jpg;.jpeg;.bmp;.png;.tif;.tiff;.gif"/>
+        <scea.dom.editors.attribute
+          name="compressionSetting"
+          displayName="Compression Setting"
+          description="Compression Setting"
+          category="Metadata"
+          editor="Sce.Atf.Controls.PropertyEditing.EnumUITypeEditor,Atf.Gui.WinForms:BC1,BC3,Normal,HDR-32bit,HDR-64bit,PVRT-2bpp,PVRT-4bpp,P4,P8,Uncompressed"/>
+        <scea.dom.editors.attribute
+          name="memoryLayout"
+          displayName="Memory Layout"
+          description="Memory Layout"
+          category="Metadata"
+          editor="Sce.Atf.Controls.PropertyEditing.EnumUITypeEditor,Atf.Gui.WinForms:Linear,Swizzled,Tiled"/>
+        <scea.dom.editors.attribute
+          name="mipMap"
+          displayName="Generate Mip Maps"
+          description="Generate Mip Maps"
+          category="Metadata"
+          editor="Sce.Atf.Controls.PropertyEditing.BoolEditor,Atf.Gui.WinForms"/>
+      </xs:appinfo>
+    </xs:annotation>
+    <xs:complexContent>
+      <xs:extension base="resourceMetadataType">
+        <xs:attribute name="compressionSetting" type="xs:string" default="BC1" />
+        <xs:attribute name="memoryLayout" type="xs:string" default="Linear" />
+        <xs:attribute name="mipMap" type="xs:boolean" default="true" />
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:element name="textureMetadata" type="textureMetadataType"/>
+  <xs:element name="resourceMetadata" type="resourceMetadataType"/>
+
+  <!-- end of asset metadata -->
+
+</xs:schema>

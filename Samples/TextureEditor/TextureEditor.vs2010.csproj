@@ -19,12 +19,13 @@
     <DebugSymbols>true</DebugSymbols>
     <OutputPath>..\..\bin\Debug.vs2010\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
     <DebugType>full</DebugType>
     <PlatformTarget>AnyCPU</PlatformTarget>
     <ErrorReport>prompt</ErrorReport>
     <CodeAnalysisIgnoreBuiltInRuleSets>false</CodeAnalysisIgnoreBuiltInRuleSets>
     <CodeAnalysisIgnoreBuiltInRules>false</CodeAnalysisIgnoreBuiltInRules>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|AnyCPU'">
     <OutputPath>..\..\bin\Release.vs2010\</OutputPath>
@@ -64,13 +65,21 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Editor.cs" />
-    <Compile Include="GameEditingContext.cs" />
+    <Compile Include="Globals.cs" />
+    <Compile Include="Listers\IFileSystemResourceFolder.cs" />
+    <Compile Include="Listers\ResourceLister.cs" />
+    <Compile Include="Listers\ResourceMetadataDocument.cs" />
+    <Compile Include="Listers\ResourceMetadataEditor.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SchemaLoader.cs" />
     <Compile Include="Schemas\Schema.cs" />
+    <Compile Include="Services\CustomFileSystemResourceFolder.cs" />
+    <Compile Include="Services\IResourceMetadataService.cs" />
+    <Compile Include="Services\ResourceMetadataService.cs" />
+    <Compile Include="TextureEditorAdapters.cs" />
     <None Include="app.config" />
-    <EmbeddedResource Include="Schemas\game.xsd">
+    <EmbeddedResource Include="Schemas\textureEditor.xsd">
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <None Include="Schemas\GenSchemaDef.cmd" />
