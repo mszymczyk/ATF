@@ -69,8 +69,10 @@ namespace TextureEditor
                 typeof(AutomationService),              // provides facilities to run an automated script using the .NET remoting service
 
                 typeof(SchemaLoader),                   // component that loads XML schema and sets up types
-                typeof(Editor)                          // component that manages UI documents
-                );
+                typeof(Editor),                         // component that manages UI documents
+
+				typeof(RenderViewSharpDx)               // displays a 3D scene in a Windows Control
+				);
 
 			TypeCatalog LECoreCatalog = new TypeCatalog(
 				typeof( ResourceLister ),
