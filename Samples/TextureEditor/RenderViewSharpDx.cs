@@ -63,7 +63,7 @@ namespace TextureEditor
         /// Registers rendering control and subscribes to ActiveDocumentChanged event</summary>
         void IInitializable.Initialize()
         {
-            ControlInfo cinfo = new ControlInfo("Texture Preview", "texture viewer", StandardControlGroup.Center);
+            ControlInfo cinfo = new ControlInfo("Texture Preview", "texture viewer", StandardControlGroup.CenterPermanent);
             m_controlHostService.RegisterControl(m_designControl, cinfo, null);
 
 			//m_documentRegistry.ActiveDocumentChanged += (sender, e) =>
@@ -81,17 +81,27 @@ namespace TextureEditor
 			//	}
 			//};
 
+            m_resourceLister.SelectionChanged += resourceLister_SelectionChanged;
         }
 
         #endregion
-        
-        private object m_context;
+
+        private void resourceLister_SelectionChanged(object sender, EventArgs e)
+        {
+            Uri resUri = m_resourceLister.LastSelected;
+            m_designControl.showResource(resUri);
+        }
+
+        //private object m_context;
 
 		//[Import(AllowDefault = false)]
 		//private IDocumentRegistry m_documentRegistry;
 
 		[Import(AllowDefault = false)]
 		private IControlHostService m_controlHostService;
+
+        [Import(AllowDefault = true)]
+        private ResourceLister m_resourceLister = null;
 
         private Panel3DSharpDx m_designControl;
     }

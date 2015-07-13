@@ -144,6 +144,9 @@
     <EmbeddedResource Include="Resources\Journeyman.png" />
     <EmbeddedResource Include="Resources\Master.png" />
   </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\shaders.fx" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
