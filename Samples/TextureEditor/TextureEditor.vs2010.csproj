@@ -102,6 +102,8 @@
     <Compile Include="Services\IResourceMetadataService.cs" />
     <Compile Include="Services\ResourceMetadataService.cs" />
     <Compile Include="TextureEditorAdapters.cs" />
+    <Compile Include="TextureProperties.cs" />
+    <Compile Include="TextureSelectionContext.cs" />
     <None Include="app.config" />
     <EmbeddedResource Include="Schemas\textureEditor.xsd">
       <SubType>Designer</SubType>

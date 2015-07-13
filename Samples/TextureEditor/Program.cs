@@ -60,7 +60,7 @@ namespace TextureEditor
                 typeof(HelpAboutCommand),               // Help -> About command
                 typeof(ContextRegistry),                // central context registry with change notification
                 typeof(PropertyEditor),                 // property grid for editing selected objects
-                typeof(GridPropertyEditor),             // grid control for editing selected objects
+				//typeof(GridPropertyEditor),             // grid control for editing selected objects
                 typeof(PropertyEditingCommands),        // commands for PropertyEditor and GridPropertyEditor
                 typeof(SettingsService),
                 typeof(PythonService),                  // scripting service for automated tests

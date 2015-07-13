@@ -24,7 +24,6 @@ namespace TextureEditor
         /// Construct render view</summary>
 		public RenderViewSharpDx()
         {
-            m_designControl = new Panel3DSharpDx();
         }
 
 		///// <summary>
@@ -63,6 +62,8 @@ namespace TextureEditor
         /// Registers rendering control and subscribes to ActiveDocumentChanged event</summary>
         void IInitializable.Initialize()
         {
+			m_designControl = new Panel3DSharpDx( m_contextRegistry );
+
             ControlInfo cinfo = new ControlInfo("Texture Preview", "texture viewer", StandardControlGroup.CenterPermanent);
             m_controlHostService.RegisterControl(m_designControl, cinfo, null);
 
@@ -102,6 +103,9 @@ namespace TextureEditor
 
         [Import(AllowDefault = true)]
         private ResourceLister m_resourceLister = null;
+
+		[Import( AllowDefault = false )]
+		private IContextRegistry m_contextRegistry;
 
         private Panel3DSharpDx m_designControl;
     }
