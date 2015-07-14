@@ -89,6 +89,7 @@
     <Compile Include="Listers\IFileSystemResourceFolder.cs" />
     <Compile Include="Listers\ResourceLister.cs" />
     <Compile Include="Listers\ResourceMetadataDocument.cs" />
+    <Compile Include="Listers\ResourceMetadataEditingContext.cs" />
     <Compile Include="Listers\ResourceMetadataEditor.cs" />
     <Compile Include="Panel3DSharpDx.cs">
       <SubType>Component</SubType>

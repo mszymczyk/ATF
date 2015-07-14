@@ -19,14 +19,14 @@ namespace TextureEditor
 
         private void DomNode_AttributeChanged(object sender, AttributeEventArgs e)
         {
-			SchemaLoader schemaTypeLoader = Globals.MEFContainer.GetExportedValue<SchemaLoader>();
-			string filePath = Uri.LocalPath;
-			FileMode fileMode = File.Exists( filePath ) ? FileMode.Truncate : FileMode.OpenOrCreate;
-			using (FileStream stream = new FileStream( filePath, fileMode ))
-			{
-				var writer = new DomXmlWriter( schemaTypeLoader.TypeCollection );
-				writer.Write( DomNode, stream, Uri );
-			}            
+			//SchemaLoader schemaTypeLoader = Globals.MEFContainer.GetExportedValue<SchemaLoader>();
+			//string filePath = Uri.LocalPath;
+			//FileMode fileMode = File.Exists( filePath ) ? FileMode.Truncate : FileMode.OpenOrCreate;
+			//using (FileStream stream = new FileStream( filePath, fileMode ))
+			//{
+			//	var writer = new DomXmlWriter( schemaTypeLoader.TypeCollection );
+			//	writer.Write( DomNode, stream, Uri );
+			//}            
         }
     }
 }

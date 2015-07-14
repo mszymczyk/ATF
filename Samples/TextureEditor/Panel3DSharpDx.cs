@@ -582,17 +582,17 @@ namespace TextureEditor
                     m_tex = res;
                     m_texSRV = new ShaderResourceView(m_device, res);
 
-                    TextureProperties tp = new TextureProperties(resUri, m_tex);
-                    m_textureSelectionContext.Selection = new[] { tp };
+					//TextureProperties tp = new TextureProperties(resUri, m_tex);
+					//m_textureSelectionContext.Selection = new[] { tp };
                 }
                 else
                 {
-                    m_textureSelectionContext.Clear();
+					//m_textureSelectionContext.Clear();
                 }
             }
             else
             {
-                m_textureSelectionContext.Clear();
+				//m_textureSelectionContext.Clear();
             }
 
 			fitSizeRequest = true;

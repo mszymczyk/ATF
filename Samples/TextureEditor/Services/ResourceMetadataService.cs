@@ -103,6 +103,9 @@ namespace TextureEditor
                 }
 
                 rootNode.InitializeExtensions();
+
+				//var edContext = rootNode.Cast<ResourceMetadataEditor>();
+
                 ResourceMetadataDocument document = rootNode.Cast<ResourceMetadataDocument>();
                 document.Uri = metadataUri;
                 rootNodes.Add(rootNode);

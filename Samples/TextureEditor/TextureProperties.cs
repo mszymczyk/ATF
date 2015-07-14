@@ -177,7 +177,7 @@ namespace TextureEditor
 			public override bool IsReadOnly
 			{
 				//get { return GetChildProperties().Count <= 0; }
-				get { return true; }
+				get { return false; }
 			}
 
 			/// <summary>
