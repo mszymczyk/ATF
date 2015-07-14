@@ -63,8 +63,9 @@ namespace TextureEditor
         void IInitializable.Initialize()
         {
 			m_designControl = new Panel3DSharpDx( m_contextRegistry );
+            m_textureViewCommands = new TextureViewCommands(m_commandService, m_designControl);
 
-            ControlInfo cinfo = new ControlInfo("Texture Preview", "texture viewer", StandardControlGroup.CenterPermanent);
+            ControlInfo cinfo = new ControlInfo("Texture Preview", "texture viewer", StandardControlGroup.Center);
             m_controlHostService.RegisterControl(m_designControl, cinfo, null);
 
 			//m_documentRegistry.ActiveDocumentChanged += (sender, e) =>
@@ -107,6 +108,10 @@ namespace TextureEditor
 		[Import( AllowDefault = false )]
 		private IContextRegistry m_contextRegistry;
 
+        [Import(AllowDefault = false)]
+        private ICommandService m_commandService;
+
         private Panel3DSharpDx m_designControl;
+        private TextureViewCommands m_textureViewCommands;
     }
 }

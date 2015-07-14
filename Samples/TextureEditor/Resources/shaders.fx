@@ -36,6 +36,13 @@ struct PS_IN
 	float4 col : TEXCOORD0;
 };
 
+cbuffer cbFrameParams : register( b0 )
+{
+	int xOffset;
+	int yOffset;
+	int mipLevel;
+};
+
 Texture2D tex2D;
 SamplerState ssPoint;
 
@@ -52,8 +59,17 @@ PS_IN VS( VS_IN input )
 float4 PS( PS_IN input ) : SV_Target
 {
 	//return input.col;
-	float3 t = tex2D.SampleLevel( ssPoint, input.col.xy, 0 );
-	return float4( t, 0 );
+	float3 t = tex2D.SampleLevel( ssPoint, input.col.xy, 0 ).xyz;
+	return float4( t, 1 );
+}
+
+float4 PSTex2DLoad( PS_IN input ) : SV_Target
+{
+	//return input.col;
+	//float3 t = tex2D.SampleLevel( ssPoint, input.col.xy, 0 );
+	int2 pixelCoord = ( int2 )( input.pos.xy );
+	float3 t = tex2D.Load( int3( pixelCoord + int2(xOffset, yOffset), mipLevel ) ).xyz;
+	return float4( t, 1 );
 }
 
 technique10 Render
@@ -63,5 +79,12 @@ technique10 Render
 		SetGeometryShader( 0 );
 		SetVertexShader( CompileShader( vs_4_0, VS() ) );
 		SetPixelShader( CompileShader( ps_4_0, PS() ) );
+	}
+
+	pass P1
+	{
+		SetGeometryShader( 0 );
+		SetVertexShader( CompileShader( vs_4_0, VS() ) );
+		SetPixelShader( CompileShader( ps_4_0, PSTex2DLoad() ) );
 	}
 }

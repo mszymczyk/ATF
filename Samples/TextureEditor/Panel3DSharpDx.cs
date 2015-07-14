@@ -4,9 +4,22 @@ using System;
 using System.Windows.Forms;
 using System.IO;
 using System.Reflection;
+using System.Runtime.InteropServices;
 
 using Sce.Atf;
 using Sce.Atf.Applications;
+
+using AtfKeys = Sce.Atf.Input.Keys;
+using AtfKeyEventArgs = Sce.Atf.Input.KeyEventArgs;
+using AtfMouseEventArgs = Sce.Atf.Input.MouseEventArgs;
+using AtfMessage = Sce.Atf.Input.Message;
+using AtfDragEventArgs = Sce.Atf.Input.DragEventArgs;
+
+using WfKeys = System.Windows.Forms.Keys;
+using WfKeyEventArgs = System.Windows.Forms.KeyEventArgs;
+using WfMouseEventArgs = System.Windows.Forms.MouseEventArgs;
+using WfMessage = System.Windows.Forms.Message;
+using WfDragEventArgs = System.Windows.Forms.DragEventArgs;
 
 using SharpDX;
 using SharpDX.D3DCompiler;
@@ -49,6 +62,17 @@ namespace TextureEditor
              base.Dispose(disposing);
         }
 
+		[StructLayout(LayoutKind.Explicit, Size = 64)]
+		struct ConstantBufferData
+		{
+			[FieldOffset(0)]
+			public int xOffset;
+			[FieldOffset(4)]
+			public int yOffset;
+			[FieldOffset(8)]
+			public int mipLevel;
+		};
+
 		/// <summary>
 		/// Raises the <see cref="E:System.Windows.Forms.Control.Paint"></see> event</summary>
 		/// <param name="e">A <see cref="T:System.Windows.Forms.PaintEventArgs"></see> that contains the event data</param>
@@ -56,13 +80,110 @@ namespace TextureEditor
 		{
 			m_context.ClearRenderTargetView( m_renderView, Color.Black );
 
+			int textureFileWidth = 1;
+			int textureFileHeight = 1;
+
+            if ( m_tex != null )
+            {
+                ResourceDimension dim = m_tex.Dimension;
+                if ( dim == ResourceDimension.Texture2D )
+                {
+                    Texture2D tex = m_tex as Texture2D;
+                    Texture2DDescription desc = tex.Description;
+					textureFileWidth = desc.Width;
+					textureFileHeight = desc.Height;
+                    //if (ClientSize.Width > ClientSize.Height)
+                    //{
+                    //    if (desc.Width > desc.Height)
+                    //    {
+                    //        texH = (float)desc.Height / (float)desc.Width;
+                    //        texH *= 2;
+                    //    }
+                    //    else
+                    //    {
+                    //        texW = (float)desc.Width / (float)desc.Height;
+                    //        texW *= 2;
+                    //    }
+                    //}
+                    //else
+                    //{
+                    //    if (desc.Width > desc.Height)
+                    //    {
+                    //        texW = (float)desc.Width / (float)desc.Height;
+                    //        texW *= 2;
+                    //    }
+                    //    else
+                    //    {
+                    //        texH = (float)desc.Height / (float)desc.Width;
+                    //        texH *= 2;
+                    //    }
+                    //}
+                }
+                else
+                {
+                    throw new Exception("Unsupported resource dimension");
+                }
+            }
+
+			//float texW = 2.0f;
+			//float texH = 2.0f;
+			float windowAspect = (float)ClientSize.Width / (float)ClientSize.Height;
+
+			if ( fitSizeRequest )
+			{
+				fitSizeRequest = false;
+
+				m_texW = 2 * (float)textureFileWidth / (float)ClientSize.Width;
+				m_texH = 2 * (float)textureFileHeight / (float)ClientSize.Height;
+			}
+			else if (fitInWindowRequest)
+			{
+				fitInWindowRequest = false;
+
+				m_texW = 2.0f;
+				m_texH = 2.0f;
+				float texAspect = (float)textureFileWidth / (float)textureFileHeight;
+				if (windowAspect > texAspect)
+				{
+					//texW = (float)desc.Height / (float)desc.Width;
+					m_texW = (float)textureFileWidth / (float)textureFileHeight;
+					m_texW *= 2;
+					m_texW *= (float)ClientSize.Height / (float)ClientSize.Width;
+					//texW *= windowAspect;
+				}
+				else
+				{
+					m_texH = (float)textureFileHeight / (float)textureFileWidth;
+					m_texH *= 2;
+					m_texH *= windowAspect;
+				}
+			}
+
+            //// Instantiate Vertex buffer from vertex data
+            //var vertices = Buffer.Create(m_device, BindFlags.VertexBuffer, new[]
+            //                      {
+            //                          new Vector4(-0.5f, -0.5f, 0.5f, 1.0f), new Vector4(0.0f, 1.0f, 0.0f, 1.0f),
+            //                          new Vector4(0.5f, -0.5f, 0.5f, 1.0f), new Vector4(1.0f, 1.0f, 0.0f, 1.0f),
+            //                          new Vector4(-0.5f, 0.5f, 0.5f, 1.0f), new Vector4(0.0f, 0.0f, 0.0f, 1.0f),
+            //                          new Vector4(0.5f, 0.5f, 0.5f, 1.0f), new Vector4(1.0f, 0.0f, 0.0f, 1.0f)
+            //                      });
+
+			float texWh = m_texW * 0.5f * m_texScale;
+			float texHh = m_texH * 0.5f * m_texScale;
+			float xOffset = m_texPosition.X * m_texScale;
+			float yOffset = m_texPosition.Y * m_texScale;
+			//float texWh = 2.0f;
+			//float texHh = 2.0f;
+			//float xOffset = 0;
+			//float yOffset = 0;
+
             // Instantiate Vertex buffer from vertex data
             var vertices = Buffer.Create(m_device, BindFlags.VertexBuffer, new[]
                                   {
-                                      new Vector4(-0.5f, -0.5f, 0.5f, 1.0f), new Vector4(0.0f, 1.0f, 0.0f, 1.0f),
-                                      new Vector4(0.5f, -0.5f, 0.5f, 1.0f), new Vector4(1.0f, 1.0f, 0.0f, 1.0f),
-                                      new Vector4(-0.5f, 0.5f, 0.5f, 1.0f), new Vector4(0.0f, 0.0f, 0.0f, 1.0f),
-                                      new Vector4(0.5f, 0.5f, 0.5f, 1.0f), new Vector4(1.0f, 0.0f, 0.0f, 1.0f)
+                                      new Vector4(-texWh + xOffset, -texHh + yOffset, 0.5f, 1.0f), new Vector4(0.0f, 1.0f, 0.0f, 1.0f),
+                                      new Vector4( texWh + xOffset, -texHh + yOffset, 0.5f, 1.0f), new Vector4(1.0f, 1.0f, 0.0f, 1.0f),
+                                      new Vector4(-texWh + xOffset,  texHh + yOffset, 0.5f, 1.0f), new Vector4(0.0f, 0.0f, 0.0f, 1.0f),
+                                      new Vector4( texWh + xOffset,  texHh + yOffset, 0.5f, 1.0f), new Vector4(1.0f, 0.0f, 0.0f, 1.0f)
                                   });
 
             m_context.InputAssembler.InputLayout = m_inputLayout;
@@ -71,8 +192,41 @@ namespace TextureEditor
             vertices.Dispose();
             m_context.VertexShader.Set(m_vsPassThrough);
             m_context.Rasterizer.SetViewport(new Viewport(0, 0, ClientSize.Width, ClientSize.Height, 0.0f, 1.0f));
-            m_context.PixelShader.Set(m_psColor);
-            m_context.OutputMerger.SetTargets(m_renderView);
+
+			//var constants = Buffer.Create(m_device, BindFlags.ConstantBuffer, new[]
+			//					   {
+			//							 0
+			//						   , 0
+			//						   , 0
+			//					   }
+			//	);
+			ConstantBufferData data = new ConstantBufferData();
+			data.xOffset = 0;
+			data.yOffset = 0;
+			data.mipLevel = 0;
+
+			try
+			{
+				var constantBuffer = Buffer.Create(m_device, BindFlags.ConstantBuffer, ref data);
+				//var constantBuffer = new SharpDX.Direct3D11.Buffer(m_device, 16, ResourceUsage.Default, BindFlags.ConstantBuffer, CpuAccessFlags.None, ResourceOptionFlags.None, 0);
+				//m_context.UpdateSubresource(ref data, constantBuffer);
+				m_context.PixelShader.SetConstantBuffer(0, constantBuffer);
+				//var vertices2 = Buffer.Create(m_device, BindFlags.ConstantBuffer, new[]
+				//				  {
+				//					  new Vector4(-texWh + xOffset, -texHh + yOffset, 0.5f, 1.0f), new Vector4(0.0f, 1.0f, 0.0f, 1.0f),
+				//					  new Vector4( texWh + xOffset, -texHh + yOffset, 0.5f, 1.0f), new Vector4(1.0f, 1.0f, 0.0f, 1.0f),
+				//					  new Vector4(-texWh + xOffset,  texHh + yOffset, 0.5f, 1.0f), new Vector4(0.0f, 0.0f, 0.0f, 1.0f),
+				//					  new Vector4( texWh + xOffset,  texHh + yOffset, 0.5f, 1.0f), new Vector4(1.0f, 0.0f, 0.0f, 1.0f)
+				//				  });
+			}
+			catch (Exception ex)
+			{
+				int x = 5;
+			}
+
+			m_context.PixelShader.Set(m_psColor);
+			//m_context.PixelShader.Set(m_psTex2DLoad);
+			m_context.OutputMerger.SetTargets(m_renderView);
 
             RasterizerStateDescription rsd = RasterizerStateDescription.Default();
             rsd.IsFrontCounterClockwise = true;
@@ -112,6 +266,69 @@ namespace TextureEditor
             base.OnFontChanged(e);
             if (m_isStarted)
                 Invalidate();
+        }
+
+        //protected override void OnGotFocus(EventArgs e)
+        //{
+        //    System.Diagnostics.Debug.WriteLine("GotFocus");
+        //}
+
+        /// <summary>
+        /// Raises the <see cref="E:System.Windows.Forms.Control.MouseWheel"></see> event</summary>
+        /// <param name="e">A <see cref="T:System.Windows.Forms.MouseEventArgs"></see> that contains the event data</param>
+        protected override void OnMouseWheel(MouseEventArgs e)
+        {
+            // e.Delta is by default multiple of WHEEL_DELTA which for current versions of windows is 120
+            //
+            int delta = e.Delta / 120;
+            float mult = 1.1f;
+            if (delta < 0)
+                mult = 0.9f;
+
+			float scaleX = -0.1f / (float)ClientSize.Width;
+			float scaleY = 0.1f / (float)ClientSize.Height;
+			int xDiff = e.Location.X - ClientSize.Width / 2;
+			int yDiff = e.Location.Y - ClientSize.Height / 2;
+
+            for (int idetent = 0; idetent < Math.Abs(delta); ++idetent)
+            {
+                m_texScale *= mult;
+
+				m_texPosition += new Vector4((float)xDiff * scaleX, (float)yDiff * scaleY, 0.0f, 0.0f);
+			}
+
+            Invalidate();
+            base.OnMouseWheel(e);
+        }
+
+        protected override void OnMouseDown(MouseEventArgs e)
+        {
+            m_leftMouseButtonDown = true;
+            m_mouseMoveStartLocation_ = e.Location;
+            Focus();
+            base.OnMouseDown(e);
+        }
+        protected override void OnMouseUp(MouseEventArgs e)
+        {
+            m_leftMouseButtonDown = false;
+            base.OnMouseUp(e);
+        }
+
+        protected override void OnMouseMove(MouseEventArgs e)
+        {
+            if ( m_leftMouseButtonDown )
+            {
+                System.Drawing.Size s = new System.Drawing.Size(m_mouseMoveStartLocation_);
+                m_mouseMoveStartLocation_ = e.Location;
+                System.Drawing.Point locDiff = e.Location - s;
+
+                float scaleX = 2.0f / (float)ClientSize.Width;
+                float scaleY = -2.0f / (float)ClientSize.Height;
+
+                m_texPosition += new Vector4((float)locDiff.X * scaleX, (float)locDiff.Y * scaleY, 0.0f, 0.0f);
+                Invalidate();
+            }
+            base.OnMouseMove(e);
         }
 
 		///// <summary>
@@ -185,8 +402,15 @@ namespace TextureEditor
             var vertexShaderByteCode = ShaderBytecode.Compile(shadersFxText, "VS", "vs_4_0", ShaderFlags.None, EffectFlags.None);
             m_vsPassThrough = new VertexShader(m_device, vertexShaderByteCode);
 
-            var pixelShaderByteCode = ShaderBytecode.Compile(shadersFxText, "PS", "ps_4_0", ShaderFlags.None, EffectFlags.None);
-            m_psColor = new PixelShader(m_device, pixelShaderByteCode);
+			{
+				var pixelShaderByteCode = ShaderBytecode.Compile(shadersFxText, "PS", "ps_4_0", ShaderFlags.None, EffectFlags.None);
+				m_psColor = new PixelShader(m_device, pixelShaderByteCode);
+			}
+
+			{
+				var pixelShaderByteCode = ShaderBytecode.Compile(shadersFxText, "PSTex2DLoad", "ps_4_0", ShaderFlags.None, EffectFlags.None);
+				m_psTex2DLoad = new PixelShader(m_device, pixelShaderByteCode);
+			}
 
             // Layout from VertexShader input signature
             m_inputLayout = new InputLayout(
@@ -212,7 +436,12 @@ namespace TextureEditor
                 m_psColor.Dispose();
                 m_psColor = null;
             }
-            if (m_vsPassThrough != null)
+			if (m_psTex2DLoad != null)
+			{
+				m_psTex2DLoad.Dispose();
+				m_psTex2DLoad = null;
+			} 
+			if (m_vsPassThrough != null)
             {
                 m_vsPassThrough.Dispose();
                 m_vsPassThrough = null;
@@ -311,6 +540,9 @@ namespace TextureEditor
 
         public void showResource( Uri resUri )
         {
+            if (resUri == null)
+                return;
+
             if ( m_tex != null )
             {
                 m_tex.Dispose();
@@ -319,22 +551,68 @@ namespace TextureEditor
                 m_texSRV = null;
             }
 
-            SharpDX.Direct3D11.Resource res = SharpDX.Direct3D11.Resource.FromFile(m_device, resUri.AbsolutePath);
-            if ( res != null )
+            SharpDX.Direct3D11.ImageInformation? ii = SharpDX.Direct3D11.ImageInformation.FromFile(resUri.AbsolutePath);
+            if (ii != null)
             {
-                m_tex = res;
-                m_texSRV = new ShaderResourceView(m_device, res);
+                ImageLoadInformation ili = ImageLoadInformation.Default;
+                //ImageLoadInformation ili = new ImageLoadInformation();
+                ili.MipLevels = ii.Value.MipLevels;
+                ili.PSrcInfo = IntPtr.Zero;
 
-				TextureProperties tp = new TextureProperties( resUri, m_tex );
-				m_textureSelectionContext.Selection = new[] { tp };
-			}
-			else
-			{
-				m_textureSelectionContext.Clear();
-			}
+                SharpDX.Direct3D11.Resource res = SharpDX.Direct3D11.Texture2D.FromFile(m_device, resUri.AbsolutePath, ili);
+                //SharpDX.Direct3D11.Resource res = Texture2D.FromFile<Texture2D>(m_device, resUri.AbsolutePath, new ImageLoadInformation()
+                //{
+                //    Width = ImageLoadInformation.FileDefaultValue,
+                //    Height = ImageLoadInformation.FileDefaultValue,
+                //    Depth = ImageLoadInformation.FileDefaultValue,
+                //    FirstMipLevel = ImageLoadInformation.FileDefaultValue,
+                //    MipLevels = 1,
+                //    Usage = ResourceUsage.Default,
+                //    BindFlags = BindFlags.None,
+                //    CpuAccessFlags = CpuAccessFlags.None,
+                //    OptionFlags = ResourceOptionFlags.None,
+                //    Format = Format.R8G8B8A8_UNorm,
+                //    Filter = FilterFlags.None,
+                //    MipFilter = FilterFlags.None,
+                //    PSrcInfo = IntPtr.Zero
+                //});
 
+                if (res != null)
+                {
+                    m_tex = res;
+                    m_texSRV = new ShaderResourceView(m_device, res);
+
+                    TextureProperties tp = new TextureProperties(resUri, m_tex);
+                    m_textureSelectionContext.Selection = new[] { tp };
+                }
+                else
+                {
+                    m_textureSelectionContext.Clear();
+                }
+            }
+            else
+            {
+                m_textureSelectionContext.Clear();
+            }
+
+			fitSizeRequest = true;
             Invalidate();
         }
+
+        public void fitInWindow()
+        {
+            m_texPosition = new Vector4(0, 0, 0, 0);
+            m_texScale = 1.0f;
+			fitInWindowRequest = true;
+            Invalidate();
+        }
+		public void fitSize()
+		{
+			m_texPosition = new Vector4(0, 0, 0, 0);
+			m_texScale = 1.0f;
+			fitSizeRequest = true;
+			Invalidate();
+		}
 
 		TextureSelectionContext m_textureSelectionContext;
 
@@ -350,9 +628,21 @@ namespace TextureEditor
 
         private VertexShader m_vsPassThrough;
         private PixelShader m_psColor;
-        private SamplerState m_ssPoint;
+		private PixelShader m_psTex2DLoad;
+		private SamplerState m_ssPoint;
 
         private SharpDX.Direct3D11.Resource m_tex;
         private ShaderResourceView m_texSRV;
+
+        private Vector4 m_texPosition = new Vector4(0, 0, 0, 0);
+        private float m_texScale = 1.0f;
+		private float m_texW = 2.0f;
+		private float m_texH = 2.0f;
+
+        private bool m_leftMouseButtonDown = false;
+        private System.Drawing.Point m_mouseMoveStartLocation_;
+
+		private bool fitSizeRequest = false;
+		private bool fitInWindowRequest = false;
     }
 }
