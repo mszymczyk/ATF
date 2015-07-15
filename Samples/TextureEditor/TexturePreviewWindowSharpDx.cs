@@ -604,7 +604,7 @@ namespace TextureEditor
 				//m_textureSelectionContext.Clear();
             }
 
-			fitSizeRequest = true;
+			fitInWindowRequest = true;
             Invalidate();
 
 			return tp;

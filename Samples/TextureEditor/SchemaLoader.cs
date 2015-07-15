@@ -121,6 +121,23 @@ namespace TextureEditor
 							 )
 				);
 
+
+				// create images used for showing emotion
+				// for enum OrcEmotion 
+				var emoVals = Enum.GetValues( typeof( IntendedUsage ) );
+
+				// Shows how to edit enum that is stored as string.
+				var emotionEditor = new LongEnumEditor( typeof( IntendedUsage ), null );
+				textureMetadataTypeProperyCollection.Add(
+				  new AttributePropertyDescriptor(
+						 "IntendedUsage".Localize(),
+						 Schema.textureMetadataType.intendedUsageAttribute,
+						 group_Metadata,
+						 "Specifies how this texture will be used".Localize(),
+						 false,
+						 emotionEditor
+						 ) );
+
 				Schema.textureMetadataType.Type.SetTag(textureMetadataTypeProperyCollection);
 
 				break;
@@ -160,6 +177,19 @@ namespace TextureEditor
 			//}
 		}
 
-        private readonly PropertyEditor m_propertyEditor;        
-    }
+        private readonly PropertyEditor m_propertyEditor;
+
+		/// <summary>
+		/// Enum used for orc character level.</summary>
+		private enum IntendedUsage
+		{
+			Unspecified,
+			Color,
+			ColorHiQuality,
+			NormalMap,
+			Ambient,
+			OrigFormat,
+			ManualFormat
+		};
+	}
 }

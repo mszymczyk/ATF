@@ -60,9 +60,9 @@
         <xs:attribute name="height" type="xs:integer" default="-1" /-->
 
         <!-- actual attributes that can be modified by user -->
+        <xs:attribute name="intendedUsage" type="xs:string" default="Unspecified" />
         <xs:attribute name="compression" type="xs:string" default="Unspecified" />
         <!--xs:attribute name="memoryLayout" type="xs:string" default="Linear" /-->
-        <xs:attribute name="intendedUsage" type="xs:string" default="Unspecified" />
         <xs:attribute name="genMipMaps" type="xs:boolean" default="true" />
       </xs:extension>
     </xs:complexContent>
