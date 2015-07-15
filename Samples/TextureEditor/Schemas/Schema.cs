@@ -1,6 +1,6 @@
 // -------------------------------------------------------------------------------------------------------------------
 // Generated code, do not edit
-// Command Line:  DomGen "game.xsd" "Schema.cs" "TextureEditor" "TextureEditor"
+// Command Line:  DomGen "textureEditor.xsd" "Schema.cs" "TextureEditor" "TextureEditor"
 // -------------------------------------------------------------------------------------------------------------------
 
 using System;
@@ -31,16 +31,20 @@ namespace TextureEditor
             textureMetadataType.Type = getNodeType("TextureEditor", "textureMetadataType");
             textureMetadataType.uriAttribute = textureMetadataType.Type.GetAttributeInfo("uri");
             textureMetadataType.keywordsAttribute = textureMetadataType.Type.GetAttributeInfo("keywords");
-            textureMetadataType.compressionSettingAttribute = textureMetadataType.Type.GetAttributeInfo("compressionSetting");
-            textureMetadataType.memoryLayoutAttribute = textureMetadataType.Type.GetAttributeInfo("memoryLayout");
-            textureMetadataType.mipMapAttribute = textureMetadataType.Type.GetAttributeInfo("mipMap");
+            textureMetadataType.compressionAttribute = textureMetadataType.Type.GetAttributeInfo("compression");
+            textureMetadataType.intendedUsageAttribute = textureMetadataType.Type.GetAttributeInfo("intendedUsage");
+            textureMetadataType.genMipMapsAttribute = textureMetadataType.Type.GetAttributeInfo("genMipMaps");
 
             resourceMetadataType.Type = getNodeType("TextureEditor", "resourceMetadataType");
             resourceMetadataType.uriAttribute = resourceMetadataType.Type.GetAttributeInfo("uri");
             resourceMetadataType.keywordsAttribute = resourceMetadataType.Type.GetAttributeInfo("keywords");
 
+            textureMetadataEditorType.Type = getNodeType("TextureEditor", "textureMetadataEditorType");
+            textureMetadataEditorType.textureMetadataChild = textureMetadataEditorType.Type.GetChildInfo("textureMetadata");
+
             textureMetadataRootElement = getRootElement(NS, "textureMetadata");
             resourceMetadataRootElement = getRootElement(NS, "resourceMetadata");
+            textureMetadataEditorRootElement = getRootElement(NS, "textureMetadataEditor");
         }
 
         public static class textureMetadataType
@@ -48,9 +52,9 @@ namespace TextureEditor
             public static DomNodeType Type;
             public static AttributeInfo uriAttribute;
             public static AttributeInfo keywordsAttribute;
-            public static AttributeInfo compressionSettingAttribute;
-            public static AttributeInfo memoryLayoutAttribute;
-            public static AttributeInfo mipMapAttribute;
+            public static AttributeInfo compressionAttribute;
+            public static AttributeInfo intendedUsageAttribute;
+            public static AttributeInfo genMipMapsAttribute;
         }
 
         public static class resourceMetadataType
@@ -60,8 +64,16 @@ namespace TextureEditor
             public static AttributeInfo keywordsAttribute;
         }
 
+        public static class textureMetadataEditorType
+        {
+            public static DomNodeType Type;
+            public static ChildInfo textureMetadataChild;
+        }
+
         public static ChildInfo textureMetadataRootElement;
 
         public static ChildInfo resourceMetadataRootElement;
+
+        public static ChildInfo textureMetadataEditorRootElement;
     }
 }

@@ -96,7 +96,13 @@ namespace TextureEditor
             m_path = path;
             m_parent = parent;
             m_name = PathUtil.GetLastElement(path);
-        }
+
+			m_extensions.Add(".png");
+			m_extensions.Add(".jpg");
+			m_extensions.Add(".jpeg");
+			m_extensions.Add(".bmp");
+			m_extensions.Add(".dds");
+		}
 
 
         #region IResourceFolder Members
@@ -139,7 +145,7 @@ namespace TextureEditor
                     var systemOrHidden = FileAttributes.System | FileAttributes.Hidden;
 					//var gameEngine = Globals.MEFContainer.GetExportedValue<IGameEngineProxy>();
                     //var resInfos = gameEngine != null ? gameEngine.Info.ResourceInfos : null; 
-					object resInfos = null;
+					//object resInfos = null;
 
                     var files = Directory.GetFiles(m_path);
                     foreach (string file in files)
@@ -150,7 +156,8 @@ namespace TextureEditor
                             continue;
                         string ext = finfo.Extension.ToLower();
 						//if (resInfos == null || resInfos.IsSupported(ext))
-						if (resInfos == null)
+						//if (resInfos == null)
+						if ( IsSupported(ext) )
 							uris.Add( new Uri( file ) );                        
                     }
                 }
@@ -200,8 +207,24 @@ namespace TextureEditor
             get { return m_path; }
         }
 
+
+		/// <summary>
+		/// Tests if the given extension is recognized by
+		/// the game engine as a valid game asset
+		/// for this particular resource type</summary>
+		/// <param name="ext">file extension to test</param>
+		/// <returns>true if the ext is supported, otherwise false</returns>
+		public bool IsSupported(string ext)
+		{
+			return m_extensions.Contains(ext);
+		}
+
         private string m_name;
         private readonly string m_path;
-        private readonly IResourceFolder m_parent;        
+        private readonly IResourceFolder m_parent;
+
+		// file extensions for this resource type
+		private HashSet<string> m_extensions = new HashSet<string>();
+
     }
 }

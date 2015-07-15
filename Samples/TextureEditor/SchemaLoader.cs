@@ -14,6 +14,7 @@ using Sce.Atf.Adaptation;
 using Sce.Atf.Applications;
 using Sce.Atf.Controls.PropertyEditing;
 using Sce.Atf.Dom;
+using PropertyDescriptor = Sce.Atf.Dom.PropertyDescriptor;
 
 
 namespace TextureEditor
@@ -86,6 +87,42 @@ namespace TextureEditor
 				m_typeCollection = typeCollection;
 				Schema.Initialize( typeCollection );
 				TextureEditorAdapters.Initialize( this );
+
+				string group_Metadata = "Metadata".Localize();
+
+
+				Schema.resourceMetadataType.Type.SetTag(
+					new PropertyDescriptorCollection(
+						new PropertyDescriptor[] {
+											new AttributePropertyDescriptor(
+												"URI".Localize(),
+												Schema.resourceMetadataType.uriAttribute,
+												group_Metadata,
+												"Uri".Localize(),
+												true),
+											new AttributePropertyDescriptor(
+												"Keywords".Localize(),
+												Schema.resourceMetadataType.keywordsAttribute,
+												group_Metadata,
+												"Keywords".Localize(),
+												false),
+									}));
+
+				PropertyDescriptorCollection textureMetadataTypeProperyCollection = new PropertyDescriptorCollection(null);
+
+				textureMetadataTypeProperyCollection.Add(
+					new AttributePropertyDescriptor(
+							 "Generate mipmaps".Localize(),
+							 Schema.textureMetadataType.genMipMapsAttribute,
+							 group_Metadata,
+							 "Controlls mipmap generation".Localize(),
+							 false,
+							 new BoolEditor()
+							 )
+				);
+
+				Schema.textureMetadataType.Type.SetTag(textureMetadataTypeProperyCollection);
+
 				break;
 			}
         }
@@ -96,31 +133,31 @@ namespace TextureEditor
 		{
 			base.ParseAnnotations( schemaSet, annotations );
 
-			foreach (var kv in annotations)
-			{
-				DomNodeType nodeType = kv.Key as DomNodeType;
-				if (kv.Value.Count == 0) continue;
+			//foreach (var kv in annotations)
+			//{
+			//	DomNodeType nodeType = kv.Key as DomNodeType;
+			//	if (kv.Value.Count == 0) continue;
 
-				PropertyDescriptorCollection localDescriptor = nodeType.GetTagLocal<PropertyDescriptorCollection>();
-				PropertyDescriptorCollection annotationDescriptor = Sce.Atf.Dom.PropertyDescriptor.ParseXml( nodeType, kv.Value );
+			//	PropertyDescriptorCollection localDescriptor = nodeType.GetTagLocal<PropertyDescriptorCollection>();
+			//	PropertyDescriptorCollection annotationDescriptor = Sce.Atf.Dom.PropertyDescriptor.ParseXml( nodeType, kv.Value );
 
-				// if the type already have local property descriptors 
-				// then add annotation driven property descriptors to it.
-				if (localDescriptor != null)
-				{
-					foreach (System.ComponentModel.PropertyDescriptor propDecr in annotationDescriptor)
-					{
-						localDescriptor.Add( propDecr );
-					}
-				}
-				else
-				{
-					localDescriptor = annotationDescriptor;
-				}
+			//	// if the type already have local property descriptors 
+			//	// then add annotation driven property descriptors to it.
+			//	if (localDescriptor != null)
+			//	{
+			//		foreach (System.ComponentModel.PropertyDescriptor propDecr in annotationDescriptor)
+			//		{
+			//			localDescriptor.Add( propDecr );
+			//		}
+			//	}
+			//	else
+			//	{
+			//		localDescriptor = annotationDescriptor;
+			//	}
 
-				if (localDescriptor.Count > 0)
-					nodeType.SetTag<PropertyDescriptorCollection>( localDescriptor );
-			}
+			//	if (localDescriptor.Count > 0)
+			//		nodeType.SetTag<PropertyDescriptorCollection>( localDescriptor );
+			//}
 		}
 
         private readonly PropertyEditor m_propertyEditor;        

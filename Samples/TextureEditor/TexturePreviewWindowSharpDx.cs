@@ -38,14 +38,14 @@ namespace TextureEditor
     /// <remarks>This class's constructor initializes OpenGL so that other tools that use OpenGL, such as
     /// the Texture Manager, work even if BeginPaint has not been called. This allows
     /// Panel3D to work in a tabbed interface like the FAST Editor.</remarks>
-	public class Panel3DSharpDx : InteropControl
+	public class TexturePreviewWindowSharpDX : InteropControl
     {
         /// <summary>
         /// Constructor</summary>
         /// <remarks>This constructor initializes OpenGL so that other tools that use OpenGL, such as
         /// the Texture Manager, work even if BeginPaint has not been called. This allows
         /// Panel3D to work in a tabbed interface like the FAST Editor.</remarks>
-		public Panel3DSharpDx( IContextRegistry contextRegistry )
+		public TexturePreviewWindowSharpDX( IContextRegistry contextRegistry )
         {
 			m_textureSelectionContext = new TextureSelectionContext( contextRegistry );
 			SizeChanged += new EventHandler( this.MyButton1_SizeChanged );
@@ -205,12 +205,13 @@ namespace TextureEditor
 			data.yOffset = 0;
 			data.mipLevel = 0;
 
-			try
-			{
+			//try
+			//{
 				var constantBuffer = Buffer.Create(m_device, BindFlags.ConstantBuffer, ref data);
 				//var constantBuffer = new SharpDX.Direct3D11.Buffer(m_device, 16, ResourceUsage.Default, BindFlags.ConstantBuffer, CpuAccessFlags.None, ResourceOptionFlags.None, 0);
 				//m_context.UpdateSubresource(ref data, constantBuffer);
 				m_context.PixelShader.SetConstantBuffer(0, constantBuffer);
+				constantBuffer.Dispose();
 				//var vertices2 = Buffer.Create(m_device, BindFlags.ConstantBuffer, new[]
 				//				  {
 				//					  new Vector4(-texWh + xOffset, -texHh + yOffset, 0.5f, 1.0f), new Vector4(0.0f, 1.0f, 0.0f, 1.0f),
@@ -218,11 +219,11 @@ namespace TextureEditor
 				//					  new Vector4(-texWh + xOffset,  texHh + yOffset, 0.5f, 1.0f), new Vector4(0.0f, 0.0f, 0.0f, 1.0f),
 				//					  new Vector4( texWh + xOffset,  texHh + yOffset, 0.5f, 1.0f), new Vector4(1.0f, 0.0f, 0.0f, 1.0f)
 				//				  });
-			}
-			catch (Exception ex)
-			{
-				int x = 5;
-			}
+			//}
+			//catch (Exception ex)
+			//{
+			//	int x = 5;
+			//}
 
 			m_context.PixelShader.Set(m_psColor);
 			//m_context.PixelShader.Set(m_psTex2DLoad);
@@ -538,10 +539,16 @@ namespace TextureEditor
             m_isStarted = false;
         }
 
-        public void showResource( Uri resUri )
+		public SharpDX.Direct3D11.ImageInformation? readImageInformation( Uri resUri )
+		{
+			SharpDX.Direct3D11.ImageInformation? ii = SharpDX.Direct3D11.ImageInformation.FromFile(resUri.AbsolutePath);
+			return ii;
+		}
+
+        public TextureProperties showResource( Uri resUri )
         {
             if (resUri == null)
-                return;
+                return null;
 
             if ( m_tex != null )
             {
@@ -550,6 +557,8 @@ namespace TextureEditor
                 m_texSRV.Dispose();
                 m_texSRV = null;
             }
+
+			TextureProperties tp = null;
 
             SharpDX.Direct3D11.ImageInformation? ii = SharpDX.Direct3D11.ImageInformation.FromFile(resUri.AbsolutePath);
             if (ii != null)
@@ -582,7 +591,7 @@ namespace TextureEditor
                     m_tex = res;
                     m_texSRV = new ShaderResourceView(m_device, res);
 
-					//TextureProperties tp = new TextureProperties(resUri, m_tex);
+					tp = new TextureProperties(resUri, m_tex);
 					//m_textureSelectionContext.Selection = new[] { tp };
                 }
                 else
@@ -597,6 +606,8 @@ namespace TextureEditor
 
 			fitSizeRequest = true;
             Invalidate();
+
+			return tp;
         }
 
         public void fitInWindow()

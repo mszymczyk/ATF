@@ -60,24 +60,26 @@ namespace TextureEditor
                 typeof(HelpAboutCommand),               // Help -> About command
                 typeof(ContextRegistry),                // central context registry with change notification
                 typeof(PropertyEditor),                 // property grid for editing selected objects
-				//typeof(GridPropertyEditor),             // grid control for editing selected objects
+				typeof(GridPropertyEditor),             // grid control for editing selected objects
                 typeof(PropertyEditingCommands),        // commands for PropertyEditor and GridPropertyEditor
                 typeof(SettingsService),
                 typeof(PythonService),                  // scripting service for automated tests
                 typeof(ScriptConsole),                  // provides a dockable command console for entering Python commands
                 typeof(AtfScriptVariables),             // exposes common ATF services as script variables
                 typeof(AutomationService),              // provides facilities to run an automated script using the .NET remoting service
+				typeof(DomExplorer),                    // component that gives diagnostic view of DOM
+				//typeof(HistoryLister),                  // visual list of undo/redo stack
 
                 typeof(SchemaLoader),                   // component that loads XML schema and sets up types
                 typeof(Editor),                         // component that manages UI documents
 
-				typeof(RenderViewSharpDx)               // displays a 3D scene in a Windows Control
+				typeof(TextureMetadataEditor)           // displays a 3D scene in a Windows Control
 				);
 
 			TypeCatalog LECoreCatalog = new TypeCatalog(
 				typeof( ResourceLister ),
-				typeof( ThumbnailService ),
-				typeof( ResourceMetadataEditor )
+				typeof( ThumbnailService )
+				//typeof( TextureMetadataEditor )
 				);
 
 			TypeCatalog thisAssemCatalog = new TypeCatalog(

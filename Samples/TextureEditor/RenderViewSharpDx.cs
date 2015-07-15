@@ -30,7 +30,7 @@ namespace TextureEditor
 		///// Gets DesignControl</summary>
 		//public DesignControl ViewControl
 		//{
-		//	get { return m_designControl; }
+		//	get { return m_previewWindow; }
 		//}
 
 		///// <summary>
@@ -44,15 +44,15 @@ namespace TextureEditor
 		//		Sphere3F sphere = CalcBoundSphere(m_scene.Children[0]);
 		//		sphere.Radius *= 2.0f;
 
-		//		float aspect = (float)m_designControl.Width / (float)m_designControl.Height;
+		//		float aspect = (float)m_previewWindow.Width / (float)m_previewWindow.Height;
 
-		//		m_designControl.Camera.Frustum.SetPerspective(
+		//		m_previewWindow.Camera.Frustum.SetPerspective(
 		//			(float)Math.PI / 4,
 		//			aspect,
 		//			sphere.Radius * 0.01f,
 		//			sphere.Radius * 5.0f);
 
-		//		m_designControl.Camera.ZoomOnSphere(sphere);   
+		//		m_previewWindow.Camera.ZoomOnSphere(sphere);   
 		//	}
 
 		//}
@@ -62,7 +62,7 @@ namespace TextureEditor
         /// Registers rendering control and subscribes to ActiveDocumentChanged event</summary>
         void IInitializable.Initialize()
         {
-			m_designControl = new Panel3DSharpDx( m_contextRegistry );
+			m_designControl = new TexturePreviewWindowSharpDX( m_contextRegistry );
             m_textureViewCommands = new TextureViewCommands(m_commandService, m_designControl);
 
             ControlInfo cinfo = new ControlInfo("Texture Preview", "texture viewer", StandardControlGroup.Center);
@@ -111,7 +111,7 @@ namespace TextureEditor
         [Import(AllowDefault = false)]
         private ICommandService m_commandService;
 
-        private Panel3DSharpDx m_designControl;
+        private TexturePreviewWindowSharpDX m_designControl;
         private TextureViewCommands m_textureViewCommands;
     }
 }

@@ -17,7 +17,7 @@ namespace TextureEditor
     //[PartCreationPolicy(CreationPolicy.Shared)]
     public class TextureViewCommands : ICommandClient//, IInitializable
     {
-        public TextureViewCommands(ICommandService commandService, Panel3DSharpDx panel3D)
+        public TextureViewCommands(ICommandService commandService, TexturePreviewWindowSharpDX panel3D)
         {
             m_panel3D = panel3D;
 
@@ -128,7 +128,7 @@ namespace TextureEditor
 
         //[Import(AllowDefault=false)]
         //private RenderView m_renderView;
-        private Panel3DSharpDx m_panel3D;
+        private TexturePreviewWindowSharpDX m_panel3D;
 
         private static string CommandGroup = "TexturePreviewCommands";
     }

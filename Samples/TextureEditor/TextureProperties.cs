@@ -20,7 +20,7 @@ namespace TextureEditor
 {
 	/// <summary>
 	/// Class describing properties of texture resource
-	class TextureProperties : CustomTypeDescriptor
+	public class TextureProperties : CustomTypeDescriptor
 	{
 		/// <summary>
 		/// Constructor with parameters</summary>
