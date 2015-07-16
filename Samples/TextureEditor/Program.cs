@@ -67,8 +67,9 @@ namespace TextureEditor
                 typeof(ScriptConsole),                  // provides a dockable command console for entering Python commands
                 typeof(AtfScriptVariables),             // exposes common ATF services as script variables
                 typeof(AutomationService),              // provides facilities to run an automated script using the .NET remoting service
-				typeof(DomExplorer),                    // component that gives diagnostic view of DOM
+				//typeof(DomExplorer),                    // component that gives diagnostic view of DOM
 				//typeof(HistoryLister),                  // visual list of undo/redo stack
+				typeof(ErrorDialogService),             // displays errors to the user in a message box
 
                 typeof(SchemaLoader),                   // component that loads XML schema and sets up types
                 typeof(Editor),                         // component that manages UI documents

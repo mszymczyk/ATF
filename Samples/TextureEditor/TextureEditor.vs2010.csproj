@@ -110,6 +110,7 @@
     <EmbeddedResource Include="Schemas\textureEditor.xsd">
       <SubType>Designer</SubType>
     </EmbeddedResource>
+    <EmbeddedResource Include="Resources\About.rtf" />
     <None Include="Schemas\GenSchemaDef.cmd" />
   </ItemGroup>
   <ItemGroup>

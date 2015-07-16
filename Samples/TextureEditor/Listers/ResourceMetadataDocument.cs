@@ -4,6 +4,7 @@ using System;
 using System.Diagnostics;
 using System.IO;
 using Sce.Atf.Dom;
+using Sce.Atf.Adaptation;
 
 //using LevelEditorCore;
 
@@ -19,14 +20,19 @@ namespace TextureEditor
 
         private void DomNode_AttributeChanged(object sender, AttributeEventArgs e)
         {
-			//SchemaLoader schemaTypeLoader = Globals.MEFContainer.GetExportedValue<SchemaLoader>();
-			//string filePath = Uri.LocalPath;
-			//FileMode fileMode = File.Exists( filePath ) ? FileMode.Truncate : FileMode.OpenOrCreate;
-			//using (FileStream stream = new FileStream( filePath, fileMode ))
-			//{
-			//	var writer = new DomXmlWriter( schemaTypeLoader.TypeCollection );
-			//	writer.Write( DomNode, stream, Uri );
-			//}            
+			TextureMetadata tm = DomNode.As<TextureMetadata>();
+			if ( tm.Format == SharpDX.DXGI.Format.Unknown && tm.ExtendedFormat == SharpDX.DXGI.Format.Unknown )
+				return;
+
+			SchemaLoader schemaTypeLoader = Globals.MEFContainer.GetExportedValue<SchemaLoader>();
+			string filePath = Uri.LocalPath;
+			FileMode fileMode = File.Exists( filePath ) ? FileMode.Truncate : FileMode.OpenOrCreate;
+			using ( FileStream stream = new FileStream( filePath, fileMode ) )
+			{
+				var writer = new DomXmlWriter( schemaTypeLoader.TypeCollection );
+				writer.PersistDefaultAttributes = true;
+				writer.Write( DomNode, stream, Uri );
+			}            
         }
     }
 }

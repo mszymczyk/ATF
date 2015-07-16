@@ -182,7 +182,7 @@ namespace FileExplorerSample
             }
 
             private Selection<object> m_selection;
-            private string m_path = @"C:\";
+            private string m_path = @"D:\";
         }
 
         private MainForm m_mainForm;

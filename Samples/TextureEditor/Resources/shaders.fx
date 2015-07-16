@@ -27,13 +27,13 @@
 struct VS_IN
 {
 	float4 pos : POSITION;
-	float4 col : TEXCOORD0;
+	float4 uv0 : TEXCOORD0;
 };
 
 struct PS_IN
 {
 	float4 pos : SV_POSITION;
-	float4 col : TEXCOORD0;
+	float4 uv0 : TEXCOORD0;
 };
 
 cbuffer cbFrameParams : register( b0 )
@@ -41,32 +41,57 @@ cbuffer cbFrameParams : register( b0 )
 	int xOffset;
 	int yOffset;
 	int mipLevel;
+	int sliceIndex;
 };
 
-Texture2D tex2D;
-SamplerState ssPoint;
+Texture2D tex2D : register(t0);
+Texture2DArray tex2DArray : register(t0);
+//TextureCubeArray texCubeArray : register(t0);
+SamplerState ssPoint : register(s0);
 
 PS_IN VS( VS_IN input )
 {
 	PS_IN output = (PS_IN)0;
 	
 	output.pos = input.pos;
-	output.col = input.col;
+	output.uv0 = input.uv0;
 	
 	return output;
 }
 
-float4 PS( PS_IN input ) : SV_Target
+float4 PS_Clear( PS_IN input ) : SV_Target
 {
-	//return input.col;
-	float3 t = tex2D.SampleLevel( ssPoint, input.col.xy, 0 ).xyz;
-	return float4( t, 1 );
+	uint2 pixelCoord = ( uint2 )( input.pos.xy );
+	uint2 xy = pixelCoord.xy / 8;
+	uint xm = xy.x % 2;
+	uint ym = xy.y % 2;
+	if ( ( xm == 0 && ym == 0 ) || ( xm == 1 && ym == 1 ) )
+		return float4( 0, 0.5, 0, 1 );
+	else
+		return float4( 0.25, 0.25, 0.25, 1 );
 }
 
-float4 PSTex2DLoad( PS_IN input ) : SV_Target
+float4 PS_Tex2D_Sample( PS_IN input ) : SV_Target
 {
-	//return input.col;
-	//float3 t = tex2D.SampleLevel( ssPoint, input.col.xy, 0 );
+	float4 t = tex2D.SampleLevel( ssPoint, input.uv0.xy, mipLevel );
+	return float4( t );
+}
+
+float4 PS_Tex2DArray_Sample( PS_IN input ) : SV_Target
+{
+	float4 t = tex2DArray.SampleLevel( ssPoint, float3(input.uv0.xy, sliceIndex), mipLevel );
+	return float4( t );
+}
+
+float4 PS_TexCube_Sample( PS_IN input ) : SV_Target
+{
+	//float4 t = texCubeArray.SampleLevel( ssPoint, float4( input.uv0.xyz, sliceIndex ), mipLevel );
+	float4 t = tex2DArray.SampleLevel( ssPoint, float3( input.uv0.xy, input.uv0.z + 6*sliceIndex ), mipLevel );
+	return float4( t );
+}
+
+float4 PS_Tex2D_Load( PS_IN input ) : SV_Target
+{
 	int2 pixelCoord = ( int2 )( input.pos.xy );
 	float3 t = tex2D.Load( int3( pixelCoord + int2(xOffset, yOffset), mipLevel ) ).xyz;
 	return float4( t, 1 );
@@ -74,17 +99,38 @@ float4 PSTex2DLoad( PS_IN input ) : SV_Target
 
 technique10 Render
 {
-	pass P0
+	pass Clear
 	{
 		SetGeometryShader( 0 );
 		SetVertexShader( CompileShader( vs_4_0, VS() ) );
-		SetPixelShader( CompileShader( ps_4_0, PS() ) );
+		SetPixelShader( CompileShader( ps_4_0, PS_Clear() ) );
 	}
 
-	pass P1
+	pass Tex2D_Sample
 	{
 		SetGeometryShader( 0 );
 		SetVertexShader( CompileShader( vs_4_0, VS() ) );
-		SetPixelShader( CompileShader( ps_4_0, PSTex2DLoad() ) );
+		SetPixelShader( CompileShader( ps_4_0, PS_Tex2D_Sample() ) );
+	}
+
+	pass Tex2DArray_Sample
+	{
+		SetGeometryShader( 0 );
+		SetVertexShader( CompileShader( vs_4_0, VS() ) );
+		SetPixelShader( CompileShader( ps_4_0, PS_Tex2DArray_Sample() ) );
+	}
+
+	pass TexCube_Sample
+	{
+		SetGeometryShader( 0 );
+		SetVertexShader( CompileShader( vs_4_0, VS() ) );
+		SetPixelShader( CompileShader( ps_4_0, PS_TexCube_Sample() ) );
+	}
+
+	pass Tex2D_Load
+	{
+		SetGeometryShader( 0 );
+		SetVertexShader( CompileShader( vs_4_0, VS() ) );
+		SetPixelShader( CompileShader( ps_4_0, PS_Tex2D_Load() ) );
 	}
 }

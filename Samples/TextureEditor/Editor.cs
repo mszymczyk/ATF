@@ -67,49 +67,49 @@ namespace TextureEditor
         #endregion
 
 
-		/// <summary>
-		/// Gets or sets the root resource directory for finding assets</summary>        
-		public string ResourceRoot
-		{
-			get
-			{
-				if (Globals.ResourceRoot != null)
-					return Globals.ResourceRoot.LocalPath;
-				return null;
-			}
-			set
-			{
-				if (!value.EndsWith( "\\" ))
-					value += "\\";
+		///// <summary>
+		///// Gets or sets the root resource directory for finding assets</summary>        
+		//public string ResourceRoot
+		//{
+		//	get
+		//	{
+		//		if (Globals.ResourceRoot != null)
+		//			return Globals.ResourceRoot.LocalPath;
+		//		return null;
+		//	}
+		//	set
+		//	{
+		//		if (!value.EndsWith( "\\" ))
+		//			value += "\\";
 
-				Uri uri = new Uri( value, UriKind.RelativeOrAbsolute );
-				if (!uri.IsAbsoluteUri)
-				{
-					Uri startPath = new Uri( Application.StartupPath + "\\" );
-					uri = new Uri( startPath, value );
-				}
+		//		Uri uri = new Uri( value, UriKind.RelativeOrAbsolute );
+		//		if (!uri.IsAbsoluteUri)
+		//		{
+		//			Uri startPath = new Uri( Application.StartupPath + "\\" );
+		//			uri = new Uri( startPath, value );
+		//		}
 
-				Globals.ResourceRoot = uri;
+		//		Globals.ResourceRoot = uri;
 
-				IResourceFolder rootResourceFolder = new CustomFileSystemResourceFolder( Globals.ResourceRoot.LocalPath );
-				if (m_resourceLister != null)
-					m_resourceLister.SetRootFolder( rootResourceFolder );
-			}
-		}
+		//		IResourceFolder rootResourceFolder = new CustomFileSystemResourceFolder( Globals.ResourceRoot.LocalPath );
+		//		if (m_resourceLister != null)
+		//			m_resourceLister.SetRootFolder( rootResourceFolder );
+		//	}
+		//}
 
 		private void RegisterSettings()
 		{
-			string descr = "Root path for all resources".Localize();
-			var resourceRoot =
-                new BoundPropertyDescriptor( this, () => ResourceRoot,
-					"ResourceRoot".Localize( "A user preference and the name of the preference in the settings file" ),
-					null,
-					descr,
-					new FolderBrowserDialogUITypeEditor( descr ), null );
+			//string descr = "Root path for all resources".Localize();
+			//var resourceRoot =
+			//	new BoundPropertyDescriptor( this, () => ResourceRoot,
+			//		"ResourceRoot".Localize( "A user preference and the name of the preference in the settings file" ),
+			//		null,
+			//		descr,
+			//		new FolderBrowserDialogUITypeEditor( descr ), null );
 
 
-			m_settingsService.RegisterSettings( this, resourceRoot );
-			m_settingsService.RegisterUserSettings( "Resources".Localize(), resourceRoot );
+			//m_settingsService.RegisterSettings( this, resourceRoot );
+			//m_settingsService.RegisterUserSettings( "Resources".Localize(), resourceRoot );
 
 			var resolveOnLoad =
                 new BoundPropertyDescriptor( this, () => ResolveOnLoad,

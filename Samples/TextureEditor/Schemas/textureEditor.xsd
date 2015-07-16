@@ -60,10 +60,17 @@
         <xs:attribute name="height" type="xs:integer" default="-1" /-->
 
         <!-- actual attributes that can be modified by user -->
-        <xs:attribute name="intendedUsage" type="xs:string" default="Unspecified" />
-        <xs:attribute name="compression" type="xs:string" default="Unspecified" />
+        <!--xs:attribute name="intendedUsage" type="xs:string" default="Unspecified" /-->
+        <!--xs:attribute name="compression" type="xs:string" default="Unspecified" /-->
         <!--xs:attribute name="memoryLayout" type="xs:string" default="Linear" /-->
         <xs:attribute name="genMipMaps" type="xs:boolean" default="true" />
+        <xs:attribute name="forceSourceSrgb" type="xs:boolean" default="true" />
+        <xs:attribute name="format" type="xs:string" default="Unknown" />
+        <xs:attribute name="extendedFormat" type="xs:string" default="Unknown" />
+        <xs:attribute name="width" type="xs:integer" default="-1" />
+        <xs:attribute name="height" type="xs:integer" default="-1" />
+        <!--xs:attribute name="depth" type="xs:integer" default="-1" /-->
+
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>

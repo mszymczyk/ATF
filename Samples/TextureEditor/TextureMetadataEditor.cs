@@ -11,6 +11,8 @@ using Sce.Atf.Dom;
 using Sce.Atf.Applications;
 using PropertyGrid = Sce.Atf.Controls.PropertyEditing.PropertyGrid;
 using Sce.Atf.Adaptation;
+using System.Windows.Forms;
+using System.Reflection;
 
 namespace TextureEditor
 {
@@ -35,7 +37,7 @@ namespace TextureEditor
 			//	return;
 
 			m_previewWindow = new TexturePreviewWindowSharpDX(m_contextRegistry);
-			m_textureViewCommands = new TextureViewCommands(m_commandService, m_previewWindow);
+			m_textureViewCommands = new TextureViewCommands( m_commandService, m_previewWindow, m_owner, m_schemaLoader );
 
 			ControlInfo cinfo = new ControlInfo("Texture Preview", "texture viewer", StandardControlGroup.CenterPermanent);
 			m_controlHostService.RegisterControl(m_previewWindow, cinfo, null);
@@ -48,6 +50,15 @@ namespace TextureEditor
 				"Displays information about source texture".Localize(),
 				StandardControlGroup.Hidden);
 			m_controlHostService.RegisterControl(m_propertyGrid, m_controlInfo, null);
+
+			m_helpTextBox = new RichTextBox();
+			string aboutFilePath = "TextureEditor.Resources.About.rtf";
+			Stream textFileStream = Assembly.GetExecutingAssembly().GetManifestResourceStream( aboutFilePath );
+			if ( textFileStream != null )
+				m_helpTextBox.LoadFile( textFileStream, RichTextBoxStreamType.RichText );
+
+			ControlInfo helpTextBoxInfo = new ControlInfo( "Help", "help", StandardControlGroup.Bottom );
+			m_controlHostService.RegisterControl( m_helpTextBox, helpTextBoxInfo, null );
 
 			DomNode rootNode = new DomNode(Schema.textureMetadataEditorType.Type, Schema.textureMetadataEditorRootElement);
 			rootNode.InitializeExtensions();
@@ -196,8 +207,12 @@ namespace TextureEditor
 		[Import(AllowDefault = false)]
 		private SchemaLoader m_schemaLoader = null;
 
+		[Import( AllowDefault = false )]
+		private IWin32Window m_owner;
+
 		private ControlInfo m_controlInfo;
 		private PropertyGrid m_propertyGrid;
+		private RichTextBox m_helpTextBox;
 		//private SelectionPropertyEditingContext m_defaultContext = new SelectionPropertyEditingContext();
 		//private ResourceMetadataEditingContext m_editingContext;
 

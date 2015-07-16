@@ -245,6 +245,10 @@ namespace TextureEditor
             RegisterSettings();
 
 			AssetListViewMode = "Details";
+
+			string PICO_DEMO = Environment.GetEnvironmentVariable("PICO_DEMO");
+			IResourceFolder rootResourceFolder = new CustomFileSystemResourceFolder(PICO_DEMO);
+			SetRootFolder(rootResourceFolder);
         }
 
         void ThumbnailControl_MouseLeave(object sender, EventArgs e)

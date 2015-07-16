@@ -14,7 +14,6 @@ using Sce.Atf.Adaptation;
 using Sce.Atf.Applications;
 using Sce.Atf.Controls.PropertyEditing;
 using Sce.Atf.Dom;
-using PropertyDescriptor = Sce.Atf.Dom.PropertyDescriptor;
 
 
 namespace TextureEditor
@@ -93,7 +92,7 @@ namespace TextureEditor
 
 				Schema.resourceMetadataType.Type.SetTag(
 					new PropertyDescriptorCollection(
-						new PropertyDescriptor[] {
+						new Sce.Atf.Dom.PropertyDescriptor[] {
 											new AttributePropertyDescriptor(
 												"URI".Localize(),
 												Schema.resourceMetadataType.uriAttribute,
@@ -106,9 +105,9 @@ namespace TextureEditor
 												group_Metadata,
 												"Keywords".Localize(),
 												false),
-									}));
+									} ) );
 
-				PropertyDescriptorCollection textureMetadataTypeProperyCollection = new PropertyDescriptorCollection(null);
+				PropertyDescriptorCollection textureMetadataTypeProperyCollection = new PropertyDescriptorCollection( null );
 
 				textureMetadataTypeProperyCollection.Add(
 					new AttributePropertyDescriptor(
@@ -121,24 +120,137 @@ namespace TextureEditor
 							 )
 				);
 
-
-				// create images used for showing emotion
-				// for enum OrcEmotion 
-				var emoVals = Enum.GetValues( typeof( IntendedUsage ) );
-
-				// Shows how to edit enum that is stored as string.
-				var emotionEditor = new LongEnumEditor( typeof( IntendedUsage ), null );
 				textureMetadataTypeProperyCollection.Add(
-				  new AttributePropertyDescriptor(
-						 "IntendedUsage".Localize(),
-						 Schema.textureMetadataType.intendedUsageAttribute,
-						 group_Metadata,
-						 "Specifies how this texture will be used".Localize(),
-						 false,
-						 emotionEditor
-						 ) );
+					new AttributePropertyDescriptor(
+							 "Force Source Srgb".Localize(),
+							 Schema.textureMetadataType.forceSourceSrgbAttribute,
+							 group_Metadata,
+							 "Treats source image as srgb".Localize(),
+							 false,
+							 new BoolEditor()
+							 )
+				);
 
-				Schema.textureMetadataType.Type.SetTag(textureMetadataTypeProperyCollection);
+				textureMetadataTypeProperyCollection.Add(
+					new AttributePropertyDescriptor(
+							 "Width".Localize(),
+							 Schema.textureMetadataType.widthAttribute,
+							 group_Metadata,
+							 "Sets exported image's width".Localize(),
+							 false,
+							//new BoundedIntEditor( -1, 16 * 1024 * 1024 )
+							 new NumericEditor( typeof( int ) )
+							 )
+				);
+
+				textureMetadataTypeProperyCollection.Add(
+					new AttributePropertyDescriptor(
+							 "Height".Localize(),
+							 Schema.textureMetadataType.heightAttribute,
+							 group_Metadata,
+							 "Sets exported image's height".Localize(),
+							 false,
+							 //new BoundedIntEditor( -1, 16 * 1024 * 1024 )
+							 new NumericEditor( typeof(int) )
+							 )
+				);
+
+				//textureMetadataTypeProperyCollection.Add(
+				//	new AttributePropertyDescriptor(
+				//			 "Depth".Localize(),
+				//			 Schema.textureMetadataType.depthAttribute,
+				//			 group_Metadata,
+				//			 "Sets exported image's depth".Localize(),
+				//			 false,
+				//			//new BoundedIntEditor( -1, 16 * 1024 * 1024 )
+				//			 new NumericEditor( typeof( int ) )
+				//			 )
+				//);
+				//// create images used for showing emotion
+				//// for enum OrcEmotion 
+				//var emoVals = Enum.GetValues( typeof( IntendedUsage ) );
+
+				//// Shows how to edit enum that is stored as string.
+				//var emotionEditor = new LongEnumEditor( typeof( IntendedUsage ), null );
+				//textureMetadataTypeProperyCollection.Add(
+				//  new AttributePropertyDescriptor(
+				//		 "IntendedUsage".Localize(),
+				//		 Schema.textureMetadataType.intendedUsageAttribute,
+				//		 group_Metadata,
+				//		 "Specifies how this texture will be used".Localize(),
+				//		 false,
+				//		 emotionEditor
+				//		 ) );
+
+				{
+					List<string> popularFormats = new List<string>();
+
+					// compressed
+					// https://msdn.microsoft.com/pl-pl/library/hh308955.aspx
+					// https://msdn.microsoft.com/en-us/library/windows/desktop/bb694531(v=vs.85).aspx
+					//
+					popularFormats.Add( SharpDX.DXGI.Format.Unknown.ToString() );
+
+					popularFormats.Add( SharpDX.DXGI.Format.BC1_UNorm_SRgb.ToString() );
+					popularFormats.Add( SharpDX.DXGI.Format.BC2_UNorm_SRgb.ToString() );
+					popularFormats.Add( SharpDX.DXGI.Format.BC3_UNorm_SRgb.ToString() );
+					popularFormats.Add( SharpDX.DXGI.Format.BC4_UNorm.ToString() );
+					popularFormats.Add( SharpDX.DXGI.Format.BC5_SNorm.ToString() );
+					popularFormats.Add( SharpDX.DXGI.Format.BC7_UNorm_SRgb.ToString() );
+
+					popularFormats.Add( SharpDX.DXGI.Format.R8G8B8A8_UNorm.ToString() );
+					popularFormats.Add( SharpDX.DXGI.Format.R8G8B8A8_UNorm_SRgb.ToString() );
+					popularFormats.Add( SharpDX.DXGI.Format.R8_UNorm.ToString() );
+
+					popularFormats.Add( SharpDX.DXGI.Format.BC1_UNorm.ToString() );
+					popularFormats.Add( SharpDX.DXGI.Format.BC2_UNorm.ToString() );
+					popularFormats.Add( SharpDX.DXGI.Format.BC3_UNorm.ToString() );
+					popularFormats.Add( SharpDX.DXGI.Format.BC4_SNorm.ToString() );
+					popularFormats.Add( SharpDX.DXGI.Format.BC5_UNorm.ToString() );
+					popularFormats.Add( SharpDX.DXGI.Format.BC7_UNorm.ToString() );
+
+					//var formatEditor = new LongEnumEditor( typeof(SharpDX.DXGI.Format), null );
+					var formatEditor = new LongEnumEditor();
+					formatEditor.DefineEnum( popularFormats.ToArray(), null );
+					formatEditor.MaxDropDownItems = 10;
+					var apd =  new AttributePropertyDescriptor(
+							 "Format".Localize(),
+							 Schema.textureMetadataType.formatAttribute,
+							 group_Metadata,
+							 "Specifies format of exported texture".Localize(),
+							 false,
+							 formatEditor
+							 );
+					textureMetadataTypeProperyCollection.Add( apd );
+				}
+
+				{
+					var formatNames = Enum.GetValues( typeof( SharpDX.DXGI.Format ) );
+					var formatEditor = new LongEnumEditor( typeof(SharpDX.DXGI.Format), null );
+					formatEditor.MaxDropDownItems = 10;
+					var apd =  new AttributePropertyDescriptor(
+							 "ExtendedFormat".Localize(),
+							 Schema.textureMetadataType.extendedFormatAttribute,
+							 group_Metadata,
+							 "Specifies format of exported texture (advanced)".Localize(),
+							 false,
+							 formatEditor
+							 );
+					textureMetadataTypeProperyCollection.Add( apd );
+				}
+
+				//// Shows how to edit enum that is stored as string.
+				//var emotionEditor = new LongEnumEditor( typeof( IntendedUsage ), null );
+				//textureMetadataTypeProperyCollection.Add(
+				//  new AttributePropertyDescriptor(
+				//		 "IntendedUsage".Localize(),
+				//		 Schema.textureMetadataType.intendedUsageAttribute,
+				//		 group_Metadata,
+				//		 "Specifies how this texture will be used".Localize(),
+				//		 false,
+				//		 emotionEditor
+				//		 ) );
+				Schema.textureMetadataType.Type.SetTag( textureMetadataTypeProperyCollection );
 
 				break;
 			}
@@ -179,17 +291,17 @@ namespace TextureEditor
 
         private readonly PropertyEditor m_propertyEditor;
 
-		/// <summary>
-		/// Enum used for orc character level.</summary>
-		private enum IntendedUsage
-		{
-			Unspecified,
-			Color,
-			ColorHiQuality,
-			NormalMap,
-			Ambient,
-			OrigFormat,
-			ManualFormat
-		};
+		///// <summary>
+		///// Enum used for orc character level.</summary>
+		//private enum IntendedUsage
+		//{
+		//	Unspecified,
+		//	Color,
+		//	ColorHiQuality,
+		//	NormalMap,
+		//	Ambient,
+		//	OrigFormat,
+		//	ManualFormat
+		//};
 	}
 }

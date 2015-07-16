@@ -31,9 +31,12 @@ namespace TextureEditor
             textureMetadataType.Type = getNodeType("TextureEditor", "textureMetadataType");
             textureMetadataType.uriAttribute = textureMetadataType.Type.GetAttributeInfo("uri");
             textureMetadataType.keywordsAttribute = textureMetadataType.Type.GetAttributeInfo("keywords");
-            textureMetadataType.compressionAttribute = textureMetadataType.Type.GetAttributeInfo("compression");
-            textureMetadataType.intendedUsageAttribute = textureMetadataType.Type.GetAttributeInfo("intendedUsage");
             textureMetadataType.genMipMapsAttribute = textureMetadataType.Type.GetAttributeInfo("genMipMaps");
+            textureMetadataType.forceSourceSrgbAttribute = textureMetadataType.Type.GetAttributeInfo("forceSourceSrgb");
+            textureMetadataType.formatAttribute = textureMetadataType.Type.GetAttributeInfo("format");
+            textureMetadataType.extendedFormatAttribute = textureMetadataType.Type.GetAttributeInfo("extendedFormat");
+            textureMetadataType.widthAttribute = textureMetadataType.Type.GetAttributeInfo("width");
+            textureMetadataType.heightAttribute = textureMetadataType.Type.GetAttributeInfo("height");
 
             resourceMetadataType.Type = getNodeType("TextureEditor", "resourceMetadataType");
             resourceMetadataType.uriAttribute = resourceMetadataType.Type.GetAttributeInfo("uri");
@@ -52,9 +55,12 @@ namespace TextureEditor
             public static DomNodeType Type;
             public static AttributeInfo uriAttribute;
             public static AttributeInfo keywordsAttribute;
-            public static AttributeInfo compressionAttribute;
-            public static AttributeInfo intendedUsageAttribute;
             public static AttributeInfo genMipMapsAttribute;
+            public static AttributeInfo forceSourceSrgbAttribute;
+            public static AttributeInfo formatAttribute;
+            public static AttributeInfo extendedFormatAttribute;
+            public static AttributeInfo widthAttribute;
+            public static AttributeInfo heightAttribute;
         }
 
         public static class resourceMetadataType
