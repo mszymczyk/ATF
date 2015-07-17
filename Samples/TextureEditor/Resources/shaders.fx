@@ -42,6 +42,7 @@ cbuffer cbFrameParams : register( b0 )
 	int yOffset;
 	int mipLevel;
 	int sliceIndex;
+	float gamma;
 };
 
 Texture2D tex2D : register(t0);
@@ -71,22 +72,35 @@ float4 PS_Clear( PS_IN input ) : SV_Target
 		return float4( 0.25, 0.25, 0.25, 1 );
 }
 
+float4 PS_Clear2( PS_IN input ) : SV_Target
+{
+	uint2 pixelCoord = ( uint2 )( input.pos.xy );
+	if ( pixelCoord.x % 2 == 0 )
+		return float4( 0, 0, 0, 1 );
+	else
+		return float4( 1, 1, 1, 1 );
+}
+
 float4 PS_Tex2D_Sample( PS_IN input ) : SV_Target
 {
 	float4 t = tex2D.SampleLevel( ssPoint, input.uv0.xy, mipLevel );
+	t.xyz = pow( t.xyz, gamma );
 	return float4( t );
 }
 
 float4 PS_Tex2DArray_Sample( PS_IN input ) : SV_Target
 {
-	float4 t = tex2DArray.SampleLevel( ssPoint, float3(input.uv0.xy, sliceIndex), mipLevel );
+	//input.uv0.x *= 0.25;
+	float4 t = tex2DArray.SampleLevel( ssPoint, float3( input.uv0.xy, sliceIndex ), mipLevel );
+	t.xyz = pow( t.xyz, gamma );
 	return float4( t );
 }
 
 float4 PS_TexCube_Sample( PS_IN input ) : SV_Target
 {
 	//float4 t = texCubeArray.SampleLevel( ssPoint, float4( input.uv0.xyz, sliceIndex ), mipLevel );
-	float4 t = tex2DArray.SampleLevel( ssPoint, float3( input.uv0.xy, input.uv0.z + 6*sliceIndex ), mipLevel );
+	float4 t = tex2DArray.SampleLevel( ssPoint, float3( input.uv0.xy, input.uv0.z + 6 * sliceIndex ), mipLevel );
+	t.xyz = pow( t.xyz, gamma );
 	return float4( t );
 }
 
@@ -97,6 +111,28 @@ float4 PS_Tex2D_Load( PS_IN input ) : SV_Target
 	return float4( t, 1 );
 }
 
+float4 PS_Present( PS_IN input ) : SV_Target
+{
+	float4 t = tex2D.SampleLevel( ssPoint, input.uv0.xy, 0 );
+	t = saturate( t );
+	//t = pow( t, 1 / 2.2 );
+	//t *= 64;
+	//t = floor( t );
+	//t /= 64;
+	//t = pow( t, 2.2 );
+	//t = pow( t, 1 / 2.2 );
+	return float4( t.xyz, 1 );
+	//return float4( 0.5, 0.5, 0.5, 1 );
+}
+
+float4 PS_Gradient( PS_IN input ) : SV_Target
+{
+	//input.uv0.xyz *= 0.25;
+	float3 t = input.uv0.xyz;
+	//t = pow( t, 2.2 );
+	return float4( t, 1 );
+}
+
 technique10 Render
 {
 	pass Clear
@@ -104,6 +140,13 @@ technique10 Render
 		SetGeometryShader( 0 );
 		SetVertexShader( CompileShader( vs_4_0, VS() ) );
 		SetPixelShader( CompileShader( ps_4_0, PS_Clear() ) );
+	}
+	
+	pass Clear2
+	{
+		SetGeometryShader( 0 );
+		SetVertexShader( CompileShader( vs_4_0, VS() ) );
+		SetPixelShader( CompileShader( ps_4_0, PS_Clear2() ) );
 	}
 
 	pass Tex2D_Sample
@@ -132,5 +175,19 @@ technique10 Render
 		SetGeometryShader( 0 );
 		SetVertexShader( CompileShader( vs_4_0, VS() ) );
 		SetPixelShader( CompileShader( ps_4_0, PS_Tex2D_Load() ) );
+	}
+
+	pass Present
+	{
+		SetGeometryShader( 0 );
+		SetVertexShader( CompileShader( vs_4_0, VS() ) );
+		SetPixelShader( CompileShader( ps_4_0, PS_Present() ) );
+	}
+
+	pass Gradient
+	{
+		SetGeometryShader( 0 );
+		SetVertexShader( CompileShader( vs_4_0, VS() ) );
+		SetPixelShader( CompileShader( ps_4_0, PS_Gradient() ) );
 	}
 }

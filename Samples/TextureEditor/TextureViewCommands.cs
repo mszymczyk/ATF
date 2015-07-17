@@ -12,6 +12,7 @@ using Sce.Atf.Dom;
 using Sce.Atf.Adaptation;
 using System.IO;
 using Sce.Atf.Controls;
+using SharpDX.DXGI;
 
 namespace TextureEditor
 {   
@@ -175,7 +176,7 @@ namespace TextureEditor
 		{
 		}
 
-		void ExportUri( Uri resourceUri )
+		int ExportUri( Uri resourceUri )
 		{
 			string metadataFilePath = resourceUri.LocalPath + ".metadata";
 			Uri metadataUri = new Uri( metadataFilePath );
@@ -189,6 +190,13 @@ namespace TextureEditor
 					Sce.Atf.Dom.DomNode rootNode = reader.Read( stream, metadataUri );
 					rootNode.InitializeExtensions();
 
+					string inputFile = Path.GetFullPath( resourceUri.AbsolutePath );
+					string dir_data = PICO_DEMO + "data\\";
+					string dir_dataWin = PICO_DEMO + "dataWin\\";
+					string outputFile_tmp = inputFile.Replace( dir_data, dir_dataWin );
+					//string outputFile = Path.GetDirectoryName( outputFile_tmp ) + "\\" + Path.GetFileNameWithoutExtension( outputFile_tmp ) + ".dds";
+					string outputFile = outputFile_tmp + ".dds";
+					
 					TextureMetadata tm = rootNode.As<TextureMetadata>();
 
 					string cmd = " -if CUBIC";
@@ -203,35 +211,64 @@ namespace TextureEditor
 					if ( tm.ForceSourceSrgb )
 						cmd += " -srgbi";
 
+					Format format = Format.Unknown;
+
 					if ( tm.ExtendedFormat != SharpDX.DXGI.Format.Unknown )
-						cmd += " -f " + tm.ExtendedFormat.ToString();
+						//cmd += " -f " + tm.ExtendedFormat.ToString();
+						format = tm.ExtendedFormat;
 					else if ( tm.Format != SharpDX.DXGI.Format.Unknown )
-						cmd += " -f " + tm.Format.ToString();
+						//cmd += " -f " + tm.Format.ToString();
+						format = tm.Format;
 					else
 					{
-						throw new Exception("Invalid format");
+						throw new Exception( "Invalid format" );
 					}
 
-					string file_metadata = Path.GetFullPath( resourceUri.AbsolutePath );
-					string PICO_DEMO = Path.GetFullPath( Environment.GetEnvironmentVariable( "PICO_DEMO" ) + "\\" );
-					string dir_data = PICO_DEMO + "data\\";
-					string dir_dataWin = PICO_DEMO + "dataWin\\";
+					bool bcSrgbFormat = false;
+					// texconv incorrectly generates mipmaps for compressed formats
+					// so first resize/genmips to uncompressed file, and then compress
+					//
+					if ( tm.GenMipMaps &&
+						(
+						   format == Format.BC1_UNorm_SRgb
+						|| format == Format.BC2_UNorm_SRgb
+						|| format == Format.BC3_UNorm_SRgb
+						|| format == Format.BC7_UNorm_SRgb
+						)
+						)
+					{
+						bcSrgbFormat = true;
+						cmd += " -f " + Format.R8G8B8A8_UNorm_SRgb.ToString();
+					}
+					else
+					{
+						cmd += " -f " + format.ToString();
+					}
 
-					string file = file_metadata.Replace( dir_data, dir_dataWin );
+					cmd += " -of " + outputFile;
+					cmd += " " + inputFile;
 
-					cmd += " -of " + file;
-					cmd += " " + resourceUri.AbsolutePath;
+					int ires = RunCommand( cmd );
+					if ( ires != 0 )
+					{
+						return ires;
+					}
 
-					System.Diagnostics.Process process = new System.Diagnostics.Process();
-					System.Diagnostics.ProcessStartInfo startInfo = new System.Diagnostics.ProcessStartInfo();
-					//startInfo.WindowStyle = System.Diagnostics.ProcessWindowStyle.Hidden;
-					string PICO_ROOT = Environment.GetEnvironmentVariable( "PICO_ROOT" );
-					startInfo.FileName = PICO_ROOT + "bin64\\texconv.exe";
-					startInfo.Arguments = cmd;
-					process.StartInfo = startInfo;
-					process.Start();
-					process.WaitForExit();
+					if ( bcSrgbFormat )
+					{
+						string cmd2 = " -f " + format.ToString();
+						cmd2 += " -of " + outputFile;
+						cmd2 += " " + outputFile;
+
+						ires = RunCommand( cmd2 );
+						if ( ires != 0 )
+						{
+							return ires;
+						}
+					}
 				}
+
+				return 0;
 			}
 			else
 			{
@@ -248,7 +285,22 @@ namespace TextureEditor
 				//errDialog.Show( m_owner ); //if Visible is true, Show() crashes.
 
 				MessageBox.Show( m_owner, "Please configure texture's metadata first!", "Error", MessageBoxButtons.OK );
+				return 1;
 			}
+		}
+
+		int RunCommand( string arg )
+		{
+			System.Diagnostics.Process process = new System.Diagnostics.Process();
+			System.Diagnostics.ProcessStartInfo startInfo = new System.Diagnostics.ProcessStartInfo();
+			//startInfo.WindowStyle = System.Diagnostics.ProcessWindowStyle.Hidden;
+			startInfo.FileName = texconv_exe;
+			startInfo.Arguments = arg;
+			process.StartInfo = startInfo;
+			process.Start();
+			process.WaitForExit();
+
+			return process.ExitCode;
 		}
 
 		//[Import( AllowDefault = true )]
@@ -268,5 +320,8 @@ namespace TextureEditor
         private TexturePreviewWindowSharpDX m_previewWindow;
 
         private static string CommandGroup = "TexturePreviewCommands";
+		private static readonly string PICO_ROOT = Path.GetFullPath( Environment.GetEnvironmentVariable( "PICO_ROOT" ) + "\\" );
+		private static readonly string PICO_DEMO = Path.GetFullPath( Environment.GetEnvironmentVariable( "PICO_DEMO" ) + "\\" );
+		private static readonly string texconv_exe = PICO_ROOT + "bin64\\texconv.exe";
     }
 }

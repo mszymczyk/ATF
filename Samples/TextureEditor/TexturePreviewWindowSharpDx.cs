@@ -74,6 +74,8 @@ namespace TextureEditor
 			public int mipLevel;
 			[FieldOffset(12)]
 			public int sliceIndex;
+			[FieldOffset( 16 )]
+			public float gamma;
 		};
 
 		class PsShaderWrap : IDisposable
@@ -127,8 +129,40 @@ namespace TextureEditor
 
 		void DrawBackground()
 		{
-			m_context.PixelShader.Set( GetPsShader( "PS_Clear" ) );
-			SubmitFullscreenQuad();
+			m_context.PixelShader.Set( GetPsShader( "PS_Clear2" ) );
+			var vertices = Buffer.Create( m_device, BindFlags.VertexBuffer, new[]
+                                  {
+                                      new Vector4(-1,  0, 0.5f, 1.0f), new Vector4(0.0f, 1.0f, 0.0f, 1.0f),
+                                      new Vector4( 1,  0, 0.5f, 1.0f), new Vector4(1.0f, 1.0f, 0.0f, 1.0f),
+                                      new Vector4(-1,  1, 0.5f, 1.0f), new Vector4(0.0f, 0.0f, 0.0f, 1.0f),
+                                      new Vector4( 1,  1, 0.5f, 1.0f), new Vector4(1.0f, 0.0f, 0.0f, 1.0f)
+                                  } );
+
+			m_context.InputAssembler.SetVertexBuffers( 0, new VertexBufferBinding( vertices, 32, 0 ) );
+			vertices.Dispose();
+
+			m_context.Draw( 4, 0 );
+		}
+		void DrawGradient()
+		{
+			m_context.PixelShader.Set( GetPsShader( "PS_Gradient" ) );
+
+			var vertices = Buffer.Create( m_device, BindFlags.VertexBuffer, new[]
+                                  {
+									  //new Vector4(-0.95f,  0.15f, 0.5f, 1.0f), new Vector4(0.0f, 0.0f, 0.0f, 1.0f),
+									  //new Vector4( 0.95f,  0.15f, 0.5f, 1.0f), new Vector4(1.0f, 1.0f, 1.0f, 1.0f),
+									  //new Vector4(-0.95f,  0.35f, 0.5f, 1.0f), new Vector4(0.0f, 0.0f, 0.0f, 1.0f),
+									  //new Vector4( 0.95f,  0.35f, 0.5f, 1.0f), new Vector4(1.0f, 1.0f, 1.0f, 1.0f)
+                                      new Vector4(-1,  0.15f, 0.5f, 1.0f), new Vector4(0.0f, 0.0f, 0.0f, 1.0f),
+                                      new Vector4( 1,  0.15f, 0.5f, 1.0f), new Vector4(1.0f, 1.0f, 1.0f, 1.0f),
+                                      new Vector4(-1,  0.35f, 0.5f, 1.0f), new Vector4(0.0f, 0.0f, 0.0f, 1.0f),
+                                      new Vector4( 1,  0.35f, 0.5f, 1.0f), new Vector4(1.0f, 1.0f, 1.0f, 1.0f)
+                                  } );
+
+			m_context.InputAssembler.SetVertexBuffers( 0, new VertexBufferBinding( vertices, 32, 0 ) );
+			vertices.Dispose();
+
+			m_context.Draw( 4, 0 );
 		}
 
 		void DrawTexture()
@@ -240,6 +274,10 @@ namespace TextureEditor
 				data.mipLevel = visibleMip;
 				int visibleSlice = Math.Min( m_texProperties.VisibleSlice, m_texProperties.ArraySize - 1 );
 				data.sliceIndex = visibleSlice;
+				if ( m_texProperties.DoGammaToLinearConversion )
+					data.gamma = 2.2f;
+				else
+					data.gamma = 1.0f;
 
 				var constantBuffer = Buffer.Create( m_device, BindFlags.ConstantBuffer, ref data );
 				m_context.PixelShader.SetConstantBuffer( 0, constantBuffer );
@@ -330,6 +368,10 @@ namespace TextureEditor
 				data.mipLevel = visibleMip;
 				int visibleSlice = Math.Min( m_texProperties.VisibleSlice, m_texProperties.ArraySize - 1 );
 				data.sliceIndex = visibleSlice;
+				if ( m_texProperties.DoGammaToLinearConversion )
+					data.gamma = 2.2f;
+				else
+					data.gamma = 1.0f;
 
 				var constantBuffer = Buffer.Create( m_device, BindFlags.ConstantBuffer, ref data );
 				m_context.PixelShader.SetConstantBuffer( 0, constantBuffer );
@@ -363,13 +405,10 @@ namespace TextureEditor
 		/// <param name="e">A <see cref="T:System.Windows.Forms.PaintEventArgs"></see> that contains the event data</param>
 		protected override void OnPaint( PaintEventArgs e )
 		{
-			m_context.ClearRenderTargetView( m_renderView, Color.DimGray );
-
 			m_context.InputAssembler.InputLayout = m_inputLayout;
 			m_context.InputAssembler.PrimitiveTopology = PrimitiveTopology.TriangleStrip;
 			m_context.VertexShader.Set( m_vsPassThrough );
 
-			m_context.OutputMerger.SetTargets( m_renderView );
 			BlendStateDescription bsd = BlendStateDescription.Default();
 
 			RenderTargetBlendDescription bsd0 = bsd.RenderTarget[0];
@@ -386,6 +425,11 @@ namespace TextureEditor
 			m_context.OutputMerger.SetBlendState( bs );
 			bs.Dispose();
 
+			m_context.OutputMerger.SetTargets( m_renderView );
+			m_context.ClearRenderTargetView( m_renderView, Color.DarkGray );
+			//m_context.OutputMerger.SetTargets( m_renderViewIntermediate );
+			//m_context.ClearRenderTargetView( m_renderViewIntermediate, Color.DarkGray );
+
 			RasterizerStateDescription rsd = RasterizerStateDescription.Default();
 			rsd.IsFrontCounterClockwise = true;
 			RasterizerState rs = new RasterizerState( m_device, rsd );
@@ -393,11 +437,23 @@ namespace TextureEditor
 			rs.Dispose();
 			m_context.Rasterizer.SetViewport( new Viewport( 0, 0, ClientSize.Width, ClientSize.Height, 0.0f, 1.0f ) );
 
-
 			//DrawBackground();
 			if ( m_tex != null )
 				DrawTexture();
 
+			//DrawGradient();
+
+			//m_context.OutputMerger.SetTargets( m_renderView );
+
+			//BlendStateDescription bsd2 = BlendStateDescription.Default();
+			//BlendState bs2 = new BlendState( m_device, bsd2 );
+			//m_context.OutputMerger.SetBlendState( bs2 );
+			//bs2.Dispose();
+
+			//m_context.PixelShader.Set( GetPsShader( "PS_Present" ) );
+			//m_context.PixelShader.SetSampler( 0, m_ssPoint );
+			//m_context.PixelShader.SetShaderResource( 0, m_renderViewIntermediateSrv );
+			//SubmitFullscreenQuad();
 
 			m_swapChain.Present( 0, PresentFlags.None );
 		}
@@ -515,23 +571,23 @@ namespace TextureEditor
 		{
 			m_renderView.Dispose();
 
-			// Create Device and SwapChain
-			m_swapChain.ResizeBuffers( 1, ClientSize.Width, ClientSize.Height, Format.R8G8B8A8_UNorm, SwapChainFlags.None );
-
-			// New RenderTargetView from the backbuffer
-			var backBuffer = Texture2D.FromSwapChain<Texture2D>( m_swapChain, 0 );
-			m_renderView = new RenderTargetView( m_device, backBuffer );
-			backBuffer.Dispose();
+			//m_renderViewIntermediate.Dispose();
+			//m_renderViewIntermediateSrv.Dispose();
 
 			m_context.Flush();
 			m_context.ClearState();
 
-			m_context.Rasterizer.SetViewport( new Viewport( 0, 0, ClientSize.Width, ClientSize.Height, 0.0f, 1.0f ) );
-			m_context.OutputMerger.SetTargets( m_renderView );
+			// Create Device and SwapChain
+			m_swapChain.ResizeBuffers( 1, ClientSize.Width, ClientSize.Height, backBufferFormat, SwapChainFlags.None );
+
+			ResizeBackBuffer();
+
+			//m_context.Rasterizer.SetViewport( new Viewport( 0, 0, ClientSize.Width, ClientSize.Height, 0.0f, 1.0f ) );
+			//m_context.OutputMerger.SetTargets( m_renderView );
 
             Invalidate();
 
-            System.Diagnostics.Debug.WriteLine("ClientSize: {0}", ClientSize);
+			//System.Diagnostics.Debug.WriteLine("ClientSize: {0}", ClientSize);
 		}
 
         /// <summary>
@@ -569,10 +625,13 @@ namespace TextureEditor
 
 
 			AddPsShader( "PS_Clear" );
+			AddPsShader( "PS_Clear2" );
 			AddPsShader( "PS_Tex2D_Sample" );
 			AddPsShader("PS_Tex2DArray_Sample");
 			AddPsShader("PS_Tex2D_Load");
-			AddPsShader( "PS_TexCube_Sample" );		
+			AddPsShader( "PS_TexCube_Sample" );
+			AddPsShader( "PS_Present" );
+			AddPsShader( "PS_Gradient" );
 		}
 
         /// <summary>
@@ -631,6 +690,32 @@ namespace TextureEditor
 			return ps.m_ps;
 		}
 
+		void ResizeBackBuffer()
+		{
+			// New RenderTargetView from the backbuffer
+			var backBuffer = Texture2D.FromSwapChain<Texture2D>( m_swapChain, 0 );
+			m_renderView = new RenderTargetView( m_device, backBuffer );
+
+			//Texture2DDescription td = new Texture2DDescription();
+			//td.ArraySize = 1;
+			//td.BindFlags = BindFlags.RenderTarget | BindFlags.ShaderResource;
+			//td.CpuAccessFlags = CpuAccessFlags.None;
+			//td.Format = Format.R32G32B32A32_Float;
+			//td.Height = backBuffer.Description.Height;
+			//td.MipLevels = 1;
+			//td.OptionFlags = ResourceOptionFlags.None;
+			//td.SampleDescription.Count = 1;
+			//td.SampleDescription.Quality = 0;
+			//td.Usage = ResourceUsage.Default;
+			//td.Width = backBuffer.Description.Width;
+			//Texture2D rt = new Texture2D( m_device, td );
+
+			//m_renderViewIntermediate = new RenderTargetView( m_device, rt );
+			//m_renderViewIntermediateSrv = new ShaderResourceView( m_device, rt );
+			//rt.Dispose();
+			backBuffer.Dispose();
+		}
+
         private void StartSharpDxIfNecessary()
         {
             if (!m_isStarted)
@@ -648,7 +733,7 @@ namespace TextureEditor
 						BufferCount = 1,
 						ModeDescription= 
 								   new ModeDescription( ClientSize.Width, ClientSize.Height,
-												new Rational( 60, 1 ), Format.R8G8B8A8_UNorm ),
+												new Rational( 60, 1 ), backBufferFormat ),
 						IsWindowed = true,
 						OutputHandle = Handle,
 						SampleDescription = new SampleDescription( 1, 0 ),
@@ -657,7 +742,7 @@ namespace TextureEditor
 					};
 
 					// Create Device and SwapChain
-					Device.CreateWithSwapChain( DriverType.Hardware, DeviceCreationFlags.None, desc, out m_device, out m_swapChain );
+					Device.CreateWithSwapChain( DriverType.Hardware, DeviceCreationFlags.Debug, desc, out m_device, out m_swapChain );
 					m_context = m_device.ImmediateContext;
 
 					// Ignore all windows events
@@ -665,14 +750,9 @@ namespace TextureEditor
 					factory.MakeWindowAssociation( Handle, WindowAssociationFlags.IgnoreAll );
 					factory.Dispose();
 
-					// New RenderTargetView from the backbuffer
-					var backBuffer = Texture2D.FromSwapChain<Texture2D>( m_swapChain, 0 );
-					m_renderView = new RenderTargetView( m_device, backBuffer );
-					backBuffer.Dispose();
-
-					m_context.Rasterizer.SetViewport( new Viewport( 0, 0, ClientSize.Width, ClientSize.Height, 0.0f, 1.0f ) );
-					m_context.OutputMerger.SetTargets( m_renderView );
-
+					ResizeBackBuffer();
+					//m_context.Rasterizer.SetViewport( new Viewport( 0, 0, ClientSize.Width, ClientSize.Height, 0.0f, 1.0f ) );
+					//m_context.OutputMerger.SetTargets( m_renderView );
 
                     Initialize();
                     m_isStarted = true;
@@ -694,6 +774,8 @@ namespace TextureEditor
 			if (disposing)
 			{
 				m_renderView.Dispose();
+				//m_renderViewIntermediate.Dispose();
+				//m_renderViewIntermediateSrv.Dispose();
 				m_context.ClearState();
 				m_context.Flush();
 				m_device.Dispose();
@@ -732,6 +814,7 @@ namespace TextureEditor
                 //ImageLoadInformation ili = new ImageLoadInformation();
                 ili.MipLevels = ii.Value.MipLevels;
                 ili.PSrcInfo = IntPtr.Zero;
+				//ili.Format = Format.R8G8B8A8_UNorm_SRgb;
 
                 SharpDX.Direct3D11.Resource res = SharpDX.Direct3D11.Texture2D.FromFile(m_device, resUri.AbsolutePath, ili);
                 //SharpDX.Direct3D11.Resource res = Texture2D.FromFile<Texture2D>(m_device, resUri.AbsolutePath, new ImageLoadInformation()
@@ -755,7 +838,7 @@ namespace TextureEditor
                 {
                     m_tex = res;
 
-					if ( (ili.OptionFlags & ResourceOptionFlags.TextureCube) != 0 )
+					if ( (ii.Value.OptionFlags & ResourceOptionFlags.TextureCube) != 0 )
 					{
 						Texture2D tex = m_tex as Texture2D;
 						Texture2DDescription texDesc = tex.Description;
@@ -771,6 +854,17 @@ namespace TextureEditor
 					else
 					{
 						m_texSRV = new ShaderResourceView( m_device, res );
+
+						//Texture2D tex = m_tex as Texture2D;
+						//Texture2DDescription texDesc = tex.Description;
+
+						//ShaderResourceViewDescription d = new ShaderResourceViewDescription();
+						//d.Dimension = ShaderResourceViewDimension.Texture2DArray;
+						//d.Format = texDesc.Format;
+						//d.Texture2DArray.ArraySize = texDesc.ArraySize;
+						//d.Texture2DArray.MipLevels = texDesc.MipLevels;
+						//d.Texture2DArray.MostDetailedMip = 0;
+						//m_texSRV = new ShaderResourceView( m_device, m_tex, d );
 					}
 
 					tp = new TextureProperties(resUri, m_tex, this);
@@ -820,7 +914,9 @@ namespace TextureEditor
 		private SwapChain m_swapChain;
 		private DeviceContext m_context;
 		private RenderTargetView m_renderView;
-        private bool m_isStarted;
+		//private RenderTargetView m_renderViewIntermediate;
+		//private ShaderResourceView m_renderViewIntermediateSrv;
+		private bool m_isStarted;
 
         private InputLayout m_inputLayout;
         //private Buffer m_screenQuad;
@@ -846,5 +942,7 @@ namespace TextureEditor
 
 		private bool fitSizeRequest = false;
 		private bool fitInWindowRequest = false;
+
+		private static readonly SharpDX.DXGI.Format backBufferFormat = Format.R8G8B8A8_UNorm_SRgb;
     }
 }

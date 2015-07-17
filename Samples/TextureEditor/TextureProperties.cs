@@ -38,6 +38,8 @@ namespace TextureEditor
 			//Type = type;
 			//Value = value;
 
+			DoGammaToLinearConversion = true;
+
 			ResourceDimension dim = m_res.Dimension;
 			if (dim == ResourceDimension.Texture1D)
 			{
@@ -147,6 +149,11 @@ namespace TextureEditor
 		/// Slice to display </summary>
 		[PropertyEditingAttribute(false)]
 		public int VisibleSlice { get; set; }
+
+		/// <summary>
+		/// Slice to display </summary>
+		[PropertyEditingAttribute( false )]
+		public bool DoGammaToLinearConversion { get; set; }
 
 		#region Property Editing
 
