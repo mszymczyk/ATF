@@ -155,7 +155,7 @@ namespace TextureEditor
 						rootNode.SetAttribute(Schema.resourceMetadataType.uriAttribute, resourceUri);
 					}
 
-					//m_loadedNodes.Add(metadataUri, rootNode);
+					m_loadedNodes.Add(metadataUri, rootNode);
 
 					rootNode.InitializeExtensions();
 
@@ -164,7 +164,7 @@ namespace TextureEditor
 
 					// this node must be added to root in order for history to work
 					//
-					//m_editorRootNode.GetChildList(Schema.textureMetadataEditorType.textureMetadataChild).Add(rootNode);
+					m_editorRootNode.GetChildList(Schema.textureMetadataEditorType.textureMetadataChild).Add(rootNode);
 				}
 
 				rootNodes.Add(rootNode);

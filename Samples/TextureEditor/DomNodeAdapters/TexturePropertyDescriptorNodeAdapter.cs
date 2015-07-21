@@ -37,7 +37,7 @@ namespace TextureEditor
 				m_domNode = domNode;
 				m_counter = globalCounter_;
 				globalCounter_ += 1;
-				//m_attributeInfo2 = attribute;
+				m_attributeInfo2 = attribute;
 				//m_isReadOnly2 = isReadOnly;
 			}
 
@@ -72,11 +72,30 @@ namespace TextureEditor
 				get
 				{
 					TextureMetadata tp = m_domNode.Cast<TextureMetadata>();
+					System.Diagnostics.Debug.WriteLine( "IsReadOnly: {0}, {1}", tp.Uri, tp.CopySourceFile );
 					return tp.CopySourceFile;
 				}
 			}
 
-			//private readonly AttributeInfo m_attributeInfo2;
+			/// <summary>
+			/// Tests equality of property descriptor with object</summary>
+			/// <param name="obj">Object to compare to</param>
+			/// <returns>True iff property descriptors are identical</returns>
+			/// <remarks>Implements Equals() for organizing descriptors in grid controls</remarks>
+			public override bool Equals( object obj )
+			{
+				var other = obj as CustomEnableAttributePropertyDescriptor;
+
+				// If true is returned, then GetNode() must also succeed when it calls
+				//  DomNode.Type.IsValid(m_attributeInfo), otherwise this AttributePropertyDescriptor
+				//  will be considered identical in a dictionary, but its GetValue() will fail.
+				return
+					other != null &&
+					m_attributeInfo2.Equivalent( other.m_attributeInfo2 ) &&
+					m_domNode.Equals( other.m_domNode );
+			}
+
+			private readonly AttributeInfo m_attributeInfo2;
 			private DomNode m_domNode;
 			//private bool m_isReadOnly2;
 		};
