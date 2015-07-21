@@ -72,6 +72,56 @@ namespace TextureEditor
         }
         private XmlSchemaTypeCollection m_typeCollection;
 
+		//class CustomEnableAttributePropertyDescriptor : AttributePropertyDescriptor
+		//{
+		//	public CustomEnableAttributePropertyDescriptor(
+		//		string name,
+		//		AttributeInfo attribute,
+		//		string category,
+		//		string description,
+		//		bool isReadOnly,
+		//		object editor )
+
+		//		: base( name, attribute, category, description, isReadOnly, editor, null )
+		//	{
+		//		m_attributeInfo2 = attribute;
+		//		m_isReadOnly2 = isReadOnly;
+		//	}
+
+		//	/// <summary>
+		//	/// When overridden in a derived class, gets the result value of the property on a component</summary>
+		//	/// <param name="component">The component with the property for which to retrieve the value</param>
+		//	/// <returns>The value of a property for a given component.</returns>
+		//	public override object GetValue( object component )
+		//	{
+		//		DomNode node = GetNode( component );
+		//		TextureMetadata tm = component.As<TextureMetadata>();
+		//		if ( tm != null )
+		//		{
+		//			if ( tm.CopySourceFile )
+		//				m_isReadOnly2 = true;
+		//			else
+		//				m_isReadOnly2 = false;
+		//		}
+		//		else
+		//		{
+		//			m_isReadOnly2 = false;
+		//		}
+
+		//		return base.GetValue( component );
+		//	}
+
+		//	/// <summary>
+		//	/// When overridden in a derived class, gets a value indicating whether this property is read-only</summary>
+		//	public override bool IsReadOnly
+		//	{
+		//		get { return m_isReadOnly2; }
+		//	}
+
+		//	private readonly AttributeInfo m_attributeInfo2;
+		//	private bool m_isReadOnly2;
+		//};
+
         /// <summary>
         /// Method called after the schema set has been loaded and the DomNodeTypes have been created, but
         /// before the DomNodeTypes have been frozen. This means that DomNodeType.SetIdAttribute, for example, has
@@ -126,6 +176,30 @@ namespace TextureEditor
 							 Schema.textureMetadataType.forceSourceSrgbAttribute,
 							 group_Metadata,
 							 "Treats source image as srgb".Localize(),
+							 false,
+							 new BoolEditor()
+							 )
+				);
+
+				//textureMetadataTypeProperyCollection.Add(
+				//	new AttributePropertyDescriptor(
+				//	//new CustomEnableAttributePropertyDescriptor(
+				//			 "Flip Y".Localize(),
+				//			 Schema.textureMetadataType.flipYAttribute,
+				//			 group_Metadata,
+				//			 "Flips image vertically".Localize(),
+				//			 false,
+				//			 //new BoolEditor()
+				//			 new CustomBoolEditor()
+				//			 )
+				//);
+
+				textureMetadataTypeProperyCollection.Add(
+					new AttributePropertyDescriptor(
+							 "Copy source file".Localize(),
+							 Schema.textureMetadataType.copySourceFileAttribute,
+							 group_Metadata,
+							 "Copies source file without any modifications".Localize(),
 							 false,
 							 new BoolEditor()
 							 )

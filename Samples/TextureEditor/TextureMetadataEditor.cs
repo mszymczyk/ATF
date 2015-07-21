@@ -37,7 +37,7 @@ namespace TextureEditor
 			//	return;
 
 			m_previewWindow = new TexturePreviewWindowSharpDX(m_contextRegistry);
-			m_textureViewCommands = new TextureViewCommands( m_commandService, m_previewWindow, m_owner, m_schemaLoader );
+			m_textureViewCommands = new TextureViewCommands( m_commandService, m_previewWindow, m_owner, m_mainForm, m_schemaLoader );
 
 			ControlInfo cinfo = new ControlInfo("Texture Preview", "texture viewer", StandardControlGroup.CenterPermanent);
 			m_controlHostService.RegisterControl(m_previewWindow, cinfo, null);
@@ -155,7 +155,7 @@ namespace TextureEditor
 						rootNode.SetAttribute(Schema.resourceMetadataType.uriAttribute, resourceUri);
 					}
 
-					m_loadedNodes.Add(metadataUri, rootNode);
+					//m_loadedNodes.Add(metadataUri, rootNode);
 
 					rootNode.InitializeExtensions();
 
@@ -164,7 +164,7 @@ namespace TextureEditor
 
 					// this node must be added to root in order for history to work
 					//
-					m_editorRootNode.GetChildList(Schema.textureMetadataEditorType.textureMetadataChild).Add(rootNode);
+					//m_editorRootNode.GetChildList(Schema.textureMetadataEditorType.textureMetadataChild).Add(rootNode);
 				}
 
 				rootNodes.Add(rootNode);
@@ -209,6 +209,9 @@ namespace TextureEditor
 
 		[Import( AllowDefault = false )]
 		private IWin32Window m_owner;
+
+		[Import( AllowDefault = false )]
+		private MainForm m_mainForm;
 
 		private ControlInfo m_controlInfo;
 		private PropertyGrid m_propertyGrid;

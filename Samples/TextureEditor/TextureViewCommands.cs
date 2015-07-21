@@ -13,6 +13,8 @@ using Sce.Atf.Adaptation;
 using System.IO;
 using Sce.Atf.Controls;
 using SharpDX.DXGI;
+using System.Threading;
+using System.Collections.Generic;
 
 namespace TextureEditor
 {   
@@ -23,10 +25,11 @@ namespace TextureEditor
     //[PartCreationPolicy(CreationPolicy.Shared)]
     public class TextureViewCommands : ICommandClient
     {
-		public TextureViewCommands( ICommandService commandService, TexturePreviewWindowSharpDX panel3D, IWin32Window owner, SchemaLoader schemaLoader )
+		public TextureViewCommands( ICommandService commandService, TexturePreviewWindowSharpDX panel3D, IWin32Window owner, MainForm mainForm, SchemaLoader schemaLoader )
         {
             m_previewWindow = panel3D;
 			m_owner = owner;
+			m_mainForm = mainForm;
 			m_schemaLoader = schemaLoader;
 
             commandService.RegisterCommand(
@@ -170,141 +173,327 @@ namespace TextureEditor
 		void ExportOne()
 		{
 			TextureProperties tp = m_previewWindow.SelectedTexture;
-			ExportUri( tp.FileUri );
+			//ExportUri( tp.FileUri );
+			TextureExporter te = new TextureExporter( m_owner, m_mainForm, m_schemaLoader );
+			te.ExportOne( new Uri(tp.FileUri.AbsolutePath + ".metadata") );
+			//ProgressOutputWindow powin = new ProgressOutputWindow();
+			//BackgroundThread bgThread = new BackgroundThread( powin, tp.FileUri );
+			//powin.ShowDialog( m_owner );
+			//bgThread.Wait();
 		}
+
 		void ExportAll()
 		{
+			TextureExporter te = new TextureExporter( m_owner, m_mainForm, m_schemaLoader );
+			te.ExportAll();
 		}
 
-		int ExportUri( Uri resourceUri )
-		{
-			string metadataFilePath = resourceUri.LocalPath + ".metadata";
-			Uri metadataUri = new Uri( metadataFilePath );
+		//void DoExport( List<string> fileList )
+		//{
+		//}
 
-			if ( File.Exists( metadataFilePath ) )
-			{
-				// read existing metadata
-				using ( FileStream stream = File.OpenRead( metadataFilePath ) )
-				{
-					var reader = new DomXmlReader( m_schemaLoader );
-					Sce.Atf.Dom.DomNode rootNode = reader.Read( stream, metadataUri );
-					rootNode.InitializeExtensions();
+		//int ExportUri( Uri resourceUri )
+		//{
+		//	string metadataFilePath = resourceUri.LocalPath + ".metadata";
+		//	Uri metadataUri = new Uri( metadataFilePath );
 
-					string inputFile = Path.GetFullPath( resourceUri.AbsolutePath );
-					string dir_data = PICO_DEMO + "data\\";
-					string dir_dataWin = PICO_DEMO + "dataWin\\";
-					string outputFile_tmp = inputFile.Replace( dir_data, dir_dataWin );
-					//string outputFile = Path.GetDirectoryName( outputFile_tmp ) + "\\" + Path.GetFileNameWithoutExtension( outputFile_tmp ) + ".dds";
-					string outputFile = outputFile_tmp + ".dds";
-					
-					TextureMetadata tm = rootNode.As<TextureMetadata>();
+		//	if ( File.Exists( metadataFilePath ) )
+		//	{
+		//		// read existing metadata
+		//		using ( FileStream stream = File.OpenRead( metadataFilePath ) )
+		//		{
+		//			var reader = new DomXmlReader( m_schemaLoader );
+		//			Sce.Atf.Dom.DomNode rootNode = reader.Read( stream, metadataUri );
+		//			rootNode.InitializeExtensions();
 
-					string cmd = " -if CUBIC";
-					if ( tm.Width > 0 )
-						cmd += " -w " + tm.Width;
-					if ( tm.Height > 0 )
-						cmd += " -h " + tm.Height;
+		//			string inputFile = Path.GetFullPath( resourceUri.AbsolutePath );
+		//			string dir_data = PICO_DEMO + "data\\";
+		//			string dir_dataWin = PICO_DEMO + "dataWin\\";
+		//			string outputFileWin_tmp = inputFile.Replace( dir_data, dir_dataWin );
+		//			string outputFileWin = outputFileWin_tmp + ".dds";
 
-					if ( !tm.GenMipMaps )
-						cmd += " -miplevels 0";
+		//			TextureMetadata tm = rootNode.As<TextureMetadata>();
 
-					if ( tm.ForceSourceSrgb )
-						cmd += " -srgbi";
+		//			if ( tm.CopySourceFile )
+		//			{
+		//				System.IO.File.Copy( inputFile, outputFileWin, true );
+		//			}
+		//			else
+		//			{
+		//				string cmd = " -if CUBIC";
+		//				if ( tm.Width > 0 )
+		//					cmd += " -w " + tm.Width;
+		//				if ( tm.Height > 0 )
+		//					cmd += " -h " + tm.Height;
 
-					Format format = Format.Unknown;
+		//				if ( !tm.GenMipMaps )
+		//					cmd += " -miplevels 0";
 
-					if ( tm.ExtendedFormat != SharpDX.DXGI.Format.Unknown )
-						//cmd += " -f " + tm.ExtendedFormat.ToString();
-						format = tm.ExtendedFormat;
-					else if ( tm.Format != SharpDX.DXGI.Format.Unknown )
-						//cmd += " -f " + tm.Format.ToString();
-						format = tm.Format;
-					else
-					{
-						throw new Exception( "Invalid format" );
-					}
+		//				if ( tm.ForceSourceSrgb )
+		//					cmd += " -srgbi";
 
-					bool bcSrgbFormat = false;
-					// texconv incorrectly generates mipmaps for compressed formats
-					// so first resize/genmips to uncompressed file, and then compress
-					//
-					if ( tm.GenMipMaps &&
-						(
-						   format == Format.BC1_UNorm_SRgb
-						|| format == Format.BC2_UNorm_SRgb
-						|| format == Format.BC3_UNorm_SRgb
-						|| format == Format.BC7_UNorm_SRgb
-						)
-						)
-					{
-						bcSrgbFormat = true;
-						cmd += " -f " + Format.R8G8B8A8_UNorm_SRgb.ToString();
-					}
-					else
-					{
-						cmd += " -f " + format.ToString();
-					}
+		//				Format format = Format.Unknown;
 
-					cmd += " -of " + outputFile;
-					cmd += " " + inputFile;
+		//				if ( tm.ExtendedFormat != SharpDX.DXGI.Format.Unknown )
+		//					//cmd += " -f " + tm.ExtendedFormat.ToString();
+		//					format = tm.ExtendedFormat;
+		//				else if ( tm.Format != SharpDX.DXGI.Format.Unknown )
+		//					//cmd += " -f " + tm.Format.ToString();
+		//					format = tm.Format;
+		//				else
+		//				{
+		//					throw new Exception( "Invalid format" );
+		//				}
 
-					int ires = RunCommand( cmd );
-					if ( ires != 0 )
-					{
-						return ires;
-					}
+		//				bool bcSrgbFormat = false;
+		//				// texconv incorrectly generates mipmaps for compressed formats
+		//				// so first resize/genmips to uncompressed file, and then compress
+		//				//
+		//				if ( tm.GenMipMaps &&
+		//					(
+		//					   format == Format.BC1_UNorm_SRgb
+		//					|| format == Format.BC2_UNorm_SRgb
+		//					|| format == Format.BC3_UNorm_SRgb
+		//					|| format == Format.BC7_UNorm_SRgb
+		//					)
+		//					)
+		//				{
+		//					bcSrgbFormat = true;
+		//					cmd += " -f " + Format.R8G8B8A8_UNorm_SRgb.ToString();
+		//				}
+		//				else
+		//				{
+		//					cmd += " -f " + format.ToString();
+		//				}
 
-					if ( bcSrgbFormat )
-					{
-						string cmd2 = " -f " + format.ToString();
-						cmd2 += " -of " + outputFile;
-						cmd2 += " " + outputFile;
+		//				cmd += " -of " + outputFileWin;
+		//				cmd += " " + inputFile;
 
-						ires = RunCommand( cmd2 );
-						if ( ires != 0 )
-						{
-							return ires;
-						}
-					}
-				}
+		//				int ires = RunCommand_texconv( cmd );
+		//				if ( ires != 0 )
+		//				{
+		//					return ires;
+		//				}
 
-				return 0;
-			}
-			else
-			{
-				//throw new Exception( "File not found" );
-				//m_errorDialogService.Write( OutputMessageType.Error, "Please configure texture's metadata first!" );
-				//ErrorDialog errDialog = new ErrorDialog();
-				//errDialog.StartPosition = FormStartPosition.CenterScreen;
-				//errDialog.Text = "Error!".Localize();
+		//				if ( bcSrgbFormat )
+		//				{
+		//					string cmd2 = " -f " + format.ToString();
+		//					cmd2 += " -of " + outputFileWin;
+		//					cmd2 += " " + outputFileWin;
 
-				//string message = "Please configure texture's metadata first!";
-				//errDialog.MessageId = message;
-				//errDialog.Message = message;
-				//errDialog.Visible = false; //Just in case a second error message comes through, because...
-				//errDialog.Show( m_owner ); //if Visible is true, Show() crashes.
+		//					ires = RunCommand_texconv( cmd2 );
+		//					if ( ires != 0 )
+		//					{
+		//						return ires;
+		//					}
+		//				}
+		//			}
 
-				MessageBox.Show( m_owner, "Please configure texture's metadata first!", "Error", MessageBoxButtons.OK );
-				return 1;
-			}
-		}
+		//			{
+		//				string dir_dataPS4 = PICO_DEMO + "dataPS4\\";
+		//				string outputFilePS4_tmp = inputFile.Replace( dir_data, dir_dataWin );
+		//				string outputFilePS4 = outputFileWin_tmp + ".gnf";
+		//				string arg = "-f Auto ";
+		//				arg += " -i \"" + outputFileWin + "\" ";
+		//				arg += " -o \"" + outputFilePS4 + "\" ";
 
-		int RunCommand( string arg )
-		{
-			System.Diagnostics.Process process = new System.Diagnostics.Process();
-			System.Diagnostics.ProcessStartInfo startInfo = new System.Diagnostics.ProcessStartInfo();
-			//startInfo.WindowStyle = System.Diagnostics.ProcessWindowStyle.Hidden;
-			startInfo.FileName = texconv_exe;
-			startInfo.Arguments = arg;
-			process.StartInfo = startInfo;
-			process.Start();
-			process.WaitForExit();
+		//				RunCommand_orbis_image2gnf( arg );
+		//			}
+		//		}
 
-			return process.ExitCode;
-		}
+		//		return 0;
+		//	}
+		//	else
+		//	{
+		//		//throw new Exception( "File not found" );
+		//		//m_errorDialogService.Write( OutputMessageType.Error, "Please configure texture's metadata first!" );
+		//		//ErrorDialog errDialog = new ErrorDialog();
+		//		//errDialog.StartPosition = FormStartPosition.CenterScreen;
+		//		//errDialog.Text = "Error!".Localize();
+
+		//		//string message = "Please configure texture's metadata first!";
+		//		//errDialog.MessageId = message;
+		//		//errDialog.Message = message;
+		//		//errDialog.Visible = false; //Just in case a second error message comes through, because...
+		//		//errDialog.Show( m_owner ); //if Visible is true, Show() crashes.
+
+		//		//MessageBox.Show( m_owner, "Please configure texture's metadata first!", "Error", MessageBoxButtons.OK );
+		//		return 1;
+		//	}
+		//}
+
+		//int RunCommand_texconv( string arg )
+		//{
+		//	System.Diagnostics.Process process = new System.Diagnostics.Process();
+		//	System.Diagnostics.ProcessStartInfo startInfo = new System.Diagnostics.ProcessStartInfo();
+		//	//startInfo.WindowStyle = System.Diagnostics.ProcessWindowStyle.Hidden;
+		//	startInfo.FileName = texconv_exe;
+		//	startInfo.Arguments = arg;
+		//	process.StartInfo = startInfo;
+		//	process.Start();
+		//	process.WaitForExit();
+
+		//	return process.ExitCode;
+		//}
+		//int RunCommand_orbis_image2gnf( string arg )
+		//{
+		//	System.Diagnostics.Process process = new System.Diagnostics.Process();
+		//	System.Diagnostics.ProcessStartInfo startInfo = new System.Diagnostics.ProcessStartInfo();
+		//	//startInfo.WindowStyle = System.Diagnostics.ProcessWindowStyle.Hidden;
+		//	startInfo.FileName = "orbis-image2gnf.exe";
+		//	startInfo.Arguments = arg;
+		//	process.StartInfo = startInfo;
+		//	process.Start();
+		//	process.WaitForExit();
+
+		//	return process.ExitCode;
+		//}
+
+
+		//private class BackgroundThread
+		//{
+		//	private readonly ProgressOutputWindow m_progressWindow;
+		//	private readonly Thread m_thread;
+		//	private bool m_alreadyStopped;
+		//	private Uri m_fileToExport;
+
+		//	public BackgroundThread( ProgressOutputWindow parent, Uri fileToExport )
+		//	{
+		//		m_progressWindow = parent;
+		//		m_fileToExport = fileToExport;
+		//		m_thread = new Thread( Run );
+		//		m_thread.Name = "progress dialog";
+		//		m_thread.IsBackground = true; //so that the thread can be killed if app dies.
+		//		//m_thread.SetApartmentState( ApartmentState.STA );
+		//		m_thread.CurrentUICulture = Thread.CurrentThread.CurrentUICulture;
+		//		m_thread.Start();
+		//	}
+
+		//	public void Stop()
+		//	{
+		//		lock ( this )
+		//		{
+		//			m_alreadyStopped = true;
+		//		}
+		//	}
+
+		//	public void Wait()
+		//	{
+		//		m_thread.Join();
+		//	}
+
+		//	//public void UpdateLabel()
+		//	//{
+		//	//	lock ( this )
+		//	//	{
+		//	//		if ( m_dialog != null && m_dialog.IsHandleCreated )
+		//	//			m_dialog.BeginInvoke( new MethodInvoker( ThreadUnsafeUpdate ) );
+		//	//	}
+		//	//}
+
+		//	//public void UpdateLocation()
+		//	//{
+		//	//	lock ( this )
+		//	//	{
+		//	//		if ( m_dialog != null && m_dialog.IsHandleCreated )
+		//	//			m_dialog.BeginInvoke( new MethodInvoker( ThreadUnsafeUpdateLocation ) );
+		//	//	}
+		//	//}
+
+		//	private void Run()
+		//	{
+		//		try
+		//		{
+		//			//lock ( this )
+		//			//{
+		//			//	if ( !m_alreadyStopped )
+		//			//	{
+		//			//		m_progressWindow.Close();
+		//			//		return;
+		//			//	}
+		//			//}
+
+		//			if ( m_fileToExport != null )
+		//			{
+
+		//			}
+
+		//			AddInfo( "Hej!\n" );
+		//			SetProgress( 0.1f );
+		//			System.Threading.Thread.Sleep( 1000 );
+		//			SetProgress( 0.5f );
+		//			AddError( "Ho!\n" );
+		//			System.Threading.Thread.Sleep( 1000 );
+		//			SetProgress( 1.0f );
+		//			Done();
+		//		}
+		//		finally
+		//		{
+		//			//lock ( this )
+		//			//{
+		//			//}
+		//		}
+		//	}
+
+		//	void AddInfo( string str )
+		//	{
+		//		lock(m_progressWindow)
+		//		{
+		//			//m_progressWindow.AddInfo( str );
+		//			//m_progressWindow.BeginInvoke( new MethodInvoker( AddInfoThreadUnsafe ), new[] { str } );
+		//			m_progressWindow.BeginInvoke( new MethodInvoker( () => this.AddInfoThreadUnsafe(str) ) );
+		//		}
+		//	}
+
+		//	void AddError( string str )
+		//	{
+		//		lock ( m_progressWindow )
+		//		{
+		//			//m_progressWindow.AddError( str );
+		//			m_progressWindow.BeginInvoke( new MethodInvoker( () => this.AddErrorThreadUnsafe( str ) ) );
+		//		}
+		//	}
+
+		//	void Done()
+		//	{
+		//		lock ( m_progressWindow )
+		//		{
+		//			m_progressWindow.BeginInvoke( new MethodInvoker(DoneThreadUnsafe) );
+		//		}
+		//	}
+
+		//	void SetProgress( float progress )
+		//	{
+		//		lock ( m_progressWindow )
+		//		{
+		//			m_progressWindow.BeginInvoke( new MethodInvoker( () => this.SetProgressThreadUnsafe( progress ) ) );
+		//		}
+		//	}
+
+		//	void AddInfoThreadUnsafe( string str )
+		//	{
+		//		m_progressWindow.AddInfo( str );
+		//	}
+
+		//	void AddErrorThreadUnsafe( string str )
+		//	{
+		//		m_progressWindow.AddError( str );
+		//	}
+
+		//	void DoneThreadUnsafe()
+		//	{
+		//		m_progressWindow.EnableUserClose();
+		//	}
+
+		//	void SetProgressThreadUnsafe( float progress )
+		//	{
+		//		m_progressWindow.SetProgress( progress );
+		//	}
+		//}
 
 		//[Import( AllowDefault = true )]
 		private IWin32Window m_owner;
+		private MainForm m_mainForm;
 
 		//[Import( AllowDefault = false )]
 		private SchemaLoader m_schemaLoader = null;

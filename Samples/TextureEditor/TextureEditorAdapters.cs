@@ -21,6 +21,7 @@ namespace TextureEditor
 			Schema.resourceMetadataType.Type.Define( new ExtensionInfo<ResourceMetadataDocument>() );
 			Schema.textureMetadataType.Type.Define( new ExtensionInfo<ResourceMetadataDocument>() );
 			Schema.textureMetadataType.Type.Define( new ExtensionInfo<TextureMetadata>() );
+			Schema.textureMetadataType.Type.Define( new ExtensionInfo<TexturePropertyDescriptorNodeAdapter>() );
 			//Schema.textureMetadataType.Type.Define( new ExtensionInfo<ResourceMetadataEditor>() );
 			//Schema.textureMetadataType.Type.Define(new ExtensionInfo<ResourceMetadataEditingContext>());
 			Schema.textureMetadataEditorType.Type.Define(new ExtensionInfo<ResourceMetadataEditingContext>());

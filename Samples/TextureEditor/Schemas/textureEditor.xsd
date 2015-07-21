@@ -65,6 +65,8 @@
         <!--xs:attribute name="memoryLayout" type="xs:string" default="Linear" /-->
         <xs:attribute name="genMipMaps" type="xs:boolean" default="true" />
         <xs:attribute name="forceSourceSrgb" type="xs:boolean" default="true" />
+        <xs:attribute name="flipY" type="xs:boolean" default="true" />
+        <xs:attribute name="copySourceFile" type="xs:boolean" default="false" />
         <xs:attribute name="format" type="xs:string" default="Unknown" />
         <xs:attribute name="extendedFormat" type="xs:string" default="Unknown" />
         <xs:attribute name="width" type="xs:integer" default="-1" />

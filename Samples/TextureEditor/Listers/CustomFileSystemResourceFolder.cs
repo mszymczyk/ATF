@@ -104,6 +104,28 @@ namespace TextureEditor
 			m_extensions.Add(".dds");
 		}
 
+		public string GetFileFilter()
+		{
+			if ( m_extensions.Count == 0 )
+				return "*.*";
+
+			string f = "";
+			bool first = true;
+			foreach( string ext in m_extensions )
+			{
+				if ( first )
+				{
+					first = false;
+					f += "*" + ext;
+				}
+				else
+				{
+					f += ";*" + ext;
+				}
+			}
+
+			return f;
+		}
 
         #region IResourceFolder Members
 

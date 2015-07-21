@@ -33,6 +33,8 @@ namespace TextureEditor
             textureMetadataType.keywordsAttribute = textureMetadataType.Type.GetAttributeInfo("keywords");
             textureMetadataType.genMipMapsAttribute = textureMetadataType.Type.GetAttributeInfo("genMipMaps");
             textureMetadataType.forceSourceSrgbAttribute = textureMetadataType.Type.GetAttributeInfo("forceSourceSrgb");
+            textureMetadataType.flipYAttribute = textureMetadataType.Type.GetAttributeInfo("flipY");
+            textureMetadataType.copySourceFileAttribute = textureMetadataType.Type.GetAttributeInfo("copySourceFile");
             textureMetadataType.formatAttribute = textureMetadataType.Type.GetAttributeInfo("format");
             textureMetadataType.extendedFormatAttribute = textureMetadataType.Type.GetAttributeInfo("extendedFormat");
             textureMetadataType.widthAttribute = textureMetadataType.Type.GetAttributeInfo("width");
@@ -57,6 +59,8 @@ namespace TextureEditor
             public static AttributeInfo keywordsAttribute;
             public static AttributeInfo genMipMapsAttribute;
             public static AttributeInfo forceSourceSrgbAttribute;
+            public static AttributeInfo flipYAttribute;
+            public static AttributeInfo copySourceFileAttribute;
             public static AttributeInfo formatAttribute;
             public static AttributeInfo extendedFormatAttribute;
             public static AttributeInfo widthAttribute;

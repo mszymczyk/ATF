@@ -21,8 +21,11 @@ namespace TextureEditor
         private void DomNode_AttributeChanged(object sender, AttributeEventArgs e)
         {
 			TextureMetadata tm = DomNode.As<TextureMetadata>();
-			if ( tm.Format == SharpDX.DXGI.Format.Unknown && tm.ExtendedFormat == SharpDX.DXGI.Format.Unknown )
+			if ( tm.Format == SharpDX.DXGI.Format.Unknown && tm.ExtendedFormat == SharpDX.DXGI.Format.Unknown && !tm.CopySourceFile )
+			{
+				System.IO.File.Delete( Uri.LocalPath );
 				return;
+			}
 
 			SchemaLoader schemaTypeLoader = Globals.MEFContainer.GetExportedValue<SchemaLoader>();
 			string filePath = Uri.LocalPath;
@@ -32,7 +35,7 @@ namespace TextureEditor
 				var writer = new DomXmlWriter( schemaTypeLoader.TypeCollection );
 				writer.PersistDefaultAttributes = true;
 				writer.Write( DomNode, stream, Uri );
-			}            
+			}
         }
     }
 }

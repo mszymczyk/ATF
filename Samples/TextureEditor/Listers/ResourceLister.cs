@@ -31,7 +31,7 @@ namespace TextureEditor
         /// <summary>
         /// Sets the root resource folder, registers events and refreshes controls</summary>
         /// <param name="rootFolder">Resource folder</param>
-        public void SetRootFolder(IResourceFolder rootFolder)
+		public void SetRootFolder( CustomFileSystemResourceFolder rootFolder )
         {
 
             if (m_watcher == null)
@@ -43,7 +43,7 @@ namespace TextureEditor
                 m_watcher.Created += Watcher_FileChanged;
                 m_watcher.Deleted += Watcher_FileChanged;
                 m_watcher.Renamed += Watcher_Renamed;
-
+				m_watcher.Filter += rootFolder.GetFileFilter();
             }
 
             IFileSystemResourceFolder rootDirectory = rootFolder as IFileSystemResourceFolder;
@@ -247,8 +247,7 @@ namespace TextureEditor
 			AssetListViewMode = "Details";
 
 			string PICO_DEMO = Environment.GetEnvironmentVariable("PICO_DEMO");
-			IResourceFolder rootResourceFolder = new CustomFileSystemResourceFolder(PICO_DEMO);
-			SetRootFolder(rootResourceFolder);
+			SetRootFolder( new CustomFileSystemResourceFolder(PICO_DEMO) );
         }
 
         void ThumbnailControl_MouseLeave(object sender, EventArgs e)

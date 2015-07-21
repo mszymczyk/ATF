@@ -84,13 +84,22 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="CustomBoolEditor.cs" />
     <Compile Include="DomNodeAdapters\TextureMetadata.cs" />
+    <Compile Include="DomNodeAdapters\TexturePropertyDescriptorNodeAdapter.cs" />
     <Compile Include="Editor.cs" />
+    <Compile Include="ExportCommands.cs" />
     <Compile Include="Globals.cs" />
     <Compile Include="Listers\IFileSystemResourceFolder.cs" />
     <Compile Include="Listers\ResourceLister.cs" />
     <Compile Include="Listers\ResourceMetadataDocument.cs" />
     <Compile Include="Listers\ResourceMetadataEditingContext.cs" />
+    <Compile Include="ProgressOutputWindow.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ProgressOutputWindow.Designer.cs">
+      <DependentUpon>ProgressOutputWindow.cs</DependentUpon>
+    </Compile>
     <Compile Include="TextureMetadataEditor.cs" />
     <Compile Include="TexturePreviewWindowSharpDx.cs">
       <SubType>Component</SubType>
@@ -107,6 +116,9 @@
     <Compile Include="TextureSelectionContext.cs" />
     <Compile Include="TextureViewCommands.cs" />
     <None Include="app.config" />
+    <EmbeddedResource Include="ProgressOutputWindow.resx">
+      <DependentUpon>ProgressOutputWindow.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Schemas\textureEditor.xsd">
       <SubType>Designer</SubType>
     </EmbeddedResource>

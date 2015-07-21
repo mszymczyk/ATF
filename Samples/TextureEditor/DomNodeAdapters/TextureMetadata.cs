@@ -8,6 +8,12 @@ namespace TextureEditor
 	/// Texture metadata</summary>
 	public class TextureMetadata : DomNodeAdapter
 	{
+		public Uri Uri
+		{
+			get { return GetAttribute<Uri>( Schema.resourceMetadataType.uriAttribute ); }
+			set { SetAttribute( Schema.resourceMetadataType.uriAttribute, value ); }
+		}
+
 		/// <summary>
 		/// Gets or sets game object name</summary>
 		public string Keywords
@@ -26,6 +32,18 @@ namespace TextureEditor
 		{
 			get { return GetAttribute<bool>( Schema.textureMetadataType.forceSourceSrgbAttribute ); }
 			set { SetAttribute( Schema.textureMetadataType.forceSourceSrgbAttribute, value ); }
+		}
+
+		public bool FlipY
+		{
+			get { return GetAttribute<bool>( Schema.textureMetadataType.flipYAttribute ); }
+			set { SetAttribute( Schema.textureMetadataType.flipYAttribute, value ); }
+		}
+
+		public bool CopySourceFile
+		{
+			get { return GetAttribute<bool>( Schema.textureMetadataType.copySourceFileAttribute ); }
+			set { SetAttribute( Schema.textureMetadataType.copySourceFileAttribute, value ); }
 		}
 
 		public SharpDX.DXGI.Format Format
