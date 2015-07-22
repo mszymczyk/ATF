@@ -38,19 +38,21 @@ namespace TextureEditor
 			//Type = type;
 			//Value = value;
 
-			DoGammaToLinearConversion = true;
+			SharpDX.DXGI.Format tmpFormat = SharpDX.DXGI.Format.Unknown;
 
 			ResourceDimension dim = m_res.Dimension;
 			if (dim == ResourceDimension.Texture1D)
 			{
 				Texture1D tex = m_res as Texture1D;
 				Texture1DDescription desc = tex.Description;
+				Format = desc.Format.ToString();
 				Width = desc.Width;
 				Height = 0;
 				Depth = 0;
 				MipLevels = desc.MipLevels;
 				ArraySize = desc.ArraySize;
 				CubeMap = (desc.OptionFlags & ResourceOptionFlags.TextureCube) > 0;
+				tmpFormat = desc.Format;
 			}
 			else if ( dim == ResourceDimension.Texture2D )
 			{
@@ -65,6 +67,7 @@ namespace TextureEditor
 				CubeMap = (desc.OptionFlags & ResourceOptionFlags.TextureCube) > 0;
 				if ( CubeMap )
 					ArraySize /= 6;
+				tmpFormat = desc.Format;
 			}
 			else if (dim == ResourceDimension.Texture3D)
 			{
@@ -77,10 +80,28 @@ namespace TextureEditor
 				MipLevels = desc.MipLevels;
 				ArraySize = 0;
 				CubeMap = (desc.OptionFlags & ResourceOptionFlags.TextureCube) > 0;
+				tmpFormat = desc.Format;
 			}
 			else
 			{
 				throw new Exception( "Unsupported resource type type" );
+			}
+
+			if ( tmpFormat == SharpDX.DXGI.Format.B8G8R8A8_UNorm_SRgb
+				||	tmpFormat == SharpDX.DXGI.Format.B8G8R8X8_UNorm_SRgb
+				||	tmpFormat == SharpDX.DXGI.Format.BC1_UNorm_SRgb
+				||	tmpFormat == SharpDX.DXGI.Format.BC2_UNorm_SRgb
+				||	tmpFormat == SharpDX.DXGI.Format.BC3_UNorm_SRgb
+				||	tmpFormat == SharpDX.DXGI.Format.BC7_UNorm_SRgb
+				||	tmpFormat == SharpDX.DXGI.Format.R8G8B8A8_UNorm_SRgb
+				)
+			{
+				DoGammaToLinearConversion = false;
+				m_isSrgbFormat = true;
+			}
+			else
+			{
+				DoGammaToLinearConversion = true;
 			}
 
 		}
@@ -152,7 +173,7 @@ namespace TextureEditor
 
 		/// <summary>
 		/// Slice to display </summary>
-		[PropertyEditingAttribute( false )]
+		//[PropertyEditingAttribute( false )]
 		public bool DoGammaToLinearConversion { get; set; }
 
 		#region Property Editing
@@ -194,6 +215,8 @@ namespace TextureEditor
 					PropertyEditingAttribute p = attr as PropertyEditingAttribute;
 					m_readOnly = p.ReadOnly;
 				}
+
+				m_category = m_readOnly ? "SrcInfo" : "Misc";
 			}
 
 			/// <summary>
@@ -217,16 +240,24 @@ namespace TextureEditor
 				//get { return GetChildProperties().Count <= 0; }
 				//get { return true; }
 				get { return m_readOnly; }
+				//set { m_readOnly = value; }
+			}
+
+			public void SetReadOnly( bool readOnly )
+			{
+				m_readOnly = readOnly;
 			}
 
 			/// <summary>
 			/// Gets the name of the category to which the member belongs, as specified in the <see cref="T:System.ComponentModel.CategoryAttribute"></see></summary>
 			public override string Category
 			{
-				get
-				{
-					return m_readOnly ? "SrcInfo" : "Misc";
-				}
+				get { return m_category; }
+			}
+
+			public void SetCategory( string category )
+			{
+				m_category = category;
 			}
 
 			/// <summary>
@@ -307,7 +338,8 @@ namespace TextureEditor
 
 			private readonly Type m_ownerType;
 			private readonly PropertyInfo m_property;
-			bool m_readOnly;
+			private string m_category;
+			private bool m_readOnly;
 		}
 
 
@@ -452,8 +484,15 @@ namespace TextureEditor
 				}
 			}
 
-			//PropertyInfo vmProp = GetType().GetProperty("VisibleMip");
-			//props.Add( new LimitedIntPropertyDescriptor(vmProp, GetType()) );
+			PropertyInfo DoGammaToLinearConversionProp = GetType().GetProperty( "DoGammaToLinearConversion" );
+			PropertyPropertyDescriptor ppd = new PropertyPropertyDescriptor( DoGammaToLinearConversionProp, GetType() );
+			ppd.ItemChanged += PropertyDescItemChanged;
+			ppd.SetCategory( "Misc" );
+			if ( m_isSrgbFormat )
+				ppd.SetReadOnly( true );
+			else
+				ppd.SetReadOnly( false );
+			props.Add( ppd );
 
 			return props;
 		}
@@ -481,6 +520,7 @@ namespace TextureEditor
 
 		private SharpDX.Direct3D11.Resource m_res;
 		private TexturePreviewWindowSharpDX m_previewWindow;
+		private bool m_isSrgbFormat;
 	}
 }
 

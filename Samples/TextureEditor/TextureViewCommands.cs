@@ -25,10 +25,9 @@ namespace TextureEditor
     //[PartCreationPolicy(CreationPolicy.Shared)]
     public class TextureViewCommands : ICommandClient
     {
-		public TextureViewCommands( ICommandService commandService, TexturePreviewWindowSharpDX panel3D, IWin32Window owner, MainForm mainForm, SchemaLoader schemaLoader )
+		public TextureViewCommands( ICommandService commandService, TexturePreviewWindowSharpDX panel3D, MainForm mainForm, SchemaLoader schemaLoader )
         {
             m_previewWindow = panel3D;
-			m_owner = owner;
 			m_mainForm = mainForm;
 			m_schemaLoader = schemaLoader;
 
@@ -174,8 +173,8 @@ namespace TextureEditor
 		{
 			TextureProperties tp = m_previewWindow.SelectedTexture;
 			//ExportUri( tp.FileUri );
-			TextureExporter te = new TextureExporter( m_owner, m_mainForm, m_schemaLoader );
-			te.ExportOne( new Uri(tp.FileUri.AbsolutePath + ".metadata") );
+			TextureExporter te = new TextureExporter( m_mainForm, m_schemaLoader );
+			te.ExportOne( new Uri(tp.FileUri.LocalPath + ".metadata") );
 			//ProgressOutputWindow powin = new ProgressOutputWindow();
 			//BackgroundThread bgThread = new BackgroundThread( powin, tp.FileUri );
 			//powin.ShowDialog( m_owner );
@@ -184,7 +183,7 @@ namespace TextureEditor
 
 		void ExportAll()
 		{
-			TextureExporter te = new TextureExporter( m_owner, m_mainForm, m_schemaLoader );
+			TextureExporter te = new TextureExporter( m_mainForm, m_schemaLoader );
 			te.ExportAll();
 		}
 
@@ -492,7 +491,7 @@ namespace TextureEditor
 		//}
 
 		//[Import( AllowDefault = true )]
-		private IWin32Window m_owner;
+		//private IWin32Window m_owner;
 		private MainForm m_mainForm;
 
 		//[Import( AllowDefault = false )]

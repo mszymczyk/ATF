@@ -137,49 +137,49 @@ namespace TextureEditor
 				Schema.Initialize( typeCollection );
 				TextureEditorAdapters.Initialize( this );
 
-				string group_Metadata = "Metadata".Localize();
+				//string group_Metadata = "Metadata".Localize();
 
 
-				Schema.resourceMetadataType.Type.SetTag(
-					new PropertyDescriptorCollection(
-						new Sce.Atf.Dom.PropertyDescriptor[] {
-											new AttributePropertyDescriptor(
-												"URI".Localize(),
-												Schema.resourceMetadataType.uriAttribute,
-												group_Metadata,
-												"Uri".Localize(),
-												true),
-											new AttributePropertyDescriptor(
-												"Keywords".Localize(),
-												Schema.resourceMetadataType.keywordsAttribute,
-												group_Metadata,
-												"Keywords".Localize(),
-												false),
-									} ) );
+				//Schema.resourceMetadataType.Type.SetTag(
+				//	new PropertyDescriptorCollection(
+				//		new Sce.Atf.Dom.PropertyDescriptor[] {
+				//							new AttributePropertyDescriptor(
+				//								"URI".Localize(),
+				//								Schema.resourceMetadataType.uriAttribute,
+				//								group_Metadata,
+				//								"Uri".Localize(),
+				//								true),
+				//							new AttributePropertyDescriptor(
+				//								"Keywords".Localize(),
+				//								Schema.resourceMetadataType.keywordsAttribute,
+				//								group_Metadata,
+				//								"Keywords".Localize(),
+				//								false),
+				//					} ) );
 
-				PropertyDescriptorCollection textureMetadataTypeProperyCollection = new PropertyDescriptorCollection( null );
+				//PropertyDescriptorCollection textureMetadataTypeProperyCollection = new PropertyDescriptorCollection( null );
 
-				textureMetadataTypeProperyCollection.Add(
-					new AttributePropertyDescriptor(
-							 "Generate mipmaps".Localize(),
-							 Schema.textureMetadataType.genMipMapsAttribute,
-							 group_Metadata,
-							 "Controlls mipmap generation".Localize(),
-							 false,
-							 new BoolEditor()
-							 )
-				);
+				//textureMetadataTypeProperyCollection.Add(
+				//	new AttributePropertyDescriptor(
+				//			 "Generate mipmaps".Localize(),
+				//			 Schema.textureMetadataType.genMipMapsAttribute,
+				//			 group_Metadata,
+				//			 "Controlls mipmap generation".Localize(),
+				//			 false,
+				//			 new BoolEditor()
+				//			 )
+				//);
 
-				textureMetadataTypeProperyCollection.Add(
-					new AttributePropertyDescriptor(
-							 "Force Source Srgb".Localize(),
-							 Schema.textureMetadataType.forceSourceSrgbAttribute,
-							 group_Metadata,
-							 "Treats source image as srgb".Localize(),
-							 false,
-							 new BoolEditor()
-							 )
-				);
+				//textureMetadataTypeProperyCollection.Add(
+				//	new AttributePropertyDescriptor(
+				//			 "Force Source Srgb".Localize(),
+				//			 Schema.textureMetadataType.forceSourceSrgbAttribute,
+				//			 group_Metadata,
+				//			 "Treats source image as srgb".Localize(),
+				//			 false,
+				//			 new BoolEditor()
+				//			 )
+				//);
 
 				//textureMetadataTypeProperyCollection.Add(
 				//	new AttributePropertyDescriptor(
@@ -194,40 +194,40 @@ namespace TextureEditor
 				//			 )
 				//);
 
-				textureMetadataTypeProperyCollection.Add(
-					new AttributePropertyDescriptor(
-							 "Copy source file".Localize(),
-							 Schema.textureMetadataType.copySourceFileAttribute,
-							 group_Metadata,
-							 "Copies source file without any modifications".Localize(),
-							 false,
-							 new BoolEditor()
-							 )
-				);
+				//textureMetadataTypeProperyCollection.Add(
+				//	new AttributePropertyDescriptor(
+				//			 "Copy source file".Localize(),
+				//			 Schema.textureMetadataType.copySourceFileAttribute,
+				//			 group_Metadata,
+				//			 "Copies source file without any modifications".Localize(),
+				//			 false,
+				//			 new BoolEditor()
+				//			 )
+				//);
 
-				textureMetadataTypeProperyCollection.Add(
-					new AttributePropertyDescriptor(
-							 "Width".Localize(),
-							 Schema.textureMetadataType.widthAttribute,
-							 group_Metadata,
-							 "Sets exported image's width".Localize(),
-							 false,
-							//new BoundedIntEditor( -1, 16 * 1024 * 1024 )
-							 new NumericEditor( typeof( int ) )
-							 )
-				);
+				//textureMetadataTypeProperyCollection.Add(
+				//	new AttributePropertyDescriptor(
+				//			 "Width".Localize(),
+				//			 Schema.textureMetadataType.widthAttribute,
+				//			 group_Metadata,
+				//			 "Sets exported image's width".Localize(),
+				//			 false,
+				//			//new BoundedIntEditor( -1, 16 * 1024 * 1024 )
+				//			 new NumericEditor( typeof( int ) )
+				//			 )
+				//);
 
-				textureMetadataTypeProperyCollection.Add(
-					new AttributePropertyDescriptor(
-							 "Height".Localize(),
-							 Schema.textureMetadataType.heightAttribute,
-							 group_Metadata,
-							 "Sets exported image's height".Localize(),
-							 false,
-							 //new BoundedIntEditor( -1, 16 * 1024 * 1024 )
-							 new NumericEditor( typeof(int) )
-							 )
-				);
+				//textureMetadataTypeProperyCollection.Add(
+				//	new AttributePropertyDescriptor(
+				//			 "Height".Localize(),
+				//			 Schema.textureMetadataType.heightAttribute,
+				//			 group_Metadata,
+				//			 "Sets exported image's height".Localize(),
+				//			 false,
+				//			 //new BoundedIntEditor( -1, 16 * 1024 * 1024 )
+				//			 new NumericEditor( typeof(int) )
+				//			 )
+				//);
 
 				//textureMetadataTypeProperyCollection.Add(
 				//	new AttributePropertyDescriptor(
@@ -256,62 +256,62 @@ namespace TextureEditor
 				//		 emotionEditor
 				//		 ) );
 
-				{
-					List<string> popularFormats = new List<string>();
+				//{
+				//	List<string> presets = new List<string>();
 
-					// compressed
-					// https://msdn.microsoft.com/pl-pl/library/hh308955.aspx
-					// https://msdn.microsoft.com/en-us/library/windows/desktop/bb694531(v=vs.85).aspx
-					//
-					popularFormats.Add( SharpDX.DXGI.Format.Unknown.ToString() );
+				//	// compressed
+				//	// https://msdn.microsoft.com/pl-pl/library/hh308955.aspx
+				//	// https://msdn.microsoft.com/en-us/library/windows/desktop/bb694531(v=vs.85).aspx
+				//	//
+				//	presets.Add( SharpDX.DXGI.Format.Unknown.ToString() );
 
-					popularFormats.Add( SharpDX.DXGI.Format.BC1_UNorm_SRgb.ToString() );
-					popularFormats.Add( SharpDX.DXGI.Format.BC2_UNorm_SRgb.ToString() );
-					popularFormats.Add( SharpDX.DXGI.Format.BC3_UNorm_SRgb.ToString() );
-					popularFormats.Add( SharpDX.DXGI.Format.BC4_UNorm.ToString() );
-					popularFormats.Add( SharpDX.DXGI.Format.BC5_SNorm.ToString() );
-					popularFormats.Add( SharpDX.DXGI.Format.BC7_UNorm_SRgb.ToString() );
+				//	presets.Add( SharpDX.DXGI.Format.BC1_UNorm_SRgb.ToString() );
+				//	presets.Add( SharpDX.DXGI.Format.BC2_UNorm_SRgb.ToString() );
+				//	presets.Add( SharpDX.DXGI.Format.BC3_UNorm_SRgb.ToString() );
+				//	presets.Add( SharpDX.DXGI.Format.BC4_UNorm.ToString() );
+				//	presets.Add( SharpDX.DXGI.Format.BC5_SNorm.ToString() );
+				//	presets.Add( SharpDX.DXGI.Format.BC7_UNorm_SRgb.ToString() );
 
-					popularFormats.Add( SharpDX.DXGI.Format.R8G8B8A8_UNorm.ToString() );
-					popularFormats.Add( SharpDX.DXGI.Format.R8G8B8A8_UNorm_SRgb.ToString() );
-					popularFormats.Add( SharpDX.DXGI.Format.R8_UNorm.ToString() );
+				//	presets.Add( SharpDX.DXGI.Format.R8G8B8A8_UNorm.ToString() );
+				//	presets.Add( SharpDX.DXGI.Format.R8G8B8A8_UNorm_SRgb.ToString() );
+				//	presets.Add( SharpDX.DXGI.Format.R8_UNorm.ToString() );
 
-					popularFormats.Add( SharpDX.DXGI.Format.BC1_UNorm.ToString() );
-					popularFormats.Add( SharpDX.DXGI.Format.BC2_UNorm.ToString() );
-					popularFormats.Add( SharpDX.DXGI.Format.BC3_UNorm.ToString() );
-					popularFormats.Add( SharpDX.DXGI.Format.BC4_SNorm.ToString() );
-					popularFormats.Add( SharpDX.DXGI.Format.BC5_UNorm.ToString() );
-					popularFormats.Add( SharpDX.DXGI.Format.BC7_UNorm.ToString() );
+				//	presets.Add( SharpDX.DXGI.Format.BC1_UNorm.ToString() );
+				//	presets.Add( SharpDX.DXGI.Format.BC2_UNorm.ToString() );
+				//	presets.Add( SharpDX.DXGI.Format.BC3_UNorm.ToString() );
+				//	presets.Add( SharpDX.DXGI.Format.BC4_SNorm.ToString() );
+				//	presets.Add( SharpDX.DXGI.Format.BC5_UNorm.ToString() );
+				//	presets.Add( SharpDX.DXGI.Format.BC7_UNorm.ToString() );
 
-					//var formatEditor = new LongEnumEditor( typeof(SharpDX.DXGI.Format), null );
-					var formatEditor = new LongEnumEditor();
-					formatEditor.DefineEnum( popularFormats.ToArray(), null );
-					formatEditor.MaxDropDownItems = 10;
-					var apd =  new AttributePropertyDescriptor(
-							 "Format".Localize(),
-							 Schema.textureMetadataType.formatAttribute,
-							 group_Metadata,
-							 "Specifies format of exported texture".Localize(),
-							 false,
-							 formatEditor
-							 );
-					textureMetadataTypeProperyCollection.Add( apd );
-				}
+				//	//var formatEditor = new LongEnumEditor( typeof(SharpDX.DXGI.Format), null );
+				//	var formatEditor = new LongEnumEditor();
+				//	formatEditor.DefineEnum( presets.ToArray(), null );
+				//	formatEditor.MaxDropDownItems = 10;
+				//	var apd =  new AttributePropertyDescriptor(
+				//			 "Format".Localize(),
+				//			 Schema.textureMetadataType.formatAttribute,
+				//			 group_Metadata,
+				//			 "Specifies format of exported texture".Localize(),
+				//			 false,
+				//			 formatEditor
+				//			 );
+				//	textureMetadataTypeProperyCollection.Add( apd );
+				//}
 
-				{
-					var formatNames = Enum.GetValues( typeof( SharpDX.DXGI.Format ) );
-					var formatEditor = new LongEnumEditor( typeof(SharpDX.DXGI.Format), null );
-					formatEditor.MaxDropDownItems = 10;
-					var apd =  new AttributePropertyDescriptor(
-							 "ExtendedFormat".Localize(),
-							 Schema.textureMetadataType.extendedFormatAttribute,
-							 group_Metadata,
-							 "Specifies format of exported texture (advanced)".Localize(),
-							 false,
-							 formatEditor
-							 );
-					textureMetadataTypeProperyCollection.Add( apd );
-				}
+				//{
+				//	var formatNames = Enum.GetValues( typeof( SharpDX.DXGI.Format ) );
+				//	var formatEditor = new LongEnumEditor( typeof(SharpDX.DXGI.Format), null );
+				//	formatEditor.MaxDropDownItems = 10;
+				//	var apd =  new AttributePropertyDescriptor(
+				//			 "ExtendedFormat".Localize(),
+				//			 Schema.textureMetadataType.extendedFormatAttribute,
+				//			 group_Metadata,
+				//			 "Specifies format of exported texture (advanced)".Localize(),
+				//			 false,
+				//			 formatEditor
+				//			 );
+				//	textureMetadataTypeProperyCollection.Add( apd );
+				//}
 
 				//// Shows how to edit enum that is stored as string.
 				//var emotionEditor = new LongEnumEditor( typeof( IntendedUsage ), null );
@@ -324,7 +324,7 @@ namespace TextureEditor
 				//		 false,
 				//		 emotionEditor
 				//		 ) );
-				Schema.textureMetadataType.Type.SetTag( textureMetadataTypeProperyCollection );
+				//Schema.textureMetadataType.Type.SetTag( textureMetadataTypeProperyCollection );
 
 				break;
 			}

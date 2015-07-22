@@ -46,8 +46,8 @@ namespace TextureEditor
 
 		public void EnableUserClose()
 		{
-			CancelButton.Enabled = false;
-			CloseButton.Enabled = true;
+			CancelButtonObj.Enabled = false;
+			CloseButtonObj.Enabled = true;
 		}
 
 		public void SetProgress( float progress01 )

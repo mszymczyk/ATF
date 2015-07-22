@@ -143,6 +143,9 @@ namespace TextureEditor
                     const FileAttributes systemOrHidden = FileAttributes.System | FileAttributes.Hidden;
                     foreach (string directory in directories)
                     {
+						if ( !directory.Contains( "\\data" ) && !directory.Contains( "\\dataWin" ) && !directory.Contains( "\\dataPS4" ) )
+							continue;
+
                         DirectoryInfo dirInfo = new DirectoryInfo(directory);
                         if ((dirInfo.Attributes & systemOrHidden) != 0)
                             continue;

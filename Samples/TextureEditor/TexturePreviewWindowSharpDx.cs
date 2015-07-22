@@ -788,7 +788,7 @@ namespace TextureEditor
 
 		public SharpDX.Direct3D11.ImageInformation? readImageInformation( Uri resUri )
 		{
-			SharpDX.Direct3D11.ImageInformation? ii = SharpDX.Direct3D11.ImageInformation.FromFile(resUri.AbsolutePath);
+			SharpDX.Direct3D11.ImageInformation? ii = SharpDX.Direct3D11.ImageInformation.FromFile(resUri.LocalPath);
 			return ii;
 		}
 
@@ -807,7 +807,7 @@ namespace TextureEditor
 
 			TextureProperties tp = null;
 
-            SharpDX.Direct3D11.ImageInformation? ii = SharpDX.Direct3D11.ImageInformation.FromFile(resUri.AbsolutePath);
+			SharpDX.Direct3D11.ImageInformation? ii = SharpDX.Direct3D11.ImageInformation.FromFile( resUri.LocalPath );
             if (ii != null)
             {
                 ImageLoadInformation ili = ImageLoadInformation.Default;
@@ -816,7 +816,7 @@ namespace TextureEditor
                 ili.PSrcInfo = IntPtr.Zero;
 				//ili.Format = Format.R8G8B8A8_UNorm_SRgb;
 
-                SharpDX.Direct3D11.Resource res = SharpDX.Direct3D11.Texture2D.FromFile(m_device, resUri.AbsolutePath, ili);
+				SharpDX.Direct3D11.Resource res = SharpDX.Direct3D11.Texture2D.FromFile( m_device, resUri.LocalPath, ili );
                 //SharpDX.Direct3D11.Resource res = Texture2D.FromFile<Texture2D>(m_device, resUri.AbsolutePath, new ImageLoadInformation()
                 //{
                 //    Width = ImageLoadInformation.FileDefaultValue,

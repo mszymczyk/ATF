@@ -60,7 +60,7 @@ namespace TextureEditor
                 typeof(HelpAboutCommand),               // Help -> About command
                 typeof(ContextRegistry),                // central context registry with change notification
                 typeof(PropertyEditor),                 // property grid for editing selected objects
-				//typeof(GridPropertyEditor),             // grid control for editing selected objects
+				typeof(GridPropertyEditor),             // grid control for editing selected objects
                 typeof(PropertyEditingCommands),        // commands for PropertyEditor and GridPropertyEditor
                 typeof(SettingsService),
                 typeof(PythonService),                  // scripting service for automated tests
@@ -70,18 +70,21 @@ namespace TextureEditor
 				//typeof(DomExplorer),                    // component that gives diagnostic view of DOM
 				//typeof(HistoryLister),                  // visual list of undo/redo stack
 				typeof(ErrorDialogService),             // displays errors to the user in a message box
-
+				typeof(ThumbnailService),
+				typeof(ResourceLister),
+				typeof(ImageThumbnailResolver),
                 typeof(SchemaLoader),                   // component that loads XML schema and sets up types
                 typeof(Editor),                         // component that manages UI documents
 
 				typeof(TextureMetadataEditor)           // displays a 3D scene in a Windows Control
 				);
 
-			TypeCatalog LECoreCatalog = new TypeCatalog(
-				typeof( ResourceLister ),
-				typeof( ThumbnailService )
-				//typeof( TextureMetadataEditor )
-				);
+			//TypeCatalog LECoreCatalog = new TypeCatalog(
+			//	//typeof( ResourceLister ),
+			//	  typeof( ThumbnailService )
+			//	//typeof( TextureMetadataEditor )
+			//	, typeof( ResourceLister )
+			//	);
 
 			TypeCatalog thisAssemCatalog = new TypeCatalog(
 				typeof( ResourceMetadataService )
@@ -90,7 +93,7 @@ namespace TextureEditor
 
             List<ComposablePartCatalog> catalogs = new List<ComposablePartCatalog>();
 			catalogs.Add(AtfCatalog);
-            catalogs.Add(LECoreCatalog);
+			//catalogs.Add( LECoreCatalog );
             catalogs.Add(thisAssemCatalog);
 
 			AggregateCatalog catalog = new AggregateCatalog(catalogs);

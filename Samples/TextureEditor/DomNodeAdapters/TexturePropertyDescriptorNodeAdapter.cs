@@ -240,41 +240,56 @@ namespace TextureEditor
 			);
 
 			{
-				List<string> popularFormats = new List<string>();
+				List<string> presets = new List<string>();
 
 				// compressed
 				// https://msdn.microsoft.com/pl-pl/library/hh308955.aspx
 				// https://msdn.microsoft.com/en-us/library/windows/desktop/bb694531(v=vs.85).aspx
 				//
-				popularFormats.Add( SharpDX.DXGI.Format.Unknown.ToString() );
+				//presets.Add( SharpDX.DXGI.Format.Unknown.ToString() );
 
-				popularFormats.Add( SharpDX.DXGI.Format.BC1_UNorm_SRgb.ToString() );
-				popularFormats.Add( SharpDX.DXGI.Format.BC2_UNorm_SRgb.ToString() );
-				popularFormats.Add( SharpDX.DXGI.Format.BC3_UNorm_SRgb.ToString() );
-				popularFormats.Add( SharpDX.DXGI.Format.BC4_UNorm.ToString() );
-				popularFormats.Add( SharpDX.DXGI.Format.BC5_SNorm.ToString() );
-				popularFormats.Add( SharpDX.DXGI.Format.BC7_UNorm_SRgb.ToString() );
+				//presets.Add( SharpDX.DXGI.Format.BC1_UNorm_SRgb.ToString() );
+				//presets.Add( SharpDX.DXGI.Format.BC2_UNorm_SRgb.ToString() );
+				//presets.Add( SharpDX.DXGI.Format.BC3_UNorm_SRgb.ToString() );
+				//presets.Add( SharpDX.DXGI.Format.BC4_UNorm.ToString() );
+				//presets.Add( SharpDX.DXGI.Format.BC5_SNorm.ToString() );
+				//presets.Add( SharpDX.DXGI.Format.BC7_UNorm_SRgb.ToString() );
 
-				popularFormats.Add( SharpDX.DXGI.Format.R8G8B8A8_UNorm.ToString() );
-				popularFormats.Add( SharpDX.DXGI.Format.R8G8B8A8_UNorm_SRgb.ToString() );
-				popularFormats.Add( SharpDX.DXGI.Format.R8_UNorm.ToString() );
+				//presets.Add( SharpDX.DXGI.Format.R8G8B8A8_UNorm.ToString() );
+				//presets.Add( SharpDX.DXGI.Format.R8G8B8A8_UNorm_SRgb.ToString() );
+				//presets.Add( SharpDX.DXGI.Format.R8_UNorm.ToString() );
 
-				popularFormats.Add( SharpDX.DXGI.Format.BC1_UNorm.ToString() );
-				popularFormats.Add( SharpDX.DXGI.Format.BC2_UNorm.ToString() );
-				popularFormats.Add( SharpDX.DXGI.Format.BC3_UNorm.ToString() );
-				popularFormats.Add( SharpDX.DXGI.Format.BC4_SNorm.ToString() );
-				popularFormats.Add( SharpDX.DXGI.Format.BC5_UNorm.ToString() );
-				popularFormats.Add( SharpDX.DXGI.Format.BC7_UNorm.ToString() );
+				//presets.Add( SharpDX.DXGI.Format.BC1_UNorm.ToString() );
+				//presets.Add( SharpDX.DXGI.Format.BC2_UNorm.ToString() );
+				//presets.Add( SharpDX.DXGI.Format.BC3_UNorm.ToString() );
+				//presets.Add( SharpDX.DXGI.Format.BC4_SNorm.ToString() );
+				//presets.Add( SharpDX.DXGI.Format.BC5_UNorm.ToString() );
+				//presets.Add( SharpDX.DXGI.Format.BC7_UNorm.ToString() );
+
+				presets.Add( TextureMetadata.TEXTURE_PRESET_UNKNOWN );
+				presets.Add( TextureMetadata.TEXTURE_PRESET_COLOR_BC1_SRGB );
+				presets.Add( TextureMetadata.TEXTURE_PRESET_COLOR_BC3_SRGB );
+				presets.Add( TextureMetadata.TEXTURE_PRESET_COLOR_BC7_SRGB );
+				presets.Add( TextureMetadata.TEXTURE_PRESET_COLOR_SRGB );
+				presets.Add( TextureMetadata.TEXTURE_PRESET_COLOR_BC6H_HDR_UNORM );
+				presets.Add( TextureMetadata.TEXTURE_PRESET_COLOR_HDR_UNORM );
+				presets.Add( TextureMetadata.TEXTURE_PRESET_NORMALMAP_BC5 );
+				presets.Add( TextureMetadata.TEXTURE_PRESET_NORMALMAP_RG8 );
+				presets.Add( TextureMetadata.TEXTURE_PRESET_AMBIENT_BC4 );
+				presets.Add( TextureMetadata.TEXTURE_PRESET_AMBIENT_R8 );
+				presets.Add( TextureMetadata.TEXTURE_PRESET_SPECULARMAP_BC1 );
+				presets.Add( TextureMetadata.TEXTURE_PRESET_SPECULARMAP_UNORM );
+				presets.Add( TextureMetadata.TEXTURE_PRESET_CUSTOM_FORMAT );
 
 				//var formatEditor = new LongEnumEditor( typeof(SharpDX.DXGI.Format), null );
 				var formatEditor = new LongEnumEditor();
-				formatEditor.DefineEnum( popularFormats.ToArray(), null );
+				formatEditor.DefineEnum( presets.ToArray(), null );
 				formatEditor.MaxDropDownItems = 10;
 				var apd = new CustomEnableAttributePropertyDescriptor(
-					"Format".Localize(),
-					Schema.textureMetadataType.formatAttribute,
+					"Preset".Localize(),
+					Schema.textureMetadataType.presetAttribute,
 					group_Metadata,
-					"Specifies format of exported texture".Localize(),
+					"Specifies intended usage of exported texture".Localize(),
 					false,
 					formatEditor
 					, DomNode
@@ -283,7 +298,8 @@ namespace TextureEditor
 						TextureMetadata tp = domNode.Cast<TextureMetadata>();
 						if ( tp.CopySourceFile )
 							return true;
-						return tp.ExtendedFormat != SharpDX.DXGI.Format.Unknown;
+
+						return false;
 					}
 				);
 				textureMetadataTypeProperyCollection.Add( apd );
@@ -294,8 +310,8 @@ namespace TextureEditor
 				var formatEditor = new LongEnumEditor( typeof( SharpDX.DXGI.Format ), null );
 				formatEditor.MaxDropDownItems = 10;
 				var apd = new CustomEnableAttributePropertyDescriptor(
-					"ExtendedFormat".Localize(),
-					Schema.textureMetadataType.extendedFormatAttribute,
+					"Format".Localize(),
+					Schema.textureMetadataType.formatAttribute,
 					group_Metadata,
 					"Specifies format of exported texture (advanced)".Localize(),
 					false,
@@ -304,9 +320,10 @@ namespace TextureEditor
 					, ( DomNode domNode, AttributeInfo attributeInfo ) =>
 						{
 							TextureMetadata tp = domNode.Cast<TextureMetadata>();
-							if ( tp.CopySourceFile )
-								return true;
-							return tp.Format != SharpDX.DXGI.Format.Unknown;
+							if ( tp.Preset == TextureMetadata.TEXTURE_PRESET_CUSTOM_FORMAT )
+								return false;
+
+							return true;
 						}
 				);
 				textureMetadataTypeProperyCollection.Add( apd );

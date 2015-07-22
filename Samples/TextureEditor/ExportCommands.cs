@@ -22,9 +22,8 @@ namespace TextureEditor
     /// A MEF component for providing user commands related to the RenderView component</summary>
     public class TextureExporter
     {
-		public TextureExporter( IWin32Window owner, MainForm mainForm, SchemaLoader schemaLoader )
+		public TextureExporter( MainForm mainForm, SchemaLoader schemaLoader )
 		{
-			m_owner = owner;
 			m_mainForm = mainForm;
 			m_schemaLoader = schemaLoader;
 		}
@@ -103,7 +102,7 @@ namespace TextureEditor
 
 			private Thread m_thread;
 			private bool m_alreadyStopped;
-			private int m_nWarnings;
+			//private int m_nWarnings;
 			private int m_nErrors;
 
 			//public BackgroundThread( MainForm mainForm )
@@ -219,10 +218,10 @@ namespace TextureEditor
 						AddError( "Cancelled by user. Finished\n " + nDone + "/" + fileList.Count );
 					}
 
-					if ( m_nWarnings > 0 )
-					{
-						AddInfo( "" + m_nWarnings + " warnings!\n" );
-					}
+					//if ( m_nWarnings > 0 )
+					//{
+					//	AddInfo( "" + m_nWarnings + " warnings!\n" );
+					//}
 
 					if ( m_nErrors > 0 )
 					{
@@ -316,7 +315,7 @@ namespace TextureEditor
 
 			public int ExportUri( Uri metadataUri )
 			{
-				string metadataFilePath = Path.GetFullPath( metadataUri.AbsolutePath );
+				string metadataFilePath = Path.GetFullPath( metadataUri.LocalPath );
 				AddInfo( "Exporting file: " + metadataFilePath + "\n" );
 
 				string inputFile = metadataFilePath.Substring( 0, metadataFilePath.Length - ".metadata.".Length + 1 );
@@ -326,8 +325,8 @@ namespace TextureEditor
 				string outputFileWin = outputFileWin_tmp + ".dds";
 
 				string dir_dataPS4 = PICO_DEMO + "dataPS4\\";
-				string outputFilePS4_tmp = inputFile.Replace( dir_data, dir_dataWin );
-				string outputFilePS4 = outputFileWin_tmp + ".gnf";
+				string outputFilePS4_tmp = inputFile.Replace( dir_data, dir_dataPS4 );
+				string outputFilePS4 = outputFilePS4_tmp + ".gnf";
 
 				bool exportRequired = false;
 
@@ -410,7 +409,7 @@ namespace TextureEditor
 								cmd += " -h " + tm.Height;
 
 							if ( !tm.GenMipMaps )
-								cmd += " -miplevels 0";
+								cmd += " -m 1";
 
 							if ( tm.ForceSourceSrgb )
 								cmd += " -srgbi";
@@ -420,15 +419,50 @@ namespace TextureEditor
 
 							Format format = Format.Unknown;
 
-							if ( tm.ExtendedFormat != SharpDX.DXGI.Format.Unknown )
-								//cmd += " -f " + tm.ExtendedFormat.ToString();
-								format = tm.ExtendedFormat;
-							else if ( tm.Format != SharpDX.DXGI.Format.Unknown )
+							//if ( tm.ExtendedFormat != SharpDX.DXGI.Format.Unknown )
+							//	//cmd += " -f " + tm.ExtendedFormat.ToString();
+							//	format = tm.ExtendedFormat;
+							//else if ( tm.Format != SharpDX.DXGI.Format.Unknown )
 								//cmd += " -f " + tm.Format.ToString();
 								format = tm.Format;
+
+							string preset = tm.Preset;
+							if ( preset == TextureMetadata.TEXTURE_PRESET_CUSTOM_FORMAT )
+								format = tm.Format;
+
+							else if ( preset == TextureMetadata.TEXTURE_PRESET_COLOR_BC1_SRGB )
+								format = SharpDX.DXGI.Format.BC1_UNorm_SRgb;
+							else if ( preset == TextureMetadata.TEXTURE_PRESET_COLOR_BC3_SRGB )
+								format = SharpDX.DXGI.Format.BC3_UNorm_SRgb;
+							else if ( preset == TextureMetadata.TEXTURE_PRESET_COLOR_BC7_SRGB )
+								format = SharpDX.DXGI.Format.BC7_UNorm_SRgb;
+							else if ( preset == TextureMetadata.TEXTURE_PRESET_COLOR_SRGB )
+								format = SharpDX.DXGI.Format.R8G8B8A8_UNorm_SRgb;
+							else if ( preset == TextureMetadata.TEXTURE_PRESET_COLOR_BC6H_HDR_UNORM )
+								format = SharpDX.DXGI.Format.BC6H_Uf16;
+							else if ( preset == TextureMetadata.TEXTURE_PRESET_COLOR_HDR_UNORM )
+								format = SharpDX.DXGI.Format.R16G16B16A16_Float;
+
+							else if ( preset == TextureMetadata.TEXTURE_PRESET_NORMALMAP_BC5 )
+								format = SharpDX.DXGI.Format.BC5_SNorm;
+							else if ( preset == TextureMetadata.TEXTURE_PRESET_NORMALMAP_RG8 )
+								format = SharpDX.DXGI.Format.R8G8_SNorm;
+
+							else if ( preset == TextureMetadata.TEXTURE_PRESET_AMBIENT_BC4 )
+								format = SharpDX.DXGI.Format.BC4_UNorm;
+							else if ( preset == TextureMetadata.TEXTURE_PRESET_AMBIENT_R8 )
+								format = SharpDX.DXGI.Format.R8_UNorm;
+
+							else if ( preset == TextureMetadata.TEXTURE_PRESET_SPECULARMAP_BC1 )
+								format = SharpDX.DXGI.Format.BC1_UNorm;
+							else if ( preset == TextureMetadata.TEXTURE_PRESET_SPECULARMAP_UNORM )
+								format = SharpDX.DXGI.Format.R8G8B8A8_UNorm;
+
 							else
 							{
-								throw new Exception( "Invalid format" );
+								AddError( "Invalid format: " + metadataFilePath + "\n" );
+								m_nErrors += 1;
+								return 1;
 							}
 
 							bool bcSrgbFormat = false;
@@ -455,6 +489,9 @@ namespace TextureEditor
 							cmd += " -of " + outputFileWin;
 							cmd += " " + inputFile;
 
+							string dirWin = System.IO.Path.GetDirectoryName( outputFileWin );
+							System.IO.Directory.CreateDirectory( dirWin );
+
 							int ires = RunCommand_texconv( cmd );
 							if ( ires != 0 )
 							{
@@ -474,11 +511,14 @@ namespace TextureEditor
 									return ires;
 								}
 
-								System.IO.File.SetLastWriteTime( outputFileWin, DateTime.Now );
+								//System.IO.File.SetLastWriteTime( outputFileWin, DateTime.Now );
 							}
 						}
 
 						{
+							string dirPS4 = System.IO.Path.GetDirectoryName( outputFilePS4 );
+							System.IO.Directory.CreateDirectory( dirPS4 );
+
 							string arg = "-f Auto ";
 							arg += " -i \"" + outputFileWin + "\" ";
 							arg += " -o \"" + outputFilePS4 + "\" ";
@@ -490,7 +530,7 @@ namespace TextureEditor
 								return ires;
 							}
 
-							System.IO.File.SetLastWriteTime( outputFilePS4, DateTime.Now );
+							//System.IO.File.SetLastWriteTime( outputFilePS4, DateTime.Now );
 						}
 					}
 
@@ -519,15 +559,30 @@ namespace TextureEditor
 
 			int RunCommand_texconv( string arg )
 			{
-				AddInfo( "Command: texconv.exe " + arg + " ..." );
+				AddInfo( "Command: texconv.exe " + arg + "\n" );
 
 				System.Diagnostics.Process process = new System.Diagnostics.Process();
 				System.Diagnostics.ProcessStartInfo startInfo = new System.Diagnostics.ProcessStartInfo();
 				startInfo.WindowStyle = System.Diagnostics.ProcessWindowStyle.Hidden;
 				startInfo.FileName = texconv_exe;
 				startInfo.Arguments = arg;
+				startInfo.RedirectStandardOutput = true;
+				startInfo.RedirectStandardError = true;
+				startInfo.UseShellExecute = false;
+				startInfo.CreateNoWindow = true;
 				process.StartInfo = startInfo;
+				process.OutputDataReceived += ( sender, args ) => AddInfo( "texconv output: " + args.Data + "\n" );
+				process.ErrorDataReceived  += ( sender, args ) => AddError( "texconv output: " + args.Data + "\n" );
 				process.Start();
+				process.BeginOutputReadLine();
+				////
+				//// Read in all the text from the process with the StreamReader.
+				////
+				//using ( StreamReader reader = process.StandardOutput )
+				//{
+				//	string result = reader.ReadToEnd();
+				//	AddInfo( "texconv output: " + result + "\n" );
+				//}
 				process.WaitForExit();
 
 				if ( process.ExitCode != 0 )
@@ -536,22 +591,29 @@ namespace TextureEditor
 				}
 				else
 				{
-					AddInfo( "OK!\n" );
+					AddInfo( "Done!\n" );
 				}
 
 				return process.ExitCode;
 			}
 			int RunCommand_orbis_image2gnf( string arg )
 			{
-				AddInfo( "Command: orbis-image2gnf " + arg + " ..." );
+				AddInfo( "Command: orbis-image2gnf " + arg + "\n" );
 
 				System.Diagnostics.Process process = new System.Diagnostics.Process();
 				System.Diagnostics.ProcessStartInfo startInfo = new System.Diagnostics.ProcessStartInfo();
 				startInfo.WindowStyle = System.Diagnostics.ProcessWindowStyle.Hidden;
 				startInfo.FileName = "orbis-image2gnf.exe";
 				startInfo.Arguments = arg;
+				startInfo.RedirectStandardOutput = true;
+				startInfo.RedirectStandardError = true;
+				startInfo.UseShellExecute = false;
+				startInfo.CreateNoWindow = true;
 				process.StartInfo = startInfo;
+				process.OutputDataReceived += ( sender, args ) => AddInfo( "orbis-image2gnf.exe output: " + args.Data + "\n" );
+				process.ErrorDataReceived  += ( sender, args ) => AddError( "texconv output: " + args.Data + "\n" );
 				process.Start();
+				process.BeginOutputReadLine();
 				process.WaitForExit();
 
 				if ( process.ExitCode != 0 )
@@ -560,7 +622,7 @@ namespace TextureEditor
 				}
 				else
 				{
-					AddInfo( "OK!\n" );
+					AddInfo( "Done!\n" );
 				}
 
 				return process.ExitCode;
@@ -571,7 +633,7 @@ namespace TextureEditor
 		private static readonly string PICO_DEMO = Path.GetFullPath( Environment.GetEnvironmentVariable( "PICO_DEMO" ) + "\\" );
 		private static readonly string texconv_exe = PICO_ROOT + "bin64\\texconv.exe";
  
-		private IWin32Window m_owner;
+		//private IWin32Window m_owner;
 		private MainForm m_mainForm;
 		private SchemaLoader m_schemaLoader;
 		private BackgroundThread m_bgThread;

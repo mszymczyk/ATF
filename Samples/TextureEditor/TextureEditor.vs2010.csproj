@@ -91,7 +91,6 @@
     <Compile Include="ExportCommands.cs" />
     <Compile Include="Globals.cs" />
     <Compile Include="Listers\IFileSystemResourceFolder.cs" />
-    <Compile Include="Listers\ResourceLister.cs" />
     <Compile Include="Listers\ResourceMetadataDocument.cs" />
     <Compile Include="Listers\ResourceMetadataEditingContext.cs" />
     <Compile Include="ProgressOutputWindow.cs">

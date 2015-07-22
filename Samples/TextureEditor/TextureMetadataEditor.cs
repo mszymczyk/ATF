@@ -37,12 +37,18 @@ namespace TextureEditor
 			//	return;
 
 			m_previewWindow = new TexturePreviewWindowSharpDX(m_contextRegistry);
-			m_textureViewCommands = new TextureViewCommands( m_commandService, m_previewWindow, m_owner, m_mainForm, m_schemaLoader );
+			m_textureViewCommands = new TextureViewCommands( m_commandService, m_previewWindow, m_mainForm, m_schemaLoader );
 
 			ControlInfo cinfo = new ControlInfo("Texture Preview", "texture viewer", StandardControlGroup.CenterPermanent);
 			m_controlHostService.RegisterControl(m_previewWindow, cinfo, null);
 
-			m_resourceLister.SelectionChanged += resourceLister_SelectionChanged;
+			string PICO_DEMO = Environment.GetEnvironmentVariable( "PICO_DEMO" );
+			m_resourceLister.SetRootFolder( new CustomFileSystemResourceFolder( PICO_DEMO ) );
+
+			//m_resourceLister.SelectionChanged += resourceLister_SelectionChanged;
+			m_resourceLister.ThumbnailControl.SelectionChanged += resourceLister_SelectionChanged_ThumbnailView;
+			//m_resourceLister.ListView.MultiSelect = false;
+			m_resourceLister.ListView.SelectedIndexChanged += resourceLister_SelectionChanged_ListView;
 
 			m_propertyGrid = new PropertyGrid();
 			m_controlInfo = new ControlInfo(
@@ -74,88 +80,75 @@ namespace TextureEditor
 
         #endregion
 
-		private void resourceLister_SelectionChanged( object sender, EventArgs e )
+		//private void resourceLister_SelectionChanged( object sender, EventArgs e )
+		//{
+		//	////var edContext = m_editorRootNode.Cast<ResourceMetadataEditingContext>();
+		//	////edContext.SetRange(mdatadata);
+		//	//IEnumerable<Uri> resourceUris = null;// m_resourceLister.Selection;
+		//	//IEnumerable<Uri> resourceUris = m_resourceLister.ThumbnailControl.Selection;
+		//	List<Uri> resourceUris = new List<Uri>();
+		//	foreach( var t in m_resourceLister.ThumbnailControl.Selection )
+		//	{
+		//		Uri path = t.Tag as Uri;
+		//		resourceUris.Add( path );
+		//	}
+		//}
+
+		private void resourceLister_SelectionChanged_ThumbnailView( object sender, EventArgs e )
 		{
-			////Uri resUri = m_resourceLister.LastSelected;
-			//object[] mdatadata = m_resourceMetadataService.GetMetadata(m_resourceLister.Selection).ToArray();
-			////if (mdatadata.Length > 0)
-			////{
-			////	DomNode mdatadata0 = mdatadata[0] as DomNode;
-			////	var edContext = mdatadata0.Cast<ResourceMetadataEditingContext>();
-			////	//m_defaultContext.SelectionContext = edContext as ISelectionContext;
-			////	//m_defaultContext.SelectionContext.Selection = mdatadata;
-			////	//m_propertyGrid.Bind( edContext );
-			////	//m_propertyGrid.Bind( m_defaultContext );
-			////	//edContext.Selection = mdatadata;
-			////	//m_contextRegistry.ActiveContext = m_defaultContext;
-			////	m_contextRegistry.ActiveContext = mdatadata;
-			////}
-			////else
-			////{
-			////	//m_propertyGrid.Bind( mdatadata );
-			////}
-			//////m_contextRegistry.ActiveContext = mdatadata;
-			////m_editingContext.Selection = mdatadata;
-			////m_editingContext.setSelection(mdatadata);
-
-			////Uri resUri = m_resourceLister.LastSelected;
-			//if (mdatadata.Length > 0)
-			//{
-			//	//m_editorRootNode.GetChildList(Schema.textureMetadataEditorType.textureMetadataChild).Clear();
-
-			//	DomNode mdatadata0 = mdatadata[mdatadata.Length-1] as DomNode;
-			//	// this node must be added to root in order for history to work
-			//	//
-			//	//m_editorRootNode.GetChildList(Schema.textureMetadataEditorType.textureMetadataChild).Add(mdatadata0);
-
-			//	//ResourceMetadataDocument doc = mdatadata0.Cast<ResourceMetadataDocument>();
-			//	Uri resUri = mdatadata0.GetAttribute(Schema.resourceMetadataType.uriAttribute) as Uri;
-			//	TextureProperties tp = m_previewWindow.showResource(resUri);
-			//	//if ( tp != null )
-			//	//{
-			//	//	m_propertyGrid.Bind(new[] { tp });
-			//	//}
-			//	var edContext = mdatadata0.Cast<ResourceMetadataEditingContext>();
-			//	edContext.SetRange(mdatadata);
-			//	m_contextRegistry.ActiveContext = edContext;
-			//}
-
-
-
-			////var edContext = m_editorRootNode.Cast<ResourceMetadataEditingContext>();
-			////edContext.SetRange(mdatadata);
-
-			IEnumerable<Uri> resourceUris = m_resourceLister.Selection;
-			List<DomNode> rootNodes = new List<DomNode>();
-			foreach (Uri resourceUri in resourceUris)
+			List<Uri> resourceUris = new List<Uri>();
+			foreach ( var t in m_resourceLister.ThumbnailControl.Selection )
 			{
-				string reExt = System.IO.Path.GetExtension(resourceUri.LocalPath).ToLower();
+				Uri path = t.Tag as Uri;
+				resourceUris.Add( path );
+			}
+
+			SelectionChangedImpl( resourceUris );
+		}
+		private void resourceLister_SelectionChanged_ListView( object sender, EventArgs e )
+		{
+			List<Uri> resourceUris = new List<Uri>();
+			foreach ( ListViewItem t in m_resourceLister.ListView.SelectedItems )
+			{
+				Uri path = t.Tag as Uri;
+				resourceUris.Add( path );
+			}
+
+			SelectionChangedImpl( resourceUris );
+		}
+
+		private void SelectionChangedImpl( List<Uri> resourceUris )
+		{
+			List<DomNode> rootNodes = new List<DomNode>();
+			foreach ( Uri resourceUri in resourceUris )
+			{
+				string reExt = System.IO.Path.GetExtension( resourceUri.LocalPath ).ToLower();
 
 				string metadataFilePath = resourceUri.LocalPath + ".metadata";
-				Uri metadataUri = new Uri(metadataFilePath);
+				Uri metadataUri = new Uri( metadataFilePath );
 				DomNode rootNode = null;
 
-				if (m_loadedNodes.TryGetValue(metadataUri, out rootNode))
+				if ( m_loadedNodes.TryGetValue( metadataUri, out rootNode ) )
 				{
 				}
 				else
 				{
-					if (File.Exists(metadataFilePath))
+					if ( File.Exists( metadataFilePath ) )
 					{
 						// read existing metadata
-						using (FileStream stream = File.OpenRead(metadataFilePath))
+						using ( FileStream stream = File.OpenRead( metadataFilePath ) )
 						{
-							var reader = new DomXmlReader(m_schemaLoader);
-							rootNode = reader.Read(stream, metadataUri);
+							var reader = new DomXmlReader( m_schemaLoader );
+							rootNode = reader.Read( stream, metadataUri );
 						}
 					}
 					else
 					{
-						rootNode = new DomNode(Schema.textureMetadataType.Type, Schema.textureMetadataRootElement);
-						rootNode.SetAttribute(Schema.resourceMetadataType.uriAttribute, resourceUri);
+						rootNode = new DomNode( Schema.textureMetadataType.Type, Schema.textureMetadataRootElement );
+						rootNode.SetAttribute( Schema.resourceMetadataType.uriAttribute, resourceUri );
 					}
 
-					m_loadedNodes.Add(metadataUri, rootNode);
+					m_loadedNodes.Add( metadataUri, rootNode );
 
 					rootNode.InitializeExtensions();
 
@@ -164,33 +157,33 @@ namespace TextureEditor
 
 					// this node must be added to root in order for history to work
 					//
-					m_editorRootNode.GetChildList(Schema.textureMetadataEditorType.textureMetadataChild).Add(rootNode);
+					m_editorRootNode.GetChildList( Schema.textureMetadataEditorType.textureMetadataChild ).Add( rootNode );
 				}
 
-				rootNodes.Add(rootNode);
+				rootNodes.Add( rootNode );
 			}
 
 			if ( rootNodes.Count > 0 )
 			{
 				DomNode mdatadata0 = rootNodes.Last();
 
-				Uri resUri = mdatadata0.GetAttribute(Schema.resourceMetadataType.uriAttribute) as Uri;
-				TextureProperties tp = m_previewWindow.showResource(resUri);
-				if (tp != null)
+				Uri resUri = mdatadata0.GetAttribute( Schema.resourceMetadataType.uriAttribute ) as Uri;
+				TextureProperties tp = m_previewWindow.showResource( resUri );
+				if ( tp != null )
 				{
-					m_propertyGrid.Bind(new[] { tp });
+					m_propertyGrid.Bind( new[] { tp } );
 				}
 			}
 
 			var edContext = m_editorRootNode.Cast<ResourceMetadataEditingContext>();
-			edContext.SetRange(rootNodes);
+			edContext.SetRange( rootNodes );
 		}
 
 		[Import( AllowDefault = true )]
 		private ResourceLister m_resourceLister = null;
 
-		[Import( AllowDefault = true )]
-		private IResourceMetadataService m_resourceMetadataService = null;
+		//[Import( AllowDefault = true )]
+		//private IResourceMetadataService m_resourceMetadataService = null;
 
         [Import(AllowDefault = false)]
         private ControlHostService m_controlHostService = null;
@@ -207,11 +200,11 @@ namespace TextureEditor
 		[Import(AllowDefault = false)]
 		private SchemaLoader m_schemaLoader = null;
 
-		[Import( AllowDefault = false )]
-		private IWin32Window m_owner;
+		//[Import( AllowDefault = false )]
+		//private IWin32Window m_owner;
 
 		[Import( AllowDefault = false )]
-		private MainForm m_mainForm;
+		private MainForm m_mainForm = null;
 
 		private ControlInfo m_controlInfo;
 		private PropertyGrid m_propertyGrid;

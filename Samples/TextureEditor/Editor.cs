@@ -20,12 +20,12 @@ namespace TextureEditor
     {
         [ImportingConstructor]
         public Editor(
-            ISettingsService settingsService,            
-            ResourceLister resourceLister
+            ISettingsService settingsService            
+			//ResourceLister resourceLister
             )
         {
             m_settingsService = settingsService;            
-            m_resourceLister = resourceLister;            
+			//m_resourceLister = resourceLister;            
             
             //to-do wire it to to command service
             ResolveOnLoad = true;
@@ -129,7 +129,7 @@ namespace TextureEditor
 			set;// { GameDocument.ResolveOnLoad = value; }
 		}
 
-		private readonly ResourceLister m_resourceLister = null;        
+		//private readonly ResourceLister m_resourceLister = null;        
 		private readonly ISettingsService m_settingsService;
 
         [Import(AllowDefault = false)]

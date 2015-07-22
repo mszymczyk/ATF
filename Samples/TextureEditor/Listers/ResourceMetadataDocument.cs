@@ -20,9 +20,11 @@ namespace TextureEditor
         private void DomNode_AttributeChanged(object sender, AttributeEventArgs e)
         {
 			TextureMetadata tm = DomNode.As<TextureMetadata>();
-			if ( tm.Format == SharpDX.DXGI.Format.Unknown && tm.ExtendedFormat == SharpDX.DXGI.Format.Unknown && !tm.CopySourceFile )
+			//if ( tm.Format == SharpDX.DXGI.Format.Unknown && tm.ExtendedFormat == SharpDX.DXGI.Format.Unknown && !tm.CopySourceFile )
+			if ( (tm.Preset == TextureMetadata.TEXTURE_PRESET_UNKNOWN || (tm.Preset == TextureMetadata.TEXTURE_PRESET_CUSTOM_FORMAT && tm.Format == SharpDX.DXGI.Format.Unknown) ) && !tm.CopySourceFile )
 			{
-				System.IO.File.Delete( Uri.LocalPath );
+				if ( System.IO.File.Exists( Uri.LocalPath ) )
+					System.IO.File.Delete( Uri.LocalPath );
 				return;
 			}
 
