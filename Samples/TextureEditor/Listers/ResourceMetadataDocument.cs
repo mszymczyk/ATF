@@ -17,7 +17,6 @@ namespace TextureEditor
             DomNode.AttributeChanged += DomNode_AttributeChanged;
         }
 
-
         private void DomNode_AttributeChanged(object sender, AttributeEventArgs e)
         {
 			TextureMetadata tm = DomNode.As<TextureMetadata>();

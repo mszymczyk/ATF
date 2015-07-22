@@ -16,28 +16,30 @@ namespace TextureEditor
 	public class TexturePropertyDescriptorNodeAdapter : DomNodeAdapter, ICustomTypeDescriptor
 	//public class TexturePropertyDescriptorNodeAdapter : CustomTypeDescriptorNodeAdapter
 	{
+		static bool CopySourceFileIsReadOnlyPredicate( DomNode domNode, AttributeInfo attributeInfo )
+		{
+			TextureMetadata tp = domNode.Cast<TextureMetadata>();
+			return tp.CopySourceFile;
+		}
 
 		class CustomEnableAttributePropertyDescriptor : AttributePropertyDescriptor
 		{
-			private static int globalCounter_ = 0;
-			private int m_counter = 0;
-
 			public CustomEnableAttributePropertyDescriptor(
 				string name,
 				AttributeInfo attribute,
 				string category,
 				string description,
 				bool isReadOnly,
-				object editor,
-				DomNode domNode
+				object editor
+				, DomNode domNode
+				, Func<DomNode, AttributeInfo, bool> isReadOnlyPredicate = null
 				)
 
 				: base( name, attribute, category, description, isReadOnly, editor, null )
 			{
 				m_domNode = domNode;
-				m_counter = globalCounter_;
-				globalCounter_ += 1;
 				m_attributeInfo2 = attribute;
+				m_isReadOnlyPredicate = isReadOnlyPredicate;
 				//m_isReadOnly2 = isReadOnly;
 			}
 
@@ -71,9 +73,13 @@ namespace TextureEditor
 				//get { return m_isReadOnly2; }
 				get
 				{
-					TextureMetadata tp = m_domNode.Cast<TextureMetadata>();
-					System.Diagnostics.Debug.WriteLine( "IsReadOnly: {0}, {1}", tp.Uri, tp.CopySourceFile );
-					return tp.CopySourceFile;
+					//TextureMetadata tp = m_domNode.Cast<TextureMetadata>();
+					//System.Diagnostics.Debug.WriteLine( "IsReadOnly: {0}, {1}", tp.Uri, tp.CopySourceFile );
+					//return tp.CopySourceFile;
+					if ( m_isReadOnlyPredicate != null )
+						return m_isReadOnlyPredicate( m_domNode, m_attributeInfo2 );
+					else
+						return false;
 				}
 			}
 
@@ -95,8 +101,18 @@ namespace TextureEditor
 					m_domNode.Equals( other.m_domNode );
 			}
 
+			/// <summary>
+			/// Gets hash code for property descriptor</summary>
+			/// <returns>Hash code</returns>
+			/// <remarks>Implements GetHashCode() for organizing descriptors in grid controls</remarks>
+			public override int GetHashCode()
+			{
+				return m_attributeInfo2.GetEquivalentHashCode();
+			}
+
 			private readonly AttributeInfo m_attributeInfo2;
 			private DomNode m_domNode;
+			private Func<DomNode, AttributeInfo, bool> m_isReadOnlyPredicate;
 			//private bool m_isReadOnly2;
 		};
 
@@ -107,52 +123,196 @@ namespace TextureEditor
         /// <returns>Array of property descriptors</returns>
         protected virtual System.ComponentModel.PropertyDescriptor[] GetPropertyDescriptors()
         {
-			HashSet<string> names = new HashSet<string>();
-			List<System.ComponentModel.PropertyDescriptor> result = new List<System.ComponentModel.PropertyDescriptor>();
-			//result.AddRange( base.GetPropertyDescriptors() );
+			//HashSet<string> names = new HashSet<string>();
+			//List<System.ComponentModel.PropertyDescriptor> result = new List<System.ComponentModel.PropertyDescriptor>();
+			////result.AddRange( base.GetPropertyDescriptors() );
 
-			DomNodeType nodeType = DomNode.Type;
-			while ( nodeType != null )
-			{
-				PropertyDescriptorCollection propertyDescriptors = nodeType.GetTag<PropertyDescriptorCollection>();
-				if ( propertyDescriptors != null )
-				{
-					foreach ( System.ComponentModel.PropertyDescriptor propertyDescriptor in propertyDescriptors )
-					{
-						// Use combination of category and name, to allow having properties with the
-						// same display name under different categories.
-						string fullName = string.Format( "{0}_{1}", propertyDescriptor.Category, propertyDescriptor.Name );
+			//DomNodeType nodeType = DomNode.Type;
+			//while ( nodeType != null )
+			//{
+			//	PropertyDescriptorCollection propertyDescriptors = nodeType.GetTag<PropertyDescriptorCollection>();
+			//	if ( propertyDescriptors != null )
+			//	{
+			//		foreach ( System.ComponentModel.PropertyDescriptor propertyDescriptor in propertyDescriptors )
+			//		{
+			//			// Use combination of category and name, to allow having properties with the
+			//			// same display name under different categories.
+			//			string fullName = string.Format( "{0}_{1}", propertyDescriptor.Category, propertyDescriptor.Name );
 
-						// Filter out duplicate names, so derived type data overrides base type data)
-						if ( !names.Contains( fullName ) )
-						{
-							names.Add( fullName );
-							result.Add( propertyDescriptor );
-						}
-					}
-				}
-				nodeType = nodeType.BaseType;
-			}
+			//			// Filter out duplicate names, so derived type data overrides base type data)
+			//			if ( !names.Contains( fullName ) )
+			//			{
+			//				names.Add( fullName );
+			//				result.Add( propertyDescriptor );
+			//			}
+			//		}
+			//	}
+			//	nodeType = nodeType.BaseType;
+			//}
+
+			TextureMetadata tm = DomNode.Cast<TextureMetadata>();
+			string uriExt = System.IO.Path.GetExtension( tm.Uri.LocalPath );
 
 			string group_Metadata = "Metadata".Localize();
 
-			result.Add(
-				//new AttributePropertyDescriptor(
+			List<System.ComponentModel.PropertyDescriptor> textureMetadataTypeProperyCollection = new List<System.ComponentModel.PropertyDescriptor>();
+
+			textureMetadataTypeProperyCollection.Add(
+				new AttributePropertyDescriptor(
+						"URI".Localize(),
+						Schema.resourceMetadataType.uriAttribute,
+						group_Metadata,
+						"Uri".Localize(),
+						true
+						)
+			);
+
+			if ( uriExt == ".dds" )
+			{
+				textureMetadataTypeProperyCollection.Add(
+					new AttributePropertyDescriptor(
+							 "Copy source file".Localize(),
+							 Schema.textureMetadataType.copySourceFileAttribute,
+							 group_Metadata,
+							 "Copies source file without any modifications".Localize(),
+							 false,
+							 new BoolEditor()
+							 )
+				);
+			}
+
+			textureMetadataTypeProperyCollection.Add(
 				new CustomEnableAttributePropertyDescriptor(
-						 "Flip Y".Localize(),
-						 Schema.textureMetadataType.flipYAttribute,
-						 //Type.
+						 "Generate mipmaps".Localize(),
+						 Schema.textureMetadataType.genMipMapsAttribute,
 						 group_Metadata,
-						 "Flips image vertically".Localize(),
+						 "Controlls mipmap generation".Localize(),
 						 false,
-				//new BoolEditor()
 						 new BoolEditor()
 						 , DomNode
+						 , CopySourceFileIsReadOnlyPredicate
 						 )
 			);
 
+			textureMetadataTypeProperyCollection.Add(
+				new CustomEnableAttributePropertyDescriptor(
+						 "Flip Y".Localize(),
+						 Schema.textureMetadataType.flipYAttribute,
+						 group_Metadata,
+						 "Flips image vertically".Localize(),
+						 false,
+						 new BoolEditor()
+						 , DomNode
+						 //, (DomNode domNode, AttributeInfo attributeInfo) => 
+						 //   {
+						 //	   TextureMetadata tp = domNode.Cast<TextureMetadata>();
+						 //	   return tp.CopySourceFile;
+						 //   }
+						 , CopySourceFileIsReadOnlyPredicate
+						 )
+			);
 
-            return result.ToArray();
+			textureMetadataTypeProperyCollection.Add(
+				new CustomEnableAttributePropertyDescriptor(
+						 "Width".Localize(),
+						 Schema.textureMetadataType.widthAttribute,
+						 group_Metadata,
+						 "Sets exported image's width".Localize(),
+						 false,
+				//new BoundedIntEditor( -1, 16 * 1024 * 1024 )
+						 new NumericEditor( typeof( int ) )
+						 , DomNode
+						 , CopySourceFileIsReadOnlyPredicate
+						 )
+			);
+
+			textureMetadataTypeProperyCollection.Add(
+				new CustomEnableAttributePropertyDescriptor(
+						 "Height".Localize(),
+						 Schema.textureMetadataType.heightAttribute,
+						 group_Metadata,
+						 "Sets exported image's height".Localize(),
+						 false,
+						 new NumericEditor( typeof( int ) )
+						 , DomNode
+						 , CopySourceFileIsReadOnlyPredicate
+						 )
+			);
+
+			{
+				List<string> popularFormats = new List<string>();
+
+				// compressed
+				// https://msdn.microsoft.com/pl-pl/library/hh308955.aspx
+				// https://msdn.microsoft.com/en-us/library/windows/desktop/bb694531(v=vs.85).aspx
+				//
+				popularFormats.Add( SharpDX.DXGI.Format.Unknown.ToString() );
+
+				popularFormats.Add( SharpDX.DXGI.Format.BC1_UNorm_SRgb.ToString() );
+				popularFormats.Add( SharpDX.DXGI.Format.BC2_UNorm_SRgb.ToString() );
+				popularFormats.Add( SharpDX.DXGI.Format.BC3_UNorm_SRgb.ToString() );
+				popularFormats.Add( SharpDX.DXGI.Format.BC4_UNorm.ToString() );
+				popularFormats.Add( SharpDX.DXGI.Format.BC5_SNorm.ToString() );
+				popularFormats.Add( SharpDX.DXGI.Format.BC7_UNorm_SRgb.ToString() );
+
+				popularFormats.Add( SharpDX.DXGI.Format.R8G8B8A8_UNorm.ToString() );
+				popularFormats.Add( SharpDX.DXGI.Format.R8G8B8A8_UNorm_SRgb.ToString() );
+				popularFormats.Add( SharpDX.DXGI.Format.R8_UNorm.ToString() );
+
+				popularFormats.Add( SharpDX.DXGI.Format.BC1_UNorm.ToString() );
+				popularFormats.Add( SharpDX.DXGI.Format.BC2_UNorm.ToString() );
+				popularFormats.Add( SharpDX.DXGI.Format.BC3_UNorm.ToString() );
+				popularFormats.Add( SharpDX.DXGI.Format.BC4_SNorm.ToString() );
+				popularFormats.Add( SharpDX.DXGI.Format.BC5_UNorm.ToString() );
+				popularFormats.Add( SharpDX.DXGI.Format.BC7_UNorm.ToString() );
+
+				//var formatEditor = new LongEnumEditor( typeof(SharpDX.DXGI.Format), null );
+				var formatEditor = new LongEnumEditor();
+				formatEditor.DefineEnum( popularFormats.ToArray(), null );
+				formatEditor.MaxDropDownItems = 10;
+				var apd = new CustomEnableAttributePropertyDescriptor(
+					"Format".Localize(),
+					Schema.textureMetadataType.formatAttribute,
+					group_Metadata,
+					"Specifies format of exported texture".Localize(),
+					false,
+					formatEditor
+					, DomNode
+					, ( DomNode domNode, AttributeInfo attributeInfo ) =>
+					{
+						TextureMetadata tp = domNode.Cast<TextureMetadata>();
+						if ( tp.CopySourceFile )
+							return true;
+						return tp.ExtendedFormat != SharpDX.DXGI.Format.Unknown;
+					}
+				);
+				textureMetadataTypeProperyCollection.Add( apd );
+			}
+
+			{
+				var formatNames = Enum.GetValues( typeof( SharpDX.DXGI.Format ) );
+				var formatEditor = new LongEnumEditor( typeof( SharpDX.DXGI.Format ), null );
+				formatEditor.MaxDropDownItems = 10;
+				var apd = new CustomEnableAttributePropertyDescriptor(
+					"ExtendedFormat".Localize(),
+					Schema.textureMetadataType.extendedFormatAttribute,
+					group_Metadata,
+					"Specifies format of exported texture (advanced)".Localize(),
+					false,
+					formatEditor
+					, DomNode
+					, ( DomNode domNode, AttributeInfo attributeInfo ) =>
+						{
+							TextureMetadata tp = domNode.Cast<TextureMetadata>();
+							if ( tp.CopySourceFile )
+								return true;
+							return tp.Format != SharpDX.DXGI.Format.Unknown;
+						}
+				);
+				textureMetadataTypeProperyCollection.Add( apd );
+			}
+
+			return textureMetadataTypeProperyCollection.ToArray();
         }
 
 		/// <summary>

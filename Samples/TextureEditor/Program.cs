@@ -54,13 +54,13 @@ namespace TextureEditor
                 typeof(CrashLogger),                    // logs unhandled exceptions to an ATF server
                 typeof(UnhandledExceptionService),      // catches unhandled exceptions, displays info, and gives user a chance to save
                 typeof(FileDialogService),
-                typeof(SkinService),
+				//typeof(SkinService),
                 typeof(StandardFileExitCommand),        // standard File exit menu command
-                typeof(StandardEditHistoryCommands),    // tracks document changes and updates main form title
+				//typeof(StandardEditHistoryCommands),    // tracks document changes and updates main form title
                 typeof(HelpAboutCommand),               // Help -> About command
                 typeof(ContextRegistry),                // central context registry with change notification
                 typeof(PropertyEditor),                 // property grid for editing selected objects
-				typeof(GridPropertyEditor),             // grid control for editing selected objects
+				//typeof(GridPropertyEditor),             // grid control for editing selected objects
                 typeof(PropertyEditingCommands),        // commands for PropertyEditor and GridPropertyEditor
                 typeof(SettingsService),
                 typeof(PythonService),                  // scripting service for automated tests
