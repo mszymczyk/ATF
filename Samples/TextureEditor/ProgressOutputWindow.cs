@@ -16,14 +16,14 @@ namespace TextureEditor
 			InitializeComponent();
 		}
 
-		private void Cancel_Click( object sender, EventArgs e )
+		private void CancelButtonObj_Click( object sender, EventArgs e )
 		{
 			//Close();
 			if ( CancelClicked != null )
 				CancelClicked( sender, e );
 		}
 
-		private void CloseButton_Click( object sender, EventArgs e )
+		private void CloseButtonObj_Click( object sender, EventArgs e )
 		{
 			Close();
 		}

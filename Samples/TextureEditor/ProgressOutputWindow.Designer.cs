@@ -28,86 +28,68 @@
 		/// </summary>
 		private void InitializeComponent()
 		{
-			this.panel1 = new System.Windows.Forms.Panel();
-			this.richTextBox1 = new System.Windows.Forms.RichTextBox();
+			this.groupBox1 = new System.Windows.Forms.GroupBox();
 			this.progressBar1 = new System.Windows.Forms.ProgressBar();
-			this.CloseButtonObj = new System.Windows.Forms.Button();
+			this.richTextBox1 = new System.Windows.Forms.RichTextBox();
 			this.CancelButtonObj = new System.Windows.Forms.Button();
-			this.panel2 = new System.Windows.Forms.Panel();
-			this.flowLayoutPanel1 = new System.Windows.Forms.FlowLayoutPanel();
-			this.panel1.SuspendLayout();
-			this.panel2.SuspendLayout();
-			this.flowLayoutPanel1.SuspendLayout();
+			this.CloseButtonObj = new System.Windows.Forms.Button();
+			this.groupBox1.SuspendLayout();
 			this.SuspendLayout();
 			// 
-			// panel1
+			// groupBox1
 			// 
-			this.panel1.Controls.Add(this.richTextBox1);
-			this.panel1.Dock = System.Windows.Forms.DockStyle.Fill;
-			this.panel1.Location = new System.Drawing.Point(0, 0);
-			this.panel1.Name = "panel1";
-			this.panel1.Size = new System.Drawing.Size(1164, 412);
-			this.panel1.TabIndex = 1;
-			// 
-			// richTextBox1
-			// 
-			this.richTextBox1.Dock = System.Windows.Forms.DockStyle.Fill;
-			this.richTextBox1.Location = new System.Drawing.Point(0, 0);
-			this.richTextBox1.Name = "richTextBox1";
-			this.richTextBox1.ReadOnly = true;
-			this.richTextBox1.Size = new System.Drawing.Size(1164, 412);
-			this.richTextBox1.TabIndex = 0;
-			this.richTextBox1.Text = "";
+			this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+			this.groupBox1.Controls.Add(this.progressBar1);
+			this.groupBox1.Controls.Add(this.richTextBox1);
+			this.groupBox1.Location = new System.Drawing.Point(12, 6);
+			this.groupBox1.Name = "groupBox1";
+			this.groupBox1.Size = new System.Drawing.Size(1140, 360);
+			this.groupBox1.TabIndex = 0;
+			this.groupBox1.TabStop = false;
 			// 
 			// progressBar1
 			// 
-			this.progressBar1.Dock = System.Windows.Forms.DockStyle.Fill;
-			this.progressBar1.Location = new System.Drawing.Point(0, 0);
+			this.progressBar1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+			this.progressBar1.Location = new System.Drawing.Point(6, 318);
 			this.progressBar1.Name = "progressBar1";
-			this.progressBar1.Size = new System.Drawing.Size(995, 33);
-			this.progressBar1.TabIndex = 2;
+			this.progressBar1.Size = new System.Drawing.Size(1128, 36);
+			this.progressBar1.TabIndex = 1;
 			// 
-			// CloseButtonObj
+			// richTextBox1
 			// 
-			this.CloseButtonObj.Enabled = false;
-			this.CloseButtonObj.Location = new System.Drawing.Point(3, 3);
-			this.CloseButtonObj.Name = "CloseButtonObj";
-			this.CloseButtonObj.Size = new System.Drawing.Size(75, 23);
-			this.CloseButtonObj.TabIndex = 3;
-			this.CloseButtonObj.Text = "Close";
-			this.CloseButtonObj.UseVisualStyleBackColor = true;
-			this.CloseButtonObj.Click += new System.EventHandler(this.CloseButton_Click);
+			this.richTextBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+			this.richTextBox1.Location = new System.Drawing.Point(6, 12);
+			this.richTextBox1.Name = "richTextBox1";
+			this.richTextBox1.Size = new System.Drawing.Size(1128, 300);
+			this.richTextBox1.TabIndex = 0;
+			this.richTextBox1.Text = "";
 			// 
 			// CancelButtonObj
 			// 
-			this.CancelButtonObj.Location = new System.Drawing.Point(84, 3);
+			this.CancelButtonObj.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.CancelButtonObj.Location = new System.Drawing.Point(1077, 377);
 			this.CancelButtonObj.Name = "CancelButtonObj";
 			this.CancelButtonObj.Size = new System.Drawing.Size(75, 23);
-			this.CancelButtonObj.TabIndex = 4;
+			this.CancelButtonObj.TabIndex = 1;
 			this.CancelButtonObj.Text = "Cancel";
 			this.CancelButtonObj.UseVisualStyleBackColor = true;
-			this.CancelButtonObj.Click += new System.EventHandler(this.Cancel_Click);
+			this.CancelButtonObj.Click += new System.EventHandler(this.CancelButtonObj_Click);
 			// 
-			// panel2
+			// CloseButtonObj
 			// 
-			this.panel2.Controls.Add(this.progressBar1);
-			this.panel2.Controls.Add(this.flowLayoutPanel1);
-			this.panel2.Dock = System.Windows.Forms.DockStyle.Bottom;
-			this.panel2.Location = new System.Drawing.Point(0, 379);
-			this.panel2.Name = "panel2";
-			this.panel2.Size = new System.Drawing.Size(1164, 33);
-			this.panel2.TabIndex = 5;
-			// 
-			// flowLayoutPanel1
-			// 
-			this.flowLayoutPanel1.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-			this.flowLayoutPanel1.Controls.Add(this.CloseButtonObj);
-			this.flowLayoutPanel1.Controls.Add(this.CancelButtonObj);
-			this.flowLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Right;
-			this.flowLayoutPanel1.Location = new System.Drawing.Point(995, 0);
-			this.flowLayoutPanel1.Name = "flowLayoutPanel1";
-			this.flowLayoutPanel1.Size = new System.Drawing.Size(169, 33);
-			this.flowLayoutPanel1.TabIndex = 3;
+			this.CloseButtonObj.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.CloseButtonObj.Location = new System.Drawing.Point(996, 377);
+			this.CloseButtonObj.Name = "CloseButtonObj";
+			this.CloseButtonObj.Size = new System.Drawing.Size(75, 23);
+			this.CloseButtonObj.TabIndex = 2;
+			this.CloseButtonObj.Text = "Close";
+			this.CloseButtonObj.UseVisualStyleBackColor = true;
+			this.CloseButtonObj.Click += new System.EventHandler(this.CloseButtonObj_Click);
 			// 
 			// ProgressOutputWindow
 			// 
@@ -115,29 +97,28 @@
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.ClientSize = new System.Drawing.Size(1164, 412);
 			this.ControlBox = false;
-			this.Controls.Add(this.panel2);
-			this.Controls.Add(this.panel1);
+			this.Controls.Add(this.CloseButtonObj);
+			this.Controls.Add(this.CancelButtonObj);
+			this.Controls.Add(this.groupBox1);
 			this.MaximizeBox = false;
 			this.MinimizeBox = false;
+			this.MinimumSize = new System.Drawing.Size(500, 300);
 			this.Name = "ProgressOutputWindow";
 			this.ShowIcon = false;
 			this.Text = "ProgressOutputWindow";
-			this.panel1.ResumeLayout(false);
-			this.panel2.ResumeLayout(false);
-			this.flowLayoutPanel1.ResumeLayout(false);
+			this.groupBox1.ResumeLayout(false);
 			this.ResumeLayout(false);
 
 		}
 
 		#endregion
 
-		private System.Windows.Forms.Panel panel1;
-		private System.Windows.Forms.ProgressBar progressBar1;
-		private System.Windows.Forms.Button CloseButtonObj;
-		private System.Windows.Forms.Button CancelButtonObj;
+		private System.Windows.Forms.GroupBox groupBox1;
 		private System.Windows.Forms.RichTextBox richTextBox1;
-		private System.Windows.Forms.Panel panel2;
-		private System.Windows.Forms.FlowLayoutPanel flowLayoutPanel1;
+		private System.Windows.Forms.ProgressBar progressBar1;
+		private System.Windows.Forms.Button CancelButtonObj;
+		private System.Windows.Forms.Button CloseButtonObj;
+
 
 	}
 }
