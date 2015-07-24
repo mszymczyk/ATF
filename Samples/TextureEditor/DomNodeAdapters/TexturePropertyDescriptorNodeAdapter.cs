@@ -214,6 +214,19 @@ namespace TextureEditor
 
 			textureMetadataTypeProperyCollection.Add(
 				new CustomEnableAttributePropertyDescriptor(
+						 "Force Source Srgb".Localize(),
+						 Schema.textureMetadataType.forceSourceSrgbAttribute,
+						 group_Metadata,
+						 "Assumes source image is srgb".Localize(),
+						 false,
+						 new BoolEditor()
+						 , DomNode
+						 , CopySourceFileIsReadOnlyPredicate
+						 )
+			);
+
+			textureMetadataTypeProperyCollection.Add(
+				new CustomEnableAttributePropertyDescriptor(
 						 "Width".Localize(),
 						 Schema.textureMetadataType.widthAttribute,
 						 group_Metadata,
@@ -275,10 +288,12 @@ namespace TextureEditor
 				presets.Add( TextureMetadata.TEXTURE_PRESET_COLOR_HDR_UNORM );
 				presets.Add( TextureMetadata.TEXTURE_PRESET_NORMALMAP_BC5 );
 				presets.Add( TextureMetadata.TEXTURE_PRESET_NORMALMAP_RG8 );
-				presets.Add( TextureMetadata.TEXTURE_PRESET_AMBIENT_BC4 );
-				presets.Add( TextureMetadata.TEXTURE_PRESET_AMBIENT_R8 );
-				presets.Add( TextureMetadata.TEXTURE_PRESET_SPECULARMAP_BC1 );
-				presets.Add( TextureMetadata.TEXTURE_PRESET_SPECULARMAP_UNORM );
+				presets.Add( TextureMetadata.TEXTURE_PRESET_GRAYSCALE_BC4 );
+				presets.Add( TextureMetadata.TEXTURE_PRESET_GRAYSCALE_R8 );
+				//presets.Add( TextureMetadata.TEXTURE_PRESET_SPECULARMAP_BC1_SRGB );
+				//presets.Add( TextureMetadata.TEXTURE_PRESET_SPECULARMAP_SRGB );
+				//presets.Add( TextureMetadata.TEXTURE_PRESET_SPECULARMAP_BC4 );
+				//presets.Add( TextureMetadata.TEXTURE_PRESET_SPECULARMAP_R8);
 				presets.Add( TextureMetadata.TEXTURE_PRESET_CUSTOM_FORMAT );
 
 				//var formatEditor = new LongEnumEditor( typeof(SharpDX.DXGI.Format), null );

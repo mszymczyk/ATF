@@ -17,10 +17,12 @@ namespace TextureEditor
 		public static readonly string TEXTURE_PRESET_COLOR_HDR_UNORM = "Color+Alpha HDR (Uncompressed R16G16B16A16 FLOAT)";
 		public static readonly string TEXTURE_PRESET_NORMALMAP_BC5 = "Normal (Compressed BC5 SNORM)";
 		public static readonly string TEXTURE_PRESET_NORMALMAP_RG8 = "Normal (Uncompressed RG8 SNORM)";
-		public static readonly string TEXTURE_PRESET_AMBIENT_BC4 = "Ambient (Compressed BC4 UNORM)";
-		public static readonly string TEXTURE_PRESET_AMBIENT_R8 = "Ambient (Uncompressed R8 UNORM)";
-		public static readonly string TEXTURE_PRESET_SPECULARMAP_BC1 = "Specular (Compressed BC1 UNORM)";
-		public static readonly string TEXTURE_PRESET_SPECULARMAP_UNORM = "Specular (Uncompressed R8G8B8A8 UNORM)";
+		public static readonly string TEXTURE_PRESET_GRAYSCALE_BC4 = "Grayscale (R8 Compressed BC4 UNORM)";
+		public static readonly string TEXTURE_PRESET_GRAYSCALE_R8 = "Grayscale (Uncompressed R8 UNORM)";
+		//public static readonly string TEXTURE_PRESET_SPECULARMAP_BC1_SRGB = "Specular (RGB Compressed BC1 SRGB)";
+		//public static readonly string TEXTURE_PRESET_SPECULARMAP_SRGB = "Specular (Uncompressed R8G8B8A8 SRGB)";
+		//public static readonly string TEXTURE_PRESET_SPECULARMAP_BC4 = "Specular (R8 Compressed BC4 UNORM)";
+		//public static readonly string TEXTURE_PRESET_SPECULARMAP_R8 = "Specular (Uncompressed R8 UNORM)";
 		public static readonly string TEXTURE_PRESET_CUSTOM_FORMAT = "Custom Format";
 
 		public Uri Uri

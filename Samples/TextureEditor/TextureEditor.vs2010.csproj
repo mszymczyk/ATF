@@ -93,12 +93,14 @@
     <Compile Include="Listers\IFileSystemResourceFolder.cs" />
     <Compile Include="Listers\ResourceMetadataDocument.cs" />
     <Compile Include="Listers\ResourceMetadataEditingContext.cs" />
+    <Compile Include="picoSharpDxWrappers.cs" />
     <Compile Include="ProgressOutputWindow.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="ProgressOutputWindow.Designer.cs">
       <DependentUpon>ProgressOutputWindow.cs</DependentUpon>
     </Compile>
+    <Compile Include="Resources\Resources.cs" />
     <Compile Include="TextureMetadataEditor.cs" />
     <Compile Include="TexturePreviewWindowSharpDx.cs">
       <SubType>Component</SubType>
@@ -121,7 +123,7 @@
     <EmbeddedResource Include="Schemas\textureEditor.xsd">
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="Resources\About.rtf" />
+    <EmbeddedResource Include="Resources\Help.rtf" />
     <None Include="Schemas\GenSchemaDef.cmd" />
   </ItemGroup>
   <ItemGroup>
@@ -143,25 +145,18 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Resources\Adequate.png" />
-    <EmbeddedResource Include="Resources\Angry.png" />
-    <EmbeddedResource Include="Resources\Annoyed.png" />
-    <EmbeddedResource Include="Resources\Capable.png" />
-    <EmbeddedResource Include="Resources\Depressed.png" />
-    <EmbeddedResource Include="Resources\Enthusiastic.png" />
-    <EmbeddedResource Include="Resources\Frustrated.png" />
-    <EmbeddedResource Include="Resources\Happy.png" />
-    <EmbeddedResource Include="Resources\Hostile.png" />
-    <EmbeddedResource Include="Resources\Thrilled.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Resources\Adept.png" />
-    <EmbeddedResource Include="Resources\Apprentice.png" />
-    <EmbeddedResource Include="Resources\Journeyman.png" />
-    <EmbeddedResource Include="Resources\Master.png" />
-  </ItemGroup>
-  <ItemGroup>
     <EmbeddedResource Include="Resources\shaders.fx" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\Difference16.png" />
+    <EmbeddedResource Include="Resources\Difference24.png" />
+    <EmbeddedResource Include="Resources\Difference32.png" />
+    <EmbeddedResource Include="Resources\Exported16.png" />
+    <EmbeddedResource Include="Resources\Exported24.png" />
+    <EmbeddedResource Include="Resources\Exported32.png" />
+    <EmbeddedResource Include="Resources\Source16.png" />
+    <EmbeddedResource Include="Resources\Source24.png" />
+    <EmbeddedResource Include="Resources\Source32.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

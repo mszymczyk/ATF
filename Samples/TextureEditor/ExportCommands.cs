@@ -402,7 +402,9 @@ namespace TextureEditor
 						}
 						else
 						{
-							string cmd = " -if CUBIC";
+							string cmd = "";
+							//cmd += " -if CUBIC";
+							//cmd += " -if POINT";
 							if ( tm.Width > 0 )
 								cmd += " -w " + tm.Width;
 							if ( tm.Height > 0 )
@@ -448,15 +450,20 @@ namespace TextureEditor
 							else if ( preset == TextureMetadata.TEXTURE_PRESET_NORMALMAP_RG8 )
 								format = SharpDX.DXGI.Format.R8G8_SNorm;
 
-							else if ( preset == TextureMetadata.TEXTURE_PRESET_AMBIENT_BC4 )
+							else if ( preset == TextureMetadata.TEXTURE_PRESET_GRAYSCALE_BC4 )
 								format = SharpDX.DXGI.Format.BC4_UNorm;
-							else if ( preset == TextureMetadata.TEXTURE_PRESET_AMBIENT_R8 )
+							else if ( preset == TextureMetadata.TEXTURE_PRESET_GRAYSCALE_R8 )
 								format = SharpDX.DXGI.Format.R8_UNorm;
 
-							else if ( preset == TextureMetadata.TEXTURE_PRESET_SPECULARMAP_BC1 )
-								format = SharpDX.DXGI.Format.BC1_UNorm;
-							else if ( preset == TextureMetadata.TEXTURE_PRESET_SPECULARMAP_UNORM )
-								format = SharpDX.DXGI.Format.R8G8B8A8_UNorm;
+							//else if ( preset == TextureMetadata.TEXTURE_PRESET_SPECULARMAP_BC1_SRGB )
+							//	format = SharpDX.DXGI.Format.BC1_UNorm_SRgb;
+							//else if ( preset == TextureMetadata.TEXTURE_PRESET_SPECULARMAP_SRGB )
+							//	format = SharpDX.DXGI.Format.R8G8B8A8_UNorm_SRgb;
+
+							//else if ( preset == TextureMetadata.TEXTURE_PRESET_SPECULARMAP_BC4 )
+							//	format = SharpDX.DXGI.Format.BC4_UNorm;
+							//else if ( preset == TextureMetadata.TEXTURE_PRESET_SPECULARMAP_R8 )
+							//	format = SharpDX.DXGI.Format.R8_UNorm;
 
 							else
 							{
@@ -501,6 +508,8 @@ namespace TextureEditor
 							if ( bcSrgbFormat )
 							{
 								string cmd2 = " -f " + format.ToString();
+								if ( !tm.GenMipMaps )
+									cmd2 += " -m 1";
 								cmd2 += " -of " + outputFileWin;
 								cmd2 += " " + outputFileWin;
 
@@ -627,6 +636,15 @@ namespace TextureEditor
 
 				return process.ExitCode;
 			}
+		}
+
+		public static string GetDataWinTexture( string dataTexture )
+		{
+			string dir_data = PICO_DEMO + "data\\";
+			string dir_dataWin = PICO_DEMO + "dataWin\\";
+			string outputFileWin_tmp = dataTexture.Replace( dir_data, dir_dataWin );
+			string outputFileWin = outputFileWin_tmp + ".dds";
+			return outputFileWin;
 		}
 
 		private static readonly string PICO_ROOT = Path.GetFullPath( Environment.GetEnvironmentVariable( "PICO_ROOT" ) + "\\" );

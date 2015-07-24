@@ -43,11 +43,16 @@ cbuffer cbFrameParams : register( b0 )
 	int mipLevel;
 	int sliceIndex;
 	float gamma;
+	float gammaExp;
+	int flipYExp;
 };
 
 Texture2D tex2D : register(t0);
 Texture2DArray tex2DArray : register(t0);
 //TextureCubeArray texCubeArray : register(t0);
+Texture2D tex2DExp : register( t1 );
+Texture2DArray tex2DArrayExp : register( t1 );
+
 SamplerState ssPoint : register(s0);
 
 PS_IN VS( VS_IN input )
@@ -88,11 +93,46 @@ float4 PS_Tex2D_Sample( PS_IN input ) : SV_Target
 	return float4( t );
 }
 
+float4 PS_Tex2D_Sample_Exp( PS_IN input ) : SV_Target
+{
+	float2 uvExp = flipYExp ? float2( input.uv0.x, 1 - input.uv0.y ) : input.uv0.xy;
+	float4 tExp = tex2DExp.SampleLevel( ssPoint, uvExp, mipLevel );
+	tExp.xyz = pow( tExp.xyz, gammaExp );
+
+	return float4( tExp );
+}
+
+float4 PS_Tex2D_Sample_Diff( PS_IN input ) : SV_Target
+{
+	float4 t = tex2D.SampleLevel( ssPoint, input.uv0.xy, mipLevel );
+	t.xyz = pow( t.xyz, gamma );
+
+	float2 uvExp = flipYExp ? float2( input.uv0.x, 1 - input.uv0.y ) : input.uv0.xy;
+	float4 tExp = tex2DExp.SampleLevel( ssPoint, uvExp, mipLevel );
+	tExp.xyz = pow( tExp.xyz, gammaExp );
+
+	float4 diff = t - tExp;
+
+	return float4( abs( diff.xyz ) * 1, 1 );
+}
+
 float4 PS_Tex2DArray_Sample( PS_IN input ) : SV_Target
 {
 	//input.uv0.x *= 0.25;
 	float4 t = tex2DArray.SampleLevel( ssPoint, float3( input.uv0.xy, sliceIndex ), mipLevel );
 	t.xyz = pow( t.xyz, gamma );
+	return float4( t );
+}
+
+float4 PS_Tex2DArray_Sample_Diff( PS_IN input ) : SV_Target
+{
+	//input.uv0.x *= 0.25;
+	float4 t = tex2DArray.SampleLevel( ssPoint, float3( input.uv0.xy, sliceIndex ), mipLevel );
+	t.xyz = pow( t.xyz, gamma );
+	
+	float4 tExp = tex2DArrayExp.SampleLevel( ssPoint, float3( input.uv0.xy, sliceIndex ), mipLevel );
+	tExp.xyz = pow( tExp.xyz, gamma );
+
 	return float4( t );
 }
 
@@ -156,11 +196,32 @@ technique10 Render
 		SetPixelShader( CompileShader( ps_4_0, PS_Tex2D_Sample() ) );
 	}
 
+	pass Tex2D_Sample_Exp
+	{
+		SetGeometryShader( 0 );
+		SetVertexShader( CompileShader( vs_4_0, VS() ) );
+		SetPixelShader( CompileShader( ps_4_0, PS_Tex2D_Sample_Exp() ) );
+	}
+
+	pass Tex2D_SampleDiff
+	{
+		SetGeometryShader( 0 );
+		SetVertexShader( CompileShader( vs_4_0, VS() ) );
+		SetPixelShader( CompileShader( ps_4_0, PS_Tex2D_Sample_Diff() ) );
+	}
+
 	pass Tex2DArray_Sample
 	{
 		SetGeometryShader( 0 );
 		SetVertexShader( CompileShader( vs_4_0, VS() ) );
 		SetPixelShader( CompileShader( ps_4_0, PS_Tex2DArray_Sample() ) );
+	}
+
+	pass Tex2DArray_Sample_Diff
+	{
+		SetGeometryShader( 0 );
+		SetVertexShader( CompileShader( vs_4_0, VS() ) );
+		SetPixelShader( CompileShader( ps_4_0, PS_Tex2DArray_Sample_Diff() ) );
 	}
 
 	pass TexCube_Sample

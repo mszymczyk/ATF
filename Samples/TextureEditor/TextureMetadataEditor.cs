@@ -58,7 +58,7 @@ namespace TextureEditor
 			m_controlHostService.RegisterControl(m_propertyGrid, m_controlInfo, null);
 
 			m_helpTextBox = new RichTextBox();
-			string aboutFilePath = "TextureEditor.Resources.About.rtf";
+			string aboutFilePath = "TextureEditor.Resources.Help.rtf";
 			Stream textFileStream = Assembly.GetExecutingAssembly().GetManifestResourceStream( aboutFilePath );
 			if ( textFileStream != null )
 				m_helpTextBox.LoadFile( textFileStream, RichTextBoxStreamType.RichText );
@@ -165,10 +165,10 @@ namespace TextureEditor
 
 			if ( rootNodes.Count > 0 )
 			{
-				DomNode mdatadata0 = rootNodes.Last();
+				DomNode lastNode = rootNodes.Last();
+				TextureMetadata md = lastNode.Cast<TextureMetadata>();
 
-				Uri resUri = mdatadata0.GetAttribute( Schema.resourceMetadataType.uriAttribute ) as Uri;
-				TextureProperties tp = m_previewWindow.showResource( resUri );
+				TextureProperties tp = m_previewWindow.showResource( md );
 				if ( tp != null )
 				{
 					m_propertyGrid.Bind( new[] { tp } );

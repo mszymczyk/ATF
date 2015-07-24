@@ -76,40 +76,11 @@ namespace TextureEditor
 			public int sliceIndex;
 			[FieldOffset( 16 )]
 			public float gamma;
+			[FieldOffset( 20 )]
+			public float gammaExp;
+			[FieldOffset( 24 )]
+			public int flipYExp;
 		};
-
-		class PsShaderWrap : IDisposable
-		{
-			public PsShaderWrap( Device device, string sourceCode, string entryName )
-			{
-				var pixelShaderByteCode = ShaderBytecode.Compile(sourceCode, entryName, "ps_4_0", ShaderFlags.None, EffectFlags.None);
-				m_ps = new PixelShader(device, pixelShaderByteCode);
-			}
-
-			~ PsShaderWrap()
-			{
-				Dispose(false);
-			}
-
-			public void Dispose( bool disposing )
-			{
-				if (!disposing)
-					return;
-
-				if (m_ps != null)
-				{
-					m_ps.Dispose();
-					m_ps = null;
-				}
-			}
-			public void Dispose()
-			{
-				Dispose(true);
-				GC.SuppressFinalize(this);
-			}
-
-			public PixelShader m_ps;
-		}
 
 		void SubmitFullscreenQuad()
 		{
@@ -143,6 +114,7 @@ namespace TextureEditor
 
 			m_context.Draw( 4, 0 );
 		}
+
 		void DrawGradient()
 		{
 			m_context.PixelShader.Set( GetPsShader( "PS_Gradient" ) );
@@ -165,41 +137,34 @@ namespace TextureEditor
 			m_context.Draw( 4, 0 );
 		}
 
+		void SetupConstantBuffer()
+		{
+			ConstantBufferData data = new ConstantBufferData();
+			int visibleMip = Math.Min( m_texProperties.VisibleMip, m_texProperties.MipLevels - 1 );
+			data.mipLevel = visibleMip;
+
+			int visibleSlice = Math.Min( m_texProperties.VisibleSlice, m_texProperties.ArraySize - 1 );
+			data.sliceIndex = visibleSlice;
+
+			if ( m_texProperties.DoGammaToLinearConversion )
+				data.gamma = 2.2f;
+			else
+				data.gamma = 1.0f;
+
+			data.gammaExp = 1.0f;
+			data.flipYExp = m_metadata.FlipY ? 1 : 0;
+
+			var constantBuffer = Buffer.Create( m_device, BindFlags.ConstantBuffer, ref data );
+			m_context.PixelShader.SetConstantBuffer( 0, constantBuffer );
+			constantBuffer.Dispose();
+		}
+
 		void DrawTexture()
 		{
-			int textureFileWidth = 1;
-			int textureFileHeight = 1;
-			bool cubeMap = false;
+			int textureFileWidth = m_tex.Width;
+			int textureFileHeight = m_tex.Height;
+			bool cubeMap = m_tex.IsCubeMap;
 
-			Texture2D tex2D = m_tex as Texture2D;
-			if ( tex2D != null )
-			{
-				Texture2DDescription td = tex2D.Description;
-
-				if ( (td.OptionFlags & ResourceOptionFlags.TextureCube) != 0 )
-				{
-					cubeMap = true;
-				}
-
-				if ( cubeMap )
-				{
-					textureFileWidth = td.Width * 4;
-					textureFileHeight = td.Height * 3;
-					cubeMap = true;
-				}
-				else
-				{
-					textureFileWidth = td.Width;
-					textureFileHeight = td.Height;
-				}
-			}
-			else
-			{
-				throw new Exception( "Unsupported resource dimension" );
-			}
-
-			//float texW = 2.0f;
-			//float texH = 2.0f;
 			float windowAspect = (float)ClientSize.Width / (float)ClientSize.Height;
 
 			if ( fitSizeRequest )
@@ -233,7 +198,16 @@ namespace TextureEditor
 			}
 
 			m_context.PixelShader.SetSampler( 0, m_ssPoint );
-			m_context.PixelShader.SetShaderResource( 0, m_texSRV );
+
+			if ( DisplayMode == TextureDisplayMode.Source )
+				m_context.PixelShader.SetShaderResource( 0, m_tex.m_texSrv );
+			else if ( DisplayMode == TextureDisplayMode.Exported )
+				m_context.PixelShader.SetShaderResource( 1, m_texExp.m_texSrv );
+			else if ( DisplayMode == TextureDisplayMode.Difference )
+			{
+				m_context.PixelShader.SetShaderResource( 0, m_tex.m_texSrv );
+				m_context.PixelShader.SetShaderResource( 1, m_texExp.m_texSrv );
+			}
 
 			float texWh = m_texW * 0.5f * m_texScale;
 			float texHh = m_texH * 0.5f * m_texScale;
@@ -269,19 +243,7 @@ namespace TextureEditor
 				m_psDictionary.TryGetValue( "PS_TexCube_Sample", out ps );			
 				m_context.PixelShader.Set( ps.m_ps );
 
-				ConstantBufferData data = new ConstantBufferData();
-				int visibleMip = Math.Min( m_texProperties.VisibleMip, m_texProperties.MipLevels - 1 );
-				data.mipLevel = visibleMip;
-				int visibleSlice = Math.Min( m_texProperties.VisibleSlice, m_texProperties.ArraySize - 1 );
-				data.sliceIndex = visibleSlice;
-				if ( m_texProperties.DoGammaToLinearConversion )
-					data.gamma = 2.2f;
-				else
-					data.gamma = 1.0f;
-
-				var constantBuffer = Buffer.Create( m_device, BindFlags.ConstantBuffer, ref data );
-				m_context.PixelShader.SetConstantBuffer( 0, constantBuffer );
-				constantBuffer.Dispose();
+				SetupConstantBuffer();
 
 				float tw = ( texWh * 2 ) / 4;
 				float th = ( texHh * 2 ) / 3;
@@ -362,31 +324,26 @@ namespace TextureEditor
 				m_context.PixelShader.Set( GetPsShader( "PS_Clear" ) );
 				m_context.Draw( 4, 0 );
 
-
-				ConstantBufferData data = new ConstantBufferData();
-				int visibleMip = Math.Min( m_texProperties.VisibleMip, m_texProperties.MipLevels - 1 );
-				data.mipLevel = visibleMip;
-				int visibleSlice = Math.Min( m_texProperties.VisibleSlice, m_texProperties.ArraySize - 1 );
-				data.sliceIndex = visibleSlice;
-				if ( m_texProperties.DoGammaToLinearConversion )
-					data.gamma = 2.2f;
-				else
-					data.gamma = 1.0f;
-
-				var constantBuffer = Buffer.Create( m_device, BindFlags.ConstantBuffer, ref data );
-				m_context.PixelShader.SetConstantBuffer( 0, constantBuffer );
-				constantBuffer.Dispose();
+				SetupConstantBuffer();
 
 				PsShaderWrap ps = null;
 
-				if ( m_texSRV.Description.Dimension == ShaderResourceViewDimension.Texture2D )
+				if ( m_tex.m_texSrv.Description.Dimension == ShaderResourceViewDimension.Texture2D )
 				{
-					m_psDictionary.TryGetValue( "PS_Tex2D_Sample", out ps );
+					if ( DisplayMode == TextureDisplayMode.Source )
+						m_psDictionary.TryGetValue( "PS_Tex2D_Sample", out ps );
+					else if ( DisplayMode == TextureDisplayMode.Exported )
+						m_psDictionary.TryGetValue( "PS_Tex2D_Sample_Exp", out ps );
+					else
+						m_psDictionary.TryGetValue( "PS_Tex2D_Sample_Diff", out ps );
 					m_context.PixelShader.Set( ps.m_ps );
 				}
-				else if ( m_texSRV.Description.Dimension == ShaderResourceViewDimension.Texture2DArray )
+				else if ( m_tex.m_texSrv.Description.Dimension == ShaderResourceViewDimension.Texture2DArray )
 				{
-					m_psDictionary.TryGetValue( "PS_Tex2DArray_Sample", out ps );
+					if ( DisplayMode == TextureDisplayMode.Source || DisplayMode == TextureDisplayMode.Exported )
+						m_psDictionary.TryGetValue( "PS_Tex2DArray_Sample", out ps );
+					else
+						m_psDictionary.TryGetValue( "PS_Tex2DArray_Sample_Diff", out ps );
 				}
 
 				if ( ps == null )
@@ -539,34 +496,6 @@ namespace TextureEditor
             base.OnMouseMove(e);
         }
 
-		///// <summary>
-		///// Begins painting</summary>
-		///// <exception cref="InvalidOperationException">Can't make this panel's GL context to be current</exception>
-		//protected virtual void BeginPaint()
-		//{
-		//	StartSharpDxIfNecessary();
-		//	//if (!Wgl.wglMakeCurrent(m_hdc, m_hglrc))
-		//	//{
-		//	//	Util3D.ReportErrors();
-		//	//	throw new InvalidOperationException("Can't make this panel's GL context to be current");
-		//	//}
-		//}
-
-		///// <summary>
-		///// Whether the OpenGl buffers should be swapped by the EndPaint method. Is always set to true when
-		///// EndPaint finishes. Default is true.</summary>
-		//protected bool SwapBuffers = true;
-
-		///// <summary>
-		///// Ends painting</summary>
-		//protected virtual void EndPaint()
-		//{
-		//	//if (SwapBuffers)
-		//	//	Gdi.SwapBuffers(m_hdc);
-		//	//SwapBuffers = true;
-		//	m_swapChain.Present( 0, PresentFlags.None );
-		//}
-
 		private void MyButton1_SizeChanged(object sender, System.EventArgs e)
 		{
 			m_renderView.Dispose();
@@ -581,9 +510,6 @@ namespace TextureEditor
 			m_swapChain.ResizeBuffers( 1, ClientSize.Width, ClientSize.Height, backBufferFormat, SwapChainFlags.None );
 
 			ResizeBackBuffer();
-
-			//m_context.Rasterizer.SetViewport( new Viewport( 0, 0, ClientSize.Width, ClientSize.Height, 0.0f, 1.0f ) );
-			//m_context.OutputMerger.SetTargets( m_renderView );
 
             Invalidate();
 
@@ -627,8 +553,11 @@ namespace TextureEditor
 			AddPsShader( "PS_Clear" );
 			AddPsShader( "PS_Clear2" );
 			AddPsShader( "PS_Tex2D_Sample" );
-			AddPsShader("PS_Tex2DArray_Sample");
-			AddPsShader("PS_Tex2D_Load");
+			AddPsShader( "PS_Tex2D_Sample_Exp" );
+			AddPsShader( "PS_Tex2D_Sample_Diff" );
+			AddPsShader( "PS_Tex2DArray_Sample" );
+			AddPsShader( "PS_Tex2DArray_Sample_Diff" );
+			AddPsShader( "PS_Tex2D_Load" );
 			AddPsShader( "PS_TexCube_Sample" );
 			AddPsShader( "PS_Present" );
 			AddPsShader( "PS_Gradient" );
@@ -638,16 +567,6 @@ namespace TextureEditor
         /// Client entry to unload custom OpenGL resources</summary>
         protected virtual void Shutdown() 
         {
-			//if (m_psColor != null)
-			//{
-			//	m_psColor.Dispose();
-			//	m_psColor = null;
-			//}
-			//if (m_psTex2DLoad != null)
-			//{
-			//	m_psTex2DLoad.Dispose();
-			//	m_psTex2DLoad = null;
-			//} 
 			foreach( PsShaderWrap ps in m_psDictionary.Values )
 			{
 				ps.Dispose();
@@ -666,16 +585,8 @@ namespace TextureEditor
                 m_ssPoint = null;
             }
 
-            if ( m_tex != null )
-            {
-                m_tex.Dispose();
-                m_tex = null;
-            }
-            if ( m_texSRV != null )
-            {
-                m_texSRV.Dispose();
-                m_texSRV = null;
-            }
+			TextureWrap.SafeDispose( ref m_tex );
+			TextureWrap.SafeDispose( ref m_texExp );
         }
 
 		void AddPsShader( string entryName )
@@ -786,104 +697,36 @@ namespace TextureEditor
             m_isStarted = false;
         }
 
-		public SharpDX.Direct3D11.ImageInformation? readImageInformation( Uri resUri )
-		{
-			SharpDX.Direct3D11.ImageInformation? ii = SharpDX.Direct3D11.ImageInformation.FromFile(resUri.LocalPath);
-			return ii;
-		}
-
-        public TextureProperties showResource( Uri resUri )
+		public TextureProperties showResource( TextureMetadata metadata )
         {
+			Uri resUri = metadata.Uri;
             if (resUri == null)
                 return null;
 
-            if ( m_tex != null )
-            {
-                m_tex.Dispose();
-                m_tex = null;
-                m_texSRV.Dispose();
-                m_texSRV = null;
-            }
+			TextureWrap.SafeDispose( ref m_tex );
+			TextureWrap.SafeDispose( ref m_texExp );
 
 			TextureProperties tp = null;
 
-			SharpDX.Direct3D11.ImageInformation? ii = SharpDX.Direct3D11.ImageInformation.FromFile( resUri.LocalPath );
-            if (ii != null)
-            {
-                ImageLoadInformation ili = ImageLoadInformation.Default;
-                //ImageLoadInformation ili = new ImageLoadInformation();
-                ili.MipLevels = ii.Value.MipLevels;
-                ili.PSrcInfo = IntPtr.Zero;
-				//ili.Format = Format.R8G8B8A8_UNorm_SRgb;
+			m_tex = TextureWrap.LoadTexture( resUri.LocalPath, m_device );
+			string resFilenameDemoWin = TextureExporter.GetDataWinTexture( resUri.LocalPath );
+			m_texExp = TextureWrap.LoadTexture( resFilenameDemoWin, m_device );
 
-				SharpDX.Direct3D11.Resource res = SharpDX.Direct3D11.Texture2D.FromFile( m_device, resUri.LocalPath, ili );
-                //SharpDX.Direct3D11.Resource res = Texture2D.FromFile<Texture2D>(m_device, resUri.AbsolutePath, new ImageLoadInformation()
-                //{
-                //    Width = ImageLoadInformation.FileDefaultValue,
-                //    Height = ImageLoadInformation.FileDefaultValue,
-                //    Depth = ImageLoadInformation.FileDefaultValue,
-                //    FirstMipLevel = ImageLoadInformation.FileDefaultValue,
-                //    MipLevels = 1,
-                //    Usage = ResourceUsage.Default,
-                //    BindFlags = BindFlags.None,
-                //    CpuAccessFlags = CpuAccessFlags.None,
-                //    OptionFlags = ResourceOptionFlags.None,
-                //    Format = Format.R8G8B8A8_UNorm,
-                //    Filter = FilterFlags.None,
-                //    MipFilter = FilterFlags.None,
-                //    PSrcInfo = IntPtr.Zero
-                //});
+			if ( m_tex != null )
+			{
+				tp = new TextureProperties( this, m_tex, m_texExp );
+			}
 
-                if (res != null)
-                {
-                    m_tex = res;
-
-					if ( (ii.Value.OptionFlags & ResourceOptionFlags.TextureCube) != 0 )
-					{
-						Texture2D tex = m_tex as Texture2D;
-						Texture2DDescription texDesc = tex.Description;
-
-						ShaderResourceViewDescription d = new ShaderResourceViewDescription();
-						d.Dimension = ShaderResourceViewDimension.Texture2DArray;
-						d.Format = texDesc.Format;
-						d.Texture2DArray.ArraySize = texDesc.ArraySize;
-						d.Texture2DArray.MipLevels = texDesc.MipLevels;
-						d.Texture2DArray.MostDetailedMip = 0;
-						m_texSRV = new ShaderResourceView( m_device, m_tex, d );
-					}
-					else
-					{
-						m_texSRV = new ShaderResourceView( m_device, res );
-
-						//Texture2D tex = m_tex as Texture2D;
-						//Texture2DDescription texDesc = tex.Description;
-
-						//ShaderResourceViewDescription d = new ShaderResourceViewDescription();
-						//d.Dimension = ShaderResourceViewDimension.Texture2DArray;
-						//d.Format = texDesc.Format;
-						//d.Texture2DArray.ArraySize = texDesc.ArraySize;
-						//d.Texture2DArray.MipLevels = texDesc.MipLevels;
-						//d.Texture2DArray.MostDetailedMip = 0;
-						//m_texSRV = new ShaderResourceView( m_device, m_tex, d );
-					}
-
-					tp = new TextureProperties(resUri, m_tex, this);
-					//m_textureSelectionContext.Selection = new[] { tp };
-                }
-                else
-                {
-					//m_textureSelectionContext.Clear();
-                }
-            }
-            else
-            {
-				//m_textureSelectionContext.Clear();
-            }
+			if ( m_texExp == null )
+			{
+				DisplayMode = TextureDisplayMode.Source;
+			}
 
 			fitInWindowRequest = true;
             Invalidate();
 
 			m_texProperties = tp;
+			m_metadata = metadata;
 			return tp;
         }
 
@@ -907,6 +750,15 @@ namespace TextureEditor
 			get { return m_texProperties; }
 		}
 
+		public enum TextureDisplayMode
+		{
+			Source,
+			Exported,
+			Difference
+		};
+
+		public TextureDisplayMode DisplayMode { get; set; }
+		
 		TextureSelectionContext m_textureSelectionContext;
 
         //private IntPtr m_hdc;
@@ -923,14 +775,18 @@ namespace TextureEditor
 
 		private string m_shadersFxText;
         private VertexShader m_vsPassThrough;
-		//private PixelShader m_psColor;
-		//private PixelShader m_psTex2DLoad;
 		private Dictionary<string, PsShaderWrap> m_psDictionary = new Dictionary<string, PsShaderWrap>();
 		private SamplerState m_ssPoint;
 
-        private SharpDX.Direct3D11.Resource m_tex;
-        private ShaderResourceView m_texSRV;
+		// original texture
+		//
+		private TextureWrap m_tex;
+		// texture exported to dataWin
+		//
+		private TextureWrap m_texExp;
+
 		private TextureProperties m_texProperties;
+		private TextureMetadata m_metadata;
 
         private Vector4 m_texPosition = new Vector4(0, 0, 0, 0);
         private float m_texScale = 1.0f;

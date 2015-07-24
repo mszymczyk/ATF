@@ -29,72 +29,23 @@ namespace TextureEditor
 		/// <param name="type">Item data type</param>
 		/// <param name="value">Item value</param>
 		//public TextureProperties( string name, DataType type, object value )
-		public TextureProperties( Uri file, SharpDX.Direct3D11.Resource res, TexturePreviewWindowSharpDX previewWindow )
+		public TextureProperties( TexturePreviewWindowSharpDX previewWindow, TextureWrap tex, TextureWrap texExp )
 		{
-			FileUri = file;
-			m_res = res;
 			m_previewWindow = previewWindow;
-			//Name = name;
-			//Type = type;
-			//Value = value;
 
-			SharpDX.DXGI.Format tmpFormat = SharpDX.DXGI.Format.Unknown;
+			SourceTexture = tex;
+			ExportedTexture = texExp;
+			FileUri = new Uri( tex.Filename );
 
-			ResourceDimension dim = m_res.Dimension;
-			if (dim == ResourceDimension.Texture1D)
-			{
-				Texture1D tex = m_res as Texture1D;
-				Texture1DDescription desc = tex.Description;
-				Format = desc.Format.ToString();
-				Width = desc.Width;
-				Height = 0;
-				Depth = 0;
-				MipLevels = desc.MipLevels;
-				ArraySize = desc.ArraySize;
-				CubeMap = (desc.OptionFlags & ResourceOptionFlags.TextureCube) > 0;
-				tmpFormat = desc.Format;
-			}
-			else if ( dim == ResourceDimension.Texture2D )
-			{
-				Texture2D tex = m_res as Texture2D;
-				Texture2DDescription desc = tex.Description;
-				Format = desc.Format.ToString();
-				Width = desc.Width;
-				Height = desc.Height;
-				Depth = 0;
-				MipLevels = desc.MipLevels;
-				ArraySize = desc.ArraySize;
-				CubeMap = (desc.OptionFlags & ResourceOptionFlags.TextureCube) > 0;
-				if ( CubeMap )
-					ArraySize /= 6;
-				tmpFormat = desc.Format;
-			}
-			else if (dim == ResourceDimension.Texture3D)
-			{
-				Texture3D tex = m_res as Texture3D;
-				Texture3DDescription desc = tex.Description;
-				Format = desc.Format.ToString();
-				Width = desc.Width;
-				Height = desc.Height;
-				Depth = desc.Depth;
-				MipLevels = desc.MipLevels;
-				ArraySize = 0;
-				CubeMap = (desc.OptionFlags & ResourceOptionFlags.TextureCube) > 0;
-				tmpFormat = desc.Format;
-			}
-			else
-			{
-				throw new Exception( "Unsupported resource type type" );
-			}
+			Format = tex.Format.ToString();
+			Width = tex.Width;
+			Height = tex.Height;
+			Depth = tex.Depth;
+			MipLevels = tex.MipLevels;
+			ArraySize = tex.ArraySize;
+			CubeMap = tex.IsCubeMap;
 
-			if ( tmpFormat == SharpDX.DXGI.Format.B8G8R8A8_UNorm_SRgb
-				||	tmpFormat == SharpDX.DXGI.Format.B8G8R8X8_UNorm_SRgb
-				||	tmpFormat == SharpDX.DXGI.Format.BC1_UNorm_SRgb
-				||	tmpFormat == SharpDX.DXGI.Format.BC2_UNorm_SRgb
-				||	tmpFormat == SharpDX.DXGI.Format.BC3_UNorm_SRgb
-				||	tmpFormat == SharpDX.DXGI.Format.BC7_UNorm_SRgb
-				||	tmpFormat == SharpDX.DXGI.Format.R8G8B8A8_UNorm_SRgb
-				)
+			if ( tex.IsSrgbFormat )
 			{
 				DoGammaToLinearConversion = false;
 				m_isSrgbFormat = true;
@@ -103,28 +54,15 @@ namespace TextureEditor
 			{
 				DoGammaToLinearConversion = true;
 			}
-
 		}
+
+		public TextureWrap SourceTexture { get; set; }
+		public TextureWrap ExportedTexture { get; set; }
 
 		/// <summary>
 		/// Uri of a texture</summary>
 		[PropertyEditingAttribute]
 		public Uri FileUri { get; set; }
-
-		///// <summary>
-		///// Gets item name</summary>
-		//[PropertyEditingAttribute]
-		//public string Name { get; set; }
-
-		///// <summary>
-		///// Gets item data type</summary>
-		//[PropertyEditingAttribute]
-		//public DataType Type { get; set; }
-
-		///// <summary>
-		///// Gets item value</summary>
-		//[PropertyEditingAttribute]
-		//public object Value { get; set; }
 
 		/// <summary>
 		/// Format of texture</summary>
@@ -518,7 +456,6 @@ namespace TextureEditor
 		/// Event that is raised after an item changed</summary>
 		public event EventHandler ItemChanged;
 
-		private SharpDX.Direct3D11.Resource m_res;
 		private TexturePreviewWindowSharpDX m_previewWindow;
 		private bool m_isSrgbFormat;
 	}
