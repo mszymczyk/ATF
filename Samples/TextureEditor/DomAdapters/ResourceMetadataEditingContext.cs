@@ -10,7 +10,7 @@ using Sce.Atf.Adaptation;
 namespace TextureEditor
 {
     /// <summary>
-    /// Used for updating PropertyEditor on Undo/Redo</summary>
+    /// Context for manipulating resource metadata. Don't want undo/redo so custom implementation instead of inheriting from EditingContext</summary>
 	//public class ResourceMetadataEditingContext : EditingContext, IObservableContext
 	public class ResourceMetadataEditingContext : DomNodeAdapter, IObservableContext, ISelectionContext
 	{

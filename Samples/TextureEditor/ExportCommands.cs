@@ -19,7 +19,8 @@ using System.Collections.Generic;
 namespace TextureEditor
 {   
     /// <summary>
-    /// A MEF component for providing user commands related to the RenderView component</summary>
+	/// Utility for exporting textures based on metadata
+    /// </summary>
     public class TextureExporter
     {
 		public TextureExporter( MainForm mainForm, SchemaLoader schemaLoader )
@@ -30,9 +31,6 @@ namespace TextureEditor
 
 		public void ExportOne( Uri fileUri )
 		{
-			//List<Uri> fileList = new List<Uri>();
-			//fileList.Add( fileUri );
-			//Export( fileList );
 			ProgressOutputWindow powin = new ProgressOutputWindow();
 			powin.VisibleChanged += ( sender, msg ) =>
 			{
@@ -71,45 +69,18 @@ namespace TextureEditor
 				m_bgThread.Wait();
 		}
 
-		void Export( List<Uri> fileList )
-		{
-			////ProgressOutputWindow powin = new ProgressOutputWindow();
-			//m_bgThread = new BackgroundThread( m_mainForm );
-			////powin.ShowDialog( owner );
-
-			//int nDone = 0;
-			//foreach( Uri uri in fileList )
-			//{
-			//	float progress = (float)nDone / (float)fileList.Count;
-			//	m_bgThread.SetProgress( progress );
-			//	ExportUri( uri );
-			//	nDone += 1;
-			//}
-
-			//m_bgThread.SetProgress( 1.0f );
-			////m_bgThread.Stop();
-			//m_bgThread.Done();
-			//m_bgThread.Wait();
-		}
-
 		private class BackgroundThread
 		{
-			//private IWin32Window m_owner;
-			//private MainForm m_mainForm;
 			private ProgressOutputWindow m_progressWindow;
 			private SchemaLoader m_schemaLoader;
 			private Uri m_fileToExport;
 
 			private Thread m_thread;
 			private bool m_alreadyStopped;
-			//private int m_nWarnings;
 			private int m_nErrors;
 
-			//public BackgroundThread( MainForm mainForm )
 			public BackgroundThread( ProgressOutputWindow progressWindow, SchemaLoader schemaLoader, Uri fileToExport )
 			{
-				//m_owner = owner;
-				//m_mainForm = mainForm;
 				m_progressWindow = progressWindow;
 				m_schemaLoader = schemaLoader;
 				m_fileToExport = fileToExport;
@@ -125,8 +96,6 @@ namespace TextureEditor
 			{
 				lock ( this )
 				{
-					//if ( m_progressWindow != null && m_progressWindow.IsHandleCreated )
-					//	m_progressWindow.BeginInvoke( new MethodInvoker( m_progressWindow.Close ) );
 					m_alreadyStopped = true;
 				}
 			}
@@ -140,37 +109,6 @@ namespace TextureEditor
 			{
 				try
 				{
-					//lock ( this )
-					//{
-					//	if ( !m_alreadyStopped )
-					//	{
-					//		m_progressWindow = new ProgressOutputWindow();
-					//	}
-					//}
-
-					//if ( !m_alreadyStopped )
-					//{
-					//	//m_progressWindow.ShowDialog( m_owner );
-					//	m_progressWindow.Visible = true;
-					//	Application.Run( m_progressWindow );
-					//	//m_progressWindow.Show();
-					//	//m_mainForm.BeginInvoke( new MethodInvoker( () => m_progressWindow.ShowDialog(m_mainForm) ) );
-					//}
-
-					//if ( m_fileToExport != null )
-					//{
-
-					//}
-
-					//AddInfo( "Hej!\n" );
-					//SetProgress( 0.1f );
-					//System.Threading.Thread.Sleep( 1000 );
-					//SetProgress( 0.5f );
-					//AddError( "Ho!\n" );
-					//System.Threading.Thread.Sleep( 1000 );
-					//SetProgress( 1.0f );
-					//Done();
-
 					List<Uri> fileList = new List<Uri>();
 
 					if ( m_fileToExport != null )
@@ -188,8 +126,6 @@ namespace TextureEditor
 					}
 
 					AddInfo( "Found " + fileList.Count + " files\n\n" );
-
-					//System.Threading.Thread.Sleep( 5000 );
 
 					int nDone = 0;
 					foreach ( Uri uri in fileList )
@@ -421,13 +357,6 @@ namespace TextureEditor
 
 							Format format = Format.Unknown;
 
-							//if ( tm.ExtendedFormat != SharpDX.DXGI.Format.Unknown )
-							//	//cmd += " -f " + tm.ExtendedFormat.ToString();
-							//	format = tm.ExtendedFormat;
-							//else if ( tm.Format != SharpDX.DXGI.Format.Unknown )
-								//cmd += " -f " + tm.Format.ToString();
-								format = tm.Format;
-
 							string preset = tm.Preset;
 							if ( preset == TextureMetadata.TEXTURE_PRESET_CUSTOM_FORMAT )
 								format = tm.Format;
@@ -436,38 +365,6 @@ namespace TextureEditor
 							{
 
 							}
-							//else if ( preset == TextureMetadata.TEXTURE_PRESET_COLOR_BC1_SRGB )
-							//	format = SharpDX.DXGI.Format.BC1_UNorm_SRgb;
-							//else if ( preset == TextureMetadata.TEXTURE_PRESET_COLOR_BC3_SRGB )
-							//	format = SharpDX.DXGI.Format.BC3_UNorm_SRgb;
-							//else if ( preset == TextureMetadata.TEXTURE_PRESET_COLOR_BC7_SRGB )
-							//	format = SharpDX.DXGI.Format.BC7_UNorm_SRgb;
-							//else if ( preset == TextureMetadata.TEXTURE_PRESET_COLOR_SRGB )
-							//	format = SharpDX.DXGI.Format.R8G8B8A8_UNorm_SRgb;
-							//else if ( preset == TextureMetadata.TEXTURE_PRESET_COLOR_BC6H_HDR_UNORM )
-							//	format = SharpDX.DXGI.Format.BC6H_Uf16;
-							//else if ( preset == TextureMetadata.TEXTURE_PRESET_COLOR_HDR_UNORM )
-							//	format = SharpDX.DXGI.Format.R16G16B16A16_Float;
-
-							//else if ( preset == TextureMetadata.TEXTURE_PRESET_NORMALMAP_BC5 )
-							//	format = SharpDX.DXGI.Format.BC5_SNorm;
-							//else if ( preset == TextureMetadata.TEXTURE_PRESET_NORMALMAP_RG8 )
-							//	format = SharpDX.DXGI.Format.R8G8_SNorm;
-
-							//else if ( preset == TextureMetadata.TEXTURE_PRESET_GRAYSCALE_BC4 )
-							//	format = SharpDX.DXGI.Format.BC4_UNorm;
-							//else if ( preset == TextureMetadata.TEXTURE_PRESET_GRAYSCALE_R8 )
-							//	format = SharpDX.DXGI.Format.R8_UNorm;
-
-							//else if ( preset == TextureMetadata.TEXTURE_PRESET_SPECULARMAP_BC1_SRGB )
-							//	format = SharpDX.DXGI.Format.BC1_UNorm_SRgb;
-							//else if ( preset == TextureMetadata.TEXTURE_PRESET_SPECULARMAP_SRGB )
-							//	format = SharpDX.DXGI.Format.R8G8B8A8_UNorm_SRgb;
-
-							//else if ( preset == TextureMetadata.TEXTURE_PRESET_SPECULARMAP_BC4 )
-							//	format = SharpDX.DXGI.Format.BC4_UNorm;
-							//else if ( preset == TextureMetadata.TEXTURE_PRESET_SPECULARMAP_R8 )
-							//	format = SharpDX.DXGI.Format.R8_UNorm;
 
 							else
 							{
@@ -566,19 +463,6 @@ namespace TextureEditor
 				}
 				else
 				{
-					//throw new Exception( "File not found" );
-					//m_errorDialogService.Write( OutputMessageType.Error, "Please configure texture's metadata first!" );
-					//ErrorDialog errDialog = new ErrorDialog();
-					//errDialog.StartPosition = FormStartPosition.CenterScreen;
-					//errDialog.Text = "Error!".Localize();
-
-					//string message = "Please configure texture's metadata first!";
-					//errDialog.MessageId = message;
-					//errDialog.Message = message;
-					//errDialog.Visible = false; //Just in case a second error message comes through, because...
-					//errDialog.Show( m_owner ); //if Visible is true, Show() crashes.
-
-					//MessageBox.Show( m_owner, "Please configure texture's metadata first!", "Error", MessageBoxButtons.OK );
 					AddError( "Couldn't open file: " + metadataFilePath + "\n" );
 					m_nErrors += 1;
 					return 1;
@@ -669,8 +553,8 @@ namespace TextureEditor
 		private static readonly string PICO_ROOT = Path.GetFullPath( Environment.GetEnvironmentVariable( "PICO_ROOT" ) + "\\" );
 		private static readonly string PICO_DEMO = Path.GetFullPath( Environment.GetEnvironmentVariable( "PICO_DEMO" ) + "\\" );
 		private static readonly string texconv_exe = PICO_ROOT + "bin64\\texconv.exe";
+		private static readonly string nvcompress_exe = PICO_ROOT + "bin64\\nvcompress.exe";
  
-		//private IWin32Window m_owner;
 		private MainForm m_mainForm;
 		private SchemaLoader m_schemaLoader;
 		private BackgroundThread m_bgThread;

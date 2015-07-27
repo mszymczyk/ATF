@@ -19,11 +19,9 @@ namespace TextureEditor
     /// <summary>
     /// Component to edit resource meta-data.
     /// </summary>
-	//[Export( typeof( ResourceMetadataEditor ) )]
 	[Export( typeof( IInitializable ) )]    
     [PartCreationPolicy(CreationPolicy.Shared)]
 	public class TextureMetadataEditor : IInitializable
-	//public class ResourceMetadataEditor : EditingContext, IInitializable
     {
         public TextureMetadataEditor()
         {
@@ -189,9 +187,6 @@ namespace TextureEditor
 		[Import( AllowDefault = true )]
 		private ResourceLister m_resourceLister = null;
 
-		//[Import( AllowDefault = true )]
-		//private IResourceMetadataService m_resourceMetadataService = null;
-
         [Import(AllowDefault = false)]
         private ControlHostService m_controlHostService = null;
 
@@ -207,17 +202,12 @@ namespace TextureEditor
 		[Import(AllowDefault = false)]
 		private SchemaLoader m_schemaLoader = null;
 
-		//[Import( AllowDefault = false )]
-		//private IWin32Window m_owner;
-
 		[Import( AllowDefault = false )]
 		private MainForm m_mainForm = null;
 
 		private ControlInfo m_controlInfo;
 		private PropertyGrid m_propertyGrid;
 		private RichTextBox m_helpTextBox;
-		//private SelectionPropertyEditingContext m_defaultContext = new SelectionPropertyEditingContext();
-		//private ResourceMetadataEditingContext m_editingContext;
 
 		DomNode m_editorRootNode;
 

@@ -12,7 +12,10 @@ using Sce.Atf.Controls.PropertyEditing;
 namespace TextureEditor
 {
     /// <summary>
-    /// Node adapter to get PropertyDescriptors from NodeType and other metadata</summary>
+    /// Node adapter to get PropertyDescriptors from from metadata
+	/// Based on Atf's CustomTypeDescriptorNodeAdapter.
+	/// Implements disabling inputs based on selected properties
+	/// </summary>
 	public class TexturePropertyDescriptorNodeAdapter : DomNodeAdapter, ICustomTypeDescriptor
 	//public class TexturePropertyDescriptorNodeAdapter : CustomTypeDescriptorNodeAdapter
 	{
@@ -42,29 +45,6 @@ namespace TextureEditor
 				m_isReadOnlyPredicate = isReadOnlyPredicate;
 				//m_isReadOnly2 = isReadOnly;
 			}
-
-			///// <summary>
-			///// When overridden in a derived class, gets the result value of the property on a component</summary>
-			///// <param name="component">The component with the property for which to retrieve the value</param>
-			///// <returns>The value of a property for a given component.</returns>
-			//public override object GetValue( object component )
-			//{
-			//	DomNode node = GetNode( component );
-			//	TextureMetadata tm = component.As<TextureMetadata>();
-			//	if ( tm != null )
-			//	{
-			//		if ( tm.CopySourceFile )
-			//			m_isReadOnly2 = true;
-			//		else
-			//			m_isReadOnly2 = false;
-			//	}
-			//	else
-			//	{
-			//		m_isReadOnly2 = false;
-			//	}
-
-			//	return base.GetValue( component );
-			//}
 
 			/// <summary>
 			/// When overridden in a derived class, gets a value indicating whether this property is read-only</summary>
@@ -203,11 +183,6 @@ namespace TextureEditor
 						 false,
 						 new BoolEditor()
 						 , DomNode
-						 //, (DomNode domNode, AttributeInfo attributeInfo) => 
-						 //   {
-						 //	   TextureMetadata tp = domNode.Cast<TextureMetadata>();
-						 //	   return tp.CopySourceFile;
-						 //   }
 						 , CopySourceFileIsReadOnlyPredicate
 						 )
 			);
@@ -232,7 +207,6 @@ namespace TextureEditor
 						 group_Metadata,
 						 "Sets exported image's width".Localize(),
 						 false,
-				//new BoundedIntEditor( -1, 16 * 1024 * 1024 )
 						 new NumericEditor( typeof( int ) )
 						 , DomNode
 						 , CopySourceFileIsReadOnlyPredicate
@@ -259,43 +233,6 @@ namespace TextureEditor
 				// https://msdn.microsoft.com/pl-pl/library/hh308955.aspx
 				// https://msdn.microsoft.com/en-us/library/windows/desktop/bb694531(v=vs.85).aspx
 				//
-				//presets.Add( SharpDX.DXGI.Format.Unknown.ToString() );
-
-				//presets.Add( SharpDX.DXGI.Format.BC1_UNorm_SRgb.ToString() );
-				//presets.Add( SharpDX.DXGI.Format.BC2_UNorm_SRgb.ToString() );
-				//presets.Add( SharpDX.DXGI.Format.BC3_UNorm_SRgb.ToString() );
-				//presets.Add( SharpDX.DXGI.Format.BC4_UNorm.ToString() );
-				//presets.Add( SharpDX.DXGI.Format.BC5_SNorm.ToString() );
-				//presets.Add( SharpDX.DXGI.Format.BC7_UNorm_SRgb.ToString() );
-
-				//presets.Add( SharpDX.DXGI.Format.R8G8B8A8_UNorm.ToString() );
-				//presets.Add( SharpDX.DXGI.Format.R8G8B8A8_UNorm_SRgb.ToString() );
-				//presets.Add( SharpDX.DXGI.Format.R8_UNorm.ToString() );
-
-				//presets.Add( SharpDX.DXGI.Format.BC1_UNorm.ToString() );
-				//presets.Add( SharpDX.DXGI.Format.BC2_UNorm.ToString() );
-				//presets.Add( SharpDX.DXGI.Format.BC3_UNorm.ToString() );
-				//presets.Add( SharpDX.DXGI.Format.BC4_SNorm.ToString() );
-				//presets.Add( SharpDX.DXGI.Format.BC5_UNorm.ToString() );
-				//presets.Add( SharpDX.DXGI.Format.BC7_UNorm.ToString() );
-
-				//presets.Add( TextureMetadata.TEXTURE_PRESET_UNKNOWN );
-				//presets.Add( TextureMetadata.TEXTURE_PRESET_COLOR_BC1_SRGB );
-				//presets.Add( TextureMetadata.TEXTURE_PRESET_COLOR_BC3_SRGB );
-				//presets.Add( TextureMetadata.TEXTURE_PRESET_COLOR_BC7_SRGB );
-				//presets.Add( TextureMetadata.TEXTURE_PRESET_COLOR_SRGB );
-				//presets.Add( TextureMetadata.TEXTURE_PRESET_COLOR_BC6H_HDR_UNORM );
-				//presets.Add( TextureMetadata.TEXTURE_PRESET_COLOR_HDR_UNORM );
-				//presets.Add( TextureMetadata.TEXTURE_PRESET_NORMALMAP_BC5 );
-				//presets.Add( TextureMetadata.TEXTURE_PRESET_NORMALMAP_RG8 );
-				//presets.Add( TextureMetadata.TEXTURE_PRESET_GRAYSCALE_BC4 );
-				//presets.Add( TextureMetadata.TEXTURE_PRESET_GRAYSCALE_R8 );
-				//presets.Add( TextureMetadata.TEXTURE_PRESET_SPECULARMAP_BC1_SRGB );
-				//presets.Add( TextureMetadata.TEXTURE_PRESET_SPECULARMAP_SRGB );
-				//presets.Add( TextureMetadata.TEXTURE_PRESET_SPECULARMAP_BC4 );
-				//presets.Add( TextureMetadata.TEXTURE_PRESET_SPECULARMAP_R8);
-				//presets.Add( TextureMetadata.TEXTURE_PRESET_CUSTOM_FORMAT );
-
 				presets.Add( SharpDX.DXGI.Format.Unknown.ToString() + "==Unknown" );
 
 				presets.Add( SharpDX.DXGI.Format.BC1_UNorm_SRgb.ToString() + "==Color (" + SharpDX.DXGI.Format.BC1_UNorm_SRgb.ToString() + ")" );
