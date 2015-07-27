@@ -279,27 +279,44 @@ namespace TextureEditor
 				//presets.Add( SharpDX.DXGI.Format.BC5_UNorm.ToString() );
 				//presets.Add( SharpDX.DXGI.Format.BC7_UNorm.ToString() );
 
-				presets.Add( TextureMetadata.TEXTURE_PRESET_UNKNOWN );
-				presets.Add( TextureMetadata.TEXTURE_PRESET_COLOR_BC1_SRGB );
-				presets.Add( TextureMetadata.TEXTURE_PRESET_COLOR_BC3_SRGB );
-				presets.Add( TextureMetadata.TEXTURE_PRESET_COLOR_BC7_SRGB );
-				presets.Add( TextureMetadata.TEXTURE_PRESET_COLOR_SRGB );
-				presets.Add( TextureMetadata.TEXTURE_PRESET_COLOR_BC6H_HDR_UNORM );
-				presets.Add( TextureMetadata.TEXTURE_PRESET_COLOR_HDR_UNORM );
-				presets.Add( TextureMetadata.TEXTURE_PRESET_NORMALMAP_BC5 );
-				presets.Add( TextureMetadata.TEXTURE_PRESET_NORMALMAP_RG8 );
-				presets.Add( TextureMetadata.TEXTURE_PRESET_GRAYSCALE_BC4 );
-				presets.Add( TextureMetadata.TEXTURE_PRESET_GRAYSCALE_R8 );
+				//presets.Add( TextureMetadata.TEXTURE_PRESET_UNKNOWN );
+				//presets.Add( TextureMetadata.TEXTURE_PRESET_COLOR_BC1_SRGB );
+				//presets.Add( TextureMetadata.TEXTURE_PRESET_COLOR_BC3_SRGB );
+				//presets.Add( TextureMetadata.TEXTURE_PRESET_COLOR_BC7_SRGB );
+				//presets.Add( TextureMetadata.TEXTURE_PRESET_COLOR_SRGB );
+				//presets.Add( TextureMetadata.TEXTURE_PRESET_COLOR_BC6H_HDR_UNORM );
+				//presets.Add( TextureMetadata.TEXTURE_PRESET_COLOR_HDR_UNORM );
+				//presets.Add( TextureMetadata.TEXTURE_PRESET_NORMALMAP_BC5 );
+				//presets.Add( TextureMetadata.TEXTURE_PRESET_NORMALMAP_RG8 );
+				//presets.Add( TextureMetadata.TEXTURE_PRESET_GRAYSCALE_BC4 );
+				//presets.Add( TextureMetadata.TEXTURE_PRESET_GRAYSCALE_R8 );
 				//presets.Add( TextureMetadata.TEXTURE_PRESET_SPECULARMAP_BC1_SRGB );
 				//presets.Add( TextureMetadata.TEXTURE_PRESET_SPECULARMAP_SRGB );
 				//presets.Add( TextureMetadata.TEXTURE_PRESET_SPECULARMAP_BC4 );
 				//presets.Add( TextureMetadata.TEXTURE_PRESET_SPECULARMAP_R8);
+				//presets.Add( TextureMetadata.TEXTURE_PRESET_CUSTOM_FORMAT );
+
+				presets.Add( SharpDX.DXGI.Format.Unknown.ToString() + "==Unknown" );
+
+				presets.Add( SharpDX.DXGI.Format.BC1_UNorm_SRgb.ToString() + "==Color (" + SharpDX.DXGI.Format.BC1_UNorm_SRgb.ToString() + ")" );
+				presets.Add( SharpDX.DXGI.Format.BC3_UNorm_SRgb.ToString() + "==Color+Alpha (" + SharpDX.DXGI.Format.BC3_UNorm_SRgb.ToString() + ")" );
+				presets.Add( SharpDX.DXGI.Format.BC7_UNorm_SRgb.ToString() + "==Color+Alpha HiQuality (" + SharpDX.DXGI.Format.BC7_UNorm_SRgb.ToString() + ")" );
+				presets.Add( SharpDX.DXGI.Format.R8G8B8A8_UNorm_SRgb.ToString() + "==Color+Alpha HiQuality (Uncompressed " + SharpDX.DXGI.Format.R8G8B8A8_UNorm_SRgb.ToString() + ")" );
+				presets.Add( SharpDX.DXGI.Format.BC6H_Uf16.ToString() + "==Color HDR (" + SharpDX.DXGI.Format.BC6H_Uf16.ToString() + ")" );
+				presets.Add( SharpDX.DXGI.Format.R16G16B16A16_Float.ToString() + "==Color HDR (Uncompressed " + SharpDX.DXGI.Format.R16G16B16A16_Float.ToString() + ")" );
+
+				presets.Add( SharpDX.DXGI.Format.BC5_SNorm.ToString() + "==Normal (" + SharpDX.DXGI.Format.BC5_SNorm.ToString() + ")" );
+				presets.Add( SharpDX.DXGI.Format.R8G8_SNorm.ToString() + "==Normal (Uncompressed " + SharpDX.DXGI.Format.R8G8_SNorm.ToString() + ")" );
+
+				presets.Add( SharpDX.DXGI.Format.BC4_UNorm.ToString() + "==Grayscale (" + SharpDX.DXGI.Format.BC4_UNorm.ToString() + ")" );
+				presets.Add( SharpDX.DXGI.Format.R8_UNorm.ToString() + "==Grayscale (Uncompressed " + SharpDX.DXGI.Format.R8_UNorm.ToString() + ")" );
+
 				presets.Add( TextureMetadata.TEXTURE_PRESET_CUSTOM_FORMAT );
 
 				//var formatEditor = new LongEnumEditor( typeof(SharpDX.DXGI.Format), null );
 				var formatEditor = new LongEnumEditor();
 				formatEditor.DefineEnum( presets.ToArray(), null );
-				formatEditor.MaxDropDownItems = 10;
+				formatEditor.MaxDropDownItems = 12;
 				var apd = new CustomEnableAttributePropertyDescriptor(
 					"Preset".Localize(),
 					Schema.textureMetadataType.presetAttribute,

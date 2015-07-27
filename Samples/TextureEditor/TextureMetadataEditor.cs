@@ -48,7 +48,12 @@ namespace TextureEditor
 			//m_resourceLister.SelectionChanged += resourceLister_SelectionChanged;
 			m_resourceLister.ThumbnailControl.SelectionChanged += resourceLister_SelectionChanged_ThumbnailView;
 			//m_resourceLister.ListView.MultiSelect = false;
-			m_resourceLister.ListView.SelectedIndexChanged += resourceLister_SelectionChanged_ListView;
+			// SelectedIndexChanged is called every time item is added to list
+			// in case of multiselection, items are added one at a time
+			// and performance of resourceLister_SelectionChanged_ListView drops considerably due to many slection changes
+			//
+			//m_resourceLister.ListView.SelectedIndexChanged += resourceLister_SelectionChanged_ListView;
+			m_resourceLister.ListView.MouseUp += resourceLister_SelectionChanged_ListView;
 
 			m_propertyGrid = new PropertyGrid();
 			m_controlInfo = new ControlInfo(
@@ -174,6 +179,8 @@ namespace TextureEditor
 					m_propertyGrid.Bind( new[] { tp } );
 				}
 			}
+
+			//System.Diagnostics.Debug.WriteLine( "Nb nodes" + rootNodes.Count );
 
 			var edContext = m_editorRootNode.Cast<ResourceMetadataEditingContext>();
 			edContext.SetRange( rootNodes );

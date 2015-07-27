@@ -432,28 +432,32 @@ namespace TextureEditor
 							if ( preset == TextureMetadata.TEXTURE_PRESET_CUSTOM_FORMAT )
 								format = tm.Format;
 
-							else if ( preset == TextureMetadata.TEXTURE_PRESET_COLOR_BC1_SRGB )
-								format = SharpDX.DXGI.Format.BC1_UNorm_SRgb;
-							else if ( preset == TextureMetadata.TEXTURE_PRESET_COLOR_BC3_SRGB )
-								format = SharpDX.DXGI.Format.BC3_UNorm_SRgb;
-							else if ( preset == TextureMetadata.TEXTURE_PRESET_COLOR_BC7_SRGB )
-								format = SharpDX.DXGI.Format.BC7_UNorm_SRgb;
-							else if ( preset == TextureMetadata.TEXTURE_PRESET_COLOR_SRGB )
-								format = SharpDX.DXGI.Format.R8G8B8A8_UNorm_SRgb;
-							else if ( preset == TextureMetadata.TEXTURE_PRESET_COLOR_BC6H_HDR_UNORM )
-								format = SharpDX.DXGI.Format.BC6H_Uf16;
-							else if ( preset == TextureMetadata.TEXTURE_PRESET_COLOR_HDR_UNORM )
-								format = SharpDX.DXGI.Format.R16G16B16A16_Float;
+							else if ( Enum.TryParse<SharpDX.DXGI.Format>(tm.Preset, out format) )
+							{
 
-							else if ( preset == TextureMetadata.TEXTURE_PRESET_NORMALMAP_BC5 )
-								format = SharpDX.DXGI.Format.BC5_SNorm;
-							else if ( preset == TextureMetadata.TEXTURE_PRESET_NORMALMAP_RG8 )
-								format = SharpDX.DXGI.Format.R8G8_SNorm;
+							}
+							//else if ( preset == TextureMetadata.TEXTURE_PRESET_COLOR_BC1_SRGB )
+							//	format = SharpDX.DXGI.Format.BC1_UNorm_SRgb;
+							//else if ( preset == TextureMetadata.TEXTURE_PRESET_COLOR_BC3_SRGB )
+							//	format = SharpDX.DXGI.Format.BC3_UNorm_SRgb;
+							//else if ( preset == TextureMetadata.TEXTURE_PRESET_COLOR_BC7_SRGB )
+							//	format = SharpDX.DXGI.Format.BC7_UNorm_SRgb;
+							//else if ( preset == TextureMetadata.TEXTURE_PRESET_COLOR_SRGB )
+							//	format = SharpDX.DXGI.Format.R8G8B8A8_UNorm_SRgb;
+							//else if ( preset == TextureMetadata.TEXTURE_PRESET_COLOR_BC6H_HDR_UNORM )
+							//	format = SharpDX.DXGI.Format.BC6H_Uf16;
+							//else if ( preset == TextureMetadata.TEXTURE_PRESET_COLOR_HDR_UNORM )
+							//	format = SharpDX.DXGI.Format.R16G16B16A16_Float;
 
-							else if ( preset == TextureMetadata.TEXTURE_PRESET_GRAYSCALE_BC4 )
-								format = SharpDX.DXGI.Format.BC4_UNorm;
-							else if ( preset == TextureMetadata.TEXTURE_PRESET_GRAYSCALE_R8 )
-								format = SharpDX.DXGI.Format.R8_UNorm;
+							//else if ( preset == TextureMetadata.TEXTURE_PRESET_NORMALMAP_BC5 )
+							//	format = SharpDX.DXGI.Format.BC5_SNorm;
+							//else if ( preset == TextureMetadata.TEXTURE_PRESET_NORMALMAP_RG8 )
+							//	format = SharpDX.DXGI.Format.R8G8_SNorm;
+
+							//else if ( preset == TextureMetadata.TEXTURE_PRESET_GRAYSCALE_BC4 )
+							//	format = SharpDX.DXGI.Format.BC4_UNorm;
+							//else if ( preset == TextureMetadata.TEXTURE_PRESET_GRAYSCALE_R8 )
+							//	format = SharpDX.DXGI.Format.R8_UNorm;
 
 							//else if ( preset == TextureMetadata.TEXTURE_PRESET_SPECULARMAP_BC1_SRGB )
 							//	format = SharpDX.DXGI.Format.BC1_UNorm_SRgb;
@@ -472,18 +476,31 @@ namespace TextureEditor
 								return 1;
 							}
 
+							//bool isBc123 = false;
+							//if (
+							//	   format == Format.BC1_UNorm
+							//	|| format == Format.BC1_UNorm_SRgb
+							//	|| format == Format.BC2_UNorm
+							//	|| format == Format.BC2_UNorm_SRgb
+							//	|| format == Format.BC3_UNorm
+							//	|| format == Format.BC3_UNorm_SRgb
+							//	)
+							//{
+							//	isBc123 = true;
+							//}
+
 							bool bcSrgbFormat = false;
 							// texconv incorrectly generates mipmaps for compressed formats
 							// so first resize/genmips to uncompressed file, and then compress
 							//
 							if ( tm.GenMipMaps &&
-							(
+								(
 								   format == Format.BC1_UNorm_SRgb
-							|| format == Format.BC2_UNorm_SRgb
-							|| format == Format.BC3_UNorm_SRgb
-							|| format == Format.BC7_UNorm_SRgb
+								|| format == Format.BC2_UNorm_SRgb
+								|| format == Format.BC3_UNorm_SRgb
+								|| format == Format.BC7_UNorm_SRgb
 								)
-								)
+							)
 							{
 								bcSrgbFormat = true;
 								cmd += " -f " + Format.R8G8B8A8_UNorm_SRgb.ToString();
@@ -491,6 +508,8 @@ namespace TextureEditor
 							else
 							{
 								cmd += " -f " + format.ToString();
+								//if ( isBc123 )
+								//	cmd += " -bcdither "; // improves compression quality of smooth gradients
 							}
 
 							cmd += " -of " + outputFileWin;

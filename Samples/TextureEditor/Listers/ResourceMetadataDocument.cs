@@ -21,7 +21,7 @@ namespace TextureEditor
         {
 			TextureMetadata tm = DomNode.As<TextureMetadata>();
 			//if ( tm.Format == SharpDX.DXGI.Format.Unknown && tm.ExtendedFormat == SharpDX.DXGI.Format.Unknown && !tm.CopySourceFile )
-			if ( (tm.Preset == TextureMetadata.TEXTURE_PRESET_UNKNOWN || (tm.Preset == TextureMetadata.TEXTURE_PRESET_CUSTOM_FORMAT && tm.Format == SharpDX.DXGI.Format.Unknown) ) && !tm.CopySourceFile )
+			if ( ( tm.Preset == SharpDX.DXGI.Format.Unknown.ToString() || ( tm.Preset == TextureMetadata.TEXTURE_PRESET_CUSTOM_FORMAT && tm.Format == SharpDX.DXGI.Format.Unknown ) ) && !tm.CopySourceFile )
 			{
 				if ( System.IO.File.Exists( Uri.LocalPath ) )
 					System.IO.File.Delete( Uri.LocalPath );
