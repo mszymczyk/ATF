@@ -331,6 +331,9 @@ namespace TextureEditor
 
 						if ( tm.CopySourceFile )
 						{
+							string dirWin = System.IO.Path.GetDirectoryName( outputFileWin );
+							System.IO.Directory.CreateDirectory( dirWin );
+
 							AddInfo( "Copying " + inputFile + " to " + outputFileWin + "\n" );
 							//System.IO.File.Delete( outputFileWin );
 							System.IO.File.Copy( inputFile, outputFileWin, true );
