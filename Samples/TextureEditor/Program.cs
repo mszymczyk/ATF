@@ -74,7 +74,7 @@ namespace TextureEditor
 				typeof(ResourceLister),
 				typeof(ImageThumbnailResolver),
                 typeof(SchemaLoader),                   // component that loads XML schema and sets up types
-                typeof(Editor),                         // component that manages UI documents
+				//typeof(Editor),                         // component that manages UI documents
 
 				typeof(TextureMetadataEditor)           // displays a 3D scene in a Windows Control
 				);
@@ -86,15 +86,15 @@ namespace TextureEditor
 			//	, typeof( ResourceLister )
 			//	);
 
-			TypeCatalog thisAssemCatalog = new TypeCatalog(
-				typeof( ResourceMetadataService )
+			//TypeCatalog thisAssemCatalog = new TypeCatalog(
+				//typeof( ResourceMetadataService )
 				//typeof( ResourceConverter )
-				);
+				//);
 
             List<ComposablePartCatalog> catalogs = new List<ComposablePartCatalog>();
 			catalogs.Add(AtfCatalog);
 			//catalogs.Add( LECoreCatalog );
-            catalogs.Add(thisAssemCatalog);
+			//catalogs.Add(thisAssemCatalog);
 
 			AggregateCatalog catalog = new AggregateCatalog(catalogs);
 

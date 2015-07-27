@@ -48,7 +48,7 @@ namespace TextureEditor
         /// Panel3D to work in a tabbed interface like the FAST Editor.</remarks>
 		public TexturePreviewWindowSharpDX( IContextRegistry contextRegistry )
         {
-			m_textureSelectionContext = new TextureSelectionContext( contextRegistry );
+			//m_textureSelectionContext = new TextureSelectionContext( contextRegistry );
 			SizeChanged += new EventHandler( this.MyButton1_SizeChanged );
             StartSharpDxIfNecessary();
         }
@@ -759,7 +759,7 @@ namespace TextureEditor
 
 		public TextureDisplayMode DisplayMode { get; set; }
 		
-		TextureSelectionContext m_textureSelectionContext;
+		//TextureSelectionContext m_textureSelectionContext;
 
         //private IntPtr m_hdc;
 		private Device m_device;
