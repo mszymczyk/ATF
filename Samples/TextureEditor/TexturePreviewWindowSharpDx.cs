@@ -49,8 +49,14 @@ namespace TextureEditor
 		public TexturePreviewWindowSharpDX( IContextRegistry contextRegistry )
         {
 			//m_textureSelectionContext = new TextureSelectionContext( contextRegistry );
+			StartSharpDxIfNecessary();
+
+			ShowRedChannel = true;
+			ShowGreenChannel = true;
+			ShowBlueChannel = true;
+			ShowAlphaChannel = true;
+
 			SizeChanged += new EventHandler( this.MyButton1_SizeChanged );
-            StartSharpDxIfNecessary();
         }
 
         /// <summary>
@@ -653,7 +659,7 @@ namespace TextureEditor
 					};
 
 					// Create Device and SwapChain
-					Device.CreateWithSwapChain( DriverType.Hardware, DeviceCreationFlags.Debug, desc, out m_device, out m_swapChain );
+					Device.CreateWithSwapChain( DriverType.Hardware, 0, desc, out m_device, out m_swapChain );
 					m_context = m_device.ImmediateContext;
 
 					// Ignore all windows events
@@ -758,6 +764,10 @@ namespace TextureEditor
 		};
 
 		public TextureDisplayMode DisplayMode { get; set; }
+		public bool ShowRedChannel { get; set; }
+		public bool ShowGreenChannel { get; set; }
+		public bool ShowBlueChannel { get; set; }
+		public bool ShowAlphaChannel { get; set; }
 		
 		//TextureSelectionContext m_textureSelectionContext;
 

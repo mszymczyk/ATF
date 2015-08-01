@@ -117,6 +117,9 @@
     <EmbeddedResource Include="ProgressOutputWindow.resx">
       <DependentUpon>ProgressOutputWindow.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="Resources\ShowBlue.png" />
+    <EmbeddedResource Include="Resources\ShowGreen.png" />
+    <EmbeddedResource Include="Resources\ShowRed.png" />
     <EmbeddedResource Include="Schemas\textureEditor.xsd">
       <SubType>Designer</SubType>
     </EmbeddedResource>
@@ -155,7 +158,9 @@
     <EmbeddedResource Include="Resources\Source24.png" />
     <EmbeddedResource Include="Resources\Source32.png" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\ShowAlpha.png" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

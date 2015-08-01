@@ -88,6 +88,53 @@ namespace TextureEditor
 				CommandVisibility.Default,
 				this );
 
+
+
+			commandService.RegisterCommand(
+				Command.ShowRedChannel,
+				StandardMenu.View,
+				CommandGroup,
+				"Show red channel",
+				"Enables display of red channel",
+				Keys.None,
+				Resources.ShowRedChannelImage,
+				CommandVisibility.Default,
+				this );
+
+			commandService.RegisterCommand(
+				Command.ShowGreenChannel,
+				StandardMenu.View,
+				CommandGroup,
+				"Show green channel",
+				"Enables display of green channel",
+				Keys.None,
+				Resources.ShowGreenChannelImage,
+				CommandVisibility.Default,
+				this );
+
+			commandService.RegisterCommand(
+				Command.ShowBlueChannel,
+				StandardMenu.View,
+				CommandGroup,
+				"Show blue channel",
+				"Enables display of blue channel",
+				Keys.None,
+				Resources.ShowBlueChannelImage,
+				CommandVisibility.Default,
+				this );
+
+			commandService.RegisterCommand(
+				Command.ShowAlphaChannel,
+				StandardMenu.View,
+				CommandGroup,
+				"Show alpha channel",
+				"Enables display of alpha channel",
+				Keys.None,
+				Resources.ShowAlphaChannelImage,
+				CommandVisibility.Default,
+				this );
+
+
 			commandService.RegisterCommand(
 			   Command.ExportOne,
 			   StandardMenu.File,
@@ -122,6 +169,12 @@ namespace TextureEditor
 			ShowSource,
 			ShowExported,
 			ShowDiff,
+
+			ShowRedChannel,
+			ShowGreenChannel,
+			ShowBlueChannel,
+			ShowAlphaChannel,
+
 			ExportOne,
 			ExpartAll
         }
@@ -159,6 +212,12 @@ namespace TextureEditor
 					return m_previewWindow.SelectedTexture != null;
 				case Command.ExpartAll:
 					return true;
+
+				case Command.ShowRedChannel:
+				case Command.ShowGreenChannel:
+				case Command.ShowBlueChannel:
+				case Command.ShowAlphaChannel:
+					return true;
 			}
 
             return false;
@@ -194,6 +253,26 @@ namespace TextureEditor
 						m_previewWindow.DisplayMode = TexturePreviewWindowSharpDX.TextureDisplayMode.Difference;
 						m_previewWindow.Invalidate();
 						break;
+
+
+					case Command.ShowRedChannel:
+						m_previewWindow.ShowRedChannel = !m_previewWindow.ShowRedChannel;
+						m_previewWindow.Invalidate();
+						break;
+					case Command.ShowGreenChannel:
+						m_previewWindow.ShowGreenChannel = !m_previewWindow.ShowGreenChannel;
+						m_previewWindow.Invalidate();
+						break;
+					case Command.ShowBlueChannel:
+						m_previewWindow.ShowBlueChannel = !m_previewWindow.ShowBlueChannel;
+						m_previewWindow.Invalidate();
+						break;
+					case Command.ShowAlphaChannel:
+						m_previewWindow.ShowAlphaChannel = !m_previewWindow.ShowAlphaChannel;
+						m_previewWindow.Invalidate();
+						break;
+
+
 					case Command.ExportOne:
 						ExportOne();
 						break;
@@ -228,6 +307,19 @@ namespace TextureEditor
 						break;
 					case Command.ShowDiff:
 						state.Check = m_previewWindow.DisplayMode == TexturePreviewWindowSharpDX.TextureDisplayMode.Difference;
+						break;
+
+					case Command.ShowRedChannel:
+						state.Check = m_previewWindow.ShowRedChannel;
+						break;
+					case Command.ShowGreenChannel:
+						state.Check = m_previewWindow.ShowGreenChannel;
+						break;
+					case Command.ShowBlueChannel:
+						state.Check = m_previewWindow.ShowBlueChannel;
+						break;
+					case Command.ShowAlphaChannel:
+						state.Check = m_previewWindow.ShowAlphaChannel;
 						break;
 				}
 			}

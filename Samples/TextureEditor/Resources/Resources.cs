@@ -24,6 +24,26 @@ namespace TextureEditor
 		[ImageResource( "Difference16.png", "Difference24.png", "Difference32.png" )]
 		public static readonly string DifferenceImage;
 
+		/// <summary>
+		/// Show red channel icon</summary>
+		[ImageResource( "ShowRed.png" )]
+		public static readonly string ShowRedChannelImage;
+
+		/// <summary>
+		/// Show green channel icon</summary>
+		[ImageResource( "ShowGreen.png" )]
+		public static readonly string ShowGreenChannelImage;
+
+		/// <summary>
+		/// Show blue channel icon</summary>
+		[ImageResource( "ShowBlue.png" )]
+		public static readonly string ShowBlueChannelImage;
+
+		/// <summary>
+		/// Show alpha channel icon</summary>
+		[ImageResource( "ShowAlpha.png" )]
+		public static readonly string ShowAlphaChannelImage;
+
         private const string ResourcePath = "TextureEditor.Resources.";
 
         static Resources()
