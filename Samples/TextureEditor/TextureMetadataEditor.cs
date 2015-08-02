@@ -158,6 +158,9 @@ namespace TextureEditor
 					ResourceMetadataDocument document = rootNode.Cast<ResourceMetadataDocument>();
 					document.Uri = metadataUri;
 
+					TextureMetadata md = rootNode.Cast<TextureMetadata>();
+					md.LocalPath = resourceUri.LocalPath;
+
 					// this node must be added to root in order for history to work
 					//
 					m_editorRootNode.GetChildList( Schema.textureMetadataEditorType.textureMetadataChild ).Add( rootNode );
@@ -175,6 +178,7 @@ namespace TextureEditor
 				if ( tp != null )
 				{
 					m_propertyGrid.Bind( new[] { tp } );
+					m_textureViewCommands.onShowResource( tp );
 				}
 			}
 

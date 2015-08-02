@@ -55,6 +55,10 @@ namespace TextureEditor
 			ShowGreenChannel = true;
 			ShowBlueChannel = true;
 			ShowAlphaChannel = true;
+			SourceTextureGamma = 2.2f;
+			ExportedTextureGamma = 1.0f;
+			VisibleMip = 0;
+			VisibleSlice = 0;
 
 			SizeChanged += new EventHandler( this.MyButton1_SizeChanged );
         }
@@ -86,6 +90,14 @@ namespace TextureEditor
 			public float gammaExp;
 			[FieldOffset( 24 )]
 			public int flipYExp;
+			[FieldOffset( 28 )]
+			public int redVisible;
+			[FieldOffset( 32 )]
+			public int greenVisible;
+			[FieldOffset( 36 )]
+			public int blueVisible;
+			[FieldOffset( 40 )]
+			public int alphaVisible;
 		};
 
 		void SubmitFullscreenQuad()
@@ -146,19 +158,20 @@ namespace TextureEditor
 		void SetupConstantBuffer()
 		{
 			ConstantBufferData data = new ConstantBufferData();
-			int visibleMip = Math.Min( m_texProperties.VisibleMip, m_texProperties.MipLevels - 1 );
+			int visibleMip = Math.Min( VisibleMip, m_texProperties.MipLevels - 1 );
 			data.mipLevel = visibleMip;
 
-			int visibleSlice = Math.Min( m_texProperties.VisibleSlice, m_texProperties.ArraySize - 1 );
+			int visibleSlice = Math.Min( VisibleSlice, m_texProperties.ArraySize - 1 );
 			data.sliceIndex = visibleSlice;
 
-			if ( m_texProperties.DoGammaToLinearConversion )
-				data.gamma = 2.2f;
-			else
-				data.gamma = 1.0f;
-
-			data.gammaExp = 1.0f;
+			data.gamma = SourceTextureGamma;
+			data.gammaExp = ExportedTextureGamma;
 			data.flipYExp = m_metadata.FlipY ? 1 : 0;
+
+			data.redVisible = ShowRedChannel ? 1 : 0;
+			data.greenVisible = ShowGreenChannel ? 1 : 0;
+			data.blueVisible = ShowBlueChannel ? 1 : 0;
+			data.alphaVisible = ShowAlphaChannel ? 1 : 0;
 
 			var constantBuffer = Buffer.Create( m_device, BindFlags.ConstantBuffer, ref data );
 			m_context.PixelShader.SetConstantBuffer( 0, constantBuffer );
@@ -705,8 +718,8 @@ namespace TextureEditor
 
 		public TextureProperties showResource( TextureMetadata metadata )
         {
-			Uri resUri = metadata.Uri;
-            if (resUri == null)
+			string localPath = metadata.LocalPath;
+			if (localPath == null)
                 return null;
 
 			TextureWrap.SafeDispose( ref m_tex );
@@ -714,8 +727,8 @@ namespace TextureEditor
 
 			TextureProperties tp = null;
 
-			m_tex = TextureWrap.LoadTexture( resUri.LocalPath, m_device );
-			string resFilenameDemoWin = TextureExporter.GetDataWinTexture( resUri.LocalPath );
+			m_tex = TextureWrap.LoadTexture( localPath, m_device );
+			string resFilenameDemoWin = TextureExporter.GetDataWinTexture( localPath );
 			m_texExp = TextureWrap.LoadTexture( resFilenameDemoWin, m_device );
 
 			if ( m_tex != null )
@@ -768,6 +781,10 @@ namespace TextureEditor
 		public bool ShowGreenChannel { get; set; }
 		public bool ShowBlueChannel { get; set; }
 		public bool ShowAlphaChannel { get; set; }
+		public float SourceTextureGamma { get; set; }
+		public float ExportedTextureGamma { get; set; }
+		public int VisibleMip { get; set; }
+		public int VisibleSlice { get; set; }
 		
 		//TextureSelectionContext m_textureSelectionContext;
 

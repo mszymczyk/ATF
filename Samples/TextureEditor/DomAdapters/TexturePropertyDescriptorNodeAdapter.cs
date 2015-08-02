@@ -131,7 +131,7 @@ namespace TextureEditor
 			//}
 
 			TextureMetadata tm = DomNode.Cast<TextureMetadata>();
-			string uriExt = System.IO.Path.GetExtension( tm.Uri.LocalPath );
+			string uriExt = System.IO.Path.GetExtension( tm.LocalPath );
 
 			string group_Metadata = "Metadata".Localize();
 

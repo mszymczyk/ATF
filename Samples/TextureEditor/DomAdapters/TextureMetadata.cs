@@ -10,11 +10,11 @@ namespace TextureEditor
 	{
 		public static readonly string TEXTURE_PRESET_CUSTOM_FORMAT = "Custom Format";
 
-		public Uri Uri
-		{
-			get { return GetAttribute<Uri>( Schema.resourceMetadataType.uriAttribute ); }
-			set { SetAttribute( Schema.resourceMetadataType.uriAttribute, value ); }
-		}
+		//public Uri Uri
+		//{
+		//	get { return GetAttribute<Uri>( Schema.resourceMetadataType.uriAttribute ); }
+		//	set { SetAttribute( Schema.resourceMetadataType.uriAttribute, value ); }
+		//}
 
 		/// <summary>
 		/// Gets or sets game object name</summary>
@@ -108,6 +108,6 @@ namespace TextureEditor
 		//	set { SetAttribute( Schema.textureMetadataType.depthAttribute, value ); }
 		//}
 
-
+		public string LocalPath { get; set; }
 	}
 }

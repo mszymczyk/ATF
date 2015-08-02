@@ -158,6 +158,161 @@ namespace TextureEditor
 			   Sce.Atf.Resources.ComponentsImage,
 			   CommandVisibility.Default,
 			   this );
+
+
+
+			m_sourceTextureGamma = new ToolStripComboBox();
+			m_sourceTextureGamma.DropDownStyle = ComboBoxStyle.DropDownList;
+			m_sourceTextureGamma.Name = "Source texture gamma".Localize();
+			m_sourceTextureGamma.ComboBox.Width = m_sourceTextureGamma.ComboBox.Width / 3;
+			m_sourceTextureGamma.ComboBox.Items.Add( "1,0" );
+			m_sourceTextureGamma.ComboBox.Items.Add( "2,2" );
+			m_sourceTextureGamma.ComboBox.Items.Add( "2,4" );
+			m_sourceTextureGamma.ComboBox.SelectedIndex = 1;
+			m_sourceTextureGamma.ToolTipText = "Source texture gamma".Localize();
+			//m_sourceTextureGamma.ComboBox.Validating += ComboBox_Validating;
+			//m_sourceTextureGamma.ComboBox.KeyPress += ComboBox_KeyPress;
+			m_sourceTextureGamma.ComboBox.SelectedIndexChanged += sourceTexture_ComboBox_SelectedIndexChanged;
+
+			m_exportedTextureGamma = new ToolStripComboBox();
+			m_exportedTextureGamma.DropDownStyle = ComboBoxStyle.DropDownList;
+			m_exportedTextureGamma.Name = "Exported texture gamma".Localize();
+			m_exportedTextureGamma.ComboBox.Width = m_exportedTextureGamma.ComboBox.Width / 3;
+			m_exportedTextureGamma.ComboBox.Items.Add( "1,0" );
+			m_exportedTextureGamma.ComboBox.Items.Add( "2,2" );
+			m_exportedTextureGamma.ComboBox.Items.Add( "2,4" );
+			m_exportedTextureGamma.ComboBox.SelectedIndex = 0;
+			m_exportedTextureGamma.ToolTipText = "Exported texture gamma".Localize();
+			m_exportedTextureGamma.ComboBox.SelectedIndexChanged += exportedTexture_ComboBox_SelectedIndexChanged;
+
+
+			// Register comboBoxes for visible mip and visible slice, in the edit menu's toolbar
+			//
+			m_visibleMip = new ToolStripComboBox();
+			m_visibleMip.DropDownStyle = ComboBoxStyle.DropDownList;
+			m_visibleMip.Name = "Visible Mip".Localize();
+			//m_visibleMip.Text = "Visible Mip".Localize();
+			m_visibleMip.ComboBox.Width = m_visibleMip.ComboBox.Width / 2;
+			//m_visibleMip.ComboBox.DataSource = Enum.GetValues( typeof( SnapFromMode ) );
+			m_visibleMip.ComboBox.Items.Add( "Mip 0" );
+			m_visibleMip.ComboBox.SelectedIndex = 0;
+			m_visibleMip.ToolTipText = "Selects mip for preview".Localize();
+			m_visibleMip.ComboBox.SelectedIndexChanged += m_visibleMip_SelectedIndexChanged;
+
+
+			m_visibleSlice = new ToolStripComboBox();
+			m_visibleSlice.DropDownStyle = ComboBoxStyle.DropDownList;
+			m_visibleSlice.Name = "Visible Slice".Localize();
+			m_visibleSlice.ComboBox.Width = m_visibleSlice.ComboBox.Width / 2;
+			m_visibleSlice.ComboBox.Items.Add( "Slice 0" );
+			m_visibleSlice.ComboBox.SelectedIndex = 0;
+			m_visibleSlice.ToolTipText = "Selects slice for preview".Localize();
+			m_visibleSlice.ComboBox.SelectedIndexChanged += m_visibleSlice_SelectedIndexChanged;
+
+			MenuInfo editMenuInfo = MenuInfo.Edit;
+			editMenuInfo.GetToolStrip().Items.Add( m_sourceTextureGamma );
+			editMenuInfo.GetToolStrip().Items.Add( m_exportedTextureGamma );
+			editMenuInfo.GetToolStrip().Items.Add( m_visibleMip );
+			editMenuInfo.GetToolStrip().Items.Add( m_visibleSlice );
+		}
+
+		void m_visibleMip_SelectedIndexChanged( object sender, EventArgs e )
+		{
+			if (m_previewWindow == null)
+				return;
+
+			ComboBox cb = sender as ComboBox;
+			m_previewWindow.VisibleMip = cb.SelectedIndex;
+			m_previewWindow.Invalidate();
+		}
+
+		void m_visibleSlice_SelectedIndexChanged( object sender, EventArgs e )
+		{
+			if (m_previewWindow == null)
+				return;
+
+			ComboBox cb = sender as ComboBox;
+			m_previewWindow.VisibleSlice = cb.SelectedIndex;
+			m_previewWindow.Invalidate();
+		}
+
+		void sourceTexture_ComboBox_SelectedIndexChanged( object sender, EventArgs e )
+		{
+			if (m_previewWindow == null)
+				return;
+
+			ComboBox cb = sender as ComboBox;
+			float fval = 2.2f;
+			if (float.TryParse( cb.Text, out fval ))
+			{
+				m_previewWindow.SourceTextureGamma = fval;
+				m_previewWindow.Invalidate();
+			}
+		}
+
+		void exportedTexture_ComboBox_SelectedIndexChanged( object sender, EventArgs e )
+		{
+			if (m_previewWindow == null)
+				return;
+
+			ComboBox cb = sender as ComboBox;
+			float fval = 2.2f;
+			if (float.TryParse( cb.Text, out fval ))
+			{
+				m_previewWindow.ExportedTextureGamma = fval;
+				m_previewWindow.Invalidate();
+			}
+		}
+
+		//void ComboBox_Validating( object sender, System.ComponentModel.CancelEventArgs e )
+		//{
+		//	ComboBox tscb = sender as ComboBox;
+		//	float fval = 2.2f;
+		//	if ( ! float.TryParse( tscb.Text, out fval ) )
+		//	{
+		//		e.Cancel = true;
+		//	}
+		//}
+
+		//void ComboBox_KeyPress( object sender, KeyPressEventArgs e )
+		//{
+		//	if ( e.KeyChar == 13 )
+		//	{
+		//		ComboBox cb = sender as ComboBox;
+		//		if (cb != null)
+		//			cb.FindForm().Validate();
+		//	}
+		//}
+
+		public void onShowResource( TextureProperties tp )
+		{
+			int nMips = tp.MipLevels;
+			if ( nMips != m_visibleMip.ComboBox.Items.Count )
+			{
+				int oldSelection = m_visibleMip.ComboBox.SelectedIndex;
+				m_visibleMip.ComboBox.Items.Clear();
+				for (int i = 0; i < nMips; ++i)
+					m_visibleMip.ComboBox.Items.Add( "Mip " + i );
+
+				if (oldSelection < nMips)
+					m_visibleMip.ComboBox.SelectedIndex = oldSelection;
+				else
+					m_visibleMip.ComboBox.SelectedIndex = nMips - 1;
+			}
+
+			int nSlices = tp.ArraySize;
+			if (nSlices != m_visibleSlice.ComboBox.Items.Count)
+			{
+				int oldSelection = m_visibleSlice.ComboBox.SelectedIndex;
+				m_visibleSlice.ComboBox.Items.Clear();
+				for (int i = 0; i < nSlices; ++i)
+					m_visibleSlice.ComboBox.Items.Add( "Slice " + i );
+
+				if (oldSelection < nSlices)
+					m_visibleSlice.ComboBox.SelectedIndex = oldSelection;
+				else
+					m_visibleSlice.ComboBox.SelectedIndex = nSlices - 1;
+			}
 		}
 
         /// <summary>
@@ -343,6 +498,11 @@ namespace TextureEditor
 		private MainForm m_mainForm;
 		private SchemaLoader m_schemaLoader = null;
         private TexturePreviewWindowSharpDX m_previewWindow;
+
+		private ToolStripComboBox m_sourceTextureGamma;
+		private ToolStripComboBox m_exportedTextureGamma;
+		private ToolStripComboBox m_visibleMip;
+		private ToolStripComboBox m_visibleSlice;
 
 		private static string CommandGroup = "TexturePreviewCommands";
     }

@@ -45,6 +45,10 @@ cbuffer cbFrameParams : register( b0 )
 	float gamma;
 	float gammaExp;
 	int flipYExp;
+	int redVisible;
+	int greenVisible;
+	int blueVisible;
+	int alphaVisible;
 };
 
 Texture2D tex2D : register(t0);
@@ -54,6 +58,21 @@ Texture2D tex2DExp : register( t1 );
 Texture2DArray tex2DArrayExp : register( t1 );
 
 SamplerState ssPoint : register(s0);
+
+float4 applyVisibilityMask(float4 x)
+{
+	float4 r = x;
+	if (!redVisible)
+		r.r = 0;
+	if (!greenVisible)
+		r.g = 0;
+	if (!blueVisible)
+		r.b = 0;
+	if (!alphaVisible)
+		r.a = 1;
+
+	return r;
+}
 
 PS_IN VS( VS_IN input )
 {
@@ -90,6 +109,7 @@ float4 PS_Tex2D_Sample( PS_IN input ) : SV_Target
 {
 	float4 t = tex2D.SampleLevel( ssPoint, input.uv0.xy, mipLevel );
 	t.xyz = pow( t.xyz, gamma );
+	t = applyVisibilityMask(t);
 	return float4( t );
 }
 

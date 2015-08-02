@@ -45,15 +45,15 @@ namespace TextureEditor
 			ArraySize = tex.ArraySize;
 			CubeMap = tex.IsCubeMap;
 
-			if ( tex.IsSrgbFormat )
-			{
-				DoGammaToLinearConversion = false;
-				m_isSrgbFormat = true;
-			}
-			else
-			{
-				DoGammaToLinearConversion = true;
-			}
+			//if ( tex.IsSrgbFormat )
+			//{
+			//	DoGammaToLinearConversion = false;
+			//	m_isSrgbFormat = true;
+			//}
+			//else
+			//{
+			//	DoGammaToLinearConversion = true;
+			//}
 		}
 
 		public TextureWrap SourceTexture { get; set; }
@@ -99,19 +99,19 @@ namespace TextureEditor
 		[PropertyEditingAttribute]
 		public bool CubeMap { get; set; }
 
-		/// <summary>
-		/// Mip to display </summary>
-		[PropertyEditingAttribute(false)]
-		public int VisibleMip { get; set; }
+		///// <summary>
+		///// Mip to display </summary>
+		//[PropertyEditingAttribute(false)]
+		//public int VisibleMip { get; set; }
 
-		/// <summary>
-		/// Slice to display </summary>
-		[PropertyEditingAttribute(false)]
-		public int VisibleSlice { get; set; }
+		///// <summary>
+		///// Slice to display </summary>
+		//[PropertyEditingAttribute(false)]
+		//public int VisibleSlice { get; set; }
 
-		/// <summary>
-		/// Converts texture for preview </summary>
-		public bool DoGammaToLinearConversion { get; set; }
+		///// <summary>
+		///// Converts texture for preview </summary>
+		//public bool DoGammaToLinearConversion { get; set; }
 
 		#region Property Editing
 
@@ -288,15 +288,15 @@ namespace TextureEditor
 				}
 			}
 
-			PropertyInfo DoGammaToLinearConversionProp = GetType().GetProperty( "DoGammaToLinearConversion" );
-			PropertyPropertyDescriptor ppd = new PropertyPropertyDescriptor( DoGammaToLinearConversionProp, GetType() );
-			ppd.ItemChanged += PropertyDescItemChanged;
-			ppd.SetCategory( "Misc" );
-			if ( m_isSrgbFormat )
-				ppd.SetReadOnly( true );
-			else
-				ppd.SetReadOnly( false );
-			props.Add( ppd );
+			//PropertyInfo DoGammaToLinearConversionProp = GetType().GetProperty( "DoGammaToLinearConversion" );
+			//PropertyPropertyDescriptor ppd = new PropertyPropertyDescriptor( DoGammaToLinearConversionProp, GetType() );
+			//ppd.ItemChanged += PropertyDescItemChanged;
+			//ppd.SetCategory( "Misc" );
+			//if ( m_isSrgbFormat )
+			//	ppd.SetReadOnly( true );
+			//else
+			//	ppd.SetReadOnly( false );
+			//props.Add( ppd );
 
 			return props;
 		}
@@ -323,7 +323,7 @@ namespace TextureEditor
 		public event EventHandler ItemChanged;
 
 		private TexturePreviewWindowSharpDX m_previewWindow;
-		private bool m_isSrgbFormat;
+		//private bool m_isSrgbFormat;
 	}
 }
 
