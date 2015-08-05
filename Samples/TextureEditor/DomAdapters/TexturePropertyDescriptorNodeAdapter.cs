@@ -289,6 +289,9 @@ namespace TextureEditor
 					, ( DomNode domNode, AttributeInfo attributeInfo ) =>
 						{
 							TextureMetadata tp = domNode.Cast<TextureMetadata>();
+							if ( tp.CopySourceFile )
+								return true;
+
 							if ( tp.Preset == TextureMetadata.TEXTURE_PRESET_CUSTOM_FORMAT )
 								return false;
 
