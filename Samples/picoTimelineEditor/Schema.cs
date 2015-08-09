@@ -1,7 +1,10 @@
 // -------------------------------------------------------------------------------------------------------------------
 // Generated code, do not edit
-// Command Line:  DomGen "timeline.xsd" "..\Schema.cs" "timeline" "TimelineEditorSample"
+// Command Line:  DomGen "timeline.xsd" "..\Schema.cs" "timeline" "picoTimelineEditor"
 // -------------------------------------------------------------------------------------------------------------------
+
+using System;
+using System.Collections.Generic;
 
 using Sce.Atf.Dom;
 
@@ -13,51 +16,100 @@ namespace picoTimelineEditor
 
         public static void Initialize(XmlSchemaTypeCollection typeCollection)
         {
-            timelineType.Type = typeCollection.GetNodeType("timelineType");
+            Initialize((ns,name)=>typeCollection.GetNodeType(ns,name),
+                (ns,name)=>typeCollection.GetRootElement(ns,name));
+        }
+
+        public static void Initialize(IDictionary<string, XmlSchemaTypeCollection> typeCollections)
+        {
+            Initialize((ns,name)=>typeCollections[ns].GetNodeType(name),
+                (ns,name)=>typeCollections[ns].GetRootElement(name));
+        }
+
+        private static void Initialize(Func<string, string, DomNodeType> getNodeType, Func<string, string, ChildInfo> getRootElement)
+        {
+            timelineType.Type = getNodeType("timeline", "timelineType");
             timelineType.groupChild = timelineType.Type.GetChildInfo("group");
             timelineType.markerChild = timelineType.Type.GetChildInfo("marker");
             timelineType.timelineRefChild = timelineType.Type.GetChildInfo("timelineRef");
 
-            groupType.Type = typeCollection.GetNodeType("groupType");
+            groupType.Type = getNodeType("timeline", "groupType");
             groupType.nameAttribute = groupType.Type.GetAttributeInfo("name");
             groupType.expandedAttribute = groupType.Type.GetAttributeInfo("expanded");
             groupType.trackChild = groupType.Type.GetChildInfo("track");
 
-            trackType.Type = typeCollection.GetNodeType("trackType");
+            trackType.Type = getNodeType("timeline", "trackType");
             trackType.nameAttribute = trackType.Type.GetAttributeInfo("name");
             trackType.intervalChild = trackType.Type.GetChildInfo("interval");
             trackType.keyChild = trackType.Type.GetChildInfo("key");
 
-            intervalType.Type = typeCollection.GetNodeType("intervalType");
+            intervalType.Type = getNodeType("timeline", "intervalType");
             intervalType.startAttribute = intervalType.Type.GetAttributeInfo("start");
             intervalType.descriptionAttribute = intervalType.Type.GetAttributeInfo("description");
             intervalType.nameAttribute = intervalType.Type.GetAttributeInfo("name");
             intervalType.lengthAttribute = intervalType.Type.GetAttributeInfo("length");
             intervalType.colorAttribute = intervalType.Type.GetAttributeInfo("color");
 
-            eventType.Type = typeCollection.GetNodeType("eventType");
+            eventType.Type = getNodeType("timeline", "eventType");
             eventType.startAttribute = eventType.Type.GetAttributeInfo("start");
             eventType.descriptionAttribute = eventType.Type.GetAttributeInfo("description");
 
-            keyType.Type = typeCollection.GetNodeType("keyType");
+            keyType.Type = getNodeType("timeline", "keyType");
             keyType.startAttribute = keyType.Type.GetAttributeInfo("start");
             keyType.descriptionAttribute = keyType.Type.GetAttributeInfo("description");
             keyType.specialEventAttribute = keyType.Type.GetAttributeInfo("specialEvent");
 
-            markerType.Type = typeCollection.GetNodeType("markerType");
+            markerType.Type = getNodeType("timeline", "markerType");
             markerType.startAttribute = markerType.Type.GetAttributeInfo("start");
             markerType.descriptionAttribute = markerType.Type.GetAttributeInfo("description");
             markerType.nameAttribute = markerType.Type.GetAttributeInfo("name");
             markerType.colorAttribute = markerType.Type.GetAttributeInfo("color");
 
-            timelineRefType.Type = typeCollection.GetNodeType("timelineRefType");
+            timelineRefType.Type = getNodeType("timeline", "timelineRefType");
             timelineRefType.nameAttribute = timelineRefType.Type.GetAttributeInfo("name");
             timelineRefType.startAttribute = timelineRefType.Type.GetAttributeInfo("start");
             timelineRefType.descriptionAttribute = timelineRefType.Type.GetAttributeInfo("description");
             timelineRefType.colorAttribute = timelineRefType.Type.GetAttributeInfo("color");
             timelineRefType.refAttribute = timelineRefType.Type.GetAttributeInfo("ref");
 
-            timelineRootElement = typeCollection.GetRootElement("timeline");
+            controlPointType.Type = getNodeType("timeline", "controlPointType");
+            controlPointType.xAttribute = controlPointType.Type.GetAttributeInfo("x");
+            controlPointType.yAttribute = controlPointType.Type.GetAttributeInfo("y");
+            controlPointType.tangentInAttribute = controlPointType.Type.GetAttributeInfo("tangentIn");
+            controlPointType.tangentInTypeAttribute = controlPointType.Type.GetAttributeInfo("tangentInType");
+            controlPointType.tangentOutAttribute = controlPointType.Type.GetAttributeInfo("tangentOut");
+            controlPointType.tangentOutTypeAttribute = controlPointType.Type.GetAttributeInfo("tangentOutType");
+            controlPointType.brokenTangentsAttribute = controlPointType.Type.GetAttributeInfo("brokenTangents");
+
+            curveType.Type = getNodeType("timeline", "curveType");
+            curveType.nameAttribute = curveType.Type.GetAttributeInfo("name");
+            curveType.displayNameAttribute = curveType.Type.GetAttributeInfo("displayName");
+            curveType.minXAttribute = curveType.Type.GetAttributeInfo("minX");
+            curveType.maxXAttribute = curveType.Type.GetAttributeInfo("maxX");
+            curveType.minYAttribute = curveType.Type.GetAttributeInfo("minY");
+            curveType.maxYAttribute = curveType.Type.GetAttributeInfo("maxY");
+            curveType.preInfinityAttribute = curveType.Type.GetAttributeInfo("preInfinity");
+            curveType.postInfinityAttribute = curveType.Type.GetAttributeInfo("postInfinity");
+            curveType.colorAttribute = curveType.Type.GetAttributeInfo("color");
+            curveType.xLabelAttribute = curveType.Type.GetAttributeInfo("xLabel");
+            curveType.yLabelAttribute = curveType.Type.GetAttributeInfo("yLabel");
+            curveType.controlPointChild = curveType.Type.GetChildInfo("controlPoint");
+
+            intervalCurveType.Type = getNodeType("timeline", "intervalCurveType");
+            intervalCurveType.startAttribute = intervalCurveType.Type.GetAttributeInfo("start");
+            intervalCurveType.descriptionAttribute = intervalCurveType.Type.GetAttributeInfo("description");
+            intervalCurveType.nameAttribute = intervalCurveType.Type.GetAttributeInfo("name");
+            intervalCurveType.lengthAttribute = intervalCurveType.Type.GetAttributeInfo("length");
+            intervalCurveType.colorAttribute = intervalCurveType.Type.GetAttributeInfo("color");
+            intervalCurveType.curveChild = intervalCurveType.Type.GetChildInfo("curve");
+
+            luaScriptType.Type = getNodeType("timeline", "luaScriptType");
+            luaScriptType.startAttribute = luaScriptType.Type.GetAttributeInfo("start");
+            luaScriptType.descriptionAttribute = luaScriptType.Type.GetAttributeInfo("description");
+            luaScriptType.specialEventAttribute = luaScriptType.Type.GetAttributeInfo("specialEvent");
+            luaScriptType.sourceCodeAttribute = luaScriptType.Type.GetAttributeInfo("sourceCode");
+
+            timelineRootElement = getRootElement(NS, "timeline");
         }
 
         public static class timelineType
@@ -126,6 +178,55 @@ namespace picoTimelineEditor
             public static AttributeInfo descriptionAttribute;
             public static AttributeInfo colorAttribute;
             public static AttributeInfo refAttribute;
+        }
+
+        public static class controlPointType
+        {
+            public static DomNodeType Type;
+            public static AttributeInfo xAttribute;
+            public static AttributeInfo yAttribute;
+            public static AttributeInfo tangentInAttribute;
+            public static AttributeInfo tangentInTypeAttribute;
+            public static AttributeInfo tangentOutAttribute;
+            public static AttributeInfo tangentOutTypeAttribute;
+            public static AttributeInfo brokenTangentsAttribute;
+        }
+
+        public static class curveType
+        {
+            public static DomNodeType Type;
+            public static AttributeInfo nameAttribute;
+            public static AttributeInfo displayNameAttribute;
+            public static AttributeInfo minXAttribute;
+            public static AttributeInfo maxXAttribute;
+            public static AttributeInfo minYAttribute;
+            public static AttributeInfo maxYAttribute;
+            public static AttributeInfo preInfinityAttribute;
+            public static AttributeInfo postInfinityAttribute;
+            public static AttributeInfo colorAttribute;
+            public static AttributeInfo xLabelAttribute;
+            public static AttributeInfo yLabelAttribute;
+            public static ChildInfo controlPointChild;
+        }
+
+        public static class intervalCurveType
+        {
+            public static DomNodeType Type;
+            public static AttributeInfo startAttribute;
+            public static AttributeInfo descriptionAttribute;
+            public static AttributeInfo nameAttribute;
+            public static AttributeInfo lengthAttribute;
+            public static AttributeInfo colorAttribute;
+            public static ChildInfo curveChild;
+        }
+
+        public static class luaScriptType
+        {
+            public static DomNodeType Type;
+            public static AttributeInfo startAttribute;
+            public static AttributeInfo descriptionAttribute;
+            public static AttributeInfo specialEventAttribute;
+            public static AttributeInfo sourceCodeAttribute;
         }
 
         public static ChildInfo timelineRootElement;

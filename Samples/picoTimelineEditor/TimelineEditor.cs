@@ -12,10 +12,12 @@ using Sce.Atf.Adaptation;
 using Sce.Atf.Applications;
 using Sce.Atf.Controls.PropertyEditing;
 using Sce.Atf.Controls.Timelines;
+using Sce.Atf.Controls.CurveEditing;
 using Sce.Atf.Dom;
 
 using picoTimelineEditor.DomNodeAdapters;
 using Sce.Atf.Controls.Timelines.Direct2D;
+using Sce.Atf.Controls.SyntaxEditorControl;
 
 namespace picoTimelineEditor
 {
@@ -62,6 +64,8 @@ namespace picoTimelineEditor
             paletteService.AddItem(Schema.intervalType.Type, "Timelines", this);
             paletteService.AddItem(Schema.keyType.Type, "Timelines", this);
             paletteService.AddItem(Schema.timelineRefType.Type, "Timelines", this);
+			paletteService.AddItem(Schema.intervalCurveType.Type, "pico", this );
+			paletteService.AddItem( Schema.luaScriptType.Type, "pico", this );
 
             m_contextRegistry = contextRegistry;
             m_documentRegistry = documentRegistry;
@@ -138,8 +142,34 @@ namespace picoTimelineEditor
                     IHistoryContext hist = m_contextRegistry.GetActiveContext<IHistoryContext>();
                     m_scriptingService.SetVariable("editingContext", editingContext);
                     m_scriptingService.SetVariable("hist", hist);
-                };
-            }
+
+					ISelectionContext selectionContext = m_contextRegistry.GetActiveContext<ISelectionContext>();
+					if ( selectionContext != null )
+					{
+						selectionContext.SelectionChanged += delegate
+						{
+							object lastSelected = selectionContext.LastSelected;
+
+							Path<object> path = lastSelected as Path<object>;
+							object selected = path != null ? path.Last : lastSelected;
+
+							LuaScript luaScript = selected.As<LuaScript>();
+							if (luaScript != null)
+							{
+								m_luaEditor.ReadOnly = false;
+								m_luaEditor.Text = luaScript.SourceCode;
+								m_luaEditor.Dirty = false;
+							}
+							else
+							{
+								m_luaEditor.ReadOnly = true;
+								m_luaEditor.Text = "";
+								m_luaEditor.Dirty = false;
+							}
+						};
+					}
+				};
+			}
 
             if (m_fileWatcherService != null)
             {
@@ -174,6 +204,55 @@ namespace picoTimelineEditor
                     "The color of the scale manipulator")            };
             m_settingsService.RegisterUserSettings("Timeline Editor", settings);
             m_settingsService.RegisterSettings(this, settings);
+
+			if (m_curveEditor != null)
+			{
+				m_curveEditor.Control.AutoComputeCurveLimitsEnabled = false;
+				m_curveEditor.Control.OnlyEditSelectedCurves = true;
+				m_curveEditor.MultiSelectionOverlay = true;
+				m_curveEditor.Control.CurvesChanged += ( sender, e ) => m_curveEditor.Control.FitAll();
+			}
+
+			m_luaEditor = TextEditorFactory.CreateSyntaxHighlightingEditor();
+			m_luaEditor.SetLanguage( Languages.Lua );
+
+			m_luaEditor.EditorTextChanged += delegate
+			{
+				ISelectionContext selectionContext = m_contextRegistry.GetActiveContext<ISelectionContext>();
+				if (selectionContext != null)
+				{
+					object lastSelected = selectionContext.LastSelected;
+
+					Path<object> path = lastSelected as Path<object>;
+					object selected = path != null ? path.Last : lastSelected;
+
+					LuaScript luaScript = selected.As<LuaScript>();
+					if (luaScript != null)
+					{
+						if (luaScript.SourceCode != m_luaEditor.Text)
+						{
+							luaScript.SourceCode = m_luaEditor.Text;
+
+							TimelineDocument document = m_contextRegistry.GetActiveContext<TimelineDocument>();
+							if (document != null)
+							{
+								document.Dirty = true;
+							}
+						}
+					}
+				}
+			};
+
+			m_luaEditorControlInfo = new ControlInfo( "luaScript", "luaScript", StandardControlGroup.Bottom );
+			//// tell ControlHostService this control should be considered a document in the menu, 
+			//// and using the full path of the document for menu text to avoid adding a number in the end 
+			//// in control header,  which is not desirable for documents that have the same name 
+			//// but located at different directories.
+			//m_luaEditorControlInfo.IsDocument = true;
+			m_controlHostService.RegisterControl(
+				m_luaEditor.Control,
+				m_luaEditorControlInfo,
+				this );
         }
 
         #endregion
@@ -362,10 +441,13 @@ namespace picoTimelineEditor
         /// registered for this IControlHostClient.</remarks>
         public void Activate(Control control)
         {
-            D2dTimelineControl timelineControl = (D2dTimelineControl)control;
-            TimelineDocument timelineDocument = (TimelineDocument)timelineControl.TimelineDocument;
-            m_contextRegistry.ActiveContext = timelineDocument;
-            m_documentRegistry.ActiveDocument = timelineDocument;
+			D2dTimelineControl timelineControl = control as D2dTimelineControl;
+			if (timelineControl != null)
+			{
+				TimelineDocument timelineDocument = (TimelineDocument) timelineControl.TimelineDocument;
+				m_contextRegistry.ActiveContext = timelineDocument;
+				m_documentRegistry.ActiveDocument = timelineDocument;
+			}
         }
 
         /// <summary>
@@ -390,11 +472,14 @@ namespace picoTimelineEditor
         /// if it wants to re-register this Control.</remarks>
         public bool Close(Control control)
         {
-            D2dTimelineControl timelineControl = (D2dTimelineControl)control;
-            TimelineDocument timelineDocument = (TimelineDocument)timelineControl.TimelineDocument;
+			D2dTimelineControl timelineControl = control as D2dTimelineControl;
+			if (timelineControl != null)
+			{
+				TimelineDocument timelineDocument = (TimelineDocument) timelineControl.TimelineDocument;
 
-            if (timelineDocument != null)
-                return m_documentService.Close(timelineDocument);
+				if (timelineDocument != null)
+					return m_documentService.Close( timelineDocument );
+			}
 
             return true;
         }
@@ -802,6 +887,9 @@ namespace picoTimelineEditor
         [Import(AllowDefault = true)]
         private LiveConnectService m_liveConnectService = null;
 
+		[Import( AllowDefault = true )]
+		private CurveEditor m_curveEditor = null;
+
         private IContextRegistry m_contextRegistry;
         private IDocumentRegistry m_documentRegistry;
         private IDocumentService m_documentService;
@@ -817,5 +905,8 @@ namespace picoTimelineEditor
             Sce.Atf.Resources.DocumentImage,
             Sce.Atf.Resources.FolderImage,
             true);
+
+		private ISyntaxEditorControl m_luaEditor;
+		private ControlInfo m_luaEditorControlInfo;
     }
 }

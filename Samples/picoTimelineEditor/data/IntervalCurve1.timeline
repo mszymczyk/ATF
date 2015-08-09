@@ -1,0 +1,24 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<timeline xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns="timeline">
+	<group>
+		<track>
+			<interval xsi:type="intervalCurveType" start="3" name="IntervalCurve1">
+				<curve name="curve_Interval" displayName="Interval" minX="0" maxX="5" minY="-3.40282347E+38" maxY="3.40282347E+38" preInfinity="Cycle" postInfinity="Cycle" xLabel="x-Time" yLabel="x-Pos">
+					<controlPoint tangentIn="0.9982359 0.0593722574" tangentInType="Spline" tangentOut="0.9982359 0.0593722574" tangentOutType="Spline" />
+					<controlPoint x="3.47858739" y="0.206896573" tangentIn="0.9805807 0.196116149" tangentInType="Spline" tangentOut="0.9805807 0.196116135" tangentOutType="Spline" />
+					<controlPoint x="5" y="1" tangentIn="0.886746645 0.4622558" tangentInType="Spline" tangentOut="0.886746645 0.4622558" tangentOutType="Spline" />
+				</curve>
+			</interval>
+			<key xsi:type="luaScriptType" start="10" sourceCode="ksiezniczka.changeTrees(1.0)" />
+		</track>
+		<track>
+			<interval xsi:type="intervalCurveType" start="1" name="IntervalCurve2">
+				<curve name="curve_Interval" displayName="Interval" minX="0" maxX="5" minY="-3.40282347E+38" maxY="3.40282347E+38" preInfinity="Cycle" postInfinity="Cycle" xLabel="x-Time" yLabel="x-Pos">
+					<controlPoint tangentIn="0.9805807 0.196116135" tangentInType="Spline" tangentOut="0.9805807 0.196116135" tangentOutType="Spline" />
+					<controlPoint x="5" y="1" tangentIn="0.9805807 0.196116135" tangentInType="Spline" tangentOut="0.9805807 0.196116135" tangentOutType="Spline" />
+				</curve>
+			</interval>
+			<key xsi:type="luaScriptType" start="8" sourceCode="function dupa()&#xD;&#xA;end" />
+		</track>
+	</group>
+</timeline>

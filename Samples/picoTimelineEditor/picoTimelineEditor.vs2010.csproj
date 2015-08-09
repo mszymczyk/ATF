@@ -9,7 +9,7 @@
     <OutputType>WinExe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>picoTimelineEditor</RootNamespace>
-    <AssemblyName>TimelineEditor</AssemblyName>
+    <AssemblyName>picoTimelineEditor</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />
@@ -87,6 +87,11 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="DomNodeAdapters\ControlPoint.cs" />
+    <Compile Include="DomNodeAdapters\Curve.cs" />
+    <Compile Include="DomNodeAdapters\CurveLimitValidator.cs" />
+    <Compile Include="DomNodeAdapters\IntervalCurve.cs" />
+    <Compile Include="DomNodeAdapters\LuaScript.cs" />
     <Compile Include="DomNodeAdapters\TimelineReference.cs" />
     <Compile Include="HelpAboutCommand.cs" />
     <Compile Include="Resources.cs" />
@@ -118,6 +123,9 @@
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
     </None>
     <EmbeddedResource Include="Resources\About.rtf" />
+    <EmbeddedResource Include="schemas\CurveSchema.xsd">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
     <None Include="schemas\GenSchemaDef.bat" />
     <EmbeddedResource Include="schemas\timeline.xsd">
       <SubType>
@@ -165,6 +173,10 @@
     <ProjectReference Include="..\..\Framework\Atf.IronPython\Atf.IronPython.vs2010.csproj">
       <Project>{7F794C24-7A8D-4D21-B443-F03509669F89}</Project>
       <Name>Atf.IronPython.vs2010</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Framework\Atf.SyntaxEditorControl\Atf.SyntaxEditorControl.vs2010.csproj">
+      <Project>{d1a78912-9ad2-4555-8560-b251a4d751dc}</Project>
+      <Name>Atf.SyntaxEditorControl.vs2010</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

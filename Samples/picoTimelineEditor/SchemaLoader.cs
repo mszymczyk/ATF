@@ -77,6 +77,13 @@ namespace picoTimelineEditor
                 Schema.markerType.Type.Define(new ExtensionInfo<Marker>());
                 Schema.timelineRefType.Type.Define(new ExtensionInfo<TimelineReference>());
 
+				// pico
+				// register the timeline model interfaces
+				Schema.intervalCurveType.Type.Define( new ExtensionInfo<IntervalCurve>() );
+				Schema.curveType.Type.Define( new ExtensionInfo<Curve>() );
+				Schema.controlPointType.Type.Define( new ExtensionInfo<ControlPoint>() );
+				Schema.luaScriptType.Type.Define( new ExtensionInfo<LuaScript>() );
+
                 // the timeline schema defines only one type collection
                 break;
             }

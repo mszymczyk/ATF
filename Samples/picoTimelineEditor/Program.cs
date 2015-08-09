@@ -10,6 +10,7 @@ using Sce.Atf;
 using Sce.Atf.Adaptation;
 using Sce.Atf.Applications;
 using Sce.Atf.Dom;
+using Sce.Atf.Controls.CurveEditing;
 
 namespace picoTimelineEditor
 {
@@ -85,7 +86,10 @@ namespace picoTimelineEditor
                 typeof(FileWatcherService),                // service to watch for changes to files
                 typeof(DefaultTabCommands),             // provides the default commands related to document tab Controls
                 typeof(SkinService),                    // allows for customization of an application’s appearance by using inheritable properties that can be applied at run-time
-                
+
+				typeof( DomExplorer ),                  // component that gives diagnostic view of DOM
+				typeof( CurveEditor ),                  // edits curves using the CurveEditingControl
+
                 // Client-specific plug-ins
                 typeof(TimelineEditor),                 // timeline editor component
                 typeof(TimelineCommands),               // defines Timeline-specific commands

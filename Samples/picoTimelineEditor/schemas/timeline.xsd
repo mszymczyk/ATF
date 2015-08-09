@@ -4,6 +4,8 @@
 	xmlns="timeline"
   xmlns:xs="http://www.w3.org/2001/XMLSchema">
 
+  <xs:include schemaLocation="CurveSchema.xsd"/>
+
   <xs:complexType name="timelineType">
     <xs:annotation>
       <!--
@@ -22,7 +24,7 @@
   <xs:complexType name="groupType">
     <xs:annotation>
       <xs:appinfo>
-        <scea.dom.editors menuText="Group" description="Group" image="TimelineEditorSample.Resources.group.png" category="Timelines" />
+        <scea.dom.editors menuText="Group" description="Group" image="picoTimelineEditor.Resources.group.png" category="Timelines" />
         <scea.dom.editors.attribute name="name" displayName="Name" description="Name" />
         <scea.dom.editors.attribute name="expanded" displayName="Expanded" description="Whether Group is Expanded" />
       </xs:appinfo>
@@ -37,7 +39,7 @@
   <xs:complexType name="trackType">
     <xs:annotation>
       <xs:appinfo>
-        <scea.dom.editors menuText="Track" description="Track" image="TimelineEditorSample.Resources.track.png" category="Timelines" />
+        <scea.dom.editors menuText="Track" description="Track" image="picoTimelineEditor.Resources.track.png" category="Timelines" />
         <scea.dom.editors.attribute name="name" displayName="Name" description="Name" />
       </xs:appinfo>
     </xs:annotation>
@@ -62,7 +64,7 @@
   <xs:complexType name="intervalType">
     <xs:annotation>
       <xs:appinfo>
-        <scea.dom.editors menuText="Interval" description="Interval" image="TimelineEditorSample.Resources.interval.png" category="Timelines" />
+        <scea.dom.editors menuText="Interval" description="Interval" image="picoTimelineEditor.Resources.interval.png" category="Timelines" />
         <scea.dom.editors.attribute name="name" displayName="Name" description="Name" />
         <scea.dom.editors.attribute name="length" displayName="Length" description="Length or Duration" />
         <scea.dom.editors.attribute name="color" displayName="Color" description="Display Color"
@@ -79,10 +81,29 @@
     </xs:complexContent>
   </xs:complexType>
 
+  <xs:complexType name="intervalCurveType">
+    <xs:annotation>
+      <xs:appinfo>
+        <scea.dom.editors menuText="IntervalCurve" description="IntervalCurve" image="picoTimelineEditor.Resources.interval.png" category="pico" />
+      </xs:appinfo>
+    </xs:annotation>
+    <xs:complexContent>
+      <xs:extension base="intervalType">
+        <xs:sequence>
+          <xs:element name="curve" type="curveType" minOccurs="0" maxOccurs="unbounded"/>
+        </xs:sequence>
+        <xs:attribute name="name" type="xs:string" default="IntervalCurve"/>
+        <!--xs:attribute name="length" type="xs:float" default="5.0"/>
+        <xs:attribute name="color" type="xs:integer" default="-16776961"/-->
+        <!--blue-->
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
   <xs:complexType name="markerType">
     <xs:annotation>
       <xs:appinfo>
-        <scea.dom.editors menuText="Marker" description="Marker" image="TimelineEditorSample.Resources.marker.png" category="Timelines" />
+        <scea.dom.editors menuText="Marker" description="Marker" image="picoTimelineEditor.Resources.marker.png" category="Timelines" />
         <scea.dom.editors.attribute name="name" displayName="Name" description="Name" />
         <scea.dom.editors.attribute name="color" displayName="Color" description="Display Color"
           editor="Sce.Atf.Controls.PropertyEditing.ColorEditor,Atf.Gui"
@@ -100,7 +121,7 @@
   <xs:complexType name="keyType">
     <xs:annotation>
       <xs:appinfo>
-        <scea.dom.editors menuText="Key" description="Key" image="TimelineEditorSample.Resources.key.png" category="Timelines" />
+        <scea.dom.editors menuText="Key" description="Key" image="picoTimelineEditor.Resources.key.png" category="Timelines" />
         <scea.dom.editors.attribute
            name="specialEvent"
            displayName="Special Event"
@@ -116,11 +137,25 @@
     </xs:complexContent>
   </xs:complexType>
 
+  <xs:complexType name="luaScriptType">
+    <xs:annotation>
+      <xs:appinfo>
+        <scea.dom.editors menuText="LuaScript" description="LuaScript" image="picoTimelineEditor.Resources.key.png" category="pico" />
+        <scea.dom.editors.attribute name="sourceCode" displayName="SourceCode" description="SourceCode" />
+      </xs:appinfo>
+    </xs:annotation>
+    <xs:complexContent>
+      <xs:extension base="keyType">
+        <xs:attribute name="sourceCode" type="xs:string" />
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
   <xs:complexType name="timelineRefType">
     <xs:annotation>
       <xs:appinfo>
         <scea.dom.editors menuText="Reference" description="Timeline Reference"
-                          image="TimelineEditorSample.Resources.group.png" category="Timelines" />
+                          image="picoTimelineEditor.Resources.group.png" category="Timelines" />
         <scea.dom.editors.attribute name="name" displayName="Name" description="Name" />
         <scea.dom.editors.attribute name="start" displayName="Start" description="Start Time" />
         <scea.dom.editors.attribute name="description" displayName="Description" description="Event description" />
