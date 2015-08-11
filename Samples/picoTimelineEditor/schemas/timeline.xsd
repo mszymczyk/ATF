@@ -18,6 +18,7 @@
       <xs:element name="group" type="groupType" minOccurs="0" maxOccurs="unbounded" />
       <xs:element name="marker" type="markerType" minOccurs="0" maxOccurs="unbounded" />
       <xs:element name="timelineRef" type="timelineRefType" minOccurs="0" maxOccurs="unbounded" />
+      <xs:element name="fader" type="trackFaderType" minOccurs="0" maxOccurs="1" />
     </xs:sequence>
   </xs:complexType>
 
@@ -140,7 +141,7 @@
   <xs:complexType name="luaScriptType">
     <xs:annotation>
       <xs:appinfo>
-        <scea.dom.editors menuText="LuaScript" description="LuaScript" image="picoTimelineEditor.Resources.key.png" category="pico" />
+        <scea.dom.editors menuText="LuaScript" description="LuaScript" image="picoTimelineEditor.Resources.luaScript.png" category="pico" />
         <scea.dom.editors.attribute name="sourceCode" displayName="SourceCode" description="SourceCode" />
       </xs:appinfo>
     </xs:annotation>
@@ -171,6 +172,15 @@
     <xs:attribute name="description" type="xs:string"/>
     <xs:attribute name="color" type="xs:integer" default="-32640"/><!--sort of a salmon color-->
     <xs:attribute name="ref" type="xs:anyURI" />
+  </xs:complexType>
+
+
+  <xs:complexType name="trackFaderType">
+    <xs:annotation>
+      <xs:appinfo>
+        <scea.dom.editors menuText="TrackFader" description="TrackFader" image="picoTimelineEditor.Resources.track.png" category="pico" />
+      </xs:appinfo>
+    </xs:annotation>
   </xs:complexType>
   
   <xs:element name="timeline" type="timelineType"/>

@@ -93,7 +93,12 @@
     <Compile Include="DomNodeAdapters\IntervalCurve.cs" />
     <Compile Include="DomNodeAdapters\LuaScript.cs" />
     <Compile Include="DomNodeAdapters\TimelineReference.cs" />
+    <Compile Include="DomNodeAdapters\TrackFader.cs" />
     <Compile Include="HelpAboutCommand.cs" />
+    <Compile Include="picoD2dTimelineRenderer.cs" />
+    <Compile Include="picoTimelineControl.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="Resources.cs" />
     <Compile Include="Schema.cs" />
     <Compile Include="SchemaLoader.cs" />
@@ -181,6 +186,9 @@
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Resources\ja\Localization.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\luaScript.png" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

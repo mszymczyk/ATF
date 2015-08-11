@@ -33,5 +33,10 @@ namespace picoTimelineEditor
         /// Track image resource resource filename</summary>
         [ImageResource("track.png")]
         public static readonly string TrackImage;
-    }
+
+		/// <summary>
+		/// LuaScript image resource resource filename</summary>
+		[ImageResource( "luaScript.png" )]
+		public static readonly string LuaScriptImage;
+	}
 }

@@ -156,15 +156,9 @@ namespace picoTimelineEditor
 							LuaScript luaScript = selected.As<LuaScript>();
 							if (luaScript != null)
 							{
-								m_luaEditor.ReadOnly = false;
-								m_luaEditor.Text = luaScript.SourceCode;
-								m_luaEditor.Dirty = false;
-							}
-							else
-							{
-								m_luaEditor.ReadOnly = true;
-								m_luaEditor.Text = "";
-								m_luaEditor.Dirty = false;
+								m_luaEditorPanel.Controls.Clear();
+								m_luaEditorPanel.Controls.Add( luaScript.LuaEditorControl );
+								m_luaEditorPanelControlInfo.Name = "Lua Script: " + luaScript.Name;
 							}
 						};
 					}
@@ -213,47 +207,13 @@ namespace picoTimelineEditor
 				m_curveEditor.Control.CurvesChanged += ( sender, e ) => m_curveEditor.Control.FitAll();
 			}
 
-			m_luaEditor = TextEditorFactory.CreateSyntaxHighlightingEditor();
-			m_luaEditor.SetLanguage( Languages.Lua );
-
-			m_luaEditor.EditorTextChanged += delegate
-			{
-				ISelectionContext selectionContext = m_contextRegistry.GetActiveContext<ISelectionContext>();
-				if (selectionContext != null)
-				{
-					object lastSelected = selectionContext.LastSelected;
-
-					Path<object> path = lastSelected as Path<object>;
-					object selected = path != null ? path.Last : lastSelected;
-
-					LuaScript luaScript = selected.As<LuaScript>();
-					if (luaScript != null)
-					{
-						if (luaScript.SourceCode != m_luaEditor.Text)
-						{
-							luaScript.SourceCode = m_luaEditor.Text;
-
-							TimelineDocument document = m_contextRegistry.GetActiveContext<TimelineDocument>();
-							if (document != null)
-							{
-								document.Dirty = true;
-							}
-						}
-					}
-				}
-			};
-
-			m_luaEditorControlInfo = new ControlInfo( "luaScript", "luaScript", StandardControlGroup.Bottom );
-			//// tell ControlHostService this control should be considered a document in the menu, 
-			//// and using the full path of the document for menu text to avoid adding a number in the end 
-			//// in control header,  which is not desirable for documents that have the same name 
-			//// but located at different directories.
-			//m_luaEditorControlInfo.IsDocument = true;
+			m_luaEditorPanel = new Panel();
+			m_luaEditorPanelControlInfo = new ControlInfo( "Lua Script", "Lua Script Editor", StandardControlGroup.Bottom );
 			m_controlHostService.RegisterControl(
-				m_luaEditor.Control,
-				m_luaEditorControlInfo,
+				m_luaEditorPanel,
+				m_luaEditorPanelControlInfo,
 				this );
-        }
+		}
 
         #endregion
 
@@ -325,7 +285,6 @@ namespace picoTimelineEditor
         public IDocument Open(Uri uri)
         {
             TimelineDocument document = LoadOrCreateDocument(uri, true); //true: this is a master document
-
             if (document != null)
             {
                 m_controlHostService.RegisterControl(
@@ -442,11 +401,15 @@ namespace picoTimelineEditor
         public void Activate(Control control)
         {
 			D2dTimelineControl timelineControl = control as D2dTimelineControl;
-			if (timelineControl != null)
+			if ( timelineControl != null )
 			{
-				TimelineDocument timelineDocument = (TimelineDocument) timelineControl.TimelineDocument;
+				TimelineDocument timelineDocument = (TimelineDocument)timelineControl.TimelineDocument;
 				m_contextRegistry.ActiveContext = timelineDocument;
 				m_documentRegistry.ActiveDocument = timelineDocument;
+			}
+			else
+			{
+				m_contextRegistry.ActiveContext = m_luaEditorPanel;
 			}
         }
 
@@ -491,7 +454,8 @@ namespace picoTimelineEditor
         /// <returns>The renderer to use for one timeline control</returns>
         protected virtual D2dTimelineRenderer CreateTimelineRenderer()
         {
-            return new D2dDefaultTimelineRenderer();
+			//return new D2dDefaultTimelineRenderer();
+			return new picoD2dTimelineRenderer();
         }
 
         /// <summary>
@@ -906,7 +870,7 @@ namespace picoTimelineEditor
             Sce.Atf.Resources.FolderImage,
             true);
 
-		private ISyntaxEditorControl m_luaEditor;
-		private ControlInfo m_luaEditorControlInfo;
+		private Panel m_luaEditorPanel;
+		private ControlInfo m_luaEditorPanelControlInfo;
     }
 }

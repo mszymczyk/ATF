@@ -69,11 +69,13 @@ namespace picoTimelineEditor
 
                 // Due to recursion, we need m_timelineControl to be valid before m_timelineControl.TimelineDocument is set.
                 // So, we pass in 'null' into TimelineControl's constructor.
-                m_timelineControl = new TimelineControl(null, m_renderer, new TimelineConstraints(), false);
+                m_timelineControl = new picoTimelineControl(null, m_renderer, new TimelineConstraints(), false);
                 m_timelineControl.TimelineDocument = this;
 
-                m_timelineControl.SetZoomRange(0.1f, 50f, 1f, 100f);
-                AttachManipulators();
+                m_timelineControl.SetZoomRange(0.01f, 50f, 1f, 100f);
+				m_timelineControl.XZoom = 0.035f;
+				//m_timelineControl.YZoom = 1.0f;
+				AttachManipulators();
             }
         }
 

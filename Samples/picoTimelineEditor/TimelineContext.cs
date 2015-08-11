@@ -681,13 +681,13 @@ namespace picoTimelineEditor
             IGroup group = droppedItem.As<IGroup>();
             if (group != null)
             {
-                // if this is a new group, add a default track
-                if (group.Tracks.Count == 0)
-                {
-                    ITrack emptyTrack = group.CreateTrack();
-                    if (emptyTrack != null)
-                        group.Tracks.Add(emptyTrack);
-                }
+				//// if this is a new group, add a default track
+				//if (group.Tracks.Count == 0)
+				//{
+				//	ITrack emptyTrack = group.CreateTrack();
+				//	if (emptyTrack != null)
+				//		group.Tracks.Add(emptyTrack);
+				//}
 
                 targetTimeline.Groups.Add(group);
                 return;
@@ -776,19 +776,19 @@ namespace picoTimelineEditor
 
         private void DomNode_AttributeChanged(object sender, AttributeEventArgs e)
         {
-            if (IsTimelineItem(e.DomNode))
+			//if (IsTimelineItem(e.DomNode))
                 OnObjectChanged(new ItemChangedEventArgs<object>(e.DomNode));
         }
 
         private void DomNode_ChildInserted(object sender, ChildEventArgs e)
         {
-            if (IsTimelineItem(e.Child))
+			//if (IsTimelineItem(e.Child))
                 OnObjectInserted(new ItemInsertedEventArgs<object>(e.Index, e.Child, e.Parent));
         }
 
         private void DomNode_ChildRemoved(object sender, ChildEventArgs e)
         {
-            if (IsTimelineItem(e.Child))
+			//if (IsTimelineItem(e.Child))
                 OnObjectRemoved(new ItemRemovedEventArgs<object>(e.Index, e.Child, e.Parent));
         }
 

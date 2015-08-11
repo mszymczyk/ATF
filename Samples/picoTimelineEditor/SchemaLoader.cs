@@ -83,6 +83,7 @@ namespace picoTimelineEditor
 				Schema.curveType.Type.Define( new ExtensionInfo<Curve>() );
 				Schema.controlPointType.Type.Define( new ExtensionInfo<ControlPoint>() );
 				Schema.luaScriptType.Type.Define( new ExtensionInfo<LuaScript>() );
+				Schema.trackFaderType.Type.Define(new ExtensionInfo<TrackFader>());
 
                 // the timeline schema defines only one type collection
                 break;

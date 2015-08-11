@@ -32,6 +32,7 @@ namespace picoTimelineEditor
             timelineType.groupChild = timelineType.Type.GetChildInfo("group");
             timelineType.markerChild = timelineType.Type.GetChildInfo("marker");
             timelineType.timelineRefChild = timelineType.Type.GetChildInfo("timelineRef");
+            timelineType.faderChild = timelineType.Type.GetChildInfo("fader");
 
             groupType.Type = getNodeType("timeline", "groupType");
             groupType.nameAttribute = groupType.Type.GetAttributeInfo("name");
@@ -71,6 +72,8 @@ namespace picoTimelineEditor
             timelineRefType.descriptionAttribute = timelineRefType.Type.GetAttributeInfo("description");
             timelineRefType.colorAttribute = timelineRefType.Type.GetAttributeInfo("color");
             timelineRefType.refAttribute = timelineRefType.Type.GetAttributeInfo("ref");
+
+            trackFaderType.Type = getNodeType("timeline", "trackFaderType");
 
             controlPointType.Type = getNodeType("timeline", "controlPointType");
             controlPointType.xAttribute = controlPointType.Type.GetAttributeInfo("x");
@@ -118,6 +121,7 @@ namespace picoTimelineEditor
             public static ChildInfo groupChild;
             public static ChildInfo markerChild;
             public static ChildInfo timelineRefChild;
+            public static ChildInfo faderChild;
         }
 
         public static class groupType
@@ -178,6 +182,11 @@ namespace picoTimelineEditor
             public static AttributeInfo descriptionAttribute;
             public static AttributeInfo colorAttribute;
             public static AttributeInfo refAttribute;
+        }
+
+        public static class trackFaderType
+        {
+            public static DomNodeType Type;
         }
 
         public static class controlPointType
