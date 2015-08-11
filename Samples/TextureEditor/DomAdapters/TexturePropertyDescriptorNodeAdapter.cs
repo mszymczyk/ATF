@@ -159,6 +159,17 @@ namespace TextureEditor
 							 new BoolEditor()
 							 )
 				);
+
+				textureMetadataTypeProperyCollection.Add(
+				new AttributePropertyDescriptor(
+						 "Export to PS4 Gnf".Localize(),
+						 Schema.textureMetadataType.exportToGnfAttribute,
+						 group_Metadata,
+						 "Enables conversion to PlayStation4 Gnf format".Localize(),
+						 false,
+						 new BoolEditor()
+						 )
+			);
 			}
 
 			textureMetadataTypeProperyCollection.Add(

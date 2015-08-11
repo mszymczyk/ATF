@@ -48,6 +48,12 @@ namespace TextureEditor
 			set { SetAttribute( Schema.textureMetadataType.copySourceFileAttribute, value ); }
 		}
 
+		public bool ExportToGnf
+		{
+			get { return GetAttribute<bool>( Schema.textureMetadataType.exportToGnfAttribute ); }
+			set { SetAttribute( Schema.textureMetadataType.exportToGnfAttribute, value ); }
+		}
+
 		//public SharpDX.DXGI.Format Format
 		//{
 		//	get

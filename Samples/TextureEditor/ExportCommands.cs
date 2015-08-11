@@ -443,6 +443,7 @@ namespace TextureEditor
 							}
 						}
 
+						if ( tm.ExportToGnf )
 						{
 							string dirPS4 = System.IO.Path.GetDirectoryName( outputFilePS4 );
 							System.IO.Directory.CreateDirectory( dirPS4 );
@@ -459,6 +460,11 @@ namespace TextureEditor
 							}
 
 							//System.IO.File.SetLastWriteTime( outputFilePS4, DateTime.Now );
+						}
+						else
+						{
+							if ( System.IO.File.Exists( outputFilePS4 ) )
+								System.IO.File.Delete( outputFilePS4 );
 						}
 					}
 

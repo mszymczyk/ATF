@@ -35,6 +35,7 @@ namespace TextureEditor
             textureMetadataType.forceSourceSrgbAttribute = textureMetadataType.Type.GetAttributeInfo("forceSourceSrgb");
             textureMetadataType.flipYAttribute = textureMetadataType.Type.GetAttributeInfo("flipY");
             textureMetadataType.copySourceFileAttribute = textureMetadataType.Type.GetAttributeInfo("copySourceFile");
+            textureMetadataType.exportToGnfAttribute = textureMetadataType.Type.GetAttributeInfo("exportToGnf");
             textureMetadataType.presetAttribute = textureMetadataType.Type.GetAttributeInfo("preset");
             textureMetadataType.formatAttribute = textureMetadataType.Type.GetAttributeInfo("format");
             textureMetadataType.widthAttribute = textureMetadataType.Type.GetAttributeInfo("width");
@@ -61,6 +62,7 @@ namespace TextureEditor
             public static AttributeInfo forceSourceSrgbAttribute;
             public static AttributeInfo flipYAttribute;
             public static AttributeInfo copySourceFileAttribute;
+            public static AttributeInfo exportToGnfAttribute;
             public static AttributeInfo presetAttribute;
             public static AttributeInfo formatAttribute;
             public static AttributeInfo widthAttribute;
