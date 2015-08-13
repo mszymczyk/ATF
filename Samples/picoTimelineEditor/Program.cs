@@ -12,6 +12,8 @@ using Sce.Atf.Applications;
 using Sce.Atf.Dom;
 using Sce.Atf.Controls.CurveEditing;
 
+using pico.Hub;
+
 namespace picoTimelineEditor
 {
     /// <summary>
@@ -99,7 +101,10 @@ namespace picoTimelineEditor
                 typeof(PythonService),                  // scripting service for automated tests
                 typeof(ScriptConsole),                  // provides a dockable command console for entering Python commands
                 typeof(AtfScriptVariables),             // exposes common ATF services as script variables
-                typeof(AutomationService)               // provides facilities to run an automated script using the .NET remoting service
+                typeof(AutomationService),              // provides facilities to run an automated script using the .NET remoting service
+
+				// pico
+				typeof(HubService)
                 );
             
             var container = new CompositionContainer(catalog);

@@ -18,6 +18,14 @@
 					<controlPoint x="5" y="1" tangentIn="0.9805807 0.196116135" tangentInType="Spline" tangentOut="0.9805807 0.196116135" tangentOutType="Spline" />
 				</curve>
 			</interval>
+			<interval xsi:type="intervalFaderType" start="1177">
+				<curve name="FaderValue" displayName="Fader" minX="0" maxX="1" minY="0" maxY="1" preInfinity="Cycle" postInfinity="Cycle" color="-8388608" xLabel="Time" yLabel="Value">
+					<controlPoint tangentIn="0.7071068 0.7071068" tangentInType="Spline" tangentOut="0.7071068 0.7071068" tangentOutType="Spline" />
+					<controlPoint x="0.33" y="0.33" tangentIn="0.7071068 0.7071068" tangentInType="Spline" tangentOut="0.7071068 0.7071068" tangentOutType="Spline" />
+					<controlPoint x="0.66" y="0.66" tangentIn="0.7071068 0.7071068" tangentInType="Spline" tangentOut="0.707106769 0.707106769" tangentOutType="Spline" />
+					<controlPoint x="1" y="1" tangentIn="0.707106769 0.707106769" tangentInType="Spline" tangentOut="0.707106769 0.707106769" tangentOutType="Spline" />
+				</curve>
+			</interval>
 			<key xsi:type="luaScriptType" start="820" sourceCode="function dupa()&#xD;&#xA;end" />
 		</track>
 	</group>

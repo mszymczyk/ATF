@@ -12,15 +12,17 @@ namespace picoTimelineEditor.DomNodeAdapters
     /// <summary>
     /// Adapts DomNode to a Track</summary>
     public class TrackFader : DomNodeAdapter, ITrack, ICloneable
-    {
-        #region ITrack Members
+    {		
+		#region ITrack Members
 
         /// <summary>
         /// Gets or sets the track name</summary>
         public string Name
         {
-            get { return (string)DomNode.GetAttribute(Schema.trackType.nameAttribute); }
-            set { DomNode.SetAttribute(Schema.trackType.nameAttribute, value); }
+			//get { return (string)DomNode.GetAttribute(Schema.trackType.nameAttribute); }
+			//set { DomNode.SetAttribute(Schema.trackType.nameAttribute, value); }
+			get { return "TrackFader"; }
+			set { }
         }
 
         /// <summary>
@@ -35,7 +37,7 @@ namespace picoTimelineEditor.DomNodeAdapters
         /// <returns>New interval</returns>
         public IInterval CreateInterval()
         {
-            return new DomNode(Schema.intervalType.Type).As<IInterval>();
+            return new DomNode(Schema.intervalFaderType.Type).As<IInterval>();
         }
 
         /// <summary>
@@ -44,7 +46,7 @@ namespace picoTimelineEditor.DomNodeAdapters
         /// modified when the IList is modified.</summary>
         public IList<IInterval> Intervals
         {
-            get { return GetChildList<IInterval>(Schema.trackType.intervalChild); }
+            get { return GetChildList<IInterval>(Schema.trackFaderType.intervalFaderChild); }
         }
 
         /// <summary>
@@ -52,14 +54,16 @@ namespace picoTimelineEditor.DomNodeAdapters
         /// <returns>New key</returns>
         public IKey CreateKey()
         {
-            return new DomNode(Schema.keyType.Type).As<IKey>();
+			//return new DomNode(Schema.keyType.Type).As<IKey>();
+			return null;
         }
 
         /// <summary>
         /// Gets the list of all keys in the track</summary>
         public IList<IKey> Keys
         {
-            get { return GetChildList<IKey>(Schema.trackType.keyChild); }
+			//get { return GetChildList<IKey>(Schema.trackType.keyChild); }
+			get { return new List<IKey>(); }
         }
 
         #endregion

@@ -145,6 +145,7 @@
     <Compile Include="TimelineContext.cs" />
     <Compile Include="TimelineDocument.cs" />
     <Compile Include="TimelineEditor.cs" />
+    <Compile Include="TimelineHub.cs" />
     <Compile Include="TimelineValidator.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -182,6 +183,10 @@
     <ProjectReference Include="..\..\Framework\Atf.SyntaxEditorControl\Atf.SyntaxEditorControl.vs2010.csproj">
       <Project>{d1a78912-9ad2-4555-8560-b251a4d751dc}</Project>
       <Name>Atf.SyntaxEditorControl.vs2010</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\pico\pico.csproj">
+      <Project>{78c1e637-8be0-46e0-89c1-517659588d9a}</Project>
+      <Name>pico</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

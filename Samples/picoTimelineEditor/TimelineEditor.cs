@@ -21,6 +21,8 @@ using picoTimelineEditor.DomNodeAdapters;
 using Sce.Atf.Controls.Timelines.Direct2D;
 using Sce.Atf.Controls.SyntaxEditorControl;
 
+using pico.Hub;
+
 namespace picoTimelineEditor
 {
     /// <summary>
@@ -244,45 +246,14 @@ namespace picoTimelineEditor
 				m_luaEditorPanelControlInfo,
 				this );
 
-			//IPHostEntry hostInfo = Dns.GetHostByName( PICO_HUB_IP );
-			IPHostEntry hostInfo = Dns.GetHostEntry( PICO_HUB_IP );
-			//IPHostEntry ipHostInfo = Dns.Resolve( Dns.GetHostName() );
-			IPAddress serverAddr = hostInfo.AddressList[1];
-			var clientEndPoint = new IPEndPoint( serverAddr, PICO_HUB_PORT ); 
-
-			// Create a client socket and connect it to the endpoint 
-			m_picoHubClientSocket = new System.Net.Sockets.Socket( System.Net.Sockets.AddressFamily.InterNetwork, System.Net.Sockets.SocketType.Stream, System.Net.Sockets.ProtocolType.Tcp );
-			m_picoHubClientSocket.Connect( clientEndPoint );
-
 			D2dScrubberManipulator.Moved += ( object sender, EventArgs e ) =>
 			{
 				D2dScrubberManipulator scrubber = sender as D2dScrubberManipulator;
 				if ( scrubber == null )
 					return;
 
-				float position = scrubber.Position;
-
-				ITimelineDocument doc = scrubber.Owner.TimelineDocument;
-				string docUri = doc.Uri.LocalPath;
-				//string msg = "timeline";
-				//msg += docUri.Length.ToString;
-				//msg += docUri;
-				System.IO.MemoryStream memStr = new MemoryStream();
-				writeBytes( memStr, toBytes( "timeline" ) );
-				writeBytes( memStr, toBytes( docUri.Length ) );
-				writeBytes( memStr, toBytes( docUri ) );
-				string cmd = "scrubberPos";
-				writeBytes( memStr, toBytes( cmd.Length ) );
-				writeBytes( memStr, toBytes( cmd ) );
-				writeBytes( memStr, toBytes( position ) );
-
-				byte[] msgBytes = memStr.ToArray();
-				byte[] msgSizeBytes = toBytes( msgBytes.Length );
-				byte[] msgFinalBytes = new byte[4 + msgBytes.Length];
-				System.Buffer.BlockCopy( msgSizeBytes, 0, msgFinalBytes, 0, 4 );
-				System.Buffer.BlockCopy( msgBytes, 0, msgFinalBytes, 4, msgBytes.Length );
-				m_picoHubClientSocket.Send( msgFinalBytes );
-				//msg += position.ToString();
+				TimelineHubCommunication hubComm = scrubber.Owner.TimelineDocument.Cast<TimelineHubCommunication>();
+				hubComm.sendScrubberPosition( scrubber.Position );
 			};
 		}
 
@@ -643,6 +614,9 @@ namespace picoTimelineEditor
                     }
                 }
 
+				TimelineHubCommunication hubComm = node.Cast<TimelineHubCommunication>();
+				hubComm.setup( m_hubService, s_schemaLoader );
+
                 // Initialize Dom extensions now that the data is complete
                 node.InitializeExtensions();
             }
@@ -932,6 +906,9 @@ namespace picoTimelineEditor
 		[Import( AllowDefault = true )]
 		private CurveEditor m_curveEditor = null;
 
+		[Import( AllowDefault = true )]
+		private HubService m_hubService = null;
+
         private IContextRegistry m_contextRegistry;
         private IDocumentRegistry m_documentRegistry;
         private IDocumentService m_documentService;
@@ -951,12 +928,12 @@ namespace picoTimelineEditor
 		private Panel m_luaEditorPanel;
 		private ControlInfo m_luaEditorPanelControlInfo;
 
-		// picoHub
-		//
-		static string PICO_HUB_IP = "localhost";
-		static int PICO_HUB_PORT = 6666;
+		//// picoHub
+		////
+		//static string PICO_HUB_IP = "localhost";
+		//static int PICO_HUB_PORT = 6666;
 
-		//Client socket stuff 
-		System.Net.Sockets.Socket m_picoHubClientSocket;
+		////Client socket stuff 
+		//System.Net.Sockets.Socket m_picoHubClientSocket;
     }
 }

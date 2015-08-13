@@ -65,6 +65,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TextureEditor.vs2010", "Tex
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "picoTimelineEditor.vs2010", "picoTimelineEditor\picoTimelineEditor.vs2010.csproj", "{169FEC34-CBA7-4133-863B-03DC5EAC9039}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "pico", "pico\pico.csproj", "{78C1E637-8BE0-46E0-89C1-517659588D9A}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -509,6 +511,18 @@ Global
 		{169FEC34-CBA7-4133-863B-03DC5EAC9039}.Release|x64.Build.0 = Release|x64
 		{169FEC34-CBA7-4133-863B-03DC5EAC9039}.Release|x86.ActiveCfg = Release|x86
 		{169FEC34-CBA7-4133-863B-03DC5EAC9039}.Release|x86.Build.0 = Release|x86
+		{78C1E637-8BE0-46E0-89C1-517659588D9A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{78C1E637-8BE0-46E0-89C1-517659588D9A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{78C1E637-8BE0-46E0-89C1-517659588D9A}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{78C1E637-8BE0-46E0-89C1-517659588D9A}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{78C1E637-8BE0-46E0-89C1-517659588D9A}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{78C1E637-8BE0-46E0-89C1-517659588D9A}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{78C1E637-8BE0-46E0-89C1-517659588D9A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{78C1E637-8BE0-46E0-89C1-517659588D9A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{78C1E637-8BE0-46E0-89C1-517659588D9A}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{78C1E637-8BE0-46E0-89C1-517659588D9A}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{78C1E637-8BE0-46E0-89C1-517659588D9A}.Release|x64.ActiveCfg = Release|Any CPU
+		{78C1E637-8BE0-46E0-89C1-517659588D9A}.Release|x86.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
