@@ -29,10 +29,10 @@ namespace picoTimelineEditor
         private static void Initialize(Func<string, string, DomNodeType> getNodeType, Func<string, string, ChildInfo> getRootElement)
         {
             timelineType.Type = getNodeType("timeline", "timelineType");
+            timelineType.nameAttribute = timelineType.Type.GetAttributeInfo("name");
             timelineType.groupChild = timelineType.Type.GetChildInfo("group");
             timelineType.markerChild = timelineType.Type.GetChildInfo("marker");
             timelineType.timelineRefChild = timelineType.Type.GetChildInfo("timelineRef");
-            timelineType.faderChild = timelineType.Type.GetChildInfo("fader");
 
             groupType.Type = getNodeType("timeline", "groupType");
             groupType.nameAttribute = groupType.Type.GetAttributeInfo("name");
@@ -73,8 +73,6 @@ namespace picoTimelineEditor
             timelineRefType.colorAttribute = timelineRefType.Type.GetAttributeInfo("color");
             timelineRefType.refAttribute = timelineRefType.Type.GetAttributeInfo("ref");
 
-            trackFaderType.Type = getNodeType("timeline", "trackFaderType");
-
             controlPointType.Type = getNodeType("timeline", "controlPointType");
             controlPointType.xAttribute = controlPointType.Type.GetAttributeInfo("x");
             controlPointType.yAttribute = controlPointType.Type.GetAttributeInfo("y");
@@ -98,6 +96,12 @@ namespace picoTimelineEditor
             curveType.yLabelAttribute = curveType.Type.GetAttributeInfo("yLabel");
             curveType.controlPointChild = curveType.Type.GetChildInfo("controlPoint");
 
+            luaScriptType.Type = getNodeType("timeline", "luaScriptType");
+            luaScriptType.startAttribute = luaScriptType.Type.GetAttributeInfo("start");
+            luaScriptType.descriptionAttribute = luaScriptType.Type.GetAttributeInfo("description");
+            luaScriptType.specialEventAttribute = luaScriptType.Type.GetAttributeInfo("specialEvent");
+            luaScriptType.sourceCodeAttribute = luaScriptType.Type.GetAttributeInfo("sourceCode");
+
             intervalCurveType.Type = getNodeType("timeline", "intervalCurveType");
             intervalCurveType.startAttribute = intervalCurveType.Type.GetAttributeInfo("start");
             intervalCurveType.descriptionAttribute = intervalCurveType.Type.GetAttributeInfo("description");
@@ -106,11 +110,13 @@ namespace picoTimelineEditor
             intervalCurveType.colorAttribute = intervalCurveType.Type.GetAttributeInfo("color");
             intervalCurveType.curveChild = intervalCurveType.Type.GetChildInfo("curve");
 
-            luaScriptType.Type = getNodeType("timeline", "luaScriptType");
-            luaScriptType.startAttribute = luaScriptType.Type.GetAttributeInfo("start");
-            luaScriptType.descriptionAttribute = luaScriptType.Type.GetAttributeInfo("description");
-            luaScriptType.specialEventAttribute = luaScriptType.Type.GetAttributeInfo("specialEvent");
-            luaScriptType.sourceCodeAttribute = luaScriptType.Type.GetAttributeInfo("sourceCode");
+            intervalFaderType.Type = getNodeType("timeline", "intervalFaderType");
+            intervalFaderType.startAttribute = intervalFaderType.Type.GetAttributeInfo("start");
+            intervalFaderType.descriptionAttribute = intervalFaderType.Type.GetAttributeInfo("description");
+            intervalFaderType.nameAttribute = intervalFaderType.Type.GetAttributeInfo("name");
+            intervalFaderType.lengthAttribute = intervalFaderType.Type.GetAttributeInfo("length");
+            intervalFaderType.colorAttribute = intervalFaderType.Type.GetAttributeInfo("color");
+            intervalFaderType.curveChild = intervalFaderType.Type.GetChildInfo("curve");
 
             timelineRootElement = getRootElement(NS, "timeline");
         }
@@ -118,10 +124,10 @@ namespace picoTimelineEditor
         public static class timelineType
         {
             public static DomNodeType Type;
+            public static AttributeInfo nameAttribute;
             public static ChildInfo groupChild;
             public static ChildInfo markerChild;
             public static ChildInfo timelineRefChild;
-            public static ChildInfo faderChild;
         }
 
         public static class groupType
@@ -184,11 +190,6 @@ namespace picoTimelineEditor
             public static AttributeInfo refAttribute;
         }
 
-        public static class trackFaderType
-        {
-            public static DomNodeType Type;
-        }
-
         public static class controlPointType
         {
             public static DomNodeType Type;
@@ -218,6 +219,15 @@ namespace picoTimelineEditor
             public static ChildInfo controlPointChild;
         }
 
+        public static class luaScriptType
+        {
+            public static DomNodeType Type;
+            public static AttributeInfo startAttribute;
+            public static AttributeInfo descriptionAttribute;
+            public static AttributeInfo specialEventAttribute;
+            public static AttributeInfo sourceCodeAttribute;
+        }
+
         public static class intervalCurveType
         {
             public static DomNodeType Type;
@@ -229,13 +239,15 @@ namespace picoTimelineEditor
             public static ChildInfo curveChild;
         }
 
-        public static class luaScriptType
+        public static class intervalFaderType
         {
             public static DomNodeType Type;
             public static AttributeInfo startAttribute;
             public static AttributeInfo descriptionAttribute;
-            public static AttributeInfo specialEventAttribute;
-            public static AttributeInfo sourceCodeAttribute;
+            public static AttributeInfo nameAttribute;
+            public static AttributeInfo lengthAttribute;
+            public static AttributeInfo colorAttribute;
+            public static ChildInfo curveChild;
         }
 
         public static ChildInfo timelineRootElement;

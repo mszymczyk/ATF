@@ -6,6 +6,8 @@ using System.ComponentModel.Composition;
 using System.IO;
 using System.Linq;
 using System.Windows.Forms;
+using System.Net;
+using System.Net.Sockets; 
 
 using Sce.Atf;
 using Sce.Atf.Adaptation;
@@ -64,7 +66,12 @@ namespace picoTimelineEditor
             paletteService.AddItem(Schema.intervalType.Type, "Timelines", this);
             paletteService.AddItem(Schema.keyType.Type, "Timelines", this);
             paletteService.AddItem(Schema.timelineRefType.Type, "Timelines", this);
-			paletteService.AddItem(Schema.intervalCurveType.Type, "pico", this );
+			// pico
+			//
+			//paletteService.AddItem( Schema.groupCameraType.Type, "pico", this );
+			//paletteService.AddItem( Schema.trackFaderType.Type, "pico", this );
+			paletteService.AddItem( Schema.intervalFaderType.Type, "pico", this );
+			paletteService.AddItem( Schema.intervalCurveType.Type, "pico", this );
 			paletteService.AddItem( Schema.luaScriptType.Type, "pico", this );
 
             m_contextRegistry = contextRegistry;
@@ -122,6 +129,29 @@ namespace picoTimelineEditor
         private ScriptingService m_scriptingService = null;
 
         #region IInitializable
+
+		private byte[] toBytes( string str )
+		{
+			byte[] bytes = System.Text.Encoding.ASCII.GetBytes( str );
+			return bytes;
+		}
+
+		private byte[] toBytes( int ival )
+		{
+			byte[] bytes = BitConverter.GetBytes( ival );
+			return bytes;
+		}
+
+		private byte[] toBytes( float fval )
+		{
+			byte[] bytes = BitConverter.GetBytes( fval );
+			return bytes;
+		}
+
+		private void writeBytes( MemoryStream ms, byte[] bytes )
+		{
+			ms.Write( bytes, 0, bytes.Length );
+		}
 
         /// <summary>
         /// Finishes initializing component by setting up scripting service, subscribing to document
@@ -213,6 +243,47 @@ namespace picoTimelineEditor
 				m_luaEditorPanel,
 				m_luaEditorPanelControlInfo,
 				this );
+
+			//IPHostEntry hostInfo = Dns.GetHostByName( PICO_HUB_IP );
+			IPHostEntry hostInfo = Dns.GetHostEntry( PICO_HUB_IP );
+			//IPHostEntry ipHostInfo = Dns.Resolve( Dns.GetHostName() );
+			IPAddress serverAddr = hostInfo.AddressList[1];
+			var clientEndPoint = new IPEndPoint( serverAddr, PICO_HUB_PORT ); 
+
+			// Create a client socket and connect it to the endpoint 
+			m_picoHubClientSocket = new System.Net.Sockets.Socket( System.Net.Sockets.AddressFamily.InterNetwork, System.Net.Sockets.SocketType.Stream, System.Net.Sockets.ProtocolType.Tcp );
+			m_picoHubClientSocket.Connect( clientEndPoint );
+
+			D2dScrubberManipulator.Moved += ( object sender, EventArgs e ) =>
+			{
+				D2dScrubberManipulator scrubber = sender as D2dScrubberManipulator;
+				if ( scrubber == null )
+					return;
+
+				float position = scrubber.Position;
+
+				ITimelineDocument doc = scrubber.Owner.TimelineDocument;
+				string docUri = doc.Uri.LocalPath;
+				//string msg = "timeline";
+				//msg += docUri.Length.ToString;
+				//msg += docUri;
+				System.IO.MemoryStream memStr = new MemoryStream();
+				writeBytes( memStr, toBytes( "timeline" ) );
+				writeBytes( memStr, toBytes( docUri.Length ) );
+				writeBytes( memStr, toBytes( docUri ) );
+				string cmd = "scrubberPos";
+				writeBytes( memStr, toBytes( cmd.Length ) );
+				writeBytes( memStr, toBytes( cmd ) );
+				writeBytes( memStr, toBytes( position ) );
+
+				byte[] msgBytes = memStr.ToArray();
+				byte[] msgSizeBytes = toBytes( msgBytes.Length );
+				byte[] msgFinalBytes = new byte[4 + msgBytes.Length];
+				System.Buffer.BlockCopy( msgSizeBytes, 0, msgFinalBytes, 0, 4 );
+				System.Buffer.BlockCopy( msgBytes, 0, msgFinalBytes, 4, msgBytes.Length );
+				m_picoHubClientSocket.Send( msgFinalBytes );
+				//msg += position.ToString();
+			};
 		}
 
         #endregion
@@ -253,6 +324,7 @@ namespace picoTimelineEditor
             {
                 node.SetAttribute(idAttribute, paletteItem.Name);
             }
+
             return node;
         }
 
@@ -406,6 +478,9 @@ namespace picoTimelineEditor
 				TimelineDocument timelineDocument = (TimelineDocument)timelineControl.TimelineDocument;
 				m_contextRegistry.ActiveContext = timelineDocument;
 				m_documentRegistry.ActiveDocument = timelineDocument;
+
+				if ( m_domExplorer != null )
+					m_domExplorer.Root = timelineDocument.DomNode;
 			}
 			else
 			{
@@ -852,6 +927,9 @@ namespace picoTimelineEditor
         private LiveConnectService m_liveConnectService = null;
 
 		[Import( AllowDefault = true )]
+		private DomExplorer m_domExplorer = null;
+
+		[Import( AllowDefault = true )]
 		private CurveEditor m_curveEditor = null;
 
         private IContextRegistry m_contextRegistry;
@@ -872,5 +950,13 @@ namespace picoTimelineEditor
 
 		private Panel m_luaEditorPanel;
 		private ControlInfo m_luaEditorPanelControlInfo;
+
+		// picoHub
+		//
+		static string PICO_HUB_IP = "localhost";
+		static int PICO_HUB_PORT = 6666;
+
+		//Client socket stuff 
+		System.Net.Sockets.Socket m_picoHubClientSocket;
     }
 }

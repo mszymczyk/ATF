@@ -80,10 +80,14 @@ namespace picoTimelineEditor
 				// pico
 				// register the timeline model interfaces
 				Schema.intervalCurveType.Type.Define( new ExtensionInfo<IntervalCurve>() );
-				Schema.curveType.Type.Define( new ExtensionInfo<Curve>() );
-				Schema.controlPointType.Type.Define( new ExtensionInfo<ControlPoint>() );
 				Schema.luaScriptType.Type.Define( new ExtensionInfo<LuaScript>() );
-				Schema.trackFaderType.Type.Define(new ExtensionInfo<TrackFader>());
+				//Schema.groupCameraType.Type.Define( new ExtensionInfo<GroupCamera>() );
+				//Schema.trackFaderType.Type.Define( new ExtensionInfo<TrackFader>() );
+				Schema.intervalFaderType.Type.Define( new ExtensionInfo<IntervalFader>() );
+
+				Schema.curveType.Type.Define( new ExtensionInfo<Curve>() );
+				Schema.curveType.Type.Define( new ExtensionInfo<CurveLimitValidator>() );
+				Schema.controlPointType.Type.Define( new ExtensionInfo<ControlPoint>() );
 
                 // the timeline schema defines only one type collection
                 break;
