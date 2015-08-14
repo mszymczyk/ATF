@@ -1,6 +1,11 @@
 //Copyright © 2014 Sony Computer Entertainment America LLC. See License.txt.
 
+using System.Windows.Forms;
+
 using Sce.Atf;
+using Sce.Atf.Dom;
+using Sce.Atf.Adaptation;
+using Sce.Atf.Applications;
 using Sce.Atf.Controls.Timelines;
 using Sce.Atf.Controls.Timelines.Direct2D;
 
@@ -31,5 +36,26 @@ namespace picoTimelineEditor
 			//return (float)Math.Round(offset);
 			return (float)MathUtil.Snap( offset, 10.0f );
 		}
+
+
+		/// <summary>
+		/// Raises the <see cref="E:System.Windows.Forms.Control.MouseUp"></see> event and performs custom actions</summary>
+		/// <param name="e">A <see cref="T:System.Windows.Forms.MouseEventArgs"></see> that contains the event data</param>
+		protected override void OnMouseUp( MouseEventArgs e )
+		{
+			base.OnMouseUp( e );
+
+			ISelectionContext selectionContext = this.TimelineDocument.As<ISelectionContext>();
+			object lastSelected = selectionContext.LastSelected;
+			if ( lastSelected == null )
+			{
+				// if nothing was selected by mouse click
+				// then select timeline itself
+				//
+				selectionContext.Set( this.TimelineDocument );
+			}
+
+		}
+
 	}
 }
