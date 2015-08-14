@@ -19,7 +19,7 @@ namespace picoTimelineEditor.DomNodeAdapters
 
         /// <summary>
         /// Gets and sets the group name</summary>
-        public string Name
+		public virtual string Name
         {
             get { return (string)DomNode.GetAttribute(Schema.groupType.nameAttribute); }
             set { DomNode.SetAttribute(Schema.groupType.nameAttribute, value); }

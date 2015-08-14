@@ -58,7 +58,7 @@ namespace picoTimelineEditor
                 Schema.Initialize(typeCollection);
 
                 // There's no document type, so we will use the timeline type.
-                Schema.timelineType.Type.Define(new ExtensionInfo<TimelineDocument>());
+				Schema.timelineType.Type.Define( new ExtensionInfo<TimelineDocument>() );
                 Schema.timelineType.Type.Define(new ExtensionInfo<TimelineContext>());
                 Schema.timelineType.Type.Define(new ExtensionInfo<MultipleHistoryContext>());
 				Schema.timelineType.Type.Define( new ExtensionInfo<TimelineHubCommunication>() );
@@ -67,6 +67,8 @@ namespace picoTimelineEditor
                 Schema.timelineType.Type.Define(new ExtensionInfo<UniqueIdValidator>());
                 Schema.timelineType.Type.Define(new ExtensionInfo<ReferenceValidator>());
                 Schema.timelineType.Type.Define(new ExtensionInfo<TimelineValidator>());
+				Schema.timelineType.Type.Define( new ExtensionInfo<DataValidator>() );
+				Schema.timelineType.Type.Define( new ExtensionInfo<GroupCameraValidator>() ); // for ensuring there's only one GroupCamera group in timeline
 
                 // register the timeline model interfaces
                 Schema.timelineType.Type.Define(new ExtensionInfo<Timeline>());
@@ -82,9 +84,11 @@ namespace picoTimelineEditor
 				// register the timeline model interfaces
 				Schema.intervalCurveType.Type.Define( new ExtensionInfo<IntervalCurve>() );
 				Schema.luaScriptType.Type.Define( new ExtensionInfo<LuaScript>() );
-				//Schema.groupCameraType.Type.Define( new ExtensionInfo<GroupCamera>() );
+				Schema.groupCameraType.Type.Define( new ExtensionInfo<GroupCamera>() );
 				//Schema.trackFaderType.Type.Define( new ExtensionInfo<TrackFader>() );
+				Schema.trackCameraAnimType.Type.Define( new ExtensionInfo<TrackCameraAnim>() );
 				Schema.intervalFaderType.Type.Define( new ExtensionInfo<IntervalFader>() );
+				Schema.intervalCameraAnimType.Type.Define( new ExtensionInfo<IntervalCameraAnim>() );
 
 				Schema.curveType.Type.Define( new ExtensionInfo<Curve>() );
 				Schema.curveType.Type.Define( new ExtensionInfo<CurveLimitValidator>() );

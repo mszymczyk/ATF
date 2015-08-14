@@ -48,7 +48,7 @@ namespace picoTimelineEditor
             m_timelineControl.DragDrop += timelineControl_DragDrop;
             m_timelineControl.DragLeave += timelineControl_DragLeave;
 
-            base.OnNodeSet();
+			base.OnNodeSet();
         }
 
         /// <summary>
@@ -295,6 +295,67 @@ namespace picoTimelineEditor
                 (TimelineControl.TargetGroup == null ||
                     TimelineControl.IsEditable(TimelineControl.TargetGroup));
         }
+
+		/// <summary>
+		/// Returns whether the context can insert the data object</summary>
+		/// <param name="insertingObject">Data to insert; e.g., System.Windows.Forms.IDataObject</param>
+		/// <returns>True iff the context can insert the data object</returns>
+		public bool CanInsert2( DragEventArgs e )
+		{
+			IDataObject dataObject = (IDataObject)e.Data;
+			object[] items = dataObject.GetData( typeof( object[] ) ) as object[];
+			if (
+				items != null &&
+                AreTimelineItems( items ) &&
+                ( TimelineControl.TargetGroup == null ||
+                    TimelineControl.IsEditable( TimelineControl.TargetGroup ) )
+				)
+			{
+				Point clientPoint = m_timelineControl.PointToClient( new Point( e.X, e.Y ) );
+				PointF mouseLocation = clientPoint;
+				ITimelineObject dropTarget = Pick( mouseLocation );
+
+				GroupCamera groupCamera = null;
+				foreach ( object ob in items )
+				{
+					if ( ob.Is<GroupCamera>() )
+					{
+						GroupCamera gc = ob.Cast<GroupCamera>();
+						if ( gc != null )
+						{
+							groupCamera = gc;
+							break;
+						}
+					}
+				}
+
+				if ( groupCamera != null )
+				{
+					foreach ( DomNode existingChild in DomNode.Children )
+					{
+						GroupCamera otherGroupCamera = existingChild.As<GroupCamera>();
+						if ( otherGroupCamera != null )
+						{
+							return false;
+						}
+					}
+
+					if ( dropTarget == null )
+					{
+						return true;
+					}
+					else
+					{
+						return false;
+					}
+				}
+
+
+				return true;
+			}
+
+			return false;
+		}
 
         /// <summary>
         /// Inserts the data object into the context.
@@ -795,7 +856,7 @@ namespace picoTimelineEditor
         private void timelineControl_DragEnter(object sender, DragEventArgs e)
         {
             e.Effect = DragDropEffects.None;
-            if (CanInsert(e.Data))
+            if (CanInsert2(e))
             {
                 OnDragEnter(e);
             }
@@ -804,7 +865,7 @@ namespace picoTimelineEditor
         private void timelineControl_DragOver(object sender, DragEventArgs e)
         {
             e.Effect = DragDropEffects.None;
-            if (CanInsert(e.Data))
+            if (CanInsert2(e))
             {
                 OnDragOver(e);
             }
@@ -812,7 +873,7 @@ namespace picoTimelineEditor
 
         private void timelineControl_DragDrop(object sender, DragEventArgs e)
         {
-            if (CanInsert(e.Data))
+            if (CanInsert2(e))
             {
                 OnDragDrop(e);
             }

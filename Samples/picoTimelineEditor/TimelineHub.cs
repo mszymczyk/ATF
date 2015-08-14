@@ -32,6 +32,7 @@ namespace picoTimelineEditor
 
 		private void DomNode_AttributeChanged( object sender, AttributeEventArgs e )
 		{
+			// TODO: there's a crash when undoing reference additions
 			sendReloadTimeline();
 		}
 
@@ -89,13 +90,18 @@ namespace picoTimelineEditor
 
 		private void sendReloadTimeline()
 		{
+			if ( m_isWriting )
+				return;
+
 			string docUri;
 			if ( !validate( out docUri ) )
 				return;
 
+			m_isWriting = true;
+
 			MemoryStream stream = new MemoryStream();
-			var writer = new DomXmlWriter( m_schemaLoader.TypeCollection );
-			writer.PersistDefaultAttributes = true;
+			var writer = new TimelineEditor.TimelineXmlWriter( m_schemaLoader.TypeCollection );
+			//writer.PersistDefaultAttributes = true;
 
 			writer.Write( DomNode, stream, m_timelineDocument.Uri );
 
@@ -105,12 +111,15 @@ namespace picoTimelineEditor
 			hubMessage.appendBytes( stream.ToArray() );
 
 			m_hubService.send( hubMessage );
+
+			m_isWriting = false;
 		}
 
         private TimelineDocument m_timelineDocument;
         private D2dTimelineControl m_timelineControl;
 		private SchemaLoader m_schemaLoader;
 		private HubService m_hubService;
+		private bool m_isWriting; // to prevent endless recursion while serializing DOM with TimelineXmlWriter
 		private static readonly string TIMELINE_TAG = "timeline";
 	};
 }

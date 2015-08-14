@@ -70,11 +70,13 @@ namespace picoTimelineEditor
             paletteService.AddItem(Schema.timelineRefType.Type, "Timelines", this);
 			// pico
 			//
-			//paletteService.AddItem( Schema.groupCameraType.Type, "pico", this );
+			paletteService.AddItem( Schema.groupCameraType.Type, "pico", this );
 			//paletteService.AddItem( Schema.trackFaderType.Type, "pico", this );
 			paletteService.AddItem( Schema.intervalFaderType.Type, "pico", this );
 			paletteService.AddItem( Schema.intervalCurveType.Type, "pico", this );
+			paletteService.AddItem( Schema.intervalCameraAnimType.Type, "pico", this );
 			paletteService.AddItem( Schema.luaScriptType.Type, "pico", this );
+			paletteService.AddItem( Schema.trackCameraAnimType.Type, "pico", this );
 
             m_contextRegistry = contextRegistry;
             m_documentRegistry = documentRegistry;
@@ -617,6 +619,11 @@ namespace picoTimelineEditor
 				TimelineHubCommunication hubComm = node.Cast<TimelineHubCommunication>();
 				hubComm.setup( m_hubService, s_schemaLoader );
 
+				// select this document initially, so timeline properties are visible
+				//
+				ISelectionContext selectionContext = document.Cast<ISelectionContext>();
+				selectionContext.Set( node );
+
                 // Initialize Dom extensions now that the data is complete
                 node.InitializeExtensions();
             }
@@ -851,7 +858,7 @@ namespace picoTimelineEditor
                 });
         }
 
-        private class TimelineXmlWriter : DomXmlWriter
+        public class TimelineXmlWriter : DomXmlWriter
         {
             public TimelineXmlWriter(XmlSchemaTypeCollection typeCollection)
                 : base(typeCollection)
@@ -859,7 +866,7 @@ namespace picoTimelineEditor
                 // By default, attributes are not persisted if they have their default values.
                 // Set PersistDefaultAttributes to true to persist these attributes. This might
                 //  be useful if another app will consume the XML file without a schema file.
-                //PersistDefaultAttributes = true;
+                PersistDefaultAttributes = true;
             }
 
             // Persists relative references instead of absolute references

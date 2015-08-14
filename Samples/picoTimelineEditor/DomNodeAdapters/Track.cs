@@ -17,7 +17,7 @@ namespace picoTimelineEditor.DomNodeAdapters
 
         /// <summary>
         /// Gets or sets the track name</summary>
-        public string Name
+        public virtual string Name
         {
             get { return (string)DomNode.GetAttribute(Schema.trackType.nameAttribute); }
             set { DomNode.SetAttribute(Schema.trackType.nameAttribute, value); }

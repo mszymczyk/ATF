@@ -12,6 +12,7 @@
       <xs:appinfo>
         <!--<scea.dom.collection id="name"/>-->
         <scea.dom.editors.attribute name="name" displayName="Name" description="Name" />
+        <scea.dom.editors.attribute name="fake" displayName="FakeAttr" description="Fake" category="Timeline" />
       </xs:appinfo>
       
     </xs:annotation>
@@ -22,6 +23,7 @@
       <!--<xs:element name="groupCamera" type="groupCameraType" minOccurs="0" maxOccurs="1" />-->
     </xs:sequence>
     <xs:attribute name="name" type="xs:string" default="Timeline"/>
+    <xs:attribute name="fake" type="xs:string" default="fakeValue"/>
   </xs:complexType>
 
   <xs:complexType name="groupType">
@@ -160,16 +162,25 @@
 
   
   
-  <!--<xs:complexType name="groupCameraType">
+  <xs:complexType name="groupCameraType">
     <xs:annotation>
       <xs:appinfo>
         <scea.dom.editors menuText="GroupCamera" description="GroupCamera" image="picoTimelineEditor.Resources.group.png" category="pico" />
+        <scea.dom.editors.attribute name="name" displayName="Name" description="Name" />
       </xs:appinfo>
     </xs:annotation>
-    <xs:sequence>
+    <!--<xs:sequence>
       <xs:element name="trackGroupCamera" type="trackGroupCameraType" minOccurs="0" maxOccurs="unbounded" />
     </xs:sequence>
-    <xs:attribute name="expanded" type="xs:boolean" default="true"/>
+    <xs:attribute name="expanded" type="xs:boolean" default="true"/>-->
+    <xs:complexContent>
+      <xs:extension base="groupType">
+        <!--<xs:sequence>
+          <xs:element name="intervalFader" type="intervalFaderType" minOccurs="0" maxOccurs="unbounded" />
+        </xs:sequence>-->
+        <xs:attribute name="name" type="xs:string" default="CameraGroup"/>
+      </xs:extension>
+    </xs:complexContent>
   </xs:complexType>
 
   <xs:complexType name="trackGroupCameraType">
@@ -180,7 +191,7 @@
     </xs:annotation>
   </xs:complexType>
   
-  <xs:complexType name="trackFaderType">
+  <!--<xs:complexType name="trackFaderType">
     <xs:annotation>
       <xs:appinfo>
         <scea.dom.editors menuText="TrackFader" description="TrackFader" image="picoTimelineEditor.Resources.track.png" category="pico" />
@@ -196,6 +207,22 @@
   </xs:complexType>-->
 
 
+  <xs:complexType name="trackCameraAnimType">
+    <xs:annotation>
+      <xs:appinfo>
+        <scea.dom.editors menuText="TrackCameraAnim" description="TrackCameraAnim" image="picoTimelineEditor.Resources.track.png" category="pico" />
+      </xs:appinfo>
+    </xs:annotation>
+    <xs:complexContent>
+      <xs:extension base="trackType">
+        <xs:sequence>
+          <xs:element name="intervalCameraAnimType" type="intervalCameraAnimType" minOccurs="0" maxOccurs="1" />
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  
   <xs:complexType name="intervalCurveType">
     <xs:annotation>
       <xs:appinfo>
@@ -235,6 +262,28 @@
         <xs:attribute name="length" type="xs:float" default="1000.0"/>
         <xs:attribute name="color" type="xs:integer" default="-8388608"/><!--dark green 0xff800000-->
         <!--blue-->
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+
+  <xs:complexType name="intervalCameraAnimType">
+    <xs:annotation>
+      <xs:appinfo>
+        <scea.dom.editors menuText="CameraAnim" description="CameraAnim" image="picoTimelineEditor.Resources.interval.png" category="pico" />
+        <scea.dom.editors.attribute name="name" displayName="Name" description="Name" />
+        <scea.dom.editors.attribute name="length" displayName="Length" description="Length or Duration" />
+        <scea.dom.editors.attribute name="color" displayName="Color" description="Display Color"
+          editor="Sce.Atf.Controls.PropertyEditing.ColorEditor,Atf.Gui"
+          converter="Sce.Atf.Controls.PropertyEditing.IntColorConverter" />
+      </xs:appinfo>
+    </xs:annotation>
+    <xs:complexContent>
+      <xs:extension base="intervalType">
+        <xs:attribute name="name" type="xs:string" default="CameraAnim"/>
+        <xs:attribute name="length" type="xs:float" default="1000.0"/>
+        <xs:attribute name="color" type="xs:integer" default="-8388608"/>
+        <!--dark green 0xff800000-->
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>
