@@ -296,6 +296,33 @@ namespace picoTimelineEditor
                     TimelineControl.IsEditable(TimelineControl.TargetGroup));
         }
 
+        public static T AnyOfType<T>(object[] objects)
+            where T : class
+		{
+			foreach ( object ob in objects )
+			{
+				T t = ob.As<T>();
+				if ( t != null )
+				{
+					return t;
+				}
+			}
+
+			return null;
+		}
+
+		public static bool ParentHasChildOfType<T>( DomNode domNode )
+			where T : class
+		{
+			foreach ( DomNode existingChild in domNode.Children )
+			{
+				if ( existingChild.Is<T>() )
+					return true;
+			}
+
+			return false;
+		}
+
 		/// <summary>
 		/// Returns whether the context can insert the data object</summary>
 		/// <param name="insertingObject">Data to insert; e.g., System.Windows.Forms.IDataObject</param>
@@ -315,41 +342,34 @@ namespace picoTimelineEditor
 				PointF mouseLocation = clientPoint;
 				ITimelineObject dropTarget = Pick( mouseLocation );
 
-				GroupCamera groupCamera = null;
-				foreach ( object ob in items )
-				{
-					if ( ob.Is<GroupCamera>() )
-					{
-						GroupCamera gc = ob.Cast<GroupCamera>();
-						if ( gc != null )
-						{
-							groupCamera = gc;
-							break;
-						}
-					}
-				}
-
+				GroupCamera groupCamera = AnyOfType<GroupCamera>( items );
 				if ( groupCamera != null )
 				{
-					foreach ( DomNode existingChild in DomNode.Children )
-					{
-						GroupCamera otherGroupCamera = existingChild.As<GroupCamera>();
-						if ( otherGroupCamera != null )
-						{
-							return false;
-						}
-					}
+					if ( ParentHasChildOfType<GroupCamera>(DomNode) )
+						return false;
 
 					if ( dropTarget == null )
-					{
 						return true;
-					}
 					else
-					{
 						return false;
-					}
 				}
 
+				TrackCameraAnim trackCameraAnim = AnyOfType<TrackCameraAnim>( items );
+				if ( trackCameraAnim != null )
+				{
+					if ( !dropTarget.Is<GroupCamera>() )
+						return false;
+
+					if ( ParentHasChildOfType<TrackCameraAnim>( dropTarget.Cast<GroupCamera>().DomNode ) )
+						return false;
+				}
+
+				IntervalCameraAnim intervalCameraAnim = AnyOfType<IntervalCameraAnim>( items );
+				if ( intervalCameraAnim != null )
+				{
+					if ( !dropTarget.Is<TrackCameraAnim>() )
+						return false;
+				}
 
 				return true;
 			}
