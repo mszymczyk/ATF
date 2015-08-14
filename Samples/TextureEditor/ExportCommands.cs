@@ -35,7 +35,7 @@ namespace TextureEditor
 			powin.VisibleChanged += ( sender, msg ) =>
 			{
 				if ( m_bgThread == null )
-					m_bgThread = new BackgroundThread( powin, m_schemaLoader, fileUri );
+					m_bgThread = new BackgroundThread( powin, m_schemaLoader, fileUri, false );
 			};
 
 			powin.CancelClicked += ( sender, msg ) =>
@@ -49,13 +49,13 @@ namespace TextureEditor
 				m_bgThread.Wait();
 		}
 
-		public void ExportAll()
+		public void ExportAll( bool batchExport )
 		{
 			ProgressOutputWindow powin = new ProgressOutputWindow();
 			powin.VisibleChanged += ( sender, msg ) =>
 			{
 				if ( m_bgThread == null )
-					m_bgThread = new BackgroundThread( powin, m_schemaLoader, null );
+					m_bgThread = new BackgroundThread( powin, m_schemaLoader, null, batchExport );
 			};
 
 			powin.CancelClicked += ( sender, msg ) =>
@@ -67,6 +67,11 @@ namespace TextureEditor
 			powin.ShowDialog();
 			if ( m_bgThread != null )
 				m_bgThread.Wait();
+
+			if ( batchExport )
+			{
+				m_mainForm.Close();
+			}
 		}
 
 		private class BackgroundThread
@@ -74,16 +79,18 @@ namespace TextureEditor
 			private ProgressOutputWindow m_progressWindow;
 			private SchemaLoader m_schemaLoader;
 			private Uri m_fileToExport;
+			private bool m_batchExport;
 
 			private Thread m_thread;
 			private bool m_alreadyStopped;
 			private int m_nErrors;
 
-			public BackgroundThread( ProgressOutputWindow progressWindow, SchemaLoader schemaLoader, Uri fileToExport )
+			public BackgroundThread( ProgressOutputWindow progressWindow, SchemaLoader schemaLoader, Uri fileToExport, bool batchExport )
 			{
 				m_progressWindow = progressWindow;
 				m_schemaLoader = schemaLoader;
 				m_fileToExport = fileToExport;
+				m_batchExport = batchExport;
 				m_thread = new Thread( Run );
 				m_thread.Name = "progress dialog";
 				m_thread.IsBackground = true; //so that the thread can be killed if app dies.
@@ -138,15 +145,14 @@ namespace TextureEditor
 							}
 						}
 
-						float progress = (float)nDone / (float)fileList.Count;
-						SetProgress( progress );
+						SetProgress( nDone, fileList.Count );
 						ExportUri( uri );
 						nDone += 1;
 					}
 
 					if ( nDone == fileList.Count )
 					{
-						SetProgress( 1.0f );
+						SetProgress( nDone, fileList.Count );
 						AddInfo( "Finished\n" );
 					}
 					else
@@ -164,7 +170,10 @@ namespace TextureEditor
 						AddError( "" + m_nErrors + " errors!\n" );
 					}
 
-					Done();
+					if ( m_batchExport )
+						DoneBatchExport();
+					else
+						Done();
 				}
 				finally
 				{
@@ -219,13 +228,21 @@ namespace TextureEditor
 						m_progressWindow.BeginInvoke( new MethodInvoker( DoneThreadUnsafe ) );
 				}
 			}
-
-			public void SetProgress( float progress )
+			public void DoneBatchExport()
 			{
 				lock ( this )
 				{
 					if ( m_progressWindow != null && m_progressWindow.IsHandleCreated )
-						m_progressWindow.BeginInvoke( new MethodInvoker( () => this.SetProgressThreadUnsafe( progress ) ) );
+						m_progressWindow.BeginInvoke( new MethodInvoker( DoneBatchExportThreadUnsafe ) );
+				}
+			}
+
+			public void SetProgress( int nDone, int nTotal )
+			{
+				lock ( this )
+				{
+					if ( m_progressWindow != null && m_progressWindow.IsHandleCreated )
+						m_progressWindow.BeginInvoke( new MethodInvoker( () => this.SetProgressThreadUnsafe( nDone, nTotal ) ) );
 				}
 			}
 
@@ -244,9 +261,14 @@ namespace TextureEditor
 				m_progressWindow.EnableUserClose();
 			}
 
-			private void SetProgressThreadUnsafe( float progress )
+			private void DoneBatchExportThreadUnsafe()
 			{
-				m_progressWindow.SetProgress( progress );
+				m_progressWindow.Close();
+			}
+
+			private void SetProgressThreadUnsafe( int nDone, int nTotal )
+			{
+				m_progressWindow.SetProgress( nDone, nTotal );
 			}
 
 			public int ExportUri( Uri metadataUri )

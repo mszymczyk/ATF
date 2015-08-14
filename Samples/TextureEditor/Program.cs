@@ -32,7 +32,7 @@ namespace TextureEditor
         /// <summary>
         /// The main entry point for the application.</summary>
         [STAThread]
-        static void Main()
+		static void Main( string[] args )
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
@@ -112,6 +112,17 @@ namespace TextureEditor
                 Text = "Texture Editor".Localize(),
                 Icon = GdiUtil.CreateIcon(ResourceUtil.GetImage(Sce.Atf.Resources.AtfIconImage))
             };
+
+			mainForm.Loaded += (sender, e) =>
+			{
+				if ( args.Length > 0 )
+				{
+					if ( args[0] == "-batchExport" )
+					{
+						TextureViewCommands.ExportAll( mainForm, true );
+					}
+				}
+			};
 
             // Add the main Form instance to the container
             var batch = new CompositionBatch();

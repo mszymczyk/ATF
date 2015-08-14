@@ -50,11 +50,13 @@ namespace TextureEditor
 			CloseButtonObj.Enabled = true;
 		}
 
-		public void SetProgress( float progress01 )
+		public void SetProgress( int nDone, int nTotal )
 		{
+			float progress01 = (float)nDone / (float)nTotal;
 			float p = Math.Max( Math.Min( progress01, 1.0f ), 0.0f );
 			int prog = (int)( p * 100 );
 			progressBar1.Value = prog;
+			progressLabel.Text = "" + nDone + " / " + nTotal;
 		}
 
 		public event EventHandler CancelClicked;

@@ -432,7 +432,7 @@ namespace TextureEditor
 						ExportOne();
 						break;
 					case Command.ExpartAll:
-						ExportAll();
+						ExportAll( m_mainForm, false );
 						break;
 				}
             }
@@ -489,14 +489,14 @@ namespace TextureEditor
 			te.ExportOne( new Uri(tp.FileUri.LocalPath + ".metadata") );
 		}
 
-		void ExportAll()
+		public static void ExportAll( MainForm mainForm, bool batchExport )
 		{
-			TextureExporter te = new TextureExporter( m_mainForm, m_schemaLoader );
-			te.ExportAll();
+			TextureExporter te = new TextureExporter( mainForm, m_schemaLoader );
+			te.ExportAll( batchExport );
 		}
 
 		private MainForm m_mainForm;
-		private SchemaLoader m_schemaLoader = null;
+		private static SchemaLoader m_schemaLoader = null;
         private TexturePreviewWindowSharpDX m_previewWindow;
 
 		private ToolStripComboBox m_sourceTextureGamma;
