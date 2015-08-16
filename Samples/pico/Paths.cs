@@ -22,6 +22,12 @@ namespace pico
 			return localPath;
 		}
 
+		public static string LocalPathToPicoDataAbsolutePath( string localPath )
+		{
+			string absPath = PICO_DEMO_data + localPath;
+			return absPath;
+		}
+
 		private static readonly string PICO_ROOT = Path.GetFullPath( Environment.GetEnvironmentVariable( "PICO_ROOT" ) + "\\" );
 		private static readonly string PICO_DEMO = Path.GetFullPath( Environment.GetEnvironmentVariable( "PICO_DEMO" ) + "\\" );
 		private static readonly string PICO_DEMO_data = PICO_DEMO + "data\\";

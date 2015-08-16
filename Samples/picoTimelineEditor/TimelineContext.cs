@@ -374,6 +374,10 @@ namespace picoTimelineEditor
 				return true;
 			}
 
+			//string[] formats = e.Data.GetFormats();
+			//string data = e.Data.GetData( typeof( string ) ) as string;
+			//object data2 = e.Data.GetData( "application/x-maya-data" );
+
 			return false;
 		}
 

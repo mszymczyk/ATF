@@ -30,7 +30,6 @@ namespace picoTimelineEditor
         {
             timelineType.Type = getNodeType("timeline", "timelineType");
             timelineType.nameAttribute = timelineType.Type.GetAttributeInfo("name");
-            timelineType.fakeAttribute = timelineType.Type.GetAttributeInfo("fake");
             timelineType.groupChild = timelineType.Type.GetChildInfo("group");
             timelineType.markerChild = timelineType.Type.GetChildInfo("marker");
             timelineType.timelineRefChild = timelineType.Type.GetChildInfo("timelineRef");
@@ -55,10 +54,12 @@ namespace picoTimelineEditor
             eventType.Type = getNodeType("timeline", "eventType");
             eventType.startAttribute = eventType.Type.GetAttributeInfo("start");
             eventType.descriptionAttribute = eventType.Type.GetAttributeInfo("description");
+            eventType.nameAttribute = eventType.Type.GetAttributeInfo("name");
 
             keyType.Type = getNodeType("timeline", "keyType");
             keyType.startAttribute = keyType.Type.GetAttributeInfo("start");
             keyType.descriptionAttribute = keyType.Type.GetAttributeInfo("description");
+            keyType.nameAttribute = keyType.Type.GetAttributeInfo("name");
             keyType.specialEventAttribute = keyType.Type.GetAttributeInfo("specialEvent");
 
             markerType.Type = getNodeType("timeline", "markerType");
@@ -100,15 +101,19 @@ namespace picoTimelineEditor
             luaScriptType.Type = getNodeType("timeline", "luaScriptType");
             luaScriptType.startAttribute = luaScriptType.Type.GetAttributeInfo("start");
             luaScriptType.descriptionAttribute = luaScriptType.Type.GetAttributeInfo("description");
-            luaScriptType.specialEventAttribute = luaScriptType.Type.GetAttributeInfo("specialEvent");
+            luaScriptType.nameAttribute = luaScriptType.Type.GetAttributeInfo("name");
             luaScriptType.sourceCodeAttribute = luaScriptType.Type.GetAttributeInfo("sourceCode");
 
             groupCameraType.Type = getNodeType("timeline", "groupCameraType");
             groupCameraType.nameAttribute = groupCameraType.Type.GetAttributeInfo("name");
             groupCameraType.expandedAttribute = groupCameraType.Type.GetAttributeInfo("expanded");
+            groupCameraType.outputCameraAttribute = groupCameraType.Type.GetAttributeInfo("outputCamera");
             groupCameraType.trackChild = groupCameraType.Type.GetChildInfo("track");
 
             trackGroupCameraType.Type = getNodeType("timeline", "trackGroupCameraType");
+            trackGroupCameraType.nameAttribute = trackGroupCameraType.Type.GetAttributeInfo("name");
+            trackGroupCameraType.intervalChild = trackGroupCameraType.Type.GetChildInfo("interval");
+            trackGroupCameraType.keyChild = trackGroupCameraType.Type.GetChildInfo("key");
 
             trackCameraAnimType.Type = getNodeType("timeline", "trackCameraAnimType");
             trackCameraAnimType.nameAttribute = trackCameraAnimType.Type.GetAttributeInfo("name");
@@ -122,6 +127,8 @@ namespace picoTimelineEditor
             intervalCameraAnimType.nameAttribute = intervalCameraAnimType.Type.GetAttributeInfo("name");
             intervalCameraAnimType.lengthAttribute = intervalCameraAnimType.Type.GetAttributeInfo("length");
             intervalCameraAnimType.colorAttribute = intervalCameraAnimType.Type.GetAttributeInfo("color");
+            intervalCameraAnimType.animOffsetAttribute = intervalCameraAnimType.Type.GetAttributeInfo("animOffset");
+            intervalCameraAnimType.animFileAttribute = intervalCameraAnimType.Type.GetAttributeInfo("animFile");
 
             intervalCurveType.Type = getNodeType("timeline", "intervalCurveType");
             intervalCurveType.startAttribute = intervalCurveType.Type.GetAttributeInfo("start");
@@ -139,6 +146,17 @@ namespace picoTimelineEditor
             intervalFaderType.colorAttribute = intervalFaderType.Type.GetAttributeInfo("color");
             intervalFaderType.curveChild = intervalFaderType.Type.GetChildInfo("curve");
 
+            intervalCameraAnimBlendInType.Type = getNodeType("timeline", "intervalCameraAnimBlendInType");
+            intervalCameraAnimBlendInType.startAttribute = intervalCameraAnimBlendInType.Type.GetAttributeInfo("start");
+            intervalCameraAnimBlendInType.descriptionAttribute = intervalCameraAnimBlendInType.Type.GetAttributeInfo("description");
+            intervalCameraAnimBlendInType.nameAttribute = intervalCameraAnimBlendInType.Type.GetAttributeInfo("name");
+            intervalCameraAnimBlendInType.lengthAttribute = intervalCameraAnimBlendInType.Type.GetAttributeInfo("length");
+            intervalCameraAnimBlendInType.colorAttribute = intervalCameraAnimBlendInType.Type.GetAttributeInfo("color");
+            intervalCameraAnimBlendInType.animOffsetAttribute = intervalCameraAnimBlendInType.Type.GetAttributeInfo("animOffset");
+            intervalCameraAnimBlendInType.animFileAttribute = intervalCameraAnimBlendInType.Type.GetAttributeInfo("animFile");
+            intervalCameraAnimBlendInType.sourceCameraAttribute = intervalCameraAnimBlendInType.Type.GetAttributeInfo("sourceCamera");
+            intervalCameraAnimBlendInType.curveChild = intervalCameraAnimBlendInType.Type.GetChildInfo("curve");
+
             timelineRootElement = getRootElement(NS, "timeline");
         }
 
@@ -146,7 +164,6 @@ namespace picoTimelineEditor
         {
             public static DomNodeType Type;
             public static AttributeInfo nameAttribute;
-            public static AttributeInfo fakeAttribute;
             public static ChildInfo groupChild;
             public static ChildInfo markerChild;
             public static ChildInfo timelineRefChild;
@@ -183,6 +200,7 @@ namespace picoTimelineEditor
             public static DomNodeType Type;
             public static AttributeInfo startAttribute;
             public static AttributeInfo descriptionAttribute;
+            public static AttributeInfo nameAttribute;
         }
 
         public static class keyType
@@ -190,6 +208,7 @@ namespace picoTimelineEditor
             public static DomNodeType Type;
             public static AttributeInfo startAttribute;
             public static AttributeInfo descriptionAttribute;
+            public static AttributeInfo nameAttribute;
             public static AttributeInfo specialEventAttribute;
         }
 
@@ -246,7 +265,7 @@ namespace picoTimelineEditor
             public static DomNodeType Type;
             public static AttributeInfo startAttribute;
             public static AttributeInfo descriptionAttribute;
-            public static AttributeInfo specialEventAttribute;
+            public static AttributeInfo nameAttribute;
             public static AttributeInfo sourceCodeAttribute;
         }
 
@@ -255,12 +274,16 @@ namespace picoTimelineEditor
             public static DomNodeType Type;
             public static AttributeInfo nameAttribute;
             public static AttributeInfo expandedAttribute;
+            public static AttributeInfo outputCameraAttribute;
             public static ChildInfo trackChild;
         }
 
         public static class trackGroupCameraType
         {
             public static DomNodeType Type;
+            public static AttributeInfo nameAttribute;
+            public static ChildInfo intervalChild;
+            public static ChildInfo keyChild;
         }
 
         public static class trackCameraAnimType
@@ -280,6 +303,8 @@ namespace picoTimelineEditor
             public static AttributeInfo nameAttribute;
             public static AttributeInfo lengthAttribute;
             public static AttributeInfo colorAttribute;
+            public static AttributeInfo animOffsetAttribute;
+            public static AttributeInfo animFileAttribute;
         }
 
         public static class intervalCurveType
@@ -301,6 +326,20 @@ namespace picoTimelineEditor
             public static AttributeInfo nameAttribute;
             public static AttributeInfo lengthAttribute;
             public static AttributeInfo colorAttribute;
+            public static ChildInfo curveChild;
+        }
+
+        public static class intervalCameraAnimBlendInType
+        {
+            public static DomNodeType Type;
+            public static AttributeInfo startAttribute;
+            public static AttributeInfo descriptionAttribute;
+            public static AttributeInfo nameAttribute;
+            public static AttributeInfo lengthAttribute;
+            public static AttributeInfo colorAttribute;
+            public static AttributeInfo animOffsetAttribute;
+            public static AttributeInfo animFileAttribute;
+            public static AttributeInfo sourceCameraAttribute;
             public static ChildInfo curveChild;
         }
 

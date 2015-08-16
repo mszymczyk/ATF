@@ -23,16 +23,36 @@ namespace pico.Hub
 		/// Finishes initializing component by connecting to picoHub</summary>
 		void IInitializable.Initialize()
 		{
-			IPHostEntry hostInfo = Dns.GetHostEntry( PICO_HUB_IP );
-			IPAddress serverAddr = hostInfo.AddressList[1];
-			var clientEndPoint = new IPEndPoint( serverAddr, PICO_HUB_PORT_OUTBOUND );
+			try
+			{
+				IPHostEntry hostInfo = Dns.GetHostEntry( PICO_HUB_IP );
+				IPAddress serverAddr = hostInfo.AddressList[1];
+				var clientEndPoint = new IPEndPoint( serverAddr, PICO_HUB_PORT_OUTBOUND );
 
-			// Create a client socket and connect it to the endpoint 
-			m_picoHubClientSocketOutbound = new System.Net.Sockets.Socket( System.Net.Sockets.AddressFamily.InterNetwork, System.Net.Sockets.SocketType.Stream, System.Net.Sockets.ProtocolType.Tcp );
-			m_picoHubClientSocketOutbound.Connect( clientEndPoint );
+				// Create a client socket and connect it to the endpoint 
+				m_picoHubClientSocketOutbound = new System.Net.Sockets.Socket( System.Net.Sockets.AddressFamily.InterNetwork, System.Net.Sockets.SocketType.Stream, System.Net.Sockets.ProtocolType.Tcp );
+				m_picoHubClientSocketOutbound.Connect( clientEndPoint );
+			}
+			catch( SocketException sex )
+			{
+				System.Diagnostics.Debug.WriteLine( "SocketException while connecting to picoHub: " + sex.Message );
+				m_picoHubClientSocketOutbound.Dispose();
+				m_picoHubClientSocketOutbound = null;
+			}
+			catch( Exception ex )
+			{
+				System.Diagnostics.Debug.WriteLine( "Exception while connecting to picoHub: " + ex.Message );
+				m_picoHubClientSocketOutbound.Dispose();
+				m_picoHubClientSocketOutbound = null;
+			}
 		}
 
 		#endregion
+
+		public bool Connected
+		{
+			get { return m_picoHubClientSocketOutbound != null; }
+		}
 
 		public void send( HubMessage msg )
 		{

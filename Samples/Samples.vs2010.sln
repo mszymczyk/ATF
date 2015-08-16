@@ -64,6 +64,9 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TextureEditor.vs2010", "TextureEditor\TextureEditor.vs2010.csproj", "{03B32F8F-8401-4E87-8BFE-AD9DBEAA19EC}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "picoTimelineEditor.vs2010", "picoTimelineEditor\picoTimelineEditor.vs2010.csproj", "{169FEC34-CBA7-4133-863B-03DC5EAC9039}"
+	ProjectSection(ProjectDependencies) = postProject
+		{78C1E637-8BE0-46E0-89C1-517659588D9A} = {78C1E637-8BE0-46E0-89C1-517659588D9A}
+	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "pico", "pico\pico.csproj", "{78C1E637-8BE0-46E0-89C1-517659588D9A}"
 EndProject

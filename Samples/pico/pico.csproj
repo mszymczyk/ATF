@@ -34,6 +34,9 @@
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.Composition" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Design" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -41,6 +44,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Controls\PropertyEditing\picoFileUriEditor.cs" />
     <Compile Include="Paths.cs" />
     <Compile Include="Hub\HubService.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -49,6 +53,14 @@
     <ProjectReference Include="..\..\Framework\Atf.Core\Atf.Core.vs2010.csproj">
       <Project>{9d1835b6-d1c2-44ba-bae1-05c6ec442d2f}</Project>
       <Name>Atf.Core.vs2010</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Framework\Atf.Gui.WinForms\Atf.Gui.WinForms.vs2010.csproj">
+      <Project>{7c36a258-9102-420d-b80a-5eb5717644b6}</Project>
+      <Name>Atf.Gui.WinForms.vs2010</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Framework\Atf.Gui\Atf.Gui.vs2010.csproj">
+      <Project>{4765c2a7-f989-40db-bc12-fcd67025b93f}</Project>
+      <Name>Atf.Gui.vs2010</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

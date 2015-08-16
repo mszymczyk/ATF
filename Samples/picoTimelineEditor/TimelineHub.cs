@@ -50,7 +50,7 @@ namespace picoTimelineEditor
 		{
 			m_schemaLoader = schemaLoader;
 			m_hubService = hubService;
-			Connected = true;
+			Connected = m_hubService.Connected;
 		}
 
 		private bool validate( out string docUri )
