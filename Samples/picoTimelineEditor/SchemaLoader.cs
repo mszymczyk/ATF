@@ -1,5 +1,6 @@
 ﻿//Copyright © 2014 Sony Computer Entertainment America LLC. See License.txt.
 
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Reflection;
@@ -90,6 +91,8 @@ namespace picoTimelineEditor
 				Schema.intervalFaderType.Type.Define( new ExtensionInfo<IntervalFader>() );
 				Schema.intervalCameraAnimType.Type.Define( new ExtensionInfo<IntervalCameraAnim>() );
 
+				Schema.intervalNodeAnimationType.Type.Define( new ExtensionInfo<IntervalNodeAnimation>() );
+
 				Schema.curveType.Type.Define( new ExtensionInfo<Curve>() );
 				Schema.curveType.Type.Define( new ExtensionInfo<CurveLimitValidator>() );
 				Schema.controlPointType.Type.Define( new ExtensionInfo<ControlPoint>() );
@@ -138,6 +141,21 @@ namespace picoTimelineEditor
                          });
                     }
 
+					System.ComponentModel.PropertyDescriptor channels = propertyDescriptors["Channels"];
+					if (channels != null)
+					{
+						FlagsUITypeEditor editor = (FlagsUITypeEditor) channels.GetEditor( typeof( FlagsUITypeEditor ) );
+						editor.DefineFlags( new string[] {
+                            "Reward==Give player the reward",
+                            "Trophy==Give player the trophy",
+                            "LevelUp==Level up",
+                            "BossDies==Boss dies",
+                            "PlayerDies==Player dies",
+                            "EndCinematic==End cinematic",
+                            "EndGame==End game",
+                         } );
+					}
+
                     nodeType.SetTag<PropertyDescriptorCollection>(propertyDescriptors);
 
                     // parse type annotation to create palette items
@@ -155,6 +173,40 @@ namespace picoTimelineEditor
                     }
                 }
             }
+
+
+			// FlagsUITypeEditor store flags as int.
+			// doesn't implement IPropertyEditor
+
+			PropertyDescriptorCollection propDescCollection = Schema.intervalNodeAnimationType.Type.GetTag<PropertyDescriptorCollection>();
+
+			string[] channelNames = Enum.GetNames( typeof( IntervalNodeAnimation.ChannelType ) );
+			int[] channelValues = GetEnumIntValues( typeof( IntervalNodeAnimation.ChannelType ) );
+
+			FlagsUITypeEditor channelsEditor = new FlagsUITypeEditor( channelNames, channelValues );
+			FlagsTypeConverter channelsConverter = new FlagsTypeConverter( channelNames, channelValues );
+			propDescCollection.Add(
+			 new AttributePropertyDescriptor(
+					"Channels".Localize(),
+					Schema.intervalNodeAnimationType.channelsAttribute,
+					"Animation".Localize(),
+					"Channels to edit".Localize(),
+					false,
+					channelsEditor,
+					channelsConverter
+					) );
+
         }
+
+		public int[] GetEnumIntValues( Type type )
+		{
+			System.Array valuesArray = Enum.GetValues( type );
+			int[] intArray = new int[valuesArray.Length];
+			for ( int i = 0; i < valuesArray.Length; ++i )
+			{
+				intArray[i] = (int) valuesArray.GetValue( i );
+			}		
+			return intArray;
+		}
     }
 }

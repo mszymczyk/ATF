@@ -67,16 +67,21 @@ namespace picoTimelineEditor
             paletteService.AddItem(Schema.trackType.Type, "Timelines", this);
             paletteService.AddItem(Schema.intervalType.Type, "Timelines", this);
             paletteService.AddItem(Schema.keyType.Type, "Timelines", this);
-            paletteService.AddItem(Schema.timelineRefType.Type, "Timelines", this);
+			//paletteService.AddItem(Schema.timelineRefType.Type, "Timelines", this);
+
 			// pico
 			//
-			paletteService.AddItem( Schema.groupCameraType.Type, "pico", this );
 			//paletteService.AddItem( Schema.trackFaderType.Type, "pico", this );
 			paletteService.AddItem( Schema.intervalFaderType.Type, "pico", this );
 			paletteService.AddItem( Schema.intervalCurveType.Type, "pico", this );
-			paletteService.AddItem( Schema.intervalCameraAnimType.Type, "pico", this );
 			paletteService.AddItem( Schema.luaScriptType.Type, "pico", this );
-			paletteService.AddItem( Schema.trackCameraAnimType.Type, "pico", this );
+			paletteService.AddItem( Schema.intervalNodeAnimationType.Type, "pico", this );
+
+			// Camera
+			//
+			paletteService.AddItem( Schema.groupCameraType.Type, "Camera", this );
+			paletteService.AddItem( Schema.trackCameraAnimType.Type, "Camera", this );
+			paletteService.AddItem( Schema.intervalCameraAnimType.Type, "Camera", this );
 
             m_contextRegistry = contextRegistry;
             m_documentRegistry = documentRegistry;

@@ -311,6 +311,21 @@ namespace picoTimelineEditor
 			return null;
 		}
 
+		public static bool AnyNotOfType<T>( object[] objects )
+			where T : class
+		{
+			foreach (object ob in objects)
+			{
+				T t = ob.As<T>();
+				if (t == null)
+				{
+					return true;
+				}
+			}
+
+			return false;
+		}
+
 		public static bool ParentHasChildOfType<T>( DomNode domNode )
 			where T : class
 		{
@@ -368,6 +383,12 @@ namespace picoTimelineEditor
 				if ( intervalCameraAnim != null )
 				{
 					if ( !dropTarget.Is<TrackCameraAnim>() )
+						return false;
+				}
+
+				if ( dropTarget.Is<TrackCameraAnim>() )
+				{
+					if (AnyNotOfType<IntervalCameraAnim>( items ))
 						return false;
 				}
 

@@ -72,7 +72,7 @@
         <scea.dom.editors.attribute name="name" displayName="Name" description="Unique Name" />
         <scea.dom.editors.attribute name="length" displayName="Length" description="Length or Duration" />
         <scea.dom.editors.attribute name="color" displayName="Color" description="Display Color"
-          editor="Sce.Atf.Controls.PropertyEditing.ColorEditor,Atf.Gui"
+          editor="Sce.Atf.Controls.PropertyEditing.ColorPickerEditor,Atf.Gui.WinForms"
           converter="Sce.Atf.Controls.PropertyEditing.IntColorConverter" />
       </xs:appinfo>
     </xs:annotation>
@@ -91,7 +91,7 @@
         <scea.dom.editors menuText="Marker" description="Marker" image="picoTimelineEditor.Resources.marker.png" category="Timelines" />
         <scea.dom.editors.attribute name="name" displayName="Name" description="Unique Name" />
         <scea.dom.editors.attribute name="color" displayName="Color" description="Display Color"
-          editor="Sce.Atf.Controls.PropertyEditing.ColorEditor,Atf.Gui"
+          editor="Sce.Atf.Controls.PropertyEditing.ColorPickerEditor,Atf.Gui.WinForms"
           converter="Sce.Atf.Controls.PropertyEditing.IntColorConverter" />
       </xs:appinfo>
     </xs:annotation>
@@ -146,7 +146,7 @@
         <scea.dom.editors.attribute name="start" displayName="Start" description="Start Time" />
         <scea.dom.editors.attribute name="description" displayName="Description" description="Event description" />
         <scea.dom.editors.attribute name="color" displayName="Color" description="Display Color"
-          editor="Sce.Atf.Controls.PropertyEditing.ColorEditor,Atf.Gui"
+          editor="Sce.Atf.Controls.PropertyEditing.ColorPickerEditor,Atf.Gui.WinForms"
           converter="Sce.Atf.Controls.PropertyEditing.IntColorConverter" />
         <scea.dom.editors.attribute name="ref" displayName="File Name" description="File name of timeline reference"
                                     editor="Sce.Atf.Controls.PropertyEditing.FileUriEditor,Atf.Gui.WinForms:Timeline files (*.timeline)|*.timeline"/>
@@ -238,7 +238,7 @@
         <scea.dom.editors.attribute name="name" displayName="Name" description="Unique Name" />
         <scea.dom.editors.attribute name="length" displayName="Length" description="Length or Duration" />
         <scea.dom.editors.attribute name="color" displayName="Color" description="Display Color"
-          editor="Sce.Atf.Controls.PropertyEditing.ColorEditor,Atf.Gui"
+          editor="Sce.Atf.Controls.PropertyEditing.ColorPickerEditor,Atf.Gui.WinForms"
           converter="Sce.Atf.Controls.PropertyEditing.IntColorConverter" />
       </xs:appinfo>
     </xs:annotation>
@@ -262,7 +262,7 @@
         <scea.dom.editors.attribute name="name" displayName="Name" description="Unique Name" />
         <scea.dom.editors.attribute name="length" displayName="Length" description="Length or Duration" />
         <scea.dom.editors.attribute name="color" displayName="Color" description="Display Color"
-          editor="Sce.Atf.Controls.PropertyEditing.ColorEditor,Atf.Gui"
+          editor="Sce.Atf.Controls.PropertyEditing.ColorPickerEditor,Atf.Gui.WinForms"
           converter="Sce.Atf.Controls.PropertyEditing.IntColorConverter" />
       </xs:appinfo>
     </xs:annotation>
@@ -286,7 +286,7 @@
         <scea.dom.editors menuText="CameraAnim" description="CameraAnim" image="picoTimelineEditor.Resources.interval.png" category="pico" />
         <scea.dom.editors.attribute name="name" displayName="Name" description="Unique Name" />
         <scea.dom.editors.attribute name="color" displayName="Color" description="Display Color"
-          editor="Sce.Atf.Controls.PropertyEditing.ColorEditor,Atf.Gui"
+          editor="Sce.Atf.Controls.PropertyEditing.ColorPickerEditor,Atf.Gui.WinForms"
           converter="Sce.Atf.Controls.PropertyEditing.IntColorConverter" />
         <!--<scea.dom.editors.attribute name="animFile" displayName="File Name" description="File name of camera animation"
                                     editor="Sce.Atf.Controls.PropertyEditing.FileUriEditor,Atf.Gui.WinForms:Animation files (*.anim)|*.anim"
@@ -298,6 +298,7 @@
 
         <scea.dom.editors.attribute name="animFile" displayName="File Name" description="File name of camera animation"
                                     editor="pico.Controls.PropertyEditing.picoFileUriEditor,pico:Animation files (*.anim)|*.anim"
+                                    converter="Sce.Atf.Controls.PropertyEditing.ReadOnlyConverter"
                                     category="Animation" />
 
         <scea.dom.editors.attribute name="length" displayName="Length" description="Length or Duration" category="Animation" />
@@ -317,7 +318,7 @@
     </xs:complexContent>
   </xs:complexType>
 
-    <xs:complexType name="intervalCameraAnimBlendInType">
+    <!--<xs:complexType name="intervalCameraAnimBlendInType">
     <xs:annotation>
       <xs:appinfo>
         <scea.dom.editors menuText="CameraAnimBlendIn" description="CameraAnimBlendIn" image="picoTimelineEditor.Resources.interval.png" category="pico" />
@@ -332,8 +333,43 @@
         <xs:attribute name="sourceCamera" type="xs:string" default=""/>
       </xs:extension>
     </xs:complexContent>
-  </xs:complexType>
+  </xs:complexType>-->
   
+    <xs:complexType name="intervalNodeAnimationType">
+    <xs:annotation>
+      <xs:appinfo>
+        <scea.dom.editors menuText="NodeAnimation" description="Node Animation" image="picoTimelineEditor.Resources.interval.png" category="pico" />
+        <scea.dom.editors.attribute name="nodeName" displayName="Node Name" description="Node name" category="Animation" />
+        <!--<scea.dom.editors.attribute name="name" displayName="Name" description="Unique Name" />
+        <scea.dom.editors.attribute name="length" displayName="Length" description="Length or Duration" />-->
+        <!--<scea.dom.editors.attribute name="color" displayName="Color" description="Display Color"
+          editor="Sce.Atf.Controls.PropertyEditing.ColorPickerEditor,Atf.Gui.WinForms"
+          converter="Sce.Atf.Controls.PropertyEditing.IntColorConverter" />-->
+
+        <!--<scea.dom.editors.attribute
+           name="channels"
+           displayName="Channels"
+           description="Channels to animate"
+           editor="Sce.Atf.Controls.PropertyEditing.FlagsUITypeEditor,Atf.Gui.WinForms"
+           converter="Sce.Atf.Controls.PropertyEditing.ReadOnlyConverter"/>-->
+
+    </xs:appinfo>
+    </xs:annotation>
+    <xs:complexContent>
+      <xs:extension base="intervalType">
+        <xs:sequence>
+          <xs:element name="curve" type="curveType" minOccurs="0" maxOccurs="unbounded"/>
+        </xs:sequence>
+        <!--<xs:attribute name="name" type="xs:ID" use="required" />
+        <xs:attribute name="length" type="xs:float" default="500.0"/>
+        <xs:attribute name="color" type="xs:integer" default="-16776961"/>-->
+        <!--blue-->
+        <xs:attribute name="nodeName" type="xs:string"/>
+        <xs:attribute name="channels" type="xs:int" default ="119" />
+        <!--0x77==119-->
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
   
   <xs:element name="timeline" type="timelineType"/>
 

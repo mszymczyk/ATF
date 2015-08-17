@@ -146,16 +146,15 @@ namespace picoTimelineEditor
             intervalFaderType.colorAttribute = intervalFaderType.Type.GetAttributeInfo("color");
             intervalFaderType.curveChild = intervalFaderType.Type.GetChildInfo("curve");
 
-            intervalCameraAnimBlendInType.Type = getNodeType("timeline", "intervalCameraAnimBlendInType");
-            intervalCameraAnimBlendInType.startAttribute = intervalCameraAnimBlendInType.Type.GetAttributeInfo("start");
-            intervalCameraAnimBlendInType.descriptionAttribute = intervalCameraAnimBlendInType.Type.GetAttributeInfo("description");
-            intervalCameraAnimBlendInType.nameAttribute = intervalCameraAnimBlendInType.Type.GetAttributeInfo("name");
-            intervalCameraAnimBlendInType.lengthAttribute = intervalCameraAnimBlendInType.Type.GetAttributeInfo("length");
-            intervalCameraAnimBlendInType.colorAttribute = intervalCameraAnimBlendInType.Type.GetAttributeInfo("color");
-            intervalCameraAnimBlendInType.animOffsetAttribute = intervalCameraAnimBlendInType.Type.GetAttributeInfo("animOffset");
-            intervalCameraAnimBlendInType.animFileAttribute = intervalCameraAnimBlendInType.Type.GetAttributeInfo("animFile");
-            intervalCameraAnimBlendInType.sourceCameraAttribute = intervalCameraAnimBlendInType.Type.GetAttributeInfo("sourceCamera");
-            intervalCameraAnimBlendInType.curveChild = intervalCameraAnimBlendInType.Type.GetChildInfo("curve");
+            intervalNodeAnimationType.Type = getNodeType("timeline", "intervalNodeAnimationType");
+            intervalNodeAnimationType.startAttribute = intervalNodeAnimationType.Type.GetAttributeInfo("start");
+            intervalNodeAnimationType.descriptionAttribute = intervalNodeAnimationType.Type.GetAttributeInfo("description");
+            intervalNodeAnimationType.nameAttribute = intervalNodeAnimationType.Type.GetAttributeInfo("name");
+            intervalNodeAnimationType.lengthAttribute = intervalNodeAnimationType.Type.GetAttributeInfo("length");
+            intervalNodeAnimationType.colorAttribute = intervalNodeAnimationType.Type.GetAttributeInfo("color");
+            intervalNodeAnimationType.nodeNameAttribute = intervalNodeAnimationType.Type.GetAttributeInfo("nodeName");
+            intervalNodeAnimationType.channelsAttribute = intervalNodeAnimationType.Type.GetAttributeInfo("channels");
+            intervalNodeAnimationType.curveChild = intervalNodeAnimationType.Type.GetChildInfo("curve");
 
             timelineRootElement = getRootElement(NS, "timeline");
         }
@@ -329,7 +328,7 @@ namespace picoTimelineEditor
             public static ChildInfo curveChild;
         }
 
-        public static class intervalCameraAnimBlendInType
+        public static class intervalNodeAnimationType
         {
             public static DomNodeType Type;
             public static AttributeInfo startAttribute;
@@ -337,9 +336,8 @@ namespace picoTimelineEditor
             public static AttributeInfo nameAttribute;
             public static AttributeInfo lengthAttribute;
             public static AttributeInfo colorAttribute;
-            public static AttributeInfo animOffsetAttribute;
-            public static AttributeInfo animFileAttribute;
-            public static AttributeInfo sourceCameraAttribute;
+            public static AttributeInfo nodeNameAttribute;
+            public static AttributeInfo channelsAttribute;
             public static ChildInfo curveChild;
         }
 

@@ -95,6 +95,7 @@
     <Compile Include="DomNodeAdapters\IntervalCameraAnim.cs" />
     <Compile Include="DomNodeAdapters\IntervalCurve.cs" />
     <Compile Include="DomNodeAdapters\IntervalFader.cs" />
+    <Compile Include="DomNodeAdapters\IntervalNodeAnimation.cs" />
     <Compile Include="DomNodeAdapters\LuaScript.cs" />
     <Compile Include="DomNodeAdapters\TimelineReference.cs" />
     <Compile Include="DomNodeAdapters\TrackCameraAnim.cs" />

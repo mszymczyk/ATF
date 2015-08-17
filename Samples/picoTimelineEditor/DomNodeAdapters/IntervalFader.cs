@@ -120,12 +120,12 @@ namespace picoTimelineEditor.DomNodeAdapters
 
 			CurveUtils.ComputeTangent( curve );
 
-			curve.DomNode.InitializeExtensions();
+			//curve.DomNode.InitializeExtensions();
 
 			//m_curves = new List<ICurve>();
 			m_curves.Add( curve );
 
-			System.Diagnostics.Debug.WriteLine( "IntervalFader.OnNodeSet" );
+			//System.Diagnostics.Debug.WriteLine( "IntervalFader.OnNodeSet" );
 		}
 
 		private void DomNode_AttributeChanged( object sender, AttributeEventArgs e )
