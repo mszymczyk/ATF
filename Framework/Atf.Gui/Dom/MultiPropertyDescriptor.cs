@@ -126,6 +126,28 @@ namespace Sce.Atf.Dom
                 yield return GetValue(component);
         }
 
+		/// <summary>
+		/// pico extension
+		/// When overridden in a derived class, gets a value indicating whether this property is read-only,
+		/// but returns value based on component being edited.
+		/// </summary>
+		public override bool IsReadOnlyComponent( object component )
+		{
+			SysPropertyDescriptor descriptor = FindDescriptor( component );
+			if ( descriptor != null )
+			{
+				DomPropertyDescriptor pd = descriptor as DomPropertyDescriptor;
+				if ( pd != null )
+				{
+					bool readOnly = pd.IsReadOnlyComponent( component );
+					return readOnly;
+				}
+				else
+					return descriptor.IsReadOnly;
+			}
+
+			return false;		
+		}
         /// <summary>
         /// Returns a property descriptor of the specified component 
         /// that matches the m_key member, or null if none found</summary>

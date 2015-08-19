@@ -237,8 +237,25 @@ namespace Sce.Atf.Controls.PropertyEditing
         /// Gets whether this property is read-only</summary>
         public bool IsReadOnly
         {
-            get { return m_descriptor.IsReadOnly; }
-        }
+			// original code
+			//
+			//get { return m_descriptor.IsReadOnly; }
+			get
+			{
+				// pico extension, misz:
+				// I've changed the default behavior to support attriutes that can be disabled (grayed-out) based on value of other attribute
+				// in order to make this work with grid property view, I had to introduce IsReadOnly per component (or per edited DomNode)
+				//
+				var mpd = m_descriptor as Sce.Atf.Dom.PropertyDescriptor;
+				if ( mpd != null )
+				{
+					bool readOnly = mpd.IsReadOnlyComponent( LastSelectedObject );
+					return readOnly;
+				}
+				else
+					return m_descriptor.IsReadOnly;
+			}
+		}
 
         /// <summary>
         /// Gets a UITypeEditor for editing the property</summary>

@@ -137,6 +137,17 @@ namespace Sce.Atf.Dom
             get { return m_isReadOnly; }
         }
 
+		/// <summary>
+		/// pico extension
+		/// When overridden in a derived class, gets a value indicating whether this property is read-only,
+		/// but returns value based on component being edited.
+		/// Defaults to IsReadOnly
+		/// </summary>
+		public virtual bool IsReadOnlyComponent( object component )
+		{
+			return m_isReadOnly;
+		}
+
         /// <summary>
         /// When overridden in a derived class, gets the type of the property</summary>
         public override Type PropertyType

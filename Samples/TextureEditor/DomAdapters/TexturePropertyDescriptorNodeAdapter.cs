@@ -9,6 +9,8 @@ using Sce.Atf.Dom;
 using Sce.Atf.Adaptation;
 using Sce.Atf.Controls.PropertyEditing;
 
+using pico.Controls.PropertyEditing;
+
 namespace TextureEditor
 {
     /// <summary>
@@ -19,82 +21,97 @@ namespace TextureEditor
 	public class TexturePropertyDescriptorNodeAdapter : DomNodeAdapter, ICustomTypeDescriptor
 	//public class TexturePropertyDescriptorNodeAdapter : CustomTypeDescriptorNodeAdapter
 	{
-		static bool CopySourceFileIsReadOnlyPredicate( DomNode domNode, AttributeInfo attributeInfo )
-		{
-			TextureMetadata tp = domNode.Cast<TextureMetadata>();
-			return tp.CopySourceFile;
-		}
+		//static bool CopySourceFileIsReadOnlyPredicate( DomNode domNode, AttributeInfo attributeInfo )
+		//{
+		//	TextureMetadata tp = domNode.Cast<TextureMetadata>();
+		//	return tp.CopySourceFile;
+		//}
 
-		class CustomEnableAttributePropertyDescriptor : AttributePropertyDescriptor
-		{
-			public CustomEnableAttributePropertyDescriptor(
-				string name,
-				AttributeInfo attribute,
-				string category,
-				string description,
-				bool isReadOnly,
-				object editor
-				, DomNode domNode
-				, Func<DomNode, AttributeInfo, bool> isReadOnlyPredicate = null
-				)
+		static CustomEnableAttributePropertyDescriptorCallback CopySourceFileIsReadOnlyPredicate = new CustomEnableAttributePropertyDescriptorCallback( Schema.textureMetadataType.copySourceFileAttribute, CustomEnableAttributePropertyDescriptorCallback.Condition.ReadOnlyIfSetToTrue );
 
-				: base( name, attribute, category, description, isReadOnly, editor, null )
-			{
-				m_domNode = domNode;
-				m_attributeInfo2 = attribute;
-				m_isReadOnlyPredicate = isReadOnlyPredicate;
-				//m_isReadOnly2 = isReadOnly;
-			}
+		//class CustomEnableAttributePropertyDescriptor : AttributePropertyDescriptor
+		//{
+		//	public CustomEnableAttributePropertyDescriptor(
+		//		string name,
+		//		AttributeInfo attribute,
+		//		string category,
+		//		string description,
+		//		bool isReadOnly,
+		//		object editor
+		//		, DomNode domNode
+		//		, Func<DomNode, AttributeInfo, bool> isReadOnlyPredicate = null
+		//		)
 
-			/// <summary>
-			/// When overridden in a derived class, gets a value indicating whether this property is read-only</summary>
-			public override bool IsReadOnly
-			{
-				//get { return m_isReadOnly2; }
-				get
-				{
-					//TextureMetadata tp = m_domNode.Cast<TextureMetadata>();
-					//System.Diagnostics.Debug.WriteLine( "IsReadOnly: {0}, {1}", tp.Uri, tp.CopySourceFile );
-					//return tp.CopySourceFile;
-					if ( m_isReadOnlyPredicate != null )
-						return m_isReadOnlyPredicate( m_domNode, m_attributeInfo2 );
-					else
-						return false;
-				}
-			}
+		//		: base( name, attribute, category, description, isReadOnly, editor, null )
+		//	{
+		//		//m_domNode = domNode;
+		//		m_attributeInfo2 = attribute;
+		//		m_isReadOnlyPredicate = isReadOnlyPredicate;
+		//		//m_isReadOnly2 = isReadOnly;
+		//	}
 
-			/// <summary>
-			/// Tests equality of property descriptor with object</summary>
-			/// <param name="obj">Object to compare to</param>
-			/// <returns>True iff property descriptors are identical</returns>
-			/// <remarks>Implements Equals() for organizing descriptors in grid controls</remarks>
-			public override bool Equals( object obj )
-			{
-				var other = obj as CustomEnableAttributePropertyDescriptor;
+		//	///// <summary>
+		//	///// When overridden in a derived class, gets a value indicating whether this property is read-only</summary>
+		//	//public override bool IsReadOnly
+		//	//{
+		//	//	//get { return m_isReadOnly2; }
+		//	//	//get
+		//	//	//{
+		//	//	//	//TextureMetadata tp = m_domNode.Cast<TextureMetadata>();
+		//	//	//	//System.Diagnostics.Debug.WriteLine( "IsReadOnly: {0}, {1}", tp.Uri, tp.CopySourceFile );
+		//	//	//	//return tp.CopySourceFile;
+		//	//	//	if ( m_isReadOnlyPredicate != null )
+		//	//	//	{
+		//	//	//		//return m_isReadOnlyPredicate( m_domNode, m_attributeInfo2 );
+		//	//	//		DomNode domNode = GetNode
+		//	//	//		return m_isReadOnlyPredicate( m_domNode, m_attributeInfo2 );
+		//	//	//	}
+		//	//	//	else
+		//	//	//		return false;
+		//	//	//}
+		//	//	get { return true; }
+		//	//}
 
-				// If true is returned, then GetNode() must also succeed when it calls
-				//  DomNode.Type.IsValid(m_attributeInfo), otherwise this AttributePropertyDescriptor
-				//  will be considered identical in a dictionary, but its GetValue() will fail.
-				return
-					other != null &&
-					m_attributeInfo2.Equivalent( other.m_attributeInfo2 ) &&
-					m_domNode.Equals( other.m_domNode );
-			}
+		//	public override bool IsReadOnlyComponent( object component )
+		//	{
+		//		//return m_isReadOnly;
+		//		DomNode domNode = GetNode( component );
+		//		bool readOnly =  m_isReadOnlyPredicate( domNode, m_attributeInfo2 );
+		//		return readOnly;
+		//	}
 
-			/// <summary>
-			/// Gets hash code for property descriptor</summary>
-			/// <returns>Hash code</returns>
-			/// <remarks>Implements GetHashCode() for organizing descriptors in grid controls</remarks>
-			public override int GetHashCode()
-			{
-				return m_attributeInfo2.GetEquivalentHashCode();
-			}
+		//	///// <summary>
+		//	///// Tests equality of property descriptor with object</summary>
+		//	///// <param name="obj">Object to compare to</param>
+		//	///// <returns>True iff property descriptors are identical</returns>
+		//	///// <remarks>Implements Equals() for organizing descriptors in grid controls</remarks>
+		//	//public override bool Equals( object obj )
+		//	//{
+		//	//	var other = obj as CustomEnableAttributePropertyDescriptor;
 
-			private readonly AttributeInfo m_attributeInfo2;
-			private DomNode m_domNode;
-			private Func<DomNode, AttributeInfo, bool> m_isReadOnlyPredicate;
-			//private bool m_isReadOnly2;
-		};
+		//	//	// If true is returned, then GetNode() must also succeed when it calls
+		//	//	//  DomNode.Type.IsValid(m_attributeInfo), otherwise this AttributePropertyDescriptor
+		//	//	//  will be considered identical in a dictionary, but its GetValue() will fail.
+		//	//	return
+		//	//		other != null &&
+		//	//		m_attributeInfo2.Equivalent( other.m_attributeInfo2 ) &&
+		//	//		m_domNode.Equals( other.m_domNode );
+		//	//}
+
+		//	///// <summary>
+		//	///// Gets hash code for property descriptor</summary>
+		//	///// <returns>Hash code</returns>
+		//	///// <remarks>Implements GetHashCode() for organizing descriptors in grid controls</remarks>
+		//	//public override int GetHashCode()
+		//	//{
+		//	//	return m_attributeInfo2.GetEquivalentHashCode();
+		//	//}
+
+		//	private readonly AttributeInfo m_attributeInfo2;
+		//	//private DomNode m_domNode;
+		//	private Func<DomNode, AttributeInfo, bool> m_isReadOnlyPredicate;
+		//	//private bool m_isReadOnly2;
+		//};
 
         /// <summary>
         /// Creates an array of property descriptors that are associated with the adapted DomNode's
@@ -180,10 +197,9 @@ namespace TextureEditor
 						 "Controlls mipmap generation".Localize(),
 						 false,
 						 new BoolEditor()
-						 , DomNode
-						 , CopySourceFileIsReadOnlyPredicate
-						 )
-			);
+						 , new CustomEnableAttributePropertyDescriptorCallback( Schema.textureMetadataType.copySourceFileAttribute, CustomEnableAttributePropertyDescriptorCallback.Condition.ReadOnlyIfSetToTrue )
+						 ) 
+						 );
 
 			textureMetadataTypeProperyCollection.Add(
 				new CustomEnableAttributePropertyDescriptor(
@@ -193,7 +209,7 @@ namespace TextureEditor
 						 "Flips image vertically".Localize(),
 						 false,
 						 new BoolEditor()
-						 , DomNode
+						 //, DomNode
 						 , CopySourceFileIsReadOnlyPredicate
 						 )
 			);
@@ -206,7 +222,7 @@ namespace TextureEditor
 						 "Assumes source image is srgb".Localize(),
 						 false,
 						 new BoolEditor()
-						 , DomNode
+						 //, DomNode
 						 , CopySourceFileIsReadOnlyPredicate
 						 )
 			);
@@ -219,7 +235,6 @@ namespace TextureEditor
 						 "Sets exported image's width".Localize(),
 						 false,
 						 new NumericEditor( typeof( int ) )
-						 , DomNode
 						 , CopySourceFileIsReadOnlyPredicate
 						 )
 			);
@@ -232,7 +247,6 @@ namespace TextureEditor
 						 "Sets exported image's height".Localize(),
 						 false,
 						 new NumericEditor( typeof( int ) )
-						 , DomNode
 						 , CopySourceFileIsReadOnlyPredicate
 						 )
 			);
@@ -272,8 +286,8 @@ namespace TextureEditor
 					"Specifies intended usage of exported texture".Localize(),
 					false,
 					formatEditor
-					, DomNode
-					, ( DomNode domNode, AttributeInfo attributeInfo ) =>
+					, new CustomEnableAttributePropertyDescriptorCallback(
+					 ( DomNode domNode, CustomEnableAttributePropertyDescriptor descriptor ) =>
 					{
 						TextureMetadata tp = domNode.Cast<TextureMetadata>();
 						if ( tp.CopySourceFile )
@@ -281,6 +295,7 @@ namespace TextureEditor
 
 						return false;
 					}
+					)
 				);
 				textureMetadataTypeProperyCollection.Add( apd );
 			}
@@ -296,8 +311,8 @@ namespace TextureEditor
 					"Specifies format of exported texture (advanced)".Localize(),
 					false,
 					formatEditor
-					, DomNode
-					, ( DomNode domNode, AttributeInfo attributeInfo ) =>
+					, new CustomEnableAttributePropertyDescriptorCallback(
+					 ( DomNode domNode, CustomEnableAttributePropertyDescriptor descriptor ) =>
 						{
 							TextureMetadata tp = domNode.Cast<TextureMetadata>();
 							if ( tp.CopySourceFile )
@@ -308,6 +323,7 @@ namespace TextureEditor
 
 							return true;
 						}
+					)
 				);
 				textureMetadataTypeProperyCollection.Add( apd );
 			}

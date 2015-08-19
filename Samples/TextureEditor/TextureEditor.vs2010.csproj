@@ -143,6 +143,10 @@
       <Project>{7F794C24-7A8D-4D21-B443-F03509669F89}</Project>
       <Name>Atf.IronPython.vs2010</Name>
     </ProjectReference>
+    <ProjectReference Include="..\pico\pico.csproj">
+      <Project>{78c1e637-8be0-46e0-89c1-517659588d9a}</Project>
+      <Name>pico</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Resources\shaders.fx" />

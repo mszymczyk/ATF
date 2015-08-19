@@ -1178,8 +1178,24 @@ namespace Sce.Atf.Controls.PropertyEditing
                         {
                             bool selected = m_selectedRows.Contains(j);
                             Brush textBrush = SystemBrushes.ControlText;
-                            if (p.Descriptor.IsReadOnly)
-                                textBrush = SystemBrushes.GrayText;
+
+							// original code
+							//
+							//if (p.Descriptor.IsReadOnly)
+							//	textBrush = SystemBrushes.GrayText;
+
+							// pico extension
+							// use IsReadOnlyComponent if available
+							//
+							bool isReadOnly;
+							Sce.Atf.Dom.PropertyDescriptor pd = p.Descriptor as Sce.Atf.Dom.PropertyDescriptor;
+							if ( pd != null )
+								isReadOnly = pd.IsReadOnlyComponent( SelectedObjects[j] );
+							else
+								isReadOnly = p.Descriptor.IsReadOnly;
+
+							if ( isReadOnly )
+								textBrush = SystemBrushes.GrayText;
 
                             if (selected)
                                 textBrush = highlightTextBrush;

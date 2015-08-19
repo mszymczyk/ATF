@@ -616,7 +616,20 @@ namespace Sce.Atf.Controls.PropertyEditing
                 Rectangle bounds = base.ClientRectangle;
                 bounds.Width -= m_editButton.Width;
 
-                Brush brush = m_descriptor.IsReadOnly ? SystemBrushes.GrayText : SystemBrushes.ControlText;
+				// original code
+				//
+				//Brush brush = m_descriptor.IsReadOnly ? SystemBrushes.GrayText : SystemBrushes.ControlText;
+
+				// pico extension
+				//
+				bool readOnly;
+				Sce.Atf.Dom.PropertyDescriptor pd = m_descriptor as Sce.Atf.Dom.PropertyDescriptor;
+				if ( pd != null )
+					readOnly = pd.IsReadOnlyComponent( Instance );
+				else
+					readOnly = m_descriptor.IsReadOnly;
+
+				Brush brush = readOnly ? SystemBrushes.GrayText : SystemBrushes.ControlText;
 
                 try
                 {

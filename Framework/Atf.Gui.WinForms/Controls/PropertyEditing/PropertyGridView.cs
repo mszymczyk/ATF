@@ -1398,7 +1398,20 @@ namespace Sce.Atf.Controls.PropertyEditing
             {
                 bool isOverride = property.Descriptor.CanResetValue(LastSelectedObject);
                 Font font = isOverride ? BoldFont : Font;
-                bool isReadOnly = property.Descriptor.IsReadOnly;
+				// original code
+				//
+				//bool isReadOnly = property.Descriptor.IsReadOnly;
+
+				// pico extension
+				// use IsReadOnlyComponent if available
+				//
+				bool isReadOnly;
+				Sce.Atf.Dom.PropertyDescriptor pd = property.Descriptor as Sce.Atf.Dom.PropertyDescriptor;
+				if ( pd != null )
+					isReadOnly = pd.IsReadOnlyComponent( LastSelectedObject );
+				else
+					isReadOnly = property.Descriptor.IsReadOnly;
+
                 Brush brush = isReadOnly ? PropertyReadOnlyTextBrush : PropertyTextBrush;
 
                 TypeDescriptorContext context = new TypeDescriptorContext(
