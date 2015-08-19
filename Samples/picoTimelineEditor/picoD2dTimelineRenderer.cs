@@ -22,7 +22,9 @@ namespace picoTimelineEditor
 		public override void Init( D2dGraphics graphics )
 		{
 			base.Init( graphics );
-			
+
+			HeaderWidth = 180;
+
 			m_picoTextBrush = graphics.CreateSolidBrush( SystemColors.WindowText );
 		}
 

@@ -77,11 +77,20 @@ namespace picoTimelineEditor
 			paletteService.AddItem( Schema.luaScriptType.Type, "pico", this );
 			paletteService.AddItem( Schema.intervalNodeAnimationType.Type, "pico", this );
 
+			paletteService.AddItem( Schema.trackAnimControllerType.Type, "pico", this );
+			paletteService.AddItem( Schema.intervalAnimControllerType.Type, "pico", this );
+
 			// Camera
 			//
 			paletteService.AddItem( Schema.groupCameraType.Type, "Camera", this );
 			paletteService.AddItem( Schema.trackCameraAnimType.Type, "Camera", this );
 			paletteService.AddItem( Schema.intervalCameraAnimType.Type, "Camera", this );
+
+			// CharacterController
+			//
+			paletteService.AddItem( Schema.groupCharacterControllerType.Type, "CharacterController", this );
+			paletteService.AddItem( Schema.trackCharacterControllerAnimType.Type, "CharacterController", this );
+			paletteService.AddItem( Schema.intervalCharacterControllerAnimType.Type, "CharacterController", this );
 
             m_contextRegistry = contextRegistry;
             m_documentRegistry = documentRegistry;

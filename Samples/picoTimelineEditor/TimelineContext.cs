@@ -338,6 +338,24 @@ namespace picoTimelineEditor
 			return false;
 		}
 
+		public static bool DropTargetIs<T>( ITimelineObject dropTarget )
+			where T : class
+		{
+			DomNodeAdapter dropTarget_dna = dropTarget.As<DomNodeAdapter>();
+			if ( dropTarget_dna == null )
+				return false;
+
+			DomNode domNode = dropTarget_dna.DomNode;
+
+			foreach( DomNode dn in domNode.Lineage )
+			{
+				if ( dn.Is<T>() )
+					return true;
+			}
+
+			return false;
+		}
+
 		/// <summary>
 		/// Returns whether the context can insert the data object</summary>
 		/// <param name="insertingObject">Data to insert; e.g., System.Windows.Forms.IDataObject</param>
@@ -386,9 +404,19 @@ namespace picoTimelineEditor
 						return false;
 				}
 
-				if ( dropTarget.Is<TrackCameraAnim>() )
+				IntervalAnimController intervalAnimController = AnyOfType<IntervalAnimController>( items );
+				if ( intervalAnimController != null )
 				{
-					if (AnyNotOfType<IntervalCameraAnim>( items ))
+					//if ( !DropTargetIs<TrackCameraAnim>( dropTarget ) )
+					//{
+					//}
+					if ( !dropTarget.Is<TrackAnimController>() )
+						return false;
+				}
+
+				if ( DropTargetIs<TrackCameraAnim>( dropTarget ) )
+				{
+					if ( AnyNotOfType<IntervalCameraAnim>( items ) )
 						return false;
 				}
 

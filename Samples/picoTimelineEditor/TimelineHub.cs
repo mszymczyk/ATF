@@ -108,6 +108,7 @@ namespace picoTimelineEditor
 			HubMessage hubMessage = new HubMessage( TIMELINE_TAG );
 			hubMessage.appendString( "reloadTimeline" );
 			hubMessage.appendString( docUri );
+			hubMessage.appendInt( (int)stream.Length );
 			hubMessage.appendBytes( stream.ToArray() );
 
 			m_hubService.send( hubMessage );

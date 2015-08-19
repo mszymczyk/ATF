@@ -8,6 +8,7 @@ using Sce.Atf;
 using Sce.Atf.Adaptation;
 using Sce.Atf.Applications;
 using Sce.Atf.Controls.Timelines;
+using ScrubberManipulator = Sce.Atf.Controls.Timelines.Direct2D.D2dScrubberManipulator;
 
 namespace picoTimelineEditor
 {
@@ -81,6 +82,10 @@ namespace picoTimelineEditor
                 this);
 
             m_commandService.RegisterCommand(StandardCommand.ViewZoomExtents, CommandVisibility.All, this);
+
+			m_commandService.RegisterMenu( TimelineMenu );
+
+			m_autoPlay = new TimelineAutoPlay( m_contextRegistry );
         }
 
         #endregion
@@ -246,5 +251,138 @@ namespace picoTimelineEditor
 
         private ICommandService m_commandService;
         private IContextRegistry m_contextRegistry;
-    }
+
+		class TimelineAutoPlay
+		{
+			public TimelineAutoPlay( IContextRegistry contextRegistry )
+			{
+				m_contextRegistry = contextRegistry;
+
+				m_contextRegistry.ActiveContextChanged += delegate
+				{
+					m_timer.Stop();
+					m_stopWatch.Stop();
+				};
+
+				ScrubberManipulator.Moved += ( object sender, System.EventArgs e ) =>
+				{
+					ScrubberManipulator scrubber = sender as ScrubberManipulator;
+					if ( scrubber == null )
+						return;
+
+					int inewPos = (int)scrubber.Position;
+					m_scrubberPosTextBox.Text = inewPos.ToString();
+				};
+
+				m_stopWatch = new System.Diagnostics.Stopwatch();
+
+				m_timer = new Timer();
+				m_timer.Interval = 16; // 10 secs
+				m_timer.Tick += (object sender, System.EventArgs e ) =>
+				{
+					long milis = m_stopWatch.ElapsedMilliseconds;
+					float newPosition = setScrubberPosition( (float)milis, true );
+
+					m_stopWatch.Restart();
+				};
+
+				m_playTimelineButton = new ToolStripButton();
+				m_playTimelineButton.Name = "PlayTimeline";
+				m_playTimelineButton.Text = "Play".Localize();
+				m_playTimelineButton.Click += delegate
+				{
+					if ( m_playTimelineButton.Text == "Play" )
+					{
+						// start playing timeline
+						//
+						m_playTimelineButton.Text = "Pause";
+						m_playTimelineButtonOrigColor = m_playTimelineButton.BackColor;
+						m_playTimelineButton.BackColor = System.Drawing.Color.Red;
+						m_stopWatch.Restart();
+						m_timer.Start();
+
+					}
+					else
+					{
+						// stop playing timeline
+						//
+						m_playTimelineButton.Text = "Play";
+						m_playTimelineButton.BackColor = m_playTimelineButtonOrigColor;
+						m_timer.Stop();
+					}
+				};
+
+				MenuInfo menuInfo = TimelineMenu;
+				//MenuInfo menuInfo = MenuInfo.Edit;
+				menuInfo.GetToolStrip().Items.Add( m_playTimelineButton );
+
+				m_resetTimelineButton = new ToolStripButton();
+				m_resetTimelineButton.Name = "ResetTimeline";
+				m_resetTimelineButton.Text = "Reset".Localize();
+				m_resetTimelineButton.Click += delegate
+				{
+					setScrubberPosition( 0, false );
+				};
+
+				menuInfo.GetToolStrip().Items.Add( m_resetTimelineButton );
+
+
+				m_scrubberPosTextBox = new ToolStripTextBox();
+				m_scrubberPosTextBox.Name = "m_scrubberPosTextBox";
+				m_scrubberPosTextBox.Text = "0";
+				m_scrubberPosTextBox.LostFocus += ( object sender, System.EventArgs e ) =>
+				{
+					int pos;
+					if ( int.TryParse( m_scrubberPosTextBox.Text, out pos ) )
+					{
+						setScrubberPosition( (float)pos, false );
+					}
+				};
+				m_scrubberPosTextBox.KeyPress += ( object sender, KeyPressEventArgs e ) =>
+				{
+					if ( e.KeyChar == 13 )
+					{
+						int pos;
+						if ( int.TryParse( m_scrubberPosTextBox.Text, out pos ) )
+						{
+							setScrubberPosition( (float)pos, false );
+						}
+					}
+				};
+
+				menuInfo.GetToolStrip().Items.Add( m_scrubberPosTextBox );
+			}
+
+			float setScrubberPosition( float pos, bool add )
+			{
+				TimelineContext context = m_contextRegistry.GetActiveContext<TimelineContext>();
+				if ( context == null )
+					return 0;
+
+				TimelineDocument document = context.As<TimelineDocument>();
+				if ( document == null )
+					return 0;
+
+				if ( add )
+					document.ScrubberManipulator.Position += pos;
+				else
+					document.ScrubberManipulator.Position = pos;
+
+				return document.ScrubberManipulator.Position;
+			}
+
+			private IContextRegistry m_contextRegistry;
+			private ToolStripButton m_playTimelineButton;
+			private ToolStripButton m_resetTimelineButton;
+			private ToolStripTextBox m_scrubberPosTextBox;
+			private System.Drawing.Color m_playTimelineButtonOrigColor;
+			private System.Windows.Forms.Timer m_timer;
+			private System.Diagnostics.Stopwatch m_stopWatch;
+		};
+
+		private TimelineAutoPlay m_autoPlay;
+
+		public static MenuInfo TimelineMenu =
+            new MenuInfo( "Timeline", "Timeline".Localize( "this is the name of a menu" ), "Timeline Commands".Localize() );
+	}
 }

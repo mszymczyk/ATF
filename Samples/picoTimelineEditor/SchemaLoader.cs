@@ -13,6 +13,8 @@ using Sce.Atf.Dom;
 
 using picoTimelineEditor.DomNodeAdapters;
 
+using pico.Controls.PropertyEditing;
+
 namespace picoTimelineEditor
 {
     /// <summary>
@@ -85,17 +87,28 @@ namespace picoTimelineEditor
 				// register the timeline model interfaces
 				Schema.intervalCurveType.Type.Define( new ExtensionInfo<IntervalCurve>() );
 				Schema.luaScriptType.Type.Define( new ExtensionInfo<LuaScript>() );
-				Schema.groupCameraType.Type.Define( new ExtensionInfo<GroupCamera>() );
-				//Schema.trackFaderType.Type.Define( new ExtensionInfo<TrackFader>() );
-				Schema.trackCameraAnimType.Type.Define( new ExtensionInfo<TrackCameraAnim>() );
 				Schema.intervalFaderType.Type.Define( new ExtensionInfo<IntervalFader>() );
+	
+				// camera
+				//
+				Schema.groupCameraType.Type.Define( new ExtensionInfo<GroupCamera>() );
+				Schema.trackCameraAnimType.Type.Define( new ExtensionInfo<TrackCameraAnim>() );
 				Schema.intervalCameraAnimType.Type.Define( new ExtensionInfo<IntervalCameraAnim>() );
+
+				Schema.trackAnimControllerType.Type.Define( new ExtensionInfo<TrackAnimController>() );
+				Schema.intervalAnimControllerType.Type.Define( new ExtensionInfo<IntervalAnimController>() );
 
 				Schema.intervalNodeAnimationType.Type.Define( new ExtensionInfo<IntervalNodeAnimation>() );
 
 				Schema.curveType.Type.Define( new ExtensionInfo<Curve>() );
 				Schema.curveType.Type.Define( new ExtensionInfo<CurveLimitValidator>() );
 				Schema.controlPointType.Type.Define( new ExtensionInfo<ControlPoint>() );
+
+				// character controller
+				//
+				Schema.groupCharacterControllerType.Type.Define( new ExtensionInfo<GroupCharacterController>() );
+				Schema.trackCharacterControllerAnimType.Type.Define( new ExtensionInfo<TrackCharacterControllerAnim>() );
+				Schema.intervalCharacterControllerAnimType.Type.Define( new ExtensionInfo<IntervalCharacterControllerAnim>() );
 
                 // the timeline schema defines only one type collection
                 break;
@@ -110,41 +123,26 @@ namespace picoTimelineEditor
         protected override void ParseAnnotations(
             XmlSchemaSet schemaSet,
             IDictionary<NamedMetadata, IList<XmlNode>> annotations)
-        {
-            base.ParseAnnotations(schemaSet, annotations);
+		{
+			base.ParseAnnotations( schemaSet, annotations );
 
-            IList<XmlNode> xmlNodes;
+			IList<XmlNode> xmlNodes;
 
-            foreach (DomNodeType nodeType in m_typeCollection.GetNodeTypes())
-            {
-                // parse XML annotation for property descriptors
-                if (annotations.TryGetValue(nodeType, out xmlNodes))
-                {
-                    PropertyDescriptorCollection propertyDescriptors = Sce.Atf.Dom.PropertyDescriptor.ParseXml(nodeType, xmlNodes);
+			foreach ( DomNodeType nodeType in m_typeCollection.GetNodeTypes() )
+			{
+				// parse XML annotation for property descriptors
+				if ( annotations.TryGetValue( nodeType, out xmlNodes ) )
+				{
+					PropertyDescriptorCollection propertyDescriptors = Sce.Atf.Dom.PropertyDescriptor.ParseXml( nodeType, xmlNodes );
 
-                    // Customizations
-                    // The flags and enum support from annotation used to be in ATF 2.8.
-                    //  Please request this feature from the ATF team if you need it and a ParseXml overload
-                    //  can probably be created.
-                    System.ComponentModel.PropertyDescriptor gameFlow = propertyDescriptors["Special Event"];
-                    if (gameFlow != null)
-                    {
-                        FlagsUITypeEditor editor = (FlagsUITypeEditor)gameFlow.GetEditor(typeof(FlagsUITypeEditor));
-                        editor.DefineFlags( new string[] {
-                            "Reward==Give player the reward",
-                            "Trophy==Give player the trophy",
-                            "LevelUp==Level up",
-                            "BossDies==Boss dies",
-                            "PlayerDies==Player dies",
-                            "EndCinematic==End cinematic",
-                            "EndGame==End game",
-                         });
-                    }
-
-					System.ComponentModel.PropertyDescriptor channels = propertyDescriptors["Channels"];
-					if (channels != null)
+					// Customizations
+					// The flags and enum support from annotation used to be in ATF 2.8.
+					//  Please request this feature from the ATF team if you need it and a ParseXml overload
+					//  can probably be created.
+					System.ComponentModel.PropertyDescriptor gameFlow = propertyDescriptors["Special Event"];
+					if ( gameFlow != null )
 					{
-						FlagsUITypeEditor editor = (FlagsUITypeEditor) channels.GetEditor( typeof( FlagsUITypeEditor ) );
+						FlagsUITypeEditor editor = (FlagsUITypeEditor)gameFlow.GetEditor( typeof( FlagsUITypeEditor ) );
 						editor.DefineFlags( new string[] {
                             "Reward==Give player the reward",
                             "Trophy==Give player the trophy",
@@ -156,47 +154,66 @@ namespace picoTimelineEditor
                          } );
 					}
 
-                    nodeType.SetTag<PropertyDescriptorCollection>(propertyDescriptors);
+					nodeType.SetTag<PropertyDescriptorCollection>( propertyDescriptors );
 
-                    // parse type annotation to create palette items
-                    XmlNode xmlNode = FindElement(xmlNodes, "scea.dom.editors");
-                    if (xmlNode != null)
-                    {
-                        string menuText = FindAttribute(xmlNode, "menuText");
-                        if (menuText != null) // must have menu text and category
-                        {
-                            string description = FindAttribute(xmlNode, "description");
-                            string image = FindAttribute(xmlNode, "image");
-                            NodeTypePaletteItem item = new NodeTypePaletteItem(nodeType, menuText, description, image);
-                            nodeType.SetTag<NodeTypePaletteItem>(item);
-                        }
-                    }
-                }
-            }
+					// parse type annotation to create palette items
+					XmlNode xmlNode = FindElement( xmlNodes, "scea.dom.editors" );
+					if ( xmlNode != null )
+					{
+						string menuText = FindAttribute( xmlNode, "menuText" );
+						if ( menuText != null ) // must have menu text and category
+						{
+							string description = FindAttribute( xmlNode, "description" );
+							string image = FindAttribute( xmlNode, "image" );
+							NodeTypePaletteItem item = new NodeTypePaletteItem( nodeType, menuText, description, image );
+							nodeType.SetTag<NodeTypePaletteItem>( item );
+						}
+					}
+				}
+			}
 
 
-			// FlagsUITypeEditor store flags as int.
-			// doesn't implement IPropertyEditor
+			{
+				// FlagsUITypeEditor store flags as int.
+				// doesn't implement IPropertyEditor
 
-			PropertyDescriptorCollection propDescCollection = Schema.intervalNodeAnimationType.Type.GetTag<PropertyDescriptorCollection>();
+				PropertyDescriptorCollection propDescCollection = Schema.intervalNodeAnimationType.Type.GetTag<PropertyDescriptorCollection>();
 
-			string[] channelNames = Enum.GetNames( typeof( IntervalNodeAnimation.ChannelType ) );
-			int[] channelValues = GetEnumIntValues( typeof( IntervalNodeAnimation.ChannelType ) );
+				string[] channelNames = Enum.GetNames( typeof( IntervalNodeAnimation.ChannelType ) );
+				int[] channelValues = GetEnumIntValues( typeof( IntervalNodeAnimation.ChannelType ) );
 
-			FlagsUITypeEditor channelsEditor = new FlagsUITypeEditor( channelNames, channelValues );
-			FlagsTypeConverter channelsConverter = new FlagsTypeConverter( channelNames, channelValues );
-			propDescCollection.Add(
-			 new AttributePropertyDescriptor(
-					"Channels".Localize(),
-					Schema.intervalNodeAnimationType.channelsAttribute,
-					"Animation".Localize(),
-					"Channels to edit".Localize(),
-					false,
-					channelsEditor,
-					channelsConverter
-					) );
+				FlagsUITypeEditor channelsEditor = new FlagsUITypeEditor( channelNames, channelValues );
+				FlagsTypeConverter channelsConverter = new FlagsTypeConverter( channelNames, channelValues );
+				propDescCollection.Add(
+				 new AttributePropertyDescriptor(
+						"Channels".Localize(),
+						Schema.intervalNodeAnimationType.channelsAttribute,
+						"Animation".Localize(),
+						"Channels to edit".Localize(),
+						false,
+						channelsEditor,
+						channelsConverter
+						) );
+			}
 
-        }
+			{
+				PropertyDescriptorCollection propDescCollection = Schema.intervalCameraAnimType.Type.GetTag<PropertyDescriptorCollection>();
+
+				string[] channelNames = Enum.GetNames( typeof( IntervalNodeAnimation.ChannelType ) );
+				int[] channelValues = GetEnumIntValues( typeof( IntervalNodeAnimation.ChannelType ) );
+
+				propDescCollection.Add(
+				 new CustomEnableAttributePropertyDescriptor(
+						"Field of View".Localize(),
+						Schema.intervalCameraAnimType.fovAttribute,
+						"Animation".Localize(),
+						"Camera's Field of View".Localize(),
+						false,
+						new BoundedFloatEditor( 5, 150)
+						, new CustomEnableAttributePropertyDescriptorCallback(Schema.intervalCameraAnimType.fovOverrideAttribute, CustomEnableAttributePropertyDescriptorCallback.Condition.ReadOnlyIfSetToFalse)
+						) );
+			}
+		}
 
 		public int[] GetEnumIntValues( Type type )
 		{

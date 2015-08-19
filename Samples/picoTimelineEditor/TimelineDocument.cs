@@ -203,6 +203,7 @@ namespace picoTimelineEditor
             m_splitManipulator = new D2dSplitManipulator(m_timelineControl);
             D2dSnapManipulator snapManipulator = new D2dSnapManipulator(m_timelineControl);
             D2dScrubberManipulator scrubberManipulator = new ScrubberManipulator(m_timelineControl);
+			m_scrubberManipulator = scrubberManipulator;
 
             //// Allow the snap manipulator to snap objects to the scrubber.
             snapManipulator.Scrubber = scrubberManipulator;
@@ -253,6 +254,11 @@ namespace picoTimelineEditor
             get { return m_splitManipulator; }
         }
 
+		public ScrubberManipulator ScrubberManipulator
+		{
+			get { return m_scrubberManipulator; }
+		}
+
         #region IObservableContext Members
 
         /// <summary>
@@ -292,5 +298,6 @@ namespace picoTimelineEditor
         private TimelineControl m_timelineControl;
         private TimelineRenderer m_renderer;
         private SplitManipulator m_splitManipulator;
+		private ScrubberManipulator m_scrubberManipulator;
     }
 }

@@ -87,17 +87,22 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="DomNodeAdapters\characterController\GroupCharacterController.cs" />
+    <Compile Include="DomNodeAdapters\characterController\IntervalCharacterController.cs" />
+    <Compile Include="DomNodeAdapters\characterController\TrackCharacterController.cs" />
     <Compile Include="DomNodeAdapters\ControlPoint.cs" />
     <Compile Include="DomNodeAdapters\Curve.cs" />
     <Compile Include="DomNodeAdapters\CurveLimitValidator.cs" />
     <Compile Include="DomNodeAdapters\GroupCamera.cs" />
     <Compile Include="DomNodeAdapters\GroupCameraValidator.cs" />
+    <Compile Include="DomNodeAdapters\IntervalAnimController.cs" />
     <Compile Include="DomNodeAdapters\IntervalCameraAnim.cs" />
     <Compile Include="DomNodeAdapters\IntervalCurve.cs" />
     <Compile Include="DomNodeAdapters\IntervalFader.cs" />
     <Compile Include="DomNodeAdapters\IntervalNodeAnimation.cs" />
     <Compile Include="DomNodeAdapters\LuaScript.cs" />
     <Compile Include="DomNodeAdapters\TimelineReference.cs" />
+    <Compile Include="DomNodeAdapters\TrackAnimController.cs" />
     <Compile Include="DomNodeAdapters\TrackCameraAnim.cs" />
     <Compile Include="HelpAboutCommand.cs" />
     <Compile Include="picoD2dTimelineRenderer.cs" />

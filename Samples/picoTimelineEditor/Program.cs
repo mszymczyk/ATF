@@ -40,8 +40,10 @@ namespace picoTimelineEditor
 
             // Set up localization support early on, so that user-readable strings will be localized
             //  during the initialization phase below. Use XML files that are embedded resources.
-            Thread.CurrentThread.CurrentUICulture = System.Globalization.CultureInfo.CurrentCulture;
-            Localizer.SetStringLocalizer(new EmbeddedResourceStringLocalizer());
+			//Thread.CurrentThread.CurrentUICulture = System.Globalization.CultureInfo.CurrentCulture;
+			Thread.CurrentThread.CurrentUICulture = new System.Globalization.CultureInfo( "en-US" );
+			Thread.CurrentThread.CurrentCulture = new System.Globalization.CultureInfo( "en-US" );
+			Localizer.SetStringLocalizer( new EmbeddedResourceStringLocalizer() );
 
             // Register the embedded image resources so that they will be available for all users of ResourceUtil,
             //  such as the PaletteService.

@@ -185,7 +185,7 @@
     </xs:complexContent>
   </xs:complexType>
 
-  <xs:complexType name="trackGroupCameraType">
+  <!--<xs:complexType name="trackGroupCameraType">
     <xs:annotation>
       <xs:appinfo>
         <scea.dom.editors menuText="TrackGroupCamera" description="TrackGroupCamera" image="picoTimelineEditor.Resources.track.png" category="pico" />
@@ -195,7 +195,7 @@
       <xs:extension base="trackType">
       </xs:extension>
     </xs:complexContent>
-  </xs:complexType>
+  </xs:complexType>-->
   
   <!--<xs:complexType name="trackFaderType">
     <xs:annotation>
@@ -230,6 +230,31 @@
     </xs:complexContent>
   </xs:complexType>
 
+
+  <xs:complexType name="trackAnimControllerType">
+    <xs:annotation>
+      <xs:appinfo>
+        <scea.dom.editors menuText="TrackAnimController" description="TrackAnimController" image="picoTimelineEditor.Resources.track.png" category="pico" />
+        <!--<scea.dom.editors.attribute name="name" displayName="Name" description="Unique Name" />-->
+        <scea.dom.editors.attribute name="skelFile" displayName="Skel Filename" description="File name of animation skel"
+                                    editor="pico.Controls.PropertyEditing.picoFileUriEditor,pico:Animation Skeleton files (*.skel)|*.skel"
+                                    converter="Sce.Atf.Controls.PropertyEditing.ReadOnlyConverter"
+                                    category="Animation" />
+        <scea.dom.editors.attribute name="rootNode" displayName="Root node name" description="Node name to animate (containerName:nodeName)" category="Animation" />
+      </xs:appinfo>
+    </xs:annotation>
+    <xs:complexContent>
+      <xs:extension base="trackType">
+        <xs:sequence>
+          <xs:element name="intervalAnimControllerType" type="intervalAnimControllerType" minOccurs="0" maxOccurs="1" />
+        </xs:sequence>
+        <!--<xs:attribute name="name" type="xs:ID" use="required" />-->
+        <xs:attribute name="skelFile" type="xs:string" />
+        <xs:attribute name="rootNode" type="xs:string" />
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  
   
   <xs:complexType name="intervalCurveType">
     <xs:annotation>
@@ -303,8 +328,14 @@
 
         <scea.dom.editors.attribute name="length" displayName="Length" description="Length or Duration" category="Animation" />
         <scea.dom.editors.attribute name="animOffset" displayName="Anim Offset" description="Animation offset from interval's start" category="Animation"  />
+        <scea.dom.editors.attribute
+          name="fovOverride"
+          displayName="Field of View Override"
+          description="Override Camera's Field of View"
+          category="Animation"
+          editor="Sce.Atf.Controls.PropertyEditing.BoolEditor,Atf.Gui.WinForms"/>
 
-    </xs:appinfo>
+      </xs:appinfo>
     </xs:annotation>
     <xs:complexContent>
       <xs:extension base="intervalType">
@@ -313,11 +344,55 @@
         <xs:attribute name="animOffset" type="xs:float" default="0.0"/>
         <xs:attribute name="color" type="xs:integer" default="-8388608"/>
         <xs:attribute name="animFile" type="xs:string" />
+        <xs:attribute name="fovOverride" type="xs:boolean"/>
+        <xs:attribute name="fov" type="xs:float" default="60.0"/>
         <!--dark green 0xff800000-->
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>
 
+
+  
+  <xs:complexType name="intervalAnimControllerType">
+    <xs:annotation>
+      <xs:appinfo>
+        <scea.dom.editors menuText="AnimController" description="AnimController" image="picoTimelineEditor.Resources.interval.png" category="pico" />
+        <!--<scea.dom.editors.attribute name="name" displayName="Name" description="Unique Name" />-->
+        <!--<scea.dom.editors.attribute name="color" displayName="Color" description="Display Color"
+          editor="Sce.Atf.Controls.PropertyEditing.ColorPickerEditor,Atf.Gui.WinForms"
+          converter="Sce.Atf.Controls.PropertyEditing.IntColorConverter" />-->
+        <!--<scea.dom.editors.attribute name="animFile" displayName="File Name" description="File name of camera animation"
+                                    editor="Sce.Atf.Controls.PropertyEditing.FileUriEditor,Atf.Gui.WinForms:Animation files (*.anim)|*.anim"
+                                    />-->
+        <!--<scea.dom.editors.attribute name="animFile" displayName="File Name" description="File name of camera animation"
+                                    editor="Sce.Atf.Controls.PropertyEditing.FileUriEditor,Atf.Gui.WinForms:Animation files (*.anim)|*.anim"
+                                    converter="pico.Controls.PropertyEditing.picoUriConverter,pico"
+                                    />-->
+
+        <scea.dom.editors.attribute name="animFile" displayName="File Name" description="File name of camera animation"
+                                    editor="pico.Controls.PropertyEditing.picoFileUriEditor,pico:Animation files (*.anim)|*.anim"
+                                    converter="Sce.Atf.Controls.PropertyEditing.ReadOnlyConverter"
+                                    category="Animation" />
+
+        <!--<scea.dom.editors.attribute name="length" displayName="Length" description="Length or Duration" category="Animation" />
+        <scea.dom.editors.attribute name="animOffset" displayName="Anim Offset" description="Animation offset from interval's start" category="Animation"  />-->
+
+      </xs:appinfo>
+    </xs:annotation>
+    <xs:complexContent>
+      <xs:extension base="intervalType">
+        <!--<xs:attribute name="name" type="xs:ID" use="required" />-->
+        <!--<xs:attribute name="length" type="xs:float" default="1000.0"/>-->
+        <xs:attribute name="animOffset" type="xs:float" default="0.0"/>
+        <!--<xs:attribute name="color" type="xs:integer" default="-8388608"/>-->
+        <xs:attribute name="animFile" type="xs:string" />
+        <!--dark green 0xff800000-->
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  
+  
+  
     <!--<xs:complexType name="intervalCameraAnimBlendInType">
     <xs:annotation>
       <xs:appinfo>
@@ -335,7 +410,7 @@
     </xs:complexContent>
   </xs:complexType>-->
   
-    <xs:complexType name="intervalNodeAnimationType">
+  <xs:complexType name="intervalNodeAnimationType">
     <xs:annotation>
       <xs:appinfo>
         <scea.dom.editors menuText="NodeAnimation" description="Node Animation" image="picoTimelineEditor.Resources.interval.png" category="pico" />
@@ -370,7 +445,66 @@
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>
+
+
+
+
+
+
+
+  <xs:complexType name="groupCharacterControllerType">
+    <xs:annotation>
+      <xs:appinfo>
+        <scea.dom.editors menuText="GroupCharacterController" description="GroupCharacterController" image="picoTimelineEditor.Resources.group.png" category="pico" />
+        <scea.dom.editors.attribute name="nodeName" displayName="Character node name" description="Node name to animate (containerName:nodeName)" category="Animation" />
+      </xs:appinfo>
+    </xs:annotation>
+    <xs:complexContent>
+      <xs:extension base="groupType">
+        <xs:attribute name="nodeName" type="xs:string"/>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
   
+  <xs:complexType name="trackCharacterControllerAnimType">
+    <xs:annotation>
+      <xs:appinfo>
+        <scea.dom.editors menuText="TrackCharacterController" description="TrackCharacterController" image="picoTimelineEditor.Resources.track.png" category="pico" />
+      </xs:appinfo>
+    </xs:annotation>
+    <xs:complexContent>
+      <xs:extension base="trackType">
+        <!--<xs:sequence>
+          <xs:element name="intervalCharacterControllerAnim" type="intervalCharacterControllerAnimType" minOccurs="0" maxOccurs="1" />
+        </xs:sequence>-->
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="intervalCharacterControllerAnimType">
+    <xs:annotation>
+      <xs:appinfo>
+        <scea.dom.editors menuText="CharacterAnimation" description="CharacterAnimation" image="picoTimelineEditor.Resources.interval.png" category="pico" />
+
+        <scea.dom.editors.attribute name="animFile" displayName="File Name" description="File name of character animation"
+                                    editor="pico.Controls.PropertyEditing.picoFileUriEditor,pico:Animation files (*.anim)|*.anim"
+                                    converter="Sce.Atf.Controls.PropertyEditing.ReadOnlyConverter"
+                                    category="Animation" />
+        <scea.dom.editors.attribute name="animOffset" displayName="Anim Offset" description="Animation offset from interval's start" category="Animation"  />
+
+      </xs:appinfo>
+    </xs:annotation>
+    <xs:complexContent>
+      <xs:extension base="intervalType">
+        <xs:attribute name="animFile" type="xs:string" />
+        <xs:attribute name="animOffset" type="xs:float" default="0.0"/>
+        <!--dark green 0xff800000-->
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+
+
   <xs:element name="timeline" type="timelineType"/>
 
 </xs:schema>

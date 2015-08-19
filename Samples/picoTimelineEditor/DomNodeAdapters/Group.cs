@@ -47,7 +47,19 @@ namespace picoTimelineEditor.DomNodeAdapters
         /// <returns>New unparented track</returns>
         public ITrack CreateTrack()
         {
-            return new DomNode(Schema.trackType.Type).As<ITrack>();
+			//return new DomNode(Schema.trackType.Type).As<ITrack>();
+			Track track = new DomNode( Schema.trackType.Type ).As<Track>();
+
+			NodeTypePaletteItem paletteItem = Schema.trackType.Type.GetTag<NodeTypePaletteItem>();
+			AttributeInfo idAttribute = Schema.trackType.Type.IdAttribute;
+			if ( paletteItem != null &&
+                idAttribute != null )
+			{
+				track.DomNode.SetAttribute( idAttribute, paletteItem.Name );
+			}
+
+			return track;
+
         }
 
         /// <summary>

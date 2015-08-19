@@ -21,7 +21,17 @@ namespace picoTimelineEditor.DomNodeAdapters
         /// <returns>New group</returns>
         public IGroup CreateGroup()
         {
-            return new DomNode(Schema.groupType.Type).As<IGroup>();
+            Group group = new DomNode(Schema.groupType.Type).As<Group>();
+
+			NodeTypePaletteItem paletteItem = Schema.groupType.Type.GetTag<NodeTypePaletteItem>();
+			AttributeInfo idAttribute = Schema.groupType.Type.IdAttribute;
+			if ( paletteItem != null &&
+                idAttribute != null )
+			{
+				group.DomNode.SetAttribute( idAttribute, paletteItem.Name );
+			}
+
+			return group;
         }
 
         /// <summary>

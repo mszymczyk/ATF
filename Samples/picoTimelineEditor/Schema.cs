@@ -110,11 +110,6 @@ namespace picoTimelineEditor
             groupCameraType.outputCameraAttribute = groupCameraType.Type.GetAttributeInfo("outputCamera");
             groupCameraType.trackChild = groupCameraType.Type.GetChildInfo("track");
 
-            trackGroupCameraType.Type = getNodeType("timeline", "trackGroupCameraType");
-            trackGroupCameraType.nameAttribute = trackGroupCameraType.Type.GetAttributeInfo("name");
-            trackGroupCameraType.intervalChild = trackGroupCameraType.Type.GetChildInfo("interval");
-            trackGroupCameraType.keyChild = trackGroupCameraType.Type.GetChildInfo("key");
-
             trackCameraAnimType.Type = getNodeType("timeline", "trackCameraAnimType");
             trackCameraAnimType.nameAttribute = trackCameraAnimType.Type.GetAttributeInfo("name");
             trackCameraAnimType.intervalChild = trackCameraAnimType.Type.GetChildInfo("interval");
@@ -129,6 +124,25 @@ namespace picoTimelineEditor
             intervalCameraAnimType.colorAttribute = intervalCameraAnimType.Type.GetAttributeInfo("color");
             intervalCameraAnimType.animOffsetAttribute = intervalCameraAnimType.Type.GetAttributeInfo("animOffset");
             intervalCameraAnimType.animFileAttribute = intervalCameraAnimType.Type.GetAttributeInfo("animFile");
+            intervalCameraAnimType.fovOverrideAttribute = intervalCameraAnimType.Type.GetAttributeInfo("fovOverride");
+            intervalCameraAnimType.fovAttribute = intervalCameraAnimType.Type.GetAttributeInfo("fov");
+
+            trackAnimControllerType.Type = getNodeType("timeline", "trackAnimControllerType");
+            trackAnimControllerType.nameAttribute = trackAnimControllerType.Type.GetAttributeInfo("name");
+            trackAnimControllerType.skelFileAttribute = trackAnimControllerType.Type.GetAttributeInfo("skelFile");
+            trackAnimControllerType.rootNodeAttribute = trackAnimControllerType.Type.GetAttributeInfo("rootNode");
+            trackAnimControllerType.intervalChild = trackAnimControllerType.Type.GetChildInfo("interval");
+            trackAnimControllerType.keyChild = trackAnimControllerType.Type.GetChildInfo("key");
+            trackAnimControllerType.intervalAnimControllerTypeChild = trackAnimControllerType.Type.GetChildInfo("intervalAnimControllerType");
+
+            intervalAnimControllerType.Type = getNodeType("timeline", "intervalAnimControllerType");
+            intervalAnimControllerType.startAttribute = intervalAnimControllerType.Type.GetAttributeInfo("start");
+            intervalAnimControllerType.descriptionAttribute = intervalAnimControllerType.Type.GetAttributeInfo("description");
+            intervalAnimControllerType.nameAttribute = intervalAnimControllerType.Type.GetAttributeInfo("name");
+            intervalAnimControllerType.lengthAttribute = intervalAnimControllerType.Type.GetAttributeInfo("length");
+            intervalAnimControllerType.colorAttribute = intervalAnimControllerType.Type.GetAttributeInfo("color");
+            intervalAnimControllerType.animOffsetAttribute = intervalAnimControllerType.Type.GetAttributeInfo("animOffset");
+            intervalAnimControllerType.animFileAttribute = intervalAnimControllerType.Type.GetAttributeInfo("animFile");
 
             intervalCurveType.Type = getNodeType("timeline", "intervalCurveType");
             intervalCurveType.startAttribute = intervalCurveType.Type.GetAttributeInfo("start");
@@ -155,6 +169,26 @@ namespace picoTimelineEditor
             intervalNodeAnimationType.nodeNameAttribute = intervalNodeAnimationType.Type.GetAttributeInfo("nodeName");
             intervalNodeAnimationType.channelsAttribute = intervalNodeAnimationType.Type.GetAttributeInfo("channels");
             intervalNodeAnimationType.curveChild = intervalNodeAnimationType.Type.GetChildInfo("curve");
+
+            groupCharacterControllerType.Type = getNodeType("timeline", "groupCharacterControllerType");
+            groupCharacterControllerType.nameAttribute = groupCharacterControllerType.Type.GetAttributeInfo("name");
+            groupCharacterControllerType.expandedAttribute = groupCharacterControllerType.Type.GetAttributeInfo("expanded");
+            groupCharacterControllerType.nodeNameAttribute = groupCharacterControllerType.Type.GetAttributeInfo("nodeName");
+            groupCharacterControllerType.trackChild = groupCharacterControllerType.Type.GetChildInfo("track");
+
+            trackCharacterControllerAnimType.Type = getNodeType("timeline", "trackCharacterControllerAnimType");
+            trackCharacterControllerAnimType.nameAttribute = trackCharacterControllerAnimType.Type.GetAttributeInfo("name");
+            trackCharacterControllerAnimType.intervalChild = trackCharacterControllerAnimType.Type.GetChildInfo("interval");
+            trackCharacterControllerAnimType.keyChild = trackCharacterControllerAnimType.Type.GetChildInfo("key");
+
+            intervalCharacterControllerAnimType.Type = getNodeType("timeline", "intervalCharacterControllerAnimType");
+            intervalCharacterControllerAnimType.startAttribute = intervalCharacterControllerAnimType.Type.GetAttributeInfo("start");
+            intervalCharacterControllerAnimType.descriptionAttribute = intervalCharacterControllerAnimType.Type.GetAttributeInfo("description");
+            intervalCharacterControllerAnimType.nameAttribute = intervalCharacterControllerAnimType.Type.GetAttributeInfo("name");
+            intervalCharacterControllerAnimType.lengthAttribute = intervalCharacterControllerAnimType.Type.GetAttributeInfo("length");
+            intervalCharacterControllerAnimType.colorAttribute = intervalCharacterControllerAnimType.Type.GetAttributeInfo("color");
+            intervalCharacterControllerAnimType.animFileAttribute = intervalCharacterControllerAnimType.Type.GetAttributeInfo("animFile");
+            intervalCharacterControllerAnimType.animOffsetAttribute = intervalCharacterControllerAnimType.Type.GetAttributeInfo("animOffset");
 
             timelineRootElement = getRootElement(NS, "timeline");
         }
@@ -277,14 +311,6 @@ namespace picoTimelineEditor
             public static ChildInfo trackChild;
         }
 
-        public static class trackGroupCameraType
-        {
-            public static DomNodeType Type;
-            public static AttributeInfo nameAttribute;
-            public static ChildInfo intervalChild;
-            public static ChildInfo keyChild;
-        }
-
         public static class trackCameraAnimType
         {
             public static DomNodeType Type;
@@ -295,6 +321,31 @@ namespace picoTimelineEditor
         }
 
         public static class intervalCameraAnimType
+        {
+            public static DomNodeType Type;
+            public static AttributeInfo startAttribute;
+            public static AttributeInfo descriptionAttribute;
+            public static AttributeInfo nameAttribute;
+            public static AttributeInfo lengthAttribute;
+            public static AttributeInfo colorAttribute;
+            public static AttributeInfo animOffsetAttribute;
+            public static AttributeInfo animFileAttribute;
+            public static AttributeInfo fovOverrideAttribute;
+            public static AttributeInfo fovAttribute;
+        }
+
+        public static class trackAnimControllerType
+        {
+            public static DomNodeType Type;
+            public static AttributeInfo nameAttribute;
+            public static AttributeInfo skelFileAttribute;
+            public static AttributeInfo rootNodeAttribute;
+            public static ChildInfo intervalChild;
+            public static ChildInfo keyChild;
+            public static ChildInfo intervalAnimControllerTypeChild;
+        }
+
+        public static class intervalAnimControllerType
         {
             public static DomNodeType Type;
             public static AttributeInfo startAttribute;
@@ -339,6 +390,35 @@ namespace picoTimelineEditor
             public static AttributeInfo nodeNameAttribute;
             public static AttributeInfo channelsAttribute;
             public static ChildInfo curveChild;
+        }
+
+        public static class groupCharacterControllerType
+        {
+            public static DomNodeType Type;
+            public static AttributeInfo nameAttribute;
+            public static AttributeInfo expandedAttribute;
+            public static AttributeInfo nodeNameAttribute;
+            public static ChildInfo trackChild;
+        }
+
+        public static class trackCharacterControllerAnimType
+        {
+            public static DomNodeType Type;
+            public static AttributeInfo nameAttribute;
+            public static ChildInfo intervalChild;
+            public static ChildInfo keyChild;
+        }
+
+        public static class intervalCharacterControllerAnimType
+        {
+            public static DomNodeType Type;
+            public static AttributeInfo startAttribute;
+            public static AttributeInfo descriptionAttribute;
+            public static AttributeInfo nameAttribute;
+            public static AttributeInfo lengthAttribute;
+            public static AttributeInfo colorAttribute;
+            public static AttributeInfo animFileAttribute;
+            public static AttributeInfo animOffsetAttribute;
         }
 
         public static ChildInfo timelineRootElement;
