@@ -1,0 +1,101 @@
+//Copyright © 2014 Sony Computer Entertainment America LLC. See License.txt.
+
+using System;
+using System.Collections.Generic;
+using System.ComponentModel.Composition;
+using System.Drawing;
+using System.IO;
+using System.Linq;
+using System.Windows.Forms;
+
+using Sce.Atf;
+using Sce.Atf.Applications;
+using Sce.Atf.Controls;
+using Sce.Atf.Controls.PropertyEditing;
+
+namespace pico.LogOutput
+{
+    /// <summary>
+    /// Tree list view editor for hierarchical file system component</summary>
+    [Export(typeof(IInitializable))]
+    class picoLogOutputEditor : IInitializable, IControlHostClient
+    {
+        /// <summary>
+        /// Constructor with parameters. Creates and registers UserControl and adds buttons to it.
+        /// Creates a TreeListView to contain tree data.</summary>
+        /// <param name="mainForm">Main form</param>
+        /// <param name="contextRegistry">Context registry</param>
+        /// <param name="settingsService">Settings service</param>
+        /// <param name="controlHostService">Control host service</param>
+        [ImportingConstructor]
+		public picoLogOutputEditor(
+            MainForm mainForm,
+            IContextRegistry contextRegistry,
+            ISettingsService settingsService,
+            IControlHostService controlHostService)
+        {
+            m_mainForm = mainForm;
+            m_contextRegistry = contextRegistry;
+			m_settingsService = settingsService;
+			m_controlHostService = controlHostService;
+        }
+
+        #region IInitialize Interface
+
+        /// <summary>
+        /// Initialize component so it is displayed</summary>
+        void IInitializable.Initialize()
+        {
+            // So the GUI will show up since nothing else imports it...
+
+        }
+
+        #endregion
+
+        #region IControlHostClient Interface
+
+        /// <summary>
+        /// Notifies the client that its Control has been activated. Activation occurs when
+        /// the Control gets focus, or a parent "host" Control gets focus.</summary>
+        /// <param name="control">Client Control that was activated</param>
+        /// <remarks>This method is only called by IControlHostService if the Control was previously
+        /// registered for this IControlHostClient.</remarks>
+        public void Activate(Control control)
+        {
+            if (ReferenceEquals(control, m_host))
+                m_contextRegistry.ActiveContext = this;
+        }
+
+        /// <summary>
+        /// Notifies the client that its Control has been deactivated. Deactivation occurs when
+        /// another Control or "host" Control gets focus.</summary>
+        /// <param name="control">Client Control that was deactivated</param>
+        /// <remarks>This method is only called by IControlHostService if the Control was previously
+        /// registered for this IControlHostClient.</remarks>
+        public void Deactivate(Control control)
+        {
+        }
+
+        /// <summary>
+        /// Requests permission to close the client's Control</summary>
+        /// <param name="control">Client Control to be closed</param>
+        /// <returns>True if the Control can close, or false to cancel</returns>
+        /// <remarks>
+        /// 1. This method is only called by IControlHostService if the Control was previously
+        /// registered for this IControlHostClient.
+        /// 2. If true is returned, the IControlHostService calls its own
+        /// UnregisterControl. The IControlHostClient has to call RegisterControl again
+        /// if it wants to re-register this Control.</remarks>
+        public bool Close(Control control)
+        {
+            return true;
+        }
+
+        #endregion
+
+        private readonly MainForm m_mainForm;
+        private readonly IContextRegistry m_contextRegistry;
+		private readonly ISettingsService m_settingsService;
+		private readonly IControlHostService m_controlHostService;
+    }
+}
