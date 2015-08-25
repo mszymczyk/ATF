@@ -34,6 +34,14 @@ namespace picoTimelineEditor.DomNodeAdapters
             set { DomNode.SetAttribute(Schema.groupType.expandedAttribute, value); }
         }
 
+		/// <summary>
+		/// Gets and sets the group description</summary>
+		public string Description
+		{
+			get { return (string)DomNode.GetAttribute( Schema.groupType.descriptionAttribute ); }
+			set { DomNode.SetAttribute( Schema.groupType.descriptionAttribute, value ); }
+		}
+
         /// <summary>
         /// Gets the timeline that contains the group</summary>
         public ITimeline Timeline

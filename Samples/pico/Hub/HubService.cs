@@ -23,6 +23,8 @@ namespace pico.Hub
 		/// Finishes initializing component by connecting to picoHub</summary>
 		void IInitializable.Initialize()
 		{
+			BlockOutboundTraffic = true;
+
 			try
 			{
 				IPHostEntry hostInfo = Dns.GetHostEntry( PICO_HUB_IP );
@@ -54,9 +56,19 @@ namespace pico.Hub
 			get { return m_picoHubClientSocketOutbound != null; }
 		}
 
+		public bool BlockOutboundTraffic { get; set; }
+
+		public bool CanSendData
+		{
+			get { return Connected && !BlockOutboundTraffic; }
+		}
+
 		public void send( HubMessage msg )
 		{
 			if ( m_picoHubClientSocketOutbound == null )
+				return;
+
+			if ( BlockOutboundTraffic )
 				return;
 
 			byte[] bytes = msg.getFinalByteStream();

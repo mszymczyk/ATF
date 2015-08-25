@@ -37,10 +37,12 @@ namespace picoTimelineEditor
             groupType.Type = getNodeType("timeline", "groupType");
             groupType.nameAttribute = groupType.Type.GetAttributeInfo("name");
             groupType.expandedAttribute = groupType.Type.GetAttributeInfo("expanded");
+            groupType.descriptionAttribute = groupType.Type.GetAttributeInfo("description");
             groupType.trackChild = groupType.Type.GetChildInfo("track");
 
             trackType.Type = getNodeType("timeline", "trackType");
             trackType.nameAttribute = trackType.Type.GetAttributeInfo("name");
+            trackType.descriptionAttribute = trackType.Type.GetAttributeInfo("description");
             trackType.intervalChild = trackType.Type.GetChildInfo("interval");
             trackType.keyChild = trackType.Type.GetChildInfo("key");
 
@@ -60,7 +62,6 @@ namespace picoTimelineEditor
             keyType.startAttribute = keyType.Type.GetAttributeInfo("start");
             keyType.descriptionAttribute = keyType.Type.GetAttributeInfo("description");
             keyType.nameAttribute = keyType.Type.GetAttributeInfo("name");
-            keyType.specialEventAttribute = keyType.Type.GetAttributeInfo("specialEvent");
 
             markerType.Type = getNodeType("timeline", "markerType");
             markerType.startAttribute = markerType.Type.GetAttributeInfo("start");
@@ -98,20 +99,26 @@ namespace picoTimelineEditor
             curveType.yLabelAttribute = curveType.Type.GetAttributeInfo("yLabel");
             curveType.controlPointChild = curveType.Type.GetChildInfo("controlPoint");
 
-            luaScriptType.Type = getNodeType("timeline", "luaScriptType");
-            luaScriptType.startAttribute = luaScriptType.Type.GetAttributeInfo("start");
-            luaScriptType.descriptionAttribute = luaScriptType.Type.GetAttributeInfo("description");
-            luaScriptType.nameAttribute = luaScriptType.Type.GetAttributeInfo("name");
-            luaScriptType.sourceCodeAttribute = luaScriptType.Type.GetAttributeInfo("sourceCode");
+            keyLuaScriptType.Type = getNodeType("timeline", "keyLuaScriptType");
+            keyLuaScriptType.startAttribute = keyLuaScriptType.Type.GetAttributeInfo("start");
+            keyLuaScriptType.descriptionAttribute = keyLuaScriptType.Type.GetAttributeInfo("description");
+            keyLuaScriptType.nameAttribute = keyLuaScriptType.Type.GetAttributeInfo("name");
+            keyLuaScriptType.sourceCodeAttribute = keyLuaScriptType.Type.GetAttributeInfo("sourceCode");
 
             groupCameraType.Type = getNodeType("timeline", "groupCameraType");
             groupCameraType.nameAttribute = groupCameraType.Type.GetAttributeInfo("name");
             groupCameraType.expandedAttribute = groupCameraType.Type.GetAttributeInfo("expanded");
+            groupCameraType.descriptionAttribute = groupCameraType.Type.GetAttributeInfo("description");
             groupCameraType.outputCameraAttribute = groupCameraType.Type.GetAttributeInfo("outputCamera");
+            groupCameraType.preCutsceneCameraAttribute = groupCameraType.Type.GetAttributeInfo("preCutsceneCamera");
+            groupCameraType.postCutsceneCameraAttribute = groupCameraType.Type.GetAttributeInfo("postCutsceneCamera");
+            groupCameraType.blendInDurationAttribute = groupCameraType.Type.GetAttributeInfo("blendInDuration");
+            groupCameraType.blendOutDurationAttribute = groupCameraType.Type.GetAttributeInfo("blendOutDuration");
             groupCameraType.trackChild = groupCameraType.Type.GetChildInfo("track");
 
             trackCameraAnimType.Type = getNodeType("timeline", "trackCameraAnimType");
             trackCameraAnimType.nameAttribute = trackCameraAnimType.Type.GetAttributeInfo("name");
+            trackCameraAnimType.descriptionAttribute = trackCameraAnimType.Type.GetAttributeInfo("description");
             trackCameraAnimType.intervalChild = trackCameraAnimType.Type.GetChildInfo("interval");
             trackCameraAnimType.keyChild = trackCameraAnimType.Type.GetChildInfo("key");
             trackCameraAnimType.intervalCameraAnimTypeChild = trackCameraAnimType.Type.GetChildInfo("intervalCameraAnimType");
@@ -124,11 +131,14 @@ namespace picoTimelineEditor
             intervalCameraAnimType.colorAttribute = intervalCameraAnimType.Type.GetAttributeInfo("color");
             intervalCameraAnimType.animOffsetAttribute = intervalCameraAnimType.Type.GetAttributeInfo("animOffset");
             intervalCameraAnimType.animFileAttribute = intervalCameraAnimType.Type.GetAttributeInfo("animFile");
-            intervalCameraAnimType.fovOverrideAttribute = intervalCameraAnimType.Type.GetAttributeInfo("fovOverride");
+            intervalCameraAnimType.cameraViewAttribute = intervalCameraAnimType.Type.GetAttributeInfo("cameraView");
             intervalCameraAnimType.fovAttribute = intervalCameraAnimType.Type.GetAttributeInfo("fov");
+            intervalCameraAnimType.nearClipPlaneAttribute = intervalCameraAnimType.Type.GetAttributeInfo("nearClipPlane");
+            intervalCameraAnimType.farClipPlaneAttribute = intervalCameraAnimType.Type.GetAttributeInfo("farClipPlane");
 
             trackAnimControllerType.Type = getNodeType("timeline", "trackAnimControllerType");
             trackAnimControllerType.nameAttribute = trackAnimControllerType.Type.GetAttributeInfo("name");
+            trackAnimControllerType.descriptionAttribute = trackAnimControllerType.Type.GetAttributeInfo("description");
             trackAnimControllerType.skelFileAttribute = trackAnimControllerType.Type.GetAttributeInfo("skelFile");
             trackAnimControllerType.rootNodeAttribute = trackAnimControllerType.Type.GetAttributeInfo("rootNode");
             trackAnimControllerType.intervalChild = trackAnimControllerType.Type.GetChildInfo("interval");
@@ -152,6 +162,12 @@ namespace picoTimelineEditor
             intervalCurveType.colorAttribute = intervalCurveType.Type.GetAttributeInfo("color");
             intervalCurveType.curveChild = intervalCurveType.Type.GetChildInfo("curve");
 
+            trackFaderType.Type = getNodeType("timeline", "trackFaderType");
+            trackFaderType.nameAttribute = trackFaderType.Type.GetAttributeInfo("name");
+            trackFaderType.descriptionAttribute = trackFaderType.Type.GetAttributeInfo("description");
+            trackFaderType.intervalChild = trackFaderType.Type.GetChildInfo("interval");
+            trackFaderType.keyChild = trackFaderType.Type.GetChildInfo("key");
+
             intervalFaderType.Type = getNodeType("timeline", "intervalFaderType");
             intervalFaderType.startAttribute = intervalFaderType.Type.GetAttributeInfo("start");
             intervalFaderType.descriptionAttribute = intervalFaderType.Type.GetAttributeInfo("description");
@@ -173,11 +189,15 @@ namespace picoTimelineEditor
             groupCharacterControllerType.Type = getNodeType("timeline", "groupCharacterControllerType");
             groupCharacterControllerType.nameAttribute = groupCharacterControllerType.Type.GetAttributeInfo("name");
             groupCharacterControllerType.expandedAttribute = groupCharacterControllerType.Type.GetAttributeInfo("expanded");
+            groupCharacterControllerType.descriptionAttribute = groupCharacterControllerType.Type.GetAttributeInfo("description");
             groupCharacterControllerType.nodeNameAttribute = groupCharacterControllerType.Type.GetAttributeInfo("nodeName");
+            groupCharacterControllerType.blendInDurationAttribute = groupCharacterControllerType.Type.GetAttributeInfo("blendInDuration");
+            groupCharacterControllerType.blendOutDurationAttribute = groupCharacterControllerType.Type.GetAttributeInfo("blendOutDuration");
             groupCharacterControllerType.trackChild = groupCharacterControllerType.Type.GetChildInfo("track");
 
             trackCharacterControllerAnimType.Type = getNodeType("timeline", "trackCharacterControllerAnimType");
             trackCharacterControllerAnimType.nameAttribute = trackCharacterControllerAnimType.Type.GetAttributeInfo("name");
+            trackCharacterControllerAnimType.descriptionAttribute = trackCharacterControllerAnimType.Type.GetAttributeInfo("description");
             trackCharacterControllerAnimType.intervalChild = trackCharacterControllerAnimType.Type.GetChildInfo("interval");
             trackCharacterControllerAnimType.keyChild = trackCharacterControllerAnimType.Type.GetChildInfo("key");
 
@@ -189,6 +209,30 @@ namespace picoTimelineEditor
             intervalCharacterControllerAnimType.colorAttribute = intervalCharacterControllerAnimType.Type.GetAttributeInfo("color");
             intervalCharacterControllerAnimType.animFileAttribute = intervalCharacterControllerAnimType.Type.GetAttributeInfo("animFile");
             intervalCharacterControllerAnimType.animOffsetAttribute = intervalCharacterControllerAnimType.Type.GetAttributeInfo("animOffset");
+
+            keySoundType.Type = getNodeType("timeline", "keySoundType");
+            keySoundType.startAttribute = keySoundType.Type.GetAttributeInfo("start");
+            keySoundType.descriptionAttribute = keySoundType.Type.GetAttributeInfo("description");
+            keySoundType.nameAttribute = keySoundType.Type.GetAttributeInfo("name");
+            keySoundType.soundBankAttribute = keySoundType.Type.GetAttributeInfo("soundBank");
+            keySoundType.soundAttribute = keySoundType.Type.GetAttributeInfo("sound");
+
+            keyChangeLevelType.Type = getNodeType("timeline", "keyChangeLevelType");
+            keyChangeLevelType.startAttribute = keyChangeLevelType.Type.GetAttributeInfo("start");
+            keyChangeLevelType.descriptionAttribute = keyChangeLevelType.Type.GetAttributeInfo("description");
+            keyChangeLevelType.nameAttribute = keyChangeLevelType.Type.GetAttributeInfo("name");
+            keyChangeLevelType.levelNameAttribute = keyChangeLevelType.Type.GetAttributeInfo("levelName");
+            keyChangeLevelType.cutsceneFileAttribute = keyChangeLevelType.Type.GetAttributeInfo("cutsceneFile");
+            keyChangeLevelType.unloadCurrentlevelAttribute = keyChangeLevelType.Type.GetAttributeInfo("unloadCurrentlevel");
+
+            intervalTextType.Type = getNodeType("timeline", "intervalTextType");
+            intervalTextType.startAttribute = intervalTextType.Type.GetAttributeInfo("start");
+            intervalTextType.descriptionAttribute = intervalTextType.Type.GetAttributeInfo("description");
+            intervalTextType.nameAttribute = intervalTextType.Type.GetAttributeInfo("name");
+            intervalTextType.lengthAttribute = intervalTextType.Type.GetAttributeInfo("length");
+            intervalTextType.colorAttribute = intervalTextType.Type.GetAttributeInfo("color");
+            intervalTextType.textNodeNameAttribute = intervalTextType.Type.GetAttributeInfo("textNodeName");
+            intervalTextType.textTagAttribute = intervalTextType.Type.GetAttributeInfo("textTag");
 
             timelineRootElement = getRootElement(NS, "timeline");
         }
@@ -207,6 +251,7 @@ namespace picoTimelineEditor
             public static DomNodeType Type;
             public static AttributeInfo nameAttribute;
             public static AttributeInfo expandedAttribute;
+            public static AttributeInfo descriptionAttribute;
             public static ChildInfo trackChild;
         }
 
@@ -214,6 +259,7 @@ namespace picoTimelineEditor
         {
             public static DomNodeType Type;
             public static AttributeInfo nameAttribute;
+            public static AttributeInfo descriptionAttribute;
             public static ChildInfo intervalChild;
             public static ChildInfo keyChild;
         }
@@ -242,7 +288,6 @@ namespace picoTimelineEditor
             public static AttributeInfo startAttribute;
             public static AttributeInfo descriptionAttribute;
             public static AttributeInfo nameAttribute;
-            public static AttributeInfo specialEventAttribute;
         }
 
         public static class markerType
@@ -293,7 +338,7 @@ namespace picoTimelineEditor
             public static ChildInfo controlPointChild;
         }
 
-        public static class luaScriptType
+        public static class keyLuaScriptType
         {
             public static DomNodeType Type;
             public static AttributeInfo startAttribute;
@@ -307,7 +352,12 @@ namespace picoTimelineEditor
             public static DomNodeType Type;
             public static AttributeInfo nameAttribute;
             public static AttributeInfo expandedAttribute;
+            public static AttributeInfo descriptionAttribute;
             public static AttributeInfo outputCameraAttribute;
+            public static AttributeInfo preCutsceneCameraAttribute;
+            public static AttributeInfo postCutsceneCameraAttribute;
+            public static AttributeInfo blendInDurationAttribute;
+            public static AttributeInfo blendOutDurationAttribute;
             public static ChildInfo trackChild;
         }
 
@@ -315,6 +365,7 @@ namespace picoTimelineEditor
         {
             public static DomNodeType Type;
             public static AttributeInfo nameAttribute;
+            public static AttributeInfo descriptionAttribute;
             public static ChildInfo intervalChild;
             public static ChildInfo keyChild;
             public static ChildInfo intervalCameraAnimTypeChild;
@@ -330,14 +381,17 @@ namespace picoTimelineEditor
             public static AttributeInfo colorAttribute;
             public static AttributeInfo animOffsetAttribute;
             public static AttributeInfo animFileAttribute;
-            public static AttributeInfo fovOverrideAttribute;
+            public static AttributeInfo cameraViewAttribute;
             public static AttributeInfo fovAttribute;
+            public static AttributeInfo nearClipPlaneAttribute;
+            public static AttributeInfo farClipPlaneAttribute;
         }
 
         public static class trackAnimControllerType
         {
             public static DomNodeType Type;
             public static AttributeInfo nameAttribute;
+            public static AttributeInfo descriptionAttribute;
             public static AttributeInfo skelFileAttribute;
             public static AttributeInfo rootNodeAttribute;
             public static ChildInfo intervalChild;
@@ -366,6 +420,15 @@ namespace picoTimelineEditor
             public static AttributeInfo lengthAttribute;
             public static AttributeInfo colorAttribute;
             public static ChildInfo curveChild;
+        }
+
+        public static class trackFaderType
+        {
+            public static DomNodeType Type;
+            public static AttributeInfo nameAttribute;
+            public static AttributeInfo descriptionAttribute;
+            public static ChildInfo intervalChild;
+            public static ChildInfo keyChild;
         }
 
         public static class intervalFaderType
@@ -397,7 +460,10 @@ namespace picoTimelineEditor
             public static DomNodeType Type;
             public static AttributeInfo nameAttribute;
             public static AttributeInfo expandedAttribute;
+            public static AttributeInfo descriptionAttribute;
             public static AttributeInfo nodeNameAttribute;
+            public static AttributeInfo blendInDurationAttribute;
+            public static AttributeInfo blendOutDurationAttribute;
             public static ChildInfo trackChild;
         }
 
@@ -405,6 +471,7 @@ namespace picoTimelineEditor
         {
             public static DomNodeType Type;
             public static AttributeInfo nameAttribute;
+            public static AttributeInfo descriptionAttribute;
             public static ChildInfo intervalChild;
             public static ChildInfo keyChild;
         }
@@ -419,6 +486,39 @@ namespace picoTimelineEditor
             public static AttributeInfo colorAttribute;
             public static AttributeInfo animFileAttribute;
             public static AttributeInfo animOffsetAttribute;
+        }
+
+        public static class keySoundType
+        {
+            public static DomNodeType Type;
+            public static AttributeInfo startAttribute;
+            public static AttributeInfo descriptionAttribute;
+            public static AttributeInfo nameAttribute;
+            public static AttributeInfo soundBankAttribute;
+            public static AttributeInfo soundAttribute;
+        }
+
+        public static class keyChangeLevelType
+        {
+            public static DomNodeType Type;
+            public static AttributeInfo startAttribute;
+            public static AttributeInfo descriptionAttribute;
+            public static AttributeInfo nameAttribute;
+            public static AttributeInfo levelNameAttribute;
+            public static AttributeInfo cutsceneFileAttribute;
+            public static AttributeInfo unloadCurrentlevelAttribute;
+        }
+
+        public static class intervalTextType
+        {
+            public static DomNodeType Type;
+            public static AttributeInfo startAttribute;
+            public static AttributeInfo descriptionAttribute;
+            public static AttributeInfo nameAttribute;
+            public static AttributeInfo lengthAttribute;
+            public static AttributeInfo colorAttribute;
+            public static AttributeInfo textNodeNameAttribute;
+            public static AttributeInfo textTagAttribute;
         }
 
         public static ChildInfo timelineRootElement;

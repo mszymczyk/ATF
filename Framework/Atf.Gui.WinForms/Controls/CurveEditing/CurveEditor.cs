@@ -241,7 +241,15 @@ namespace Sce.Atf.Controls.CurveEditing
         /// <param name="e">Event args</param>
         void ObservableContextItemChanged(object sender, ItemChangedEventArgs<object> e)
         {
-            m_curveItemChanged = e.Item.Is<ICurve>() || e.Item.Is<IControlPoint>();            
+			// orig code
+			//
+			// m_curveItemChanged = e.Item.Is<ICurve>() || e.Item.Is<IControlPoint>();            
+
+			// pico extension
+			// in case many nodes are changed, above code worked only when last node was ICurve or IControlPoint
+			// code below works when at least one of nodes is ICurve or IControlPoint
+			//
+            m_curveItemChanged = m_curveItemChanged || e.Item.Is<ICurve>() || e.Item.Is<IControlPoint>();            
         }
 
         // Required MEF Imports

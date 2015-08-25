@@ -86,9 +86,18 @@ namespace picoTimelineEditor
 				// pico
 				// register the timeline model interfaces
 				Schema.intervalCurveType.Type.Define( new ExtensionInfo<IntervalCurve>() );
-				Schema.luaScriptType.Type.Define( new ExtensionInfo<LuaScript>() );
-				Schema.intervalFaderType.Type.Define( new ExtensionInfo<IntervalFader>() );
+				Schema.keyLuaScriptType.Type.Define( new ExtensionInfo<LuaScript>() );
+				Schema.keySoundType.Type.Define( new ExtensionInfo<KeySound>() );
+				Schema.keyChangeLevelType.Type.Define( new ExtensionInfo<KeyChangeLevel>() );
+
+				Schema.intervalTextType.Type.Define( new ExtensionInfo<IntervalText>() );
 	
+				// fader
+				//
+				Schema.intervalFaderType.Type.Define( new ExtensionInfo<IntervalFader>() );
+				Schema.trackFaderType.Type.Define( new ExtensionInfo<TrackFader>() );
+
+
 				// camera
 				//
 				Schema.groupCameraType.Type.Define( new ExtensionInfo<GroupCamera>() );
@@ -199,18 +208,67 @@ namespace picoTimelineEditor
 			{
 				PropertyDescriptorCollection propDescCollection = Schema.intervalCameraAnimType.Type.GetTag<PropertyDescriptorCollection>();
 
-				string[] channelNames = Enum.GetNames( typeof( IntervalNodeAnimation.ChannelType ) );
-				int[] channelValues = GetEnumIntValues( typeof( IntervalNodeAnimation.ChannelType ) );
+				//propDescCollection.Add(
+				// new CustomEnableAttributePropertyDescriptor(
+				//		"Field of View".Localize(),
+				//		Schema.intervalCameraAnimType.fovAttribute,
+				//		"Camera".Localize(),
+				//		"Camera's Field of View".Localize(),
+				//		false,
+				//		new BoundedFloatEditor( 5, 150 )
+				//		, new CustomEnableAttributePropertyDescriptorCallback( Schema.intervalCameraAnimType.fovOverrideAttribute, CustomEnableAttributePropertyDescriptorCallback.Condition.ReadOnlyIfSetToFalse )
+				//		) );
+
+				//propDescCollection.Add(
+				// new CustomEnableAttributePropertyDescriptor(
+				//		"Near Clip Plane".Localize(),
+				//		Schema.intervalCameraAnimType.nearClipPlaneAttribute,
+				//		"Camera".Localize(),
+				//		"Camera's Near Clip Plane".Localize(),
+				//		false,
+				//		new BoundedFloatEditor( 0.01f, 10000.0f )
+				//		, new CustomEnableAttributePropertyDescriptorCallback( Schema.intervalCameraAnimType.nearClipPlaneOverrideAttribute, CustomEnableAttributePropertyDescriptorCallback.Condition.ReadOnlyIfSetToFalse )
+				//		) );
+
+				//propDescCollection.Add(
+				// new CustomEnableAttributePropertyDescriptor(
+				//		"Far Clip Plane".Localize(),
+				//		Schema.intervalCameraAnimType.farClipPlaneAttribute,
+				//		"Camera".Localize(),
+				//		"Camera's Far Clip Plane".Localize(),
+				//		false,
+				//		new BoundedFloatEditor( 0.01f, 10000.0f )
+				//		, new CustomEnableAttributePropertyDescriptorCallback( Schema.intervalCameraAnimType.farClipPlaneOverrideAttribute, CustomEnableAttributePropertyDescriptorCallback.Condition.ReadOnlyIfSetToFalse )
+				//		) );
 
 				propDescCollection.Add(
-				 new CustomEnableAttributePropertyDescriptor(
+					new AttributePropertyDescriptor(
 						"Field of View".Localize(),
 						Schema.intervalCameraAnimType.fovAttribute,
-						"Animation".Localize(),
+						"Camera".Localize(),
 						"Camera's Field of View".Localize(),
 						false,
-						new BoundedFloatEditor( 5, 150)
-						, new CustomEnableAttributePropertyDescriptorCallback(Schema.intervalCameraAnimType.fovOverrideAttribute, CustomEnableAttributePropertyDescriptorCallback.Condition.ReadOnlyIfSetToFalse)
+						new BoundedFloatEditor( 5, 150 )
+						) );
+
+				propDescCollection.Add(
+					new AttributePropertyDescriptor(
+						"Near Clip Plane".Localize(),
+						Schema.intervalCameraAnimType.nearClipPlaneAttribute,
+						"Camera".Localize(),
+						"Camera's Near Clip Plane".Localize(),
+						false,
+						new BoundedFloatEditor( 0.01f, 10000.0f )
+						) );
+
+				propDescCollection.Add(
+					new AttributePropertyDescriptor(
+						"Far Clip Plane".Localize(),
+						Schema.intervalCameraAnimType.farClipPlaneAttribute,
+						"Camera".Localize(),
+						"Camera's Far Clip Plane".Localize(),
+						false,
+						new BoundedFloatEditor( 0.01f, 10000.0f )
 						) );
 			}
 		}

@@ -2,6 +2,7 @@
 
 using System;
 using System.Collections.Generic;
+//using System.Collections.ObjectModel;
 using System.Drawing;
 
 using Sce.Atf;
@@ -19,7 +20,6 @@ namespace picoTimelineEditor.DomNodeAdapters
     /// Adapts DomNode to an Interval</summary>
 	public class IntervalFader : Interval, ICurveSet, ITimelineObjectCreator
     {
-
 		/// <summary>
 		/// Gets and sets the event's name</summary>
 		public override string Name
@@ -130,17 +130,61 @@ namespace picoTimelineEditor.DomNodeAdapters
 
 		private void DomNode_AttributeChanged( object sender, AttributeEventArgs e )
 		{
-			//if ( e.AttributeInfo.Equivalent(Schema.intervalFaderType.startAttribute) )
-			//{
+			if ( e.AttributeInfo.Equivalent(Schema.intervalFaderType.lengthAttribute) )
+			{
 				foreach( Curve curve in m_curves )
 				{
+					float newLength = (float)( Length * 0.001 );
+					float oldLength = curve.MaxX;
+					oldLength = Math.Max( oldLength, 0.001f );
+					float scale = newLength / oldLength;
+
+					if ( scale > 1.0f )
+					//{
+						curve.MaxX = newLength;
+
+					//	ReadOnlyCollection<IControlPoint> controlPoints = curve.ControlPoints;
+					//	int count = controlPoints.Count;
+					//	for ( int i = count - 1; i >= 0; --i )
+					//	{
+					//		IControlPoint cp = controlPoints[i];
+					//		cp.X = cp.X * scale;
+					//	}
+					//}
+					//else
+					//{
+						foreach ( IControlPoint cp in curve.ControlPoints )
+						{
+							cp.X = cp.X * scale;
+						}
+
+					if ( scale < 1.0f )
+						curve.MaxX = newLength;
+					//}
+
+					CurveUtils.ComputeTangent( curve );
+
 					//curve.MinX = Start;
-					curve.MaxX = (float)( Length * 0.001 ); ;
-					curve.Name = Name;
-					curve.DisplayName = "FaderValue:" + Name;
+					//curve.Name = Name;
+					//curve.DisplayName = "FaderValue:" + Name;
 					curve.CurveColor = Color;
 				}
-			//}
+			}
+			else if ( e.AttributeInfo.Equivalent(Schema.intervalFaderType.nameAttribute) )
+			{
+				foreach ( Curve curve in m_curves )
+				{
+					curve.Name = Name;
+
+				}
+			}
+			else if ( e.AttributeInfo.Equivalent( Schema.intervalFaderType.colorAttribute ) )
+			{
+				foreach ( Curve curve in m_curves )
+				{
+					curve.CurveColor = Color;
+				}
+			}
 		}
 
         #region ICurveSet Members

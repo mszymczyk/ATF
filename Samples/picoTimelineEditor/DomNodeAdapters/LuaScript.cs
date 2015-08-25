@@ -28,8 +28,8 @@ namespace picoTimelineEditor.DomNodeAdapters
 		/// Gets and sets the event's name</summary>
 		public string SourceCode
 		{
-			get { return (string) DomNode.GetAttribute( Schema.luaScriptType.sourceCodeAttribute ); }
-			set { DomNode.SetAttribute( Schema.luaScriptType.sourceCodeAttribute, value ); }
+			get { return (string) DomNode.GetAttribute( Schema.keyLuaScriptType.sourceCodeAttribute ); }
+			set { DomNode.SetAttribute( Schema.keyLuaScriptType.sourceCodeAttribute, value ); }
 		}
 
 		public Control LuaEditorControl

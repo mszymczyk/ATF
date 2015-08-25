@@ -4,6 +4,7 @@ using System;
 using System.ComponentModel;
 using System.Drawing;
 using System.Globalization;
+using Sce.Atf;
 using Sce.Atf.Direct2D;
 using Sce.Atf.Controls.Timelines;
 using picoTimelineEditor.DomNodeAdapters;
@@ -46,6 +47,85 @@ namespace picoTimelineEditor
 			}
 			// always call base regardles.
 			base.Dispose( disposing );
+		}
+
+		/// <summary>
+		/// Draws an interval</summary>
+		/// <param name="interval">Interval</param>
+		/// <param name="bounds">Bounding rectangle, in screen space</param>
+		/// <param name="drawMode">Drawing mode</param>
+		/// <param name="c">Drawing context</param>
+		protected override void Draw( IInterval interval, RectangleF bounds, DrawMode drawMode, Context c )
+		{
+			Color color = interval.Color;
+			switch ( drawMode & DrawMode.States )
+			{
+				case DrawMode.Normal:
+					RectangleF realPart = new RectangleF(
+						bounds.X,
+						bounds.Y,
+						GdiUtil.TransformVector( c.Transform, interval.Length ),
+						bounds.Height );
+					bool hasTail = realPart.Width < MinimumDrawnIntervalLength;
+
+					float h = color.GetHue();
+					float s = color.GetSaturation();
+					float b = color.GetBrightness();
+					Color endColor = ColorUtil.FromAhsb( color.A, h, s * 0.3f, b );
+					c.Graphics.FillRectangle(
+						realPart,
+						new PointF( 0, realPart.Top ), new PointF( 0, realPart.Bottom ),
+						color, endColor );
+
+					if ( hasTail )
+					{
+						endColor = ColorUtil.FromAhsb( 64, h, s * 0.3f, b );
+						RectangleF tailPart = new RectangleF(
+							realPart.Right,
+							bounds.Y,
+							bounds.Width - realPart.Width,
+							bounds.Height );
+						c.Graphics.FillRectangle( tailPart, endColor );
+					}
+
+					// pico
+					// add line at the left border of interval
+					// this helps to notice where intervals begin/end when they are tightly packed next to each other
+					//
+					Color lineColor = ColorUtil.FromAhsb( endColor.A, 360.0f - h, 1.0f, 0.5f );
+					c.Graphics.DrawLine( new PointF( realPart.Left, realPart.Top ), new PointF( realPart.Left, realPart.Bottom ), lineColor, 2 );
+
+					if ( color.R + color.G + color.B < 3 * 160 )
+						TextBrush.Color = SystemColors.HighlightText;
+					else
+						TextBrush.Color = SystemColors.WindowText;
+
+					c.Graphics.DrawText( interval.Name, c.TextFormat, bounds.Location, TextBrush );
+
+					if ( ( drawMode & DrawMode.Selected ) != 0 )
+					{
+						c.Graphics.DrawRectangle(
+							new RectangleF( bounds.X + 1, bounds.Y + 1, bounds.Width - 2, bounds.Height - 2 ),
+							SelectedBrush, 3.0f );
+					}
+					break;
+				case DrawMode.Collapsed:
+					c.Graphics.FillRectangle( bounds, CollapsedBrush );
+					break;
+				case DrawMode.Ghost:
+					c.Graphics.FillRectangle( bounds, Color.FromArgb( 128, color ) );
+					bool showRight = ( drawMode & DrawMode.ResizeRight ) != 0;
+					float x = showRight ? bounds.Right : bounds.Left;
+					c.Graphics.DrawText(
+						GetXPositionString( x, c ),
+						c.TextFormat,
+						new PointF( x, bounds.Bottom - c.FontHeight ),
+						TextBrush );
+					break;
+				case DrawMode.Invalid:
+					c.Graphics.FillRectangle( bounds, InvalidBrush );
+					break;
+			}
 		}
 
         /// <summary>

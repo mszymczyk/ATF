@@ -72,13 +72,25 @@ namespace picoTimelineEditor
 			// pico
 			//
 			//paletteService.AddItem( Schema.trackFaderType.Type, "pico", this );
-			paletteService.AddItem( Schema.intervalFaderType.Type, "pico", this );
 			paletteService.AddItem( Schema.intervalCurveType.Type, "pico", this );
-			paletteService.AddItem( Schema.luaScriptType.Type, "pico", this );
+			paletteService.AddItem( Schema.keyLuaScriptType.Type, "pico", this );
 			paletteService.AddItem( Schema.intervalNodeAnimationType.Type, "pico", this );
 
 			paletteService.AddItem( Schema.trackAnimControllerType.Type, "pico", this );
 			paletteService.AddItem( Schema.intervalAnimControllerType.Type, "pico", this );
+
+			paletteService.AddItem( Schema.keyChangeLevelType.Type, "pico", this );
+
+			paletteService.AddItem( Schema.intervalTextType.Type, "pico", this );
+
+			// fader
+			//
+			paletteService.AddItem( Schema.intervalFaderType.Type, "pico", this );
+			paletteService.AddItem( Schema.trackFaderType.Type, "pico", this );
+
+			// sound
+			//
+			paletteService.AddItem( Schema.keySoundType.Type, "pico", this );
 
 			// Camera
 			//

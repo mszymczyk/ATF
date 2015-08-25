@@ -38,6 +38,21 @@ namespace Sce.Atf.Controls.PropertyEditing
 
         }
 
+		/// <summary>
+		/// pico extension
+		/// I'm surprised this kind of constructor wasn't in original code base (there is one that takes two ints?)
+		/// Constructs BoundedFloatEditor using the given arguments</summary>
+		/// <param name="min">Min value</param>
+		/// <param name="max">Max value</param>
+		public BoundedFloatEditor( float min = 0, float max = 0 )
+		{
+			if ( min >= max )
+				throw new ArgumentOutOfRangeException( "min must be less than max" );
+			Min = min;
+			Max = max;
+
+		}
+
         /// <summary>
         /// Gets or sets the editor's minimum value</summary>
         public float Min

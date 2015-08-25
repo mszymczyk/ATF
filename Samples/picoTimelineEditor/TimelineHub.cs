@@ -22,6 +22,7 @@ namespace picoTimelineEditor
 		{
 			m_timelineDocument = DomNode.Cast<TimelineDocument>();
 			m_timelineControl = m_timelineDocument.TimelineControl;
+			//m_editMode = "Standalone";
 
 			DomNode.AttributeChanged += DomNode_AttributeChanged;
 			DomNode.ChildInserted += DomNode_ChildInserted;
@@ -55,23 +56,30 @@ namespace picoTimelineEditor
 
 		private bool validate( out string docUri )
 		{
-			if ( !Connected )
+			docUri = "";
+
+			if ( !m_hubService.Connected )
 			{
 				Outputs.WriteLine( OutputMessageType.Error, "Editor is not connected to picoHub" );
-				docUri = "";
 				return false;
 			}
 
-			docUri = pico.Paths.UriToPicoDemoPath( m_timelineDocument.Uri );
-			if ( docUri.Length > 0 )
+			if ( m_hubService.BlockOutboundTraffic )
 			{
-				return true;
+				return false;
 			}
-			else
+
+			//if ( m_editMode != "Editing" )
+			//	return false;
+
+			docUri = pico.Paths.UriToPicoDemoPath( m_timelineDocument.Uri );
+			if ( docUri.Length == 0 )
 			{
 				Outputs.WriteLine( OutputMessageType.Error, "Timeline document {0} is not located within PICO_DEMO\\data folder!", m_timelineDocument.Uri.LocalPath );
 				return false;
 			}
+
+			return true;
 		}
 
 		public void sendScrubberPosition( float position )
@@ -87,6 +95,23 @@ namespace picoTimelineEditor
 			m_hubService.send( hubMsg );
 
 		}
+
+		//public void setEditMode( string editMode )
+		//{
+		//	m_editMode = editMode;
+
+		//	//string docUri;
+		//	//if ( !validate( out docUri ) )
+		//	//	return;
+
+		//	//HubMessage hubMsg = new HubMessage( TIMELINE_TAG );
+		//	//hubMsg.appendString( "editMode" ); // command
+		//	//hubMsg.appendString( docUri ); // what timeline
+		//	//hubMsg.appendString( editMode );
+		//	//m_hubService.send( hubMsg );
+		//}
+
+		//public string getEditMode()	{ return m_editMode; }
 
 		private void sendReloadTimeline()
 		{
@@ -121,6 +146,7 @@ namespace picoTimelineEditor
 		private SchemaLoader m_schemaLoader;
 		private HubService m_hubService;
 		private bool m_isWriting; // to prevent endless recursion while serializing DOM with TimelineXmlWriter
-		private static readonly string TIMELINE_TAG = "timeline";
+		public static readonly string TIMELINE_TAG = "timeline";
+		//private string m_editMode;
 	};
 }
