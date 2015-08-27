@@ -82,13 +82,35 @@ namespace picoTimelineEditor.DomNodeAdapters
             get { return m_options; }
         }
 
-        /// <summary>
-        /// Gets or sets the URI of the referenced IHierarchicalTimeline</summary>
-        public Uri Uri
-        {
-            get { return DomNode.GetAttribute(Schema.timelineRefType.refAttribute) as Uri; }
-            set { DomNode.SetAttribute(Schema.timelineRefType.refAttribute, value); }
-        }
+		///// <summary>
+		///// Gets or sets the URI of the referenced IHierarchicalTimeline</summary>
+		//public Uri Uri
+		//{
+		//	get { return DomNode.GetAttribute(Schema.timelineRefType.refAttribute) as Uri; }
+		//	set { DomNode.SetAttribute(Schema.timelineRefType.refAttribute, value); }
+		//}
+		/// <summary>
+		/// Gets or sets the URI of the referenced IHierarchicalTimeline</summary>
+		public Uri Uri
+		{
+			get
+			{
+				//return DomNode.GetAttribute( Schema.timelineRefType.refAttribute ) as Uri;
+				string attrValue = (string)DomNode.GetAttribute( Schema.timelineRefType.timelineFilenameAttribute );
+				if ( string.IsNullOrEmpty( attrValue ) )
+					return null;
+
+				string absPath = pico.Paths.LocalPathToPicoDataAbsolutePath( attrValue );
+				return new Uri( absPath );
+			}
+			set
+			{
+				//DomNode.SetAttribute( Schema.timelineRefType.refAttribute, value );
+				string absPath = value.AbsolutePath;
+				string demoPath = pico.Paths.PathToPicoDemoPath( absPath );
+				DomNode.SetAttribute( Schema.timelineRefType.timelineFilenameAttribute, demoPath );
+			}
+		}
 
         /// <summary>
         /// Returns a string that represents the event</summary>
@@ -112,6 +134,15 @@ namespace picoTimelineEditor.DomNodeAdapters
         }
 
         #endregion
+		public virtual bool CanParentTo( DomNode parent )
+		{
+			return true;
+		}
+
+		public virtual bool Validate( DomNode parent )
+		{
+			return true;
+		}
 
         private TimelineReferenceOptions m_options = new TimelineReferenceOptions();
     }

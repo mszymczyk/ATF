@@ -146,21 +146,26 @@
       <xs:appinfo>
         <scea.dom.editors menuText="Reference" description="Timeline Reference"
                           image="picoTimelineEditor.Resources.group.png" category="Timelines" />
-        <scea.dom.editors.attribute name="name" displayName="Name" description="Name" />
+        <scea.dom.editors.attribute name="name" displayName="Name" description="Unique Name" />
         <scea.dom.editors.attribute name="start" displayName="Start" description="Start Time" />
         <scea.dom.editors.attribute name="description" displayName="Description" description="Event description" />
         <scea.dom.editors.attribute name="color" displayName="Color" description="Display Color"
           editor="Sce.Atf.Controls.PropertyEditing.ColorPickerEditor,Atf.Gui.WinForms"
           converter="Sce.Atf.Controls.PropertyEditing.IntColorConverter" />
-        <scea.dom.editors.attribute name="ref" displayName="File Name" description="File name of timeline reference"
-                                    editor="Sce.Atf.Controls.PropertyEditing.FileUriEditor,Atf.Gui.WinForms:Timeline files (*.timeline)|*.timeline"/>
+        <!--<scea.dom.editors.attribute name="ref" displayName="File Name" description="File name of timeline reference"
+                                    editor="Sce.Atf.Controls.PropertyEditing.FileUriEditor,Atf.Gui.WinForms:Timeline files (*.timeline)|*.timeline"/>-->
+        <scea.dom.editors.attribute name="timelineFilename" displayName="Timeline File" description="Timeline reference"
+                                    editor="pico.Controls.PropertyEditing.picoFileUriEditor,pico:Timeline files (*.timeline)|*.timeline"
+                                    converter="Sce.Atf.Controls.PropertyEditing.ReadOnlyConverter" />
       </xs:appinfo>
     </xs:annotation>
-    <xs:attribute name="name" type="xs:string" default="Reference"/>
+    <!--<xs:attribute name="name" type="xs:string" default="Reference"/>-->
+    <xs:attribute name="name" type="xs:ID" use="required" />
     <xs:attribute name="start" type="xs:float"/>
     <xs:attribute name="description" type="xs:string"/>
     <xs:attribute name="color" type="xs:integer" default="-32640"/><!--sort of a salmon color-->
-    <xs:attribute name="ref" type="xs:anyURI" />
+    <!--<xs:attribute name="ref" type="xs:anyURI" />-->
+    <xs:attribute name="timelineFilename" type="xs:string" />
   </xs:complexType>
 
 
@@ -188,7 +193,7 @@
           <xs:element name="intervalFader" type="intervalFaderType" minOccurs="0" maxOccurs="unbounded" />
         </xs:sequence>-->
         <xs:attribute name="name" type="xs:ID" use="required" />
-        <xs:attribute name="outputCamera" type="xs:string" default="cutsceneCameraOutputShape"/>
+        <xs:attribute name="outputCamera" type="xs:string" default=""/>
         <xs:attribute name="preCutsceneCamera" type="xs:string" default=""/>
         <xs:attribute name="postCutsceneCamera" type="xs:string" default=""/>
         <xs:attribute name="blendInDuration" type="xs:float" default="0.0"/>
@@ -614,13 +619,16 @@
     </xs:complexContent>
   </xs:complexType>-->
   
-  <xs:complexType name="keyChangeLevelType">
+  <xs:complexType name="refChangeLevelType">
     <xs:annotation>
       <xs:appinfo>
         <scea.dom.editors menuText="ChangeLevel" description="ChangeLevel" image="picoTimelineEditor.Resources.key.png" category="pico" />
         <scea.dom.editors.attribute name="levelName" displayName="Level Name" description="Name of game level to play" />
         <!--<scea.dom.editors.attribute name="cutsceneName" displayName="Cutscene Name" description="Name of cutscene to play after new level is entered" category="Sound" />-->
-        <scea.dom.editors.attribute name="cutsceneFile" displayName="Timeline File" description="Timeline to play after new level has been entered"
+        <!--<scea.dom.editors.attribute name="cutsceneFile" displayName="Timeline File" description="Timeline to play after new level has been entered"
+                                    editor="pico.Controls.PropertyEditing.picoFileUriEditor,pico:Timeline files (*.timeline)|*.timeline"
+                                    converter="Sce.Atf.Controls.PropertyEditing.ReadOnlyConverter" />-->
+        <scea.dom.editors.attribute name="timelineFilename" displayName="Timeline File" description="Timeline to play after new level has been entered"
                                     editor="pico.Controls.PropertyEditing.picoFileUriEditor,pico:Timeline files (*.timeline)|*.timeline"
                                     converter="Sce.Atf.Controls.PropertyEditing.ReadOnlyConverter" />
         <scea.dom.editors.attribute name="unloadCurrentlevel"
@@ -632,13 +640,33 @@
     <xs:complexContent>
       <xs:extension base="timelineRefType">
         <xs:attribute name="levelName" type="xs:string" />
-        <xs:attribute name="cutsceneFile" type="xs:string" />
+        <!--<xs:attribute name="cutsceneFile" type="xs:string" />-->
+        <xs:attribute name="timelineFilename" type="xs:string" />
         <xs:attribute name="unloadCurrentlevel" type="xs:boolean" />
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>
 
 
+
+
+  <xs:complexType name="refPlayTimelineType">
+    <xs:annotation>
+      <xs:appinfo>
+        <scea.dom.editors menuText="PlayTimeline" description="PlayTimeline" image="picoTimelineEditor.Resources.group.png" category="pico" />
+        <scea.dom.editors.attribute name="timelineFilename" displayName="Timeline File" description="Timeline to play"
+                                    editor="pico.Controls.PropertyEditing.picoFileUriEditor,pico:Timeline files (*.timeline)|*.timeline"
+                                    converter="Sce.Atf.Controls.PropertyEditing.ReadOnlyConverter" />
+      </xs:appinfo>
+    </xs:annotation>
+    <xs:complexContent>
+      <xs:extension base="timelineRefType">
+        <xs:attribute name="timelineFilename" type="xs:string" />
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  
 
   <xs:complexType name="intervalTextType">
     <xs:annotation>

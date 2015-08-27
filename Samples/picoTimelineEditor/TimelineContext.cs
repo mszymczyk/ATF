@@ -415,6 +415,13 @@ namespace picoTimelineEditor
 						if ( !interval.CanParentTo( parent ) )
 							return false;
 					}
+
+					TimelineReference reference = item.As<TimelineReference>();
+					if ( reference != null )
+					{
+						if ( !reference.CanParentTo( parent ) )
+							return false;
+					}
 				}
 
 

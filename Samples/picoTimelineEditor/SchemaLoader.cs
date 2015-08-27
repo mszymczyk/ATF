@@ -89,9 +89,13 @@ namespace picoTimelineEditor
 				// random stuff
 				//
 				Schema.keyLuaScriptType.Type.Define( new ExtensionInfo<LuaScript>() );
-				Schema.keyChangeLevelType.Type.Define( new ExtensionInfo<KeyChangeLevel>() );
 				Schema.intervalTextType.Type.Define( new ExtensionInfo<IntervalText>() );
 				Schema.intervalNodeAnimationType.Type.Define( new ExtensionInfo<IntervalNodeAnimation>() );
+
+				// references
+				//
+				Schema.refChangeLevelType.Type.Define( new ExtensionInfo<ReferenceChangeLevel>() );
+				Schema.refPlayTimelineType.Type.Define( new ExtensionInfo<ReferencePlayTimeline>() );
 
 				// sound
 				//

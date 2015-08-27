@@ -77,9 +77,13 @@ namespace picoTimelineEditor
 			// random stuff
 			//
 			paletteService.AddItem( Schema.keyLuaScriptType.Type, "pico", this );
-			paletteService.AddItem( Schema.keyChangeLevelType.Type, "pico", this );
 			paletteService.AddItem( Schema.intervalTextType.Type, "pico", this );
 			paletteService.AddItem( Schema.intervalNodeAnimationType.Type, "Anim", this );
+
+			// references
+			//
+			paletteService.AddItem( Schema.refChangeLevelType.Type, "pico", this );
+			paletteService.AddItem( Schema.refPlayTimelineType.Type, "pico", this );
 
 			// sound
 			//
@@ -787,14 +791,25 @@ namespace picoTimelineEditor
                         return;
                 }
 
-                // Check if a URI on a timeline reference has changed, so we can unload
-                //  old document and load new document.
-                if (e.AttributeInfo.Equivalent(Schema.timelineRefType.refAttribute))
-                {
-                    UnloadSubDocument((Uri)e.OldValue);
-                    LoadSubDocument((Uri)e.NewValue);
-                }
-            }
+				//// Check if a URI on a timeline reference has changed, so we can unload
+				////  old document and load new document.
+				//if (e.AttributeInfo.Equivalent(Schema.timelineRefType.refAttribute))
+				//{
+				//	UnloadSubDocument((Uri)e.OldValue);
+				//	LoadSubDocument((Uri)e.NewValue);
+				//}
+
+				// Check if a URI on a timeline reference has changed, so we can unload
+				//  old document and load new document.
+				if ( e.AttributeInfo.Equivalent( Schema.timelineRefType.timelineFilenameAttribute ) )
+				{
+					Uri oldValue = new Uri( pico.Paths.LocalPathToPicoDataAbsolutePath( (string)e.OldValue ) );
+					Uri newValue = new Uri( pico.Paths.LocalPathToPicoDataAbsolutePath( (string)e.NewValue ) );
+
+					UnloadSubDocument( oldValue );
+					LoadSubDocument( newValue );
+				}
+			}
         }
 
         /// <summary>
@@ -923,24 +938,24 @@ namespace picoTimelineEditor
                 PersistDefaultAttributes = true;
             }
 
-            // Persists relative references instead of absolute references
-            protected override void WriteElement(DomNode node, System.Xml.XmlWriter writer)
-            {
-                TimelineReference reference = node.As<TimelineReference>();
-                Uri originalUri = null;
-                if (reference != null && reference.Uri != null && reference.Uri.IsAbsoluteUri)
-                {
-                    originalUri = reference.Uri;
-                    reference.Uri = Uri.MakeRelativeUri(reference.Uri);
-                }
+			//// Persists relative references instead of absolute references
+			//protected override void WriteElement(DomNode node, System.Xml.XmlWriter writer)
+			//{
+			//	TimelineReference reference = node.As<TimelineReference>();
+			//	Uri originalUri = null;
+			//	if (reference != null && reference.Uri != null && reference.Uri.IsAbsoluteUri)
+			//	{
+			//		originalUri = reference.Uri;
+			//		reference.Uri = Uri.MakeRelativeUri(reference.Uri);
+			//	}
 
-                base.WriteElement(node, writer);
+			//	base.WriteElement(node, writer);
 
-                if (originalUri != null)
-                {
-                    reference.Uri = originalUri;
-                }
-            }
+			//	if (originalUri != null)
+			//	{
+			//		reference.Uri = originalUri;
+			//	}
+			//}
         }
 
         /// <summary>

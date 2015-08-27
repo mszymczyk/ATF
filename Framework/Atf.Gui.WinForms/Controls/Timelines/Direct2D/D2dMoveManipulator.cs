@@ -514,8 +514,16 @@ namespace Sce.Atf.Controls.Timelines.Direct2D
 
             if (snapperEvent != null)
             {
-                Matrix localToWorld = D2dTimelineControl.CalculateLocalToWorld(snapperPath);
-                float worldStart = GdiUtil.Transform(localToWorld, snapperEvent.Start + dragOffset.X);
+				//Matrix localToWorld = D2dTimelineControl.CalculateLocalToWorld(snapperPath);
+				// pico extension
+				// since reference can't be edited, then snapping also won't work for any of objects on reference
+				// D2dTimelineControl.CalculateLocalToWorld creates matrix that will translate all objects relatively to reference's Start
+				// but here we translate snapperEvent (which is reference itself) again, this leads to 2x the translation (2x reference Start value)
+				// and causes snapping to work incorrectly
+				// setting localWorld to identity fixes this
+				//
+				Matrix localToWorld = new Matrix();
+				float worldStart = GdiUtil.Transform( localToWorld, snapperEvent.Start + dragOffset.X );
                 movingPoints.Add(worldStart);
                 if (snapperEvent.Length > 0.0f)
                     movingPoints.Add(GdiUtil.Transform(localToWorld, snapperEvent.Start + dragOffset.X + snapperEvent.Length));

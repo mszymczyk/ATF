@@ -569,12 +569,12 @@ namespace picoTimelineEditor
 			{
 				XmlElement changeLevel = (XmlElement)changeLevelNode;
 
-				m_groupChangeLevel = m_timeline.CreateGroup().Cast<Group>();
-				m_timeline.Groups.Add( m_groupChangeLevel );
-				m_groupChangeLevel.Name = "ChangeLevel";
+				//m_groupChangeLevel = m_timeline.CreateGroup().Cast<Group>();
+				//m_timeline.Groups.Add( m_groupChangeLevel );
+				//m_groupChangeLevel.Name = "ChangeLevel";
 
-				DomNode node = _CreateNode( Schema.keyChangeLevelType.Type );
-				KeyChangeLevel keyChangeLevel = node.Cast<KeyChangeLevel>();
+				DomNode node = _CreateNode( Schema.refChangeLevelType.Type );
+				ReferenceChangeLevel keyChangeLevel = node.Cast<ReferenceChangeLevel>();
 
 				keyChangeLevel.Start = m_cutsceneDuration;
 
@@ -591,10 +591,16 @@ namespace picoTimelineEditor
 				{
 					string cutsceneFile = null;
 					_ReadString( cutsceneChild, "filename", out cutsceneFile, true );
-					keyChangeLevel.CutsceneFile = cutsceneFile;
+					//keyChangeLevel.CutsceneFile = cutsceneFile;
+					string absFile = pico.Paths.LocalPathToPicoDataAbsolutePath( cutsceneFile );
+					keyChangeLevel.Uri = new Uri( absFile );
 				}
 
-				_PlaceKeyOnTrack( m_groupChangeLevel, keyChangeLevel, "ChangeLevelTrack" );
+				//_PlaceKeyOnTrack( m_groupChangeLevel, keyChangeLevel, "ChangeLevelTrack" );
+				//ITrack newTrack = m_groupChangeLevel.CreateTrack();
+				//newTrack.Name = "ChangeLevelTrack";
+				//m_groupChangeLevel.Tracks.Add( newTrack );
+				m_timeline.References.Add( keyChangeLevel );
 			}
 		}
 
@@ -1127,7 +1133,7 @@ namespace picoTimelineEditor
 				return false;
 			}
 
-			if ( attribNameValue.Contains( ':' ) )
+			if ( ! attribNameValue.Contains( ':' ) )
 			{
 				if ( string.IsNullOrEmpty(m_cutsceneNodeContainer) )
 				{
@@ -1262,7 +1268,7 @@ namespace picoTimelineEditor
 		private Group m_groupLua;
 		// change level
 		//
-		private Group m_groupChangeLevel;
+		//private Group m_groupChangeLevel;
 		// text
 		//
 		private Group m_groupText;

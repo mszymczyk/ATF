@@ -74,7 +74,7 @@ namespace picoTimelineEditor
             timelineRefType.startAttribute = timelineRefType.Type.GetAttributeInfo("start");
             timelineRefType.descriptionAttribute = timelineRefType.Type.GetAttributeInfo("description");
             timelineRefType.colorAttribute = timelineRefType.Type.GetAttributeInfo("color");
-            timelineRefType.refAttribute = timelineRefType.Type.GetAttributeInfo("ref");
+            timelineRefType.timelineFilenameAttribute = timelineRefType.Type.GetAttributeInfo("timelineFilename");
 
             controlPointType.Type = getNodeType("timeline", "controlPointType");
             controlPointType.xAttribute = controlPointType.Type.GetAttributeInfo("x");
@@ -217,13 +217,21 @@ namespace picoTimelineEditor
             keySoundType.soundBankAttribute = keySoundType.Type.GetAttributeInfo("soundBank");
             keySoundType.soundAttribute = keySoundType.Type.GetAttributeInfo("sound");
 
-            keyChangeLevelType.Type = getNodeType("timeline", "keyChangeLevelType");
-            keyChangeLevelType.startAttribute = keyChangeLevelType.Type.GetAttributeInfo("start");
-            keyChangeLevelType.descriptionAttribute = keyChangeLevelType.Type.GetAttributeInfo("description");
-            keyChangeLevelType.nameAttribute = keyChangeLevelType.Type.GetAttributeInfo("name");
-            keyChangeLevelType.levelNameAttribute = keyChangeLevelType.Type.GetAttributeInfo("levelName");
-            keyChangeLevelType.cutsceneFileAttribute = keyChangeLevelType.Type.GetAttributeInfo("cutsceneFile");
-            keyChangeLevelType.unloadCurrentlevelAttribute = keyChangeLevelType.Type.GetAttributeInfo("unloadCurrentlevel");
+            refChangeLevelType.Type = getNodeType("timeline", "refChangeLevelType");
+            refChangeLevelType.nameAttribute = refChangeLevelType.Type.GetAttributeInfo("name");
+            refChangeLevelType.startAttribute = refChangeLevelType.Type.GetAttributeInfo("start");
+            refChangeLevelType.descriptionAttribute = refChangeLevelType.Type.GetAttributeInfo("description");
+            refChangeLevelType.colorAttribute = refChangeLevelType.Type.GetAttributeInfo("color");
+            refChangeLevelType.timelineFilenameAttribute = refChangeLevelType.Type.GetAttributeInfo("timelineFilename");
+            refChangeLevelType.levelNameAttribute = refChangeLevelType.Type.GetAttributeInfo("levelName");
+            refChangeLevelType.unloadCurrentlevelAttribute = refChangeLevelType.Type.GetAttributeInfo("unloadCurrentlevel");
+
+            refPlayTimelineType.Type = getNodeType("timeline", "refPlayTimelineType");
+            refPlayTimelineType.nameAttribute = refPlayTimelineType.Type.GetAttributeInfo("name");
+            refPlayTimelineType.startAttribute = refPlayTimelineType.Type.GetAttributeInfo("start");
+            refPlayTimelineType.descriptionAttribute = refPlayTimelineType.Type.GetAttributeInfo("description");
+            refPlayTimelineType.colorAttribute = refPlayTimelineType.Type.GetAttributeInfo("color");
+            refPlayTimelineType.timelineFilenameAttribute = refPlayTimelineType.Type.GetAttributeInfo("timelineFilename");
 
             intervalTextType.Type = getNodeType("timeline", "intervalTextType");
             intervalTextType.startAttribute = intervalTextType.Type.GetAttributeInfo("start");
@@ -306,7 +314,7 @@ namespace picoTimelineEditor
             public static AttributeInfo startAttribute;
             public static AttributeInfo descriptionAttribute;
             public static AttributeInfo colorAttribute;
-            public static AttributeInfo refAttribute;
+            public static AttributeInfo timelineFilenameAttribute;
         }
 
         public static class controlPointType
@@ -498,15 +506,26 @@ namespace picoTimelineEditor
             public static AttributeInfo soundAttribute;
         }
 
-        public static class keyChangeLevelType
+        public static class refChangeLevelType
         {
             public static DomNodeType Type;
+            public static AttributeInfo nameAttribute;
             public static AttributeInfo startAttribute;
             public static AttributeInfo descriptionAttribute;
-            public static AttributeInfo nameAttribute;
+            public static AttributeInfo colorAttribute;
+            public static AttributeInfo timelineFilenameAttribute;
             public static AttributeInfo levelNameAttribute;
-            public static AttributeInfo cutsceneFileAttribute;
             public static AttributeInfo unloadCurrentlevelAttribute;
+        }
+
+        public static class refPlayTimelineType
+        {
+            public static DomNodeType Type;
+            public static AttributeInfo nameAttribute;
+            public static AttributeInfo startAttribute;
+            public static AttributeInfo descriptionAttribute;
+            public static AttributeInfo colorAttribute;
+            public static AttributeInfo timelineFilenameAttribute;
         }
 
         public static class intervalTextType

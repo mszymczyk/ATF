@@ -102,8 +102,9 @@
     <Compile Include="DomNodeAdapters\fader\TrackFader.cs" />
     <Compile Include="DomNodeAdapters\graph\IntervalNodeAnimation.cs" />
     <Compile Include="DomNodeAdapters\picoTimelineDomValidator.cs" />
-    <Compile Include="DomNodeAdapters\keys\KeyChangeLevel.cs" />
     <Compile Include="DomNodeAdapters\keys\LuaScript.cs" />
+    <Compile Include="DomNodeAdapters\references\ReferenceChangeLevel.cs" />
+    <Compile Include="DomNodeAdapters\references\ReferencePlayTimeline.cs" />
     <Compile Include="DomNodeAdapters\sound\KeySound.cs" />
     <Compile Include="DomNodeAdapters\text\IntervalText.cs" />
     <Compile Include="DomNodeAdapters\TimelineReference.cs" />
