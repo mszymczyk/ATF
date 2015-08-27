@@ -48,6 +48,24 @@ namespace pico.LogOutput
         {
             // So the GUI will show up since nothing else imports it...
 
+			//picoLogOutputForm form_All = new picoLogOutputForm( "All", m_contextRegistry, m_settingsService, m_controlHostService );
+			//m_logForms.Add( form_All );
+
+			//picoLogOutputForm2 form_All = new picoLogOutputForm2();
+			picoLogOutputForm3 form_All = new picoLogOutputForm3();
+			//picoLogDataTable data = new picoLogDataTable();
+			//form_All.bindData( data.DataTableView );
+
+			var info =
+                    new ControlInfo(
+					"All",
+					"All" + " - TreeListView",
+					StandardControlGroup.CenterPermanent );
+
+			m_controlHostService.RegisterControl(
+				form_All,
+				info,
+				this );
         }
 
         #endregion
@@ -62,8 +80,8 @@ namespace pico.LogOutput
         /// registered for this IControlHostClient.</remarks>
         public void Activate(Control control)
         {
-            if (ReferenceEquals(control, m_host))
-                m_contextRegistry.ActiveContext = this;
+			//if (ReferenceEquals(control, m_host))
+			//	m_contextRegistry.ActiveContext = this;
         }
 
         /// <summary>
@@ -97,5 +115,7 @@ namespace pico.LogOutput
         private readonly IContextRegistry m_contextRegistry;
 		private readonly ISettingsService m_settingsService;
 		private readonly IControlHostService m_controlHostService;
+
+		private List<picoLogOutputForm> m_logForms = new List<picoLogOutputForm>();
     }
 }

@@ -54,12 +54,21 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Editors.cs" />
     <Compile Include="LogDataContainer.cs" />
     <Compile Include="LogOutputForm.cs" />
+    <Compile Include="picoLogDataTable.cs" />
     <Compile Include="picoLogOutputEditor.cs" />
+    <Compile Include="picoLogOutputForm3.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="picoLogOutputForm3.Designer.cs">
+      <DependentUpon>picoLogOutputForm3.cs</DependentUpon>
+    </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <EmbeddedResource Include="picoLogOutputForm3.resx">
+      <DependentUpon>picoLogOutputForm3.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>

@@ -30,19 +30,23 @@ namespace pico.LogOutput
             string name,
 			//TreeListView.Style style,
 			//Buttons flags,
-			//IContextRegistry contextRegistry,
+			IContextRegistry contextRegistry,
             ISettingsService settingsService,
 			IControlHostService controlHostService
 			)
-            : base(TreeListView.Style.VirtualList)
+			//: base(TreeListView.Style.VirtualList)
+			: base(TreeListView.Style.List)
         {
-			//m_contextRegistry = contextRegistry;
+			m_contextRegistry = contextRegistry;
 
             TreeListView.Name = name;
 
-			m_data = new DataContainer();
+			m_data = new LogDataContainer();
 
 			View = m_data;
+
+			//m_data.GenerateVirtual();
+			m_data.GenerateFlat( null );
 
 			TreeListViewAdapter.RetrieveVirtualItem += TreeListViewAdapterRetrieveVirtualItem;
 
@@ -71,8 +75,8 @@ namespace pico.LogOutput
 
                 m_uberControl = new UserControl {Dock = DockStyle.Fill};
 
-                int x = 2, y = 2;
-                var buttonHeight = -1;
+				//int x = 2, y = 2;
+				var buttonHeight = -1;
 
 				//if ((flags & Buttons.AddFlat) == Buttons.AddFlat)
 				//{
@@ -179,12 +183,12 @@ namespace pico.LogOutput
             }
         }
 
-        /// <summary>
-        /// Initialize</summary>
-        void IInitializable.Initialize()
-        {
-            // So the GUI will show up since nothing else imports it...
-        }
+		///// <summary>
+		///// Initialize</summary>
+		//void IInitializable.Initialize()
+		//{
+		//	// So the GUI will show up since nothing else imports it...
+		//}
 
         #region IControlHostClient Interface
 
@@ -196,8 +200,8 @@ namespace pico.LogOutput
         /// registered for this IControlHostClient.</remarks>
         public void Activate(Control control)
         {
-            if (ReferenceEquals(control, m_uberControl) && View != null)
-                m_contextRegistry.ActiveContext = View;
+			//if (ReferenceEquals(control, m_uberControl) && View != null)
+			m_contextRegistry.ActiveContext = View;
         }
 
         /// <summary>
@@ -250,10 +254,15 @@ namespace pico.LogOutput
 			e.Item = m_data[e.ItemIndex];
 		}
 
-		private readonly DataContainer m_data;
+		public UserControl UberControl
+		{
+			get { return m_uberControl; }
+		}
 
-        private readonly UserControl m_uberControl;
-        private readonly IContextRegistry m_contextRegistry;
+		private readonly LogDataContainer m_data;
+
+        private UserControl m_uberControl;
+		private readonly IContextRegistry m_contextRegistry;
 
         private const string AddFlatText = "Add Flat";
         private const string AddHierarchicalText = "Add Hierarchical";

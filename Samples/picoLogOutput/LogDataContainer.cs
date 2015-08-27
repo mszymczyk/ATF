@@ -14,7 +14,7 @@ using Sce.Atf.Applications;
 using Sce.Atf.Controls;
 using Sce.Atf.Controls.PropertyEditing;
 
-namespace TreeListEditor
+namespace pico.LogOutput
 {
     /// <summary>
     /// Class to generate data items to be displayed in tree editors</summary>
@@ -54,18 +54,18 @@ namespace TreeListEditor
 
     /// <summary>
     /// Class to generate collection of data items (DataItem) to be displayed in tree editors</summary>
-    class LogDataContainer : ITreeListView, IItemView
+	class LogDataContainer : ITreeListView, IItemView, IObservableContext
     {
         /// <summary>
         /// Constructor without parameters</summary>
 		public LogDataContainer()
         {
-			//if (s_dataImageIndex == -1)
-			//{
-			//	s_dataImageIndex =
-			//		ResourceUtil.GetImageList16().Images.IndexOfKey(
-			//			Resources.DataImage);
-			//}
+			if (s_dataImageIndex == -1)
+			{
+				s_dataImageIndex =
+					ResourceUtil.GetImageList16().Images.IndexOfKey(
+						Resources.DataImage );
+			}
 
 			//if (s_folderImageIndex == -1)
 			//{
@@ -74,8 +74,14 @@ namespace TreeListEditor
 			//			Resources.FolderImage);
 			//}
 
-            // Stop compiler warning
-            if (Cancelled == null) return;
+			//GenerateVirtual();
+			//GenerateFlat( null );
+
+			//// Stop compiler warning
+			//if (Cancelled == null) return;
+			if (Reloaded == null) return;
+			if (ItemRemoved == null) return;
+			if (ItemChanged == null) return;
         }
 
         /// <summary>
@@ -94,17 +100,17 @@ namespace TreeListEditor
             m_data.Clear();
         }
 
-        /// <summary>
-        /// Generates data for a virtual list</summary>
-        /// <param name="view">Tree list view</param>
-        public static void GenerateVirtual(ITreeListView view)
-        {
-            var container = view.As<LogDataContainer>();
-            if (container == null)
-                return;
+		///// <summary>
+		///// Generates data for a virtual list</summary>
+		///// <param name="view">Tree list view</param>
+		//public static void GenerateVirtual(ITreeListView view)
+		//{
+		//	var container = view.As<LogDataContainer>();
+		//	if (container == null)
+		//		return;
 
-            container.GenerateVirtual();
-        }
+		//	container.GenerateVirtual();
+		//}
 
 		///// <summary>
 		///// Updates generated data items</summary>
@@ -133,15 +139,16 @@ namespace TreeListEditor
         /// <returns>Enumeration of the children of the parent object</returns>
         public IEnumerable<object> GetChildren(object parent)
         {
-            var dataParent = parent.As<DataItem>();
-            if (dataParent == null)
-                yield break;
+			//var dataParent = parent.As<DataItem>();
+			//if (dataParent == null)
+			//	yield break;
 
-            if (!dataParent.HasChildren)
-                yield break;
+			//if (!dataParent.HasChildren)
+			//	yield break;
 
-            foreach (var data in dataParent.Children)
-                yield return data;
+			//foreach (var data in dataParent.Children)
+			//	yield return data;
+			yield break;
         }
 
         /// <summary>
@@ -169,20 +176,41 @@ namespace TreeListEditor
             info.Properties =
                 new object[]
                 {
-                    data.Type.ToString(),
+					//data.Type.ToString(),
                     data.Value
                 };
 
-            info.IsLeaf = !data.HasChildren;
-            info.ImageIndex =
-                data.HasChildren
-                    ? s_folderImageIndex
-                    : s_dataImageIndex;
+			//info.IsLeaf = !data.HasChildren;
+			//info.ImageIndex =
+			//	data.HasChildren
+			//		? s_folderImageIndex
+			//		: s_dataImageIndex;
+			info.ImageIndex = s_dataImageIndex;
         }
 
         #endregion
 
-        private void GenerateVirtual()
+		#region IObservableContext Interface
+
+		/// <summary>
+		/// Event that is raised when an item is inserted</summary>
+		public event EventHandler<ItemInsertedEventArgs<object>> ItemInserted;
+
+		/// <summary>
+		/// Event that is raised when an item is removed</summary>
+		public event EventHandler<ItemRemovedEventArgs<object>> ItemRemoved;
+
+		/// <summary>
+		/// Event that is raised when an item is changed</summary>
+		public event EventHandler<ItemChangedEventArgs<object>> ItemChanged;
+
+		/// <summary>
+		/// Event that is raised when the collection has been reloaded</summary>
+		public event EventHandler Reloaded;
+
+		#endregion
+
+        public void GenerateVirtual()
         {
             var items = s_random.Next(10000, 100001);
 
@@ -198,7 +226,38 @@ namespace TreeListEditor
                 arrayItems[i] = data;
                 m_data.Add(data);
             }
-        }
+
+			// Can accept an array of objects or single object
+			ItemInserted.Raise( this, new ItemInsertedEventArgs<object>( -1, arrayItems ) );
+		}
+
+		public void GenerateFlat( DataItem parent )
+		{
+			//Beginning.Raise( this, EventArgs.Empty );
+
+			//var items = s_random.Next( 5, 16 );
+			int items = 1000;
+			for (var i = 0; i < items; i++)
+			{
+				var data = CreateItem( parent );
+				//data.ItemChanged += DataItemChanged;
+
+				//if (parent != null)
+				//	parent.Children.Add( data );
+				//else
+					m_data.Add( data );
+
+				ItemInserted.Raise( this, new ItemInsertedEventArgs<object>( -1, data, parent ) );
+			}
+
+			//if (parent != null)
+			//{
+			//	ItemChanged.Raise( this, new ItemChangedEventArgs<object>( parent ) );
+			//}
+
+			//Ending.Raise( this, EventArgs.Empty );
+			//Ended.Raise( this, EventArgs.Empty );
+		}
 
         private void Reload()
         {
@@ -210,7 +269,7 @@ namespace TreeListEditor
 
         private static DataItem CreateItem(DataItem parent)
         {
-            var enumLength = Enum.GetNames(typeof(DataType)).Length;
+			//var enumLength = Enum.GetNames(typeof(DataType)).Length;
             var name = CreateString(s_random.Next(2, 11));
 			//var type = (DataType)s_random.Next(0, enumLength);
 
@@ -242,7 +301,7 @@ namespace TreeListEditor
         private readonly List<DataItem> m_data = new List<DataItem>();
 
         private static int s_dataImageIndex = -1;
-        private static int s_folderImageIndex = -1;
+		//private static int s_folderImageIndex = -1;
 
         private static readonly Random s_random = new Random();
 
@@ -257,103 +316,103 @@ namespace TreeListEditor
             "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
     }
 
-    /// <summary>
-    /// Class to compare data items for sorting</summary>
-    class LogDataComparer : IComparer<TreeListView.Node>
-    {
-        /// <summary>
-        /// Constructor with TreeListView</summary>
-        /// <param name="control">Tree list view</param>
-        public LogDataComparer(TreeListView control)
-        {
-            m_control = control;
-        }
+	///// <summary>
+	///// Class to compare data items for sorting</summary>
+	//class LogDataComparer : IComparer<TreeListView.Node>
+	//{
+	//	/// <summary>
+	//	/// Constructor with TreeListView</summary>
+	//	/// <param name="control">Tree list view</param>
+	//	public LogDataComparer(TreeListView control)
+	//	{
+	//		m_control = control;
+	//	}
 
-        /// <summary>
-        /// Compares two objects and returns a value indicating whether 
-        /// one is less than, equal to, or greater than the other</summary>
-        /// <param name="x">First object to compare</param>
-        /// <param name="y">Second object to compare</param>
-        /// <returns>Signed integer that indicates the relative values of x and y. 
-        /// Less than zero: x is less than y. Zero: x equals y. Greater than zero: x is greater than y.</returns>
-        public int Compare(TreeListView.Node x, TreeListView.Node y)
-        {
-            if ((x == null) && (y == null))
-                return 0;
+	//	/// <summary>
+	//	/// Compares two objects and returns a value indicating whether 
+	//	/// one is less than, equal to, or greater than the other</summary>
+	//	/// <param name="x">First object to compare</param>
+	//	/// <param name="y">Second object to compare</param>
+	//	/// <returns>Signed integer that indicates the relative values of x and y. 
+	//	/// Less than zero: x is less than y. Zero: x equals y. Greater than zero: x is greater than y.</returns>
+	//	public int Compare(TreeListView.Node x, TreeListView.Node y)
+	//	{
+	//		if ((x == null) && (y == null))
+	//			return 0;
 
-            if (x == null)
-                return 1;
+	//		if (x == null)
+	//			return 1;
 
-            if (y == null)
-                return -1;
+	//		if (y == null)
+	//			return -1;
 
-            if (ReferenceEquals(x, y))
-                return 0;
+	//		if (ReferenceEquals(x, y))
+	//			return 0;
 
-            var lhs = x.Tag.As<DataItem>();
-            var rhs = y.Tag.As<DataItem>();
+	//		var lhs = x.Tag.As<DataItem>();
+	//		var rhs = y.Tag.As<DataItem>();
 
-            if ((lhs == null) && (rhs == null))
-                return 0;
+	//		if ((lhs == null) && (rhs == null))
+	//			return 0;
 
-            if (lhs == null)
-                return 1;
+	//		if (lhs == null)
+	//			return 1;
 
-            if (rhs == null)
-                return -1;
+	//		if (rhs == null)
+	//			return -1;
 
-            CompareFunction[] sortFuncs;
-            switch (m_control.SortColumn)
-            {
-                case 1: sortFuncs = s_column1Sort; break;
-                case 2: sortFuncs = s_column2Sort; break;
-                default: sortFuncs = s_column0Sort; break;
-            }
+	//		CompareFunction[] sortFuncs;
+	//		switch (m_control.SortColumn)
+	//		{
+	//			case 1: sortFuncs = s_column1Sort; break;
+	//			case 2: sortFuncs = s_column2Sort; break;
+	//			default: sortFuncs = s_column0Sort; break;
+	//		}
 
-            var result = 0;
+	//		var result = 0;
 
-            for (var i = 0; i < sortFuncs.Length; i++)
-            {
-                result = sortFuncs[i](lhs, rhs);
-                if (result != 0)
-                    break;
-            }
+	//		for (var i = 0; i < sortFuncs.Length; i++)
+	//		{
+	//			result = sortFuncs[i](lhs, rhs);
+	//			if (result != 0)
+	//				break;
+	//		}
 
-            if (m_control.SortOrder == SortOrder.Descending)
-                result *= -1;
+	//		if (m_control.SortOrder == SortOrder.Descending)
+	//			result *= -1;
 
-            return result;
-        }
+	//		return result;
+	//	}
 
-        private static int CompareNames(DataItem x, DataItem y)
-        {
-            return string.Compare(x.Name, y.Name);
-        }
+	//	private static int CompareNames(DataItem x, DataItem y)
+	//	{
+	//		return string.Compare(x.Name, y.Name);
+	//	}
 
-		//private static int CompareTypes(DataItem x, DataItem y)
-		//{
-		//	if (x.Type == y.Type)
-		//		return 0;
+	//	//private static int CompareTypes(DataItem x, DataItem y)
+	//	//{
+	//	//	if (x.Type == y.Type)
+	//	//		return 0;
 
-		//	return (int)x.Type < (int)y.Type ? -1 : 1;
-		//}
+	//	//	return (int)x.Type < (int)y.Type ? -1 : 1;
+	//	//}
 
-        private static int CompareValues(DataItem x, DataItem y)
-        {
-            return string.Compare(x.Value.ToString(), y.Value.ToString());
-        }
+	//	private static int CompareValues(DataItem x, DataItem y)
+	//	{
+	//		return string.Compare(x.Value.ToString(), y.Value.ToString());
+	//	}
 
-        private delegate int CompareFunction(DataItem x, DataItem y);
+	//	private delegate int CompareFunction(DataItem x, DataItem y);
 
-        private static readonly CompareFunction[] s_column0Sort =
-            new CompareFunction[] { CompareNames, CompareTypes, CompareValues };
+	//	private static readonly CompareFunction[] s_column0Sort =
+	//		new CompareFunction[] { CompareNames, CompareTypes, CompareValues };
 
-        private static readonly CompareFunction[] s_column1Sort =
-            new CompareFunction[] { CompareTypes, CompareNames, CompareValues };
+	//	private static readonly CompareFunction[] s_column1Sort =
+	//		new CompareFunction[] { CompareTypes, CompareNames, CompareValues };
 
-        private static readonly CompareFunction[] s_column2Sort =
-            new CompareFunction[] { CompareValues, CompareNames, CompareTypes };
+	//	private static readonly CompareFunction[] s_column2Sort =
+	//		new CompareFunction[] { CompareValues, CompareNames, CompareTypes };
 
-        private readonly TreeListView m_control;
-    }
+	//	private readonly TreeListView m_control;
+	//}
 }

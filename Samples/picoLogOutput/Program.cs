@@ -70,12 +70,12 @@ namespace TreeListEditor
 
                         /* Use the TreeListView as a normal Control */
 						//typeof(RawTreeListView),                // tree list view editor for hierarchical file system component
-						typeof( pico.LogOutput.picoLogOutputEditor ), //
+						typeof(pico.LogOutput.picoLogOutputEditor) //
 
-                        typeof(PythonService),                  // scripting service for automated tests
-                        typeof(ScriptConsole),                  // provides a dockable command console for entering Python commands
-                        typeof(AtfScriptVariables),             // exposes common ATF services as script variables
-                        typeof(AutomationService)               // provides facilities to run an automated script using the .NET remoting service
+						//typeof(PythonService),                  // scripting service for automated tests
+						//typeof(ScriptConsole),                  // provides a dockable command console for entering Python commands
+						//typeof(AtfScriptVariables),             // exposes common ATF services as script variables
+						//typeof(AutomationService)               // provides facilities to run an automated script using the .NET remoting service
                     ))
             {
                 using (var container = new CompositionContainer(catalog))
