@@ -71,7 +71,7 @@ namespace picoTimelineEditor
                 Schema.timelineType.Type.Define(new ExtensionInfo<ReferenceValidator>());
                 Schema.timelineType.Type.Define(new ExtensionInfo<TimelineValidator>());
 				Schema.timelineType.Type.Define( new ExtensionInfo<DataValidator>() );
-				Schema.timelineType.Type.Define( new ExtensionInfo<GroupCameraValidator>() ); // for ensuring there's only one GroupCamera group in timeline
+				Schema.timelineType.Type.Define( new ExtensionInfo<picoTimelineDomValidator>() ); // for ensuring there's only one GroupCamera group in timeline
 
                 // register the timeline model interfaces
                 Schema.timelineType.Type.Define(new ExtensionInfo<Timeline>());
@@ -84,14 +84,19 @@ namespace picoTimelineEditor
                 Schema.timelineRefType.Type.Define(new ExtensionInfo<TimelineReference>());
 
 				// pico
-				// register the timeline model interfaces
-				Schema.intervalCurveType.Type.Define( new ExtensionInfo<IntervalCurve>() );
-				Schema.keyLuaScriptType.Type.Define( new ExtensionInfo<LuaScript>() );
-				Schema.keySoundType.Type.Define( new ExtensionInfo<KeySound>() );
-				Schema.keyChangeLevelType.Type.Define( new ExtensionInfo<KeyChangeLevel>() );
+				//Schema.intervalCurveType.Type.Define( new ExtensionInfo<IntervalCurve>() );
 
+				// random stuff
+				//
+				Schema.keyLuaScriptType.Type.Define( new ExtensionInfo<LuaScript>() );
+				Schema.keyChangeLevelType.Type.Define( new ExtensionInfo<KeyChangeLevel>() );
 				Schema.intervalTextType.Type.Define( new ExtensionInfo<IntervalText>() );
-	
+				Schema.intervalNodeAnimationType.Type.Define( new ExtensionInfo<IntervalNodeAnimation>() );
+
+				// sound
+				//
+				Schema.keySoundType.Type.Define( new ExtensionInfo<KeySound>() );
+
 				// fader
 				//
 				Schema.intervalFaderType.Type.Define( new ExtensionInfo<IntervalFader>() );
@@ -104,11 +109,12 @@ namespace picoTimelineEditor
 				Schema.trackCameraAnimType.Type.Define( new ExtensionInfo<TrackCameraAnim>() );
 				Schema.intervalCameraAnimType.Type.Define( new ExtensionInfo<IntervalCameraAnim>() );
 
+				// anim controller
 				Schema.trackAnimControllerType.Type.Define( new ExtensionInfo<TrackAnimController>() );
 				Schema.intervalAnimControllerType.Type.Define( new ExtensionInfo<IntervalAnimController>() );
 
-				Schema.intervalNodeAnimationType.Type.Define( new ExtensionInfo<IntervalNodeAnimation>() );
-
+				// curve
+				//
 				Schema.curveType.Type.Define( new ExtensionInfo<Curve>() );
 				Schema.curveType.Type.Define( new ExtensionInfo<CurveLimitValidator>() );
 				Schema.controlPointType.Type.Define( new ExtensionInfo<ControlPoint>() );

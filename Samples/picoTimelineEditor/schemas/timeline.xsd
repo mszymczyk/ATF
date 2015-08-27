@@ -533,7 +533,7 @@
   <xs:complexType name="trackCharacterControllerAnimType">
     <xs:annotation>
       <xs:appinfo>
-        <scea.dom.editors menuText="TrackCharacterController" description="TrackCharacterController" image="picoTimelineEditor.Resources.track.png" category="pico" />
+        <scea.dom.editors menuText="TrackCharacterControllerAnim" description="TrackCharacterControllerAnim" image="picoTimelineEditor.Resources.track.png" category="pico" />
       </xs:appinfo>
     </xs:annotation>
     <xs:complexContent>
@@ -590,12 +590,12 @@
 
 
 
-  <xs:complexType name="keyChangeLevelType">
+  <!--<xs:complexType name="keyChangeLevelType">
     <xs:annotation>
       <xs:appinfo>
         <scea.dom.editors menuText="ChangeLevel" description="ChangeLevel" image="picoTimelineEditor.Resources.key.png" category="pico" />
         <scea.dom.editors.attribute name="levelName" displayName="Level Name" description="Name of game level to play" />
-        <!--<scea.dom.editors.attribute name="cutsceneName" displayName="Cutscene Name" description="Name of cutscene to play after new level is entered" category="Sound" />-->
+        --><!--<scea.dom.editors.attribute name="cutsceneName" displayName="Cutscene Name" description="Name of cutscene to play after new level is entered" category="Sound" />--><!--
         <scea.dom.editors.attribute name="cutsceneFile" displayName="Timeline File" description="Timeline to play after new level has been entered"
                                     editor="pico.Controls.PropertyEditing.picoFileUriEditor,pico:Timeline files (*.timeline)|*.timeline"
                                     converter="Sce.Atf.Controls.PropertyEditing.ReadOnlyConverter" />
@@ -612,8 +612,31 @@
         <xs:attribute name="unloadCurrentlevel" type="xs:boolean" />
       </xs:extension>
     </xs:complexContent>
+  </xs:complexType>-->
+  
+  <xs:complexType name="keyChangeLevelType">
+    <xs:annotation>
+      <xs:appinfo>
+        <scea.dom.editors menuText="ChangeLevel" description="ChangeLevel" image="picoTimelineEditor.Resources.key.png" category="pico" />
+        <scea.dom.editors.attribute name="levelName" displayName="Level Name" description="Name of game level to play" />
+        <!--<scea.dom.editors.attribute name="cutsceneName" displayName="Cutscene Name" description="Name of cutscene to play after new level is entered" category="Sound" />-->
+        <scea.dom.editors.attribute name="cutsceneFile" displayName="Timeline File" description="Timeline to play after new level has been entered"
+                                    editor="pico.Controls.PropertyEditing.picoFileUriEditor,pico:Timeline files (*.timeline)|*.timeline"
+                                    converter="Sce.Atf.Controls.PropertyEditing.ReadOnlyConverter" />
+        <scea.dom.editors.attribute name="unloadCurrentlevel"
+                                    displayName="Unload current level"
+                                    description="Will unload current level and free all resources associated with it"
+                                    editor="Sce.Atf.Controls.PropertyEditing.BoolEditor,Atf.Gui.WinForms"/>
+      </xs:appinfo>
+    </xs:annotation>
+    <xs:complexContent>
+      <xs:extension base="timelineRefType">
+        <xs:attribute name="levelName" type="xs:string" />
+        <xs:attribute name="cutsceneFile" type="xs:string" />
+        <xs:attribute name="unloadCurrentlevel" type="xs:boolean" />
+      </xs:extension>
+    </xs:complexContent>
   </xs:complexType>
-
 
 
 

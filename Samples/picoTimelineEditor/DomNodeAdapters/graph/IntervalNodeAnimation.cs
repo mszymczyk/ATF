@@ -132,6 +132,23 @@ namespace picoTimelineEditor.DomNodeAdapters
 		}
 		#endregion
 
+		public override bool CanParentTo( DomNode parent )
+		{
+			return ValidateImpl( parent, 0 );
+		}
+
+		public override bool Validate( DomNode parent )
+		{
+			return ValidateImpl( parent, 1 );
+		}
+
+		private bool ValidateImpl( DomNode parent, int validating )
+		{
+			if ( parent.Type != Schema.trackType.Type )
+				return false;
+
+			return true;
+		}
 
 		/// <summary>
 		/// Enum used for Channel types.

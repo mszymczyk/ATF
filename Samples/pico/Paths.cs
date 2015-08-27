@@ -56,12 +56,12 @@ namespace pico
 			return str;
 		}
 
-		private static readonly string PICO_ROOT = Path.GetFullPath( Environment.GetEnvironmentVariable( "PICO_ROOT" ) + "\\" );
-		private static readonly string PICO_DEMO = Path.GetFullPath( Environment.GetEnvironmentVariable( "PICO_DEMO" ) + "\\" );
-		private static readonly string PICO_DEMO_data = PICO_DEMO + "data\\";
-		private static readonly string PICO_DEMO_dataWin = PICO_DEMO + "dataWin\\";
-		private static readonly string PICO_DEMO_dataPS4 = PICO_DEMO + "dataPS4\\";
-		private static readonly string texconv_exe = PICO_ROOT + "bin64\\texconv.exe";
-		private static readonly string nvcompress_exe = PICO_ROOT + "bin64\\nvcompress.exe";
+		public static readonly string PICO_ROOT = Path.GetFullPath( Environment.GetEnvironmentVariable( "PICO_ROOT" ) + "\\" );
+		public static readonly string PICO_DEMO = Path.GetFullPath( Environment.GetEnvironmentVariable( "PICO_DEMO" ) + "\\" );
+		public static readonly string PICO_DEMO_data = PICO_DEMO + "data\\";
+		public static readonly string PICO_DEMO_dataWin = PICO_DEMO + "dataWin\\";
+		public static readonly string PICO_DEMO_dataPS4 = PICO_DEMO + "dataPS4\\";
+		public static readonly string texconv_exe = PICO_ROOT + "bin64\\texconv.exe";
+		public static readonly string nvcompress_exe = PICO_ROOT + "bin64\\nvcompress.exe";
 	}
 }

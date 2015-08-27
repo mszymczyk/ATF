@@ -371,54 +371,97 @@ namespace picoTimelineEditor
                     TimelineControl.IsEditable( TimelineControl.TargetGroup ) )
 				)
 			{
+				//// allow drag-n-drop only for single items
+				////
+				//if ( items.Length > 1 )
+				//	return false;
+
 				Point clientPoint = m_timelineControl.PointToClient( new Point( e.X, e.Y ) );
 				PointF mouseLocation = clientPoint;
 				ITimelineObject dropTarget = Pick( mouseLocation );
 
-				GroupCamera groupCamera = AnyOfType<GroupCamera>( items );
-				if ( groupCamera != null )
-				{
-					if ( ParentHasChildOfType<GroupCamera>(DomNode) )
-						return false;
+				DomNode parent = null;
 
-					if ( dropTarget == null )
-						return true;
-					else
-						return false;
+				if ( dropTarget == null )
+				{
+					DomNodeAdapter adapter = this.As<Timeline>();
+					parent = adapter.DomNode;
+				}
+				else
+				{
+					DomNodeAdapter adapter = dropTarget.As<DomNodeAdapter>();
+					parent = adapter.DomNode;
 				}
 
-				TrackCameraAnim trackCameraAnim = AnyOfType<TrackCameraAnim>( items );
-				if ( trackCameraAnim != null )
+				foreach ( object item in items )
 				{
-					if ( !dropTarget.Is<GroupCamera>() )
-						return false;
+					Group group = item.As<Group>();
+					if ( group != null )
+					{
+						if ( !group.CanParentTo( parent ) )
+							return false;
+					}
 
-					if ( ParentHasChildOfType<TrackCameraAnim>( dropTarget.Cast<GroupCamera>().DomNode ) )
-						return false;
+					Track track = item.As<Track>();
+					if ( track != null )
+					{
+						if ( !track.CanParentTo( parent ) )
+							return false;
+					}
+
+					Interval interval = item.As<Interval>();
+					if ( interval != null )
+					{
+						if ( !interval.CanParentTo( parent ) )
+							return false;
+					}
 				}
 
-				IntervalCameraAnim intervalCameraAnim = AnyOfType<IntervalCameraAnim>( items );
-				if ( intervalCameraAnim != null )
-				{
-					if ( !dropTarget.Is<TrackCameraAnim>() )
-						return false;
-				}
 
-				IntervalAnimController intervalAnimController = AnyOfType<IntervalAnimController>( items );
-				if ( intervalAnimController != null )
-				{
-					//if ( !DropTargetIs<TrackCameraAnim>( dropTarget ) )
-					//{
-					//}
-					if ( !dropTarget.Is<TrackAnimController>() )
-						return false;
-				}
+				//GroupCamera groupCamera = AnyOfType<GroupCamera>( items );
+				//if ( groupCamera != null )
+				//{
+				//	if ( ParentHasChildOfType<GroupCamera>(DomNode) )
+				//		return false;
 
-				if ( DropTargetIs<TrackCameraAnim>( dropTarget ) )
-				{
-					if ( AnyNotOfType<IntervalCameraAnim>( items ) )
-						return false;
-				}
+				//	if ( dropTarget == null )
+				//		return true;
+				//	else
+				//		return false;
+				//}
+
+				//TrackCameraAnim trackCameraAnim = AnyOfType<TrackCameraAnim>( items );
+				//if ( trackCameraAnim != null )
+				//{
+				//	if ( !dropTarget.Is<GroupCamera>() )
+				//		return false;
+
+				//	if ( ParentHasChildOfType<TrackCameraAnim>( dropTarget.Cast<GroupCamera>().DomNode ) )
+				//		return false;
+				//}
+
+				//IntervalCameraAnim intervalCameraAnim = AnyOfType<IntervalCameraAnim>( items );
+				//if ( intervalCameraAnim != null )
+				//{
+				//	if ( !dropTarget.Is<TrackCameraAnim>() )
+				//		return false;
+				//}
+
+				//IntervalAnimController intervalAnimController = AnyOfType<IntervalAnimController>( items );
+				//if ( intervalAnimController != null )
+				//{
+				//	//if ( !DropTargetIs<TrackCameraAnim>( dropTarget ) )
+				//	//{
+				//	//}
+				//	if ( !dropTarget.Is<TrackAnimController>() )
+				//		return false;
+				//}
+
+				//if ( DropTargetIs<TrackCameraAnim>( dropTarget ) )
+				//{
+				//	if ( AnyNotOfType<IntervalCameraAnim>( items ) )
+				//		return false;
+				//}
 
 				return true;
 			}

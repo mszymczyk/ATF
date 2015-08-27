@@ -9,7 +9,7 @@ namespace picoTimelineEditor.DomNodeAdapters
 {
     /// <summary>
     /// Adapts DomNode to a Key</summary>
-    public class KeyChangeLevel : Key
+    public class KeyChangeLevel : TimelineReference
     {
 		/// <summary>
 		/// Gets and sets the sound bank</summary>

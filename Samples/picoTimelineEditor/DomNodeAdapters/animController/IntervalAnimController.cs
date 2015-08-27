@@ -73,6 +73,24 @@ namespace picoTimelineEditor.DomNodeAdapters
 			return i;
 		}
 		#endregion
+
+		public override bool CanParentTo( DomNode parent )
+		{
+			return ValidateImpl( parent, 0 );
+		}
+
+		public override bool Validate( DomNode parent )
+		{
+			return ValidateImpl( parent, 1 );
+		}
+
+		private bool ValidateImpl( DomNode parent, int validating )
+		{
+			if ( !parent.Is<TrackAnimController>() )
+				return false;
+
+			return true;
+		}
 	}
 }
 

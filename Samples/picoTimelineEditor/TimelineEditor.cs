@@ -65,32 +65,35 @@ namespace picoTimelineEditor
             paletteService.AddItem(Schema.markerType.Type, "Timelines", this);
             paletteService.AddItem(Schema.groupType.Type, "Timelines", this);
             paletteService.AddItem(Schema.trackType.Type, "Timelines", this);
-            paletteService.AddItem(Schema.intervalType.Type, "Timelines", this);
-            paletteService.AddItem(Schema.keyType.Type, "Timelines", this);
+			//paletteService.AddItem(Schema.intervalType.Type, "Timelines", this);
+			//paletteService.AddItem(Schema.keyType.Type, "Timelines", this);
 			//paletteService.AddItem(Schema.timelineRefType.Type, "Timelines", this);
 
 			// pico
 			//
 			//paletteService.AddItem( Schema.trackFaderType.Type, "pico", this );
-			paletteService.AddItem( Schema.intervalCurveType.Type, "pico", this );
+			//paletteService.AddItem( Schema.intervalCurveType.Type, "pico", this );
+
+			// random stuff
+			//
 			paletteService.AddItem( Schema.keyLuaScriptType.Type, "pico", this );
-			paletteService.AddItem( Schema.intervalNodeAnimationType.Type, "pico", this );
-
-			paletteService.AddItem( Schema.trackAnimControllerType.Type, "pico", this );
-			paletteService.AddItem( Schema.intervalAnimControllerType.Type, "pico", this );
-
 			paletteService.AddItem( Schema.keyChangeLevelType.Type, "pico", this );
-
 			paletteService.AddItem( Schema.intervalTextType.Type, "pico", this );
+			paletteService.AddItem( Schema.intervalNodeAnimationType.Type, "Anim", this );
+
+			// sound
+			//
+			paletteService.AddItem( Schema.keySoundType.Type, "Sound", this );
+
+			// anim controller
+			//
+			paletteService.AddItem( Schema.trackAnimControllerType.Type, "Anim", this );
+			paletteService.AddItem( Schema.intervalAnimControllerType.Type, "Anim", this );
 
 			// fader
 			//
 			paletteService.AddItem( Schema.intervalFaderType.Type, "pico", this );
 			paletteService.AddItem( Schema.trackFaderType.Type, "pico", this );
-
-			// sound
-			//
-			paletteService.AddItem( Schema.keySoundType.Type, "pico", this );
 
 			// Camera
 			//
@@ -149,6 +152,11 @@ namespace picoTimelineEditor
         {
             if (attribute == Schema.groupType.expandedAttribute)
                 return true;
+
+			// when batch processing and converting cut to timeline, this might be null
+			//
+			if ( ActiveControl == null )
+				return true;
 
             TimelinePath path = new TimelinePath(item);
             return ActiveControl.IsEditable(path);
@@ -574,8 +582,9 @@ namespace picoTimelineEditor
             {
 				if ( Path.GetExtension( filePath ).ToLower() == ".cut" )
 				{
-					picoCutToTimelineConverter converter = new picoCutToTimelineConverter( uri );
-					node = converter.Convert();
+					//picoCutToTimelineConverter converter = new picoCutToTimelineConverter( uri );
+					//node = converter.Convert();
+					node = new DomNode( Schema.timelineType.Type, Schema.timelineRootElement );
 				}
 				else
 				{
@@ -664,6 +673,14 @@ namespace picoTimelineEditor
                 // Initialize Dom extensions now that the data is complete
                 node.InitializeExtensions();
             }
+
+			if ( Path.GetExtension( filePath ).ToLower() == ".cut" )
+			{
+				picoCutToTimelineConverter converter = new picoCutToTimelineConverter( filePath );
+				//node = converter.Convert();
+				converter.Convert( node );
+				//node = new DomNode( Schema.timelineType.Type, Schema.timelineRootElement );
+			}
 
             return document;
         }
@@ -961,7 +978,7 @@ namespace picoTimelineEditor
         private bool m_reloading; // true while reloading the document in response to a FileWatcher.FileChanged event
         private readonly Dictionary<Uri, DateTime> m_loadedWriteTimes = new Dictionary<Uri, DateTime>();
 
-        private static SchemaLoader s_schemaLoader;
+        public static SchemaLoader s_schemaLoader;
         private static readonly DocumentClientInfo s_info = new DocumentClientInfo(
             "Timeline".Localize(),
             new string[] { ".timeline", ".cut" },

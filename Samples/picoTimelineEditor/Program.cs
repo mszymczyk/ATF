@@ -30,7 +30,7 @@ namespace picoTimelineEditor
         /// <summary>
         /// The main entry point for the application</summary>
         [STAThread]
-        static void Main()
+		static void Main( string[] args )
         {
             // It's important to call these before starting the app; otherwise theming and bitmaps
             //  may not render correctly.
@@ -119,6 +119,18 @@ namespace picoTimelineEditor
                 Text = "Timeline Editor Sample".Localize(),
                 Icon = GdiUtil.CreateIcon(ResourceUtil.GetImage(Sce.Atf.Resources.AtfIconImage))
             };
+
+			mainForm.Loaded += ( sender, e ) =>
+			{
+				if ( args.Length > 0 )
+				{
+					if ( args[0] == "-batchConvertCutToTimeline" )
+					{
+						picoCutToTimelineBatchConverter batchConverter = new picoCutToTimelineBatchConverter();
+						batchConverter.batchConvert();
+					}
+				}
+			};
 
             var batch = new CompositionBatch();
             batch.AddPart(mainForm);

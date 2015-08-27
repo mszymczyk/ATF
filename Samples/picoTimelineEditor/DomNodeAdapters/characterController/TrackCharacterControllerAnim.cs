@@ -24,7 +24,29 @@ namespace picoTimelineEditor.DomNodeAdapters
         }
 
         #endregion
-    }
+
+		public override bool CanParentTo( DomNode parent )
+		{
+			return ValidateImpl( parent, 0 );
+		}
+
+		public override bool Validate( DomNode parent )
+		{
+			return ValidateImpl( parent, 1 );
+		}
+
+		private bool ValidateImpl( DomNode parent, int validating )
+		{
+			if ( !parent.Is<GroupCharacterController>() )
+				return false;
+
+			IList<DomNode> childList = parent.GetChildList( Schema.groupCharacterControllerType.trackChild );
+			if ( childList.Count >= ( 1 + validating ) )
+				return false;
+
+			return true;
+		}
+	}
 }
 
 

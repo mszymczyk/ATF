@@ -5,6 +5,7 @@ using System.Drawing;
 
 using Sce.Atf;
 using Sce.Atf.Controls.Timelines;
+using Sce.Atf.Dom;
 
 #pragma warning disable 0649 // suppress "field never set" warning
 
@@ -53,6 +54,16 @@ namespace picoTimelineEditor.DomNodeAdapters
         }
 
         #endregion
+
+		public virtual bool CanParentTo( DomNode parent )
+		{
+			return true;
+		}
+
+		public virtual bool Validate( DomNode parent )
+		{
+			return true;
+		}
     }
 }
 

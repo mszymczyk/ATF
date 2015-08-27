@@ -29,7 +29,7 @@ namespace picoTimelineEditor.DomNodeAdapters
 			// add default track for camera animation
 			//
 			TrackCharacterControllerAnim track = ( new DomNode( Schema.trackCharacterControllerAnimType.Type ) ).As<TrackCharacterControllerAnim>();
-			track.Name = "TrackCharacterController";
+			track.Name = "TrackCharacterAnim";
 			tracks.Add( track );
 		}
 
@@ -68,6 +68,24 @@ namespace picoTimelineEditor.DomNodeAdapters
 		}
 
 		#endregion
+
+		public override bool CanParentTo( DomNode parent )
+		{
+			return ValidateImpl( parent, 0 );
+		}
+
+		public override bool Validate( DomNode parent )
+		{
+			return ValidateImpl( parent, 1 );
+		}
+
+		private bool ValidateImpl( DomNode parent, int validating )
+		{
+			if ( !parent.Is<Timeline>() )
+				return false;
+
+			return true;
+		}
 	}
 }
 

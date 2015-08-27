@@ -87,28 +87,28 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="DomNodeAdapters\animController\IntervalAnimController.cs" />
+    <Compile Include="DomNodeAdapters\animController\TrackAnimController.cs" />
+    <Compile Include="DomNodeAdapters\camera\GroupCamera.cs" />
+    <Compile Include="DomNodeAdapters\camera\IntervalCameraAnim.cs" />
+    <Compile Include="DomNodeAdapters\camera\TrackCameraAnim.cs" />
     <Compile Include="DomNodeAdapters\characterController\GroupCharacterController.cs" />
-    <Compile Include="DomNodeAdapters\characterController\IntervalCharacterController.cs" />
-    <Compile Include="DomNodeAdapters\characterController\TrackCharacterController.cs" />
-    <Compile Include="DomNodeAdapters\ControlPoint.cs" />
-    <Compile Include="DomNodeAdapters\Curve.cs" />
-    <Compile Include="DomNodeAdapters\CurveLimitValidator.cs" />
+    <Compile Include="DomNodeAdapters\characterController\IntervalCharacterControllerAnim.cs" />
+    <Compile Include="DomNodeAdapters\characterController\TrackCharacterControllerAnim.cs" />
+    <Compile Include="DomNodeAdapters\curve\ControlPoint.cs" />
+    <Compile Include="DomNodeAdapters\curve\Curve.cs" />
+    <Compile Include="DomNodeAdapters\curve\CurveLimitValidator.cs" />
     <Compile Include="DomNodeAdapters\fader\IntervalFader.cs" />
     <Compile Include="DomNodeAdapters\fader\TrackFader.cs" />
-    <Compile Include="DomNodeAdapters\GroupCamera.cs" />
-    <Compile Include="DomNodeAdapters\GroupCameraValidator.cs" />
-    <Compile Include="DomNodeAdapters\IntervalAnimController.cs" />
-    <Compile Include="DomNodeAdapters\IntervalCameraAnim.cs" />
-    <Compile Include="DomNodeAdapters\IntervalCurve.cs" />
-    <Compile Include="DomNodeAdapters\IntervalNodeAnimation.cs" />
-    <Compile Include="DomNodeAdapters\KeyChangeLevel.cs" />
-    <Compile Include="DomNodeAdapters\LuaScript.cs" />
+    <Compile Include="DomNodeAdapters\graph\IntervalNodeAnimation.cs" />
+    <Compile Include="DomNodeAdapters\picoTimelineDomValidator.cs" />
+    <Compile Include="DomNodeAdapters\keys\KeyChangeLevel.cs" />
+    <Compile Include="DomNodeAdapters\keys\LuaScript.cs" />
     <Compile Include="DomNodeAdapters\sound\KeySound.cs" />
     <Compile Include="DomNodeAdapters\text\IntervalText.cs" />
     <Compile Include="DomNodeAdapters\TimelineReference.cs" />
-    <Compile Include="DomNodeAdapters\TrackAnimController.cs" />
-    <Compile Include="DomNodeAdapters\TrackCameraAnim.cs" />
     <Compile Include="HelpAboutCommand.cs" />
+    <Compile Include="picoCutToTimelineBatchConverter.cs" />
     <Compile Include="picoCutToTimelineConverter.cs" />
     <Compile Include="picoD2dTimelineRenderer.cs" />
     <Compile Include="picoTimelineControl.cs">

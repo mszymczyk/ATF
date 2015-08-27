@@ -22,15 +22,15 @@ namespace picoTimelineEditor
     /// </summary>
     public class picoCutToTimelineConverter
     {
-		public picoCutToTimelineConverter( Uri filePath )
+		public picoCutToTimelineConverter( string filePath )
 		{
-			m_filePath = filePath.LocalPath;
-			m_uri = filePath;
+			m_filePath = filePath;
+			//m_uri = filePath;
 		}
 
-		public DomNode Convert()
+		public bool Convert( DomNode root )
 		{
-			DomNode root = null;
+			//DomNode root = null;
 
 			string xmlFileString = string.Empty;
 
@@ -59,7 +59,7 @@ namespace picoTimelineEditor
 			}
 
 			if ( xmlFileString.Length == 0 )
-				return null;
+				return false;
 
 			XmlDocument xmlDoc = new XmlDocument();
 
@@ -70,7 +70,7 @@ namespace picoTimelineEditor
 			catch ( Exception ex )
 			{
 				string msg = ex.Message;
-				return null;
+				return false;
 			}
 
 			m_xmlDoc = xmlDoc;
@@ -110,28 +110,29 @@ namespace picoTimelineEditor
 
 			try
 			{
-				root = _ParseCutsceneFile( xmlDoc );
+				_ParseCutsceneFile( xmlDoc, root );
 			}
 			catch ( Exception ex )
 			{
 				string str = ex.Message;
-				return null;
+				return false;
 			}
 
-			return root;
+			return true;
 		}
 
-		private DomNode _ParseCutsceneFile( XmlDocument xmlDocument )
+		private void _ParseCutsceneFile( XmlDocument xmlDocument, DomNode root )
 		{
-			m_rootNode = new DomNode( Schema.timelineType.Type, Schema.timelineRootElement );
+			//m_rootNode = new DomNode( Schema.timelineType.Type, Schema.timelineRootElement );
+			m_rootNode = root;
 			m_timelineDocument = m_rootNode.Cast<TimelineDocument>();
 			m_timeline = m_rootNode.Cast<Timeline>();
 
-			D2dTimelineRenderer renderer = new picoD2dTimelineRenderer();
-			m_timelineDocument.Renderer = renderer;
-			renderer.Init( m_timelineDocument.TimelineControl.D2dGraphics );
+			//D2dTimelineRenderer renderer = new picoD2dTimelineRenderer();
+			//m_timelineDocument.Renderer = renderer;
+			//renderer.Init( m_timelineDocument.TimelineControl.D2dGraphics );
 
-			m_rootNode.InitializeExtensions();
+			//m_rootNode.InitializeExtensions();
 
 			{
 				// calculate whole cutscene duration
@@ -150,11 +151,11 @@ namespace picoTimelineEditor
 			}
 
 			TimelineContext timelineContext = m_rootNode.As<TimelineContext>();
-			string fileName = Path.GetFileName( m_filePath );
-			ControlInfo controlInfo = new ControlInfo( fileName, m_filePath, StandardControlGroup.Center );
-			timelineContext.ControlInfo = controlInfo;
+			//string fileName = Path.GetFileName( m_filePath );
+			//ControlInfo controlInfo = new ControlInfo( fileName, m_filePath, StandardControlGroup.Center );
+			//timelineContext.ControlInfo = controlInfo;
 
-			m_timelineDocument.Uri = m_uri;
+			//m_timelineDocument.Uri = m_uri;
 
 			ITransactionContext transactionContext = timelineContext.As<ITransactionContext>();
 			transactionContext.DoTransaction(
@@ -164,7 +165,6 @@ namespace picoTimelineEditor
 					_CreateCameraGroup();
 					_ReadFaderSequence();
 					_ReadLuaSequence();
-					_ReadChangeLevelSequence();
 					_ReadTextSequence();
 					_ReadSoundSequence();
 					_ReadAnimControlerSequence();
@@ -174,10 +174,12 @@ namespace picoTimelineEditor
 					_ReadMonsterCharacterSequence();
 					_FinalizeCameraSequence();
 
+					_ReadChangeLevelSequence();
+
 				}, "_ParseCutsceneFile" );
 
 
-			return m_rootNode;
+			//return m_rootNode;
 		}
 
 		private void _CreateCameraGroup()
@@ -1235,7 +1237,7 @@ namespace picoTimelineEditor
 		}
 
 		private string m_filePath;
-		private Uri m_uri;
+		//private Uri m_uri;
 		private XmlDocument m_xmlDoc;
 		private XmlElement m_xmlDocElement;
 		private string m_cutsceneDir;
