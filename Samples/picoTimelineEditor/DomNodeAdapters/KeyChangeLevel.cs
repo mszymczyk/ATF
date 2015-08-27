@@ -26,7 +26,15 @@ namespace picoTimelineEditor.DomNodeAdapters
 			get { return (string)DomNode.GetAttribute( Schema.keyChangeLevelType.cutsceneFileAttribute ); }
 			set { DomNode.SetAttribute( Schema.keyChangeLevelType.cutsceneFileAttribute, value ); }
 		}
-    }
+
+		/// <summary>
+		/// Gets and sets the unloadCurrentlevel</summary>
+		public bool UnloadCurrentLevel
+		{
+			get { return (bool)DomNode.GetAttribute( Schema.keyChangeLevelType.unloadCurrentlevelAttribute ); }
+			set { DomNode.SetAttribute( Schema.keyChangeLevelType.unloadCurrentlevelAttribute, value ); }
+		}
+	}
 }
 
 

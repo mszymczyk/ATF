@@ -175,7 +175,7 @@ namespace picoTimelineEditor.DomNodeAdapters
 				foreach ( Curve curve in m_curves )
 				{
 					curve.Name = Name;
-
+					curve.DisplayName = "FaderValue: " + Name;
 				}
 			}
 			else if ( e.AttributeInfo.Equivalent( Schema.intervalFaderType.colorAttribute ) )

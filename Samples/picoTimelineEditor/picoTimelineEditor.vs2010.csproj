@@ -109,6 +109,7 @@
     <Compile Include="DomNodeAdapters\TrackAnimController.cs" />
     <Compile Include="DomNodeAdapters\TrackCameraAnim.cs" />
     <Compile Include="HelpAboutCommand.cs" />
+    <Compile Include="picoCutToTimelineConverter.cs" />
     <Compile Include="picoD2dTimelineRenderer.cs" />
     <Compile Include="picoTimelineControl.cs">
       <SubType>Component</SubType>

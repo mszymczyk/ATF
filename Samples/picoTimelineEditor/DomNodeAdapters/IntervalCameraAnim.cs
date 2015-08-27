@@ -49,6 +49,54 @@ namespace picoTimelineEditor.DomNodeAdapters
 			set { DomNode.SetAttribute( Schema.intervalCameraAnimType.colorAttribute, value.ToArgb() ); }
 		}
 
+		/// <summary>
+		/// Gets and sets the camera's Field of View</summary>
+		public float FieldOfView
+		{
+			get { return (float)DomNode.GetAttribute( Schema.intervalCameraAnimType.fovAttribute); }
+			set { DomNode.SetAttribute( Schema.intervalCameraAnimType.fovAttribute, value ); }
+		}
+
+		/// <summary>
+		/// Gets and sets the camera's Near Clip Plane</summary>
+		public float NearClipPlane
+		{
+			get { return (float)DomNode.GetAttribute( Schema.intervalCameraAnimType.nearClipPlaneAttribute ); }
+			set { DomNode.SetAttribute( Schema.intervalCameraAnimType.nearClipPlaneAttribute, value ); }
+		}
+
+		/// <summary>
+		/// Gets and sets the camera's Far Clip Plane</summary>
+		public float FarClipPlane
+		{
+			get { return (float)DomNode.GetAttribute( Schema.intervalCameraAnimType.farClipPlaneAttribute ); }
+			set { DomNode.SetAttribute( Schema.intervalCameraAnimType.farClipPlaneAttribute, value ); }
+		}
+
+		/// <summary>
+		/// Gets and sets the camera's camera view</summary>
+		public string CameraView
+		{
+			get { return (string)DomNode.GetAttribute( Schema.intervalCameraAnimType.cameraViewAttribute ); }
+			set { DomNode.SetAttribute( Schema.intervalCameraAnimType.cameraViewAttribute, value ); }
+		}
+
+		/// <summary>
+		/// Gets and sets the camera's animation file</summary>
+		public string AnimFile
+		{
+			get { return (string)DomNode.GetAttribute( Schema.intervalCameraAnimType.animFileAttribute ); }
+			set { DomNode.SetAttribute( Schema.intervalCameraAnimType.animFileAttribute, value ); }
+		}
+
+		/// <summary>
+		/// Gets and sets the camera's Anim Offset</summary>
+		public float AnimOffset
+		{
+			get { return (float)DomNode.GetAttribute( Schema.intervalCameraAnimType.animOffsetAttribute ); }
+			set { DomNode.SetAttribute( Schema.intervalCameraAnimType.animOffsetAttribute, value ); }
+		}
+
 		#region ITimelineObjectCreator Members
 		ITimelineObject ITimelineObjectCreator.Create()
 		{

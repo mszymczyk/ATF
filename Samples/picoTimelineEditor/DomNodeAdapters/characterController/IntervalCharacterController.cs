@@ -36,6 +36,22 @@ namespace picoTimelineEditor.DomNodeAdapters
 		//	set { DomNode.SetAttribute( Schema.intervalCharacterControllerAnimType.colorAttribute, value.ToArgb() ); }
 		//}
 
+		/// <summary>
+		/// Gets and sets the camera's animation file</summary>
+		public string AnimFile
+		{
+			get { return (string)DomNode.GetAttribute( Schema.intervalCharacterControllerAnimType.animFileAttribute ); }
+			set { DomNode.SetAttribute( Schema.intervalCharacterControllerAnimType.animFileAttribute, value ); }
+		}
+
+		/// <summary>
+		/// Gets and sets the camera's Anim Offset</summary>
+		public float AnimOffset
+		{
+			get { return (float)DomNode.GetAttribute( Schema.intervalCharacterControllerAnimType.animOffsetAttribute ); }
+			set { DomNode.SetAttribute( Schema.intervalCharacterControllerAnimType.animOffsetAttribute, value ); }
+		}
+
 		#region ITimelineObjectCreator Members
 		ITimelineObject ITimelineObjectCreator.Create()
 		{

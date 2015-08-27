@@ -44,6 +44,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="picoColor.cs" />
     <Compile Include="Controls\PropertyEditing\CustomEnableAttributePropertyDescriptor.cs" />
     <Compile Include="Controls\PropertyEditing\picoFileUriEditor.cs" />
     <Compile Include="Paths.cs" />

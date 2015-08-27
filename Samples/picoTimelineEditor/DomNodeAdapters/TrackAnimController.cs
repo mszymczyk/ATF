@@ -15,39 +15,16 @@ namespace picoTimelineEditor.DomNodeAdapters
     {
         #region ITrack Members
 
-		///// <summary>
-		///// Gets or sets the track name</summary>
-		//public override string Name
-		//{
-		//	get { return (string)DomNode.GetAttribute(Schema.trackCameraAnimType.nameAttribute); }
-		//	set { DomNode.SetAttribute( Schema.trackCameraAnimType.nameAttribute, value ); }
-		//}
-
-		///// <summary>
-		///// Creates a new interval</summary>
-		///// <returns>New interval</returns>
-		//public IInterval CreateInterval()
-		//{
-		//	return new DomNode(Schema.intervalType.Type).As<IInterval>();
-		//}
-
-		///// <summary>
-		///// Creates a new key</summary>
-		///// <returns>New key</returns>
-		//public IKey CreateKey()
-		//{
-		//	return new DomNode(Schema.keyType.Type).As<IKey>();
-		//}
-
-		///// <summary>
-		///// Gets the list of all keys in the track</summary>
-		//public IList<IKey> Keys
-		//{
-		//	get { return GetChildList<IKey>(Schema.trackType.keyChild); }
-		//}
+		/// <summary>
+		/// Gets or sets the track root node</summary>
+		public string RootNode
+		{
+			get { return (string)DomNode.GetAttribute( Schema.trackAnimControllerType.rootNodeAttribute ); }
+			set { DomNode.SetAttribute( Schema.trackAnimControllerType.rootNodeAttribute, value ); }
+		}
 
 		/// <summary>
-		/// Gets or sets the track name</summary>
+		/// Gets or sets the track skel filename</summary>
 		public string SkelFilename
 		{
 			get { return (string)DomNode.GetAttribute( Schema.trackAnimControllerType.skelFileAttribute); }

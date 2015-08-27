@@ -33,6 +33,34 @@ namespace picoTimelineEditor.DomNodeAdapters
 			tracks.Add( trackCameraAnim );
 		}
 
+		/// <summary>
+		/// Gets and sets group blend in duration</summary>
+		public float BlendInDuration
+		{
+			get { return (float)DomNode.GetAttribute( Schema.groupCameraType.blendInDurationAttribute ); }
+			set { DomNode.SetAttribute( Schema.groupCameraType.blendInDurationAttribute, value ); }
+		}
+
+		/// <summary>
+		/// Gets and sets group blend out duration</summary>
+		public float BlendOutDuration
+		{
+			get { return (float)DomNode.GetAttribute( Schema.groupCameraType.blendOutDurationAttribute ); }
+			set { DomNode.SetAttribute( Schema.groupCameraType.blendOutDurationAttribute, value ); }
+		}
+
+		public string PreCutsceneCamera
+		{
+			get { return (string)DomNode.GetAttribute( Schema.groupCameraType.preCutsceneCameraAttribute ); }
+			set { DomNode.SetAttribute( Schema.groupCameraType.preCutsceneCameraAttribute, value ); }
+		}
+
+		public string PostCutsceneCamera
+		{
+			get { return (string)DomNode.GetAttribute( Schema.groupCameraType.postCutsceneCameraAttribute ); }
+			set { DomNode.SetAttribute( Schema.groupCameraType.postCutsceneCameraAttribute, value ); }
+		}
+
 		#region IGroup Members
 
 		/// <summary>

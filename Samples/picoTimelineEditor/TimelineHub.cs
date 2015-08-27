@@ -58,6 +58,9 @@ namespace picoTimelineEditor
 		{
 			docUri = "";
 
+			if ( m_hubService == null )
+				return false;
+
 			if ( !m_hubService.Connected )
 			{
 				Outputs.WriteLine( OutputMessageType.Error, "Editor is not connected to picoHub" );

@@ -572,12 +572,20 @@ namespace picoTimelineEditor
             }
             else if (File.Exists(filePath))
             {
-                // read existing document using standard XML reader
-                using (FileStream stream = new FileStream(filePath, FileMode.Open, FileAccess.Read))
-                {
-                    DomXmlReader reader = new DomXmlReader(s_schemaLoader);
-                    node = reader.Read(stream, uri);
-                }
+				if ( Path.GetExtension( filePath ).ToLower() == ".cut" )
+				{
+					picoCutToTimelineConverter converter = new picoCutToTimelineConverter( uri );
+					node = converter.Convert();
+				}
+				else
+				{
+					// read existing document using standard XML reader
+					using ( FileStream stream = new FileStream( filePath, FileMode.Open, FileAccess.Read ) )
+					{
+						DomXmlReader reader = new DomXmlReader( s_schemaLoader );
+						node = reader.Read( stream, uri );
+					}
+				}
             }
             else if (isMasterDocument)
             {
@@ -591,9 +599,12 @@ namespace picoTimelineEditor
                 {
                     document = node.Cast<TimelineDocument>();
 
-                    D2dTimelineRenderer renderer = CreateTimelineRenderer();
-                    document.Renderer = renderer;
-                    renderer.Init(document.TimelineControl.D2dGraphics);
+					if ( document.Renderer == null )
+					{
+						D2dTimelineRenderer renderer = CreateTimelineRenderer();
+						document.Renderer = renderer;
+						renderer.Init( document.TimelineControl.D2dGraphics );
+					}
 
                     string fileName = Path.GetFileName(filePath);
                     ControlInfo controlInfo = new ControlInfo(fileName, filePath, StandardControlGroup.Center);
@@ -953,7 +964,7 @@ namespace picoTimelineEditor
         private static SchemaLoader s_schemaLoader;
         private static readonly DocumentClientInfo s_info = new DocumentClientInfo(
             "Timeline".Localize(),
-            new string[] { ".timeline" },
+            new string[] { ".timeline", ".cut" },
             Sce.Atf.Resources.DocumentImage,
             Sce.Atf.Resources.FolderImage,
             true);

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Text;
 
 namespace pico
 {
@@ -26,6 +27,33 @@ namespace pico
 		{
 			string absPath = PICO_DEMO_data + localPath;
 			return absPath;
+		}
+
+		public static string CanonicalizePathSimple( string srcPath )
+		{
+			StringBuilder dst = new StringBuilder();
+
+			char lastC = '\\'; // this will remove leading '\' or '/'
+			for ( int i = 0; i < srcPath.Length; ++i )
+			{
+				char c = srcPath[i];
+				if ( c == '/' )
+					c = '\\';
+
+				if ( lastC == '\\' && c == '\\' )
+				{
+					// skip
+				}
+				else
+				{
+					lastC = c;
+					dst.Append( c );
+				}
+			}
+
+
+			string str = dst.ToString();
+			return str;
 		}
 
 		private static readonly string PICO_ROOT = Path.GetFullPath( Environment.GetEnvironmentVariable( "PICO_ROOT" ) + "\\" );
