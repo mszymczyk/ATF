@@ -293,7 +293,8 @@ namespace picoTimelineEditor
 					return;
 
 				TimelineHubCommunication hubComm = scrubber.Owner.TimelineDocument.Cast<TimelineHubCommunication>();
-				hubComm.sendScrubberPosition( scrubber.Position );
+				//hubComm.sendScrubberPosition( scrubber.Position );
+				hubComm.sendScrubberPosition();
 			};
 		}
 

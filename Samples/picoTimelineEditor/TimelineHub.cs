@@ -39,10 +39,14 @@ namespace picoTimelineEditor
 
 		private void DomNode_ChildInserted( object sender, ChildEventArgs e )
 		{
+			// TODO: there's a crash when undoing reference additions
+			sendReloadTimeline();
 		}
 
 		private void DomNode_ChildRemoved( object sender, ChildEventArgs e )
 		{
+			// TODO: there's a crash when undoing reference additions
+			sendReloadTimeline();
 		}
 
 		public bool Connected { get; set; }
@@ -85,18 +89,30 @@ namespace picoTimelineEditor
 			return true;
 		}
 
-		public void sendScrubberPosition( float position )
+		//public void sendScrubberPosition( float position )
+		//{
+		//	string docUri;
+		//	if ( !validate(out docUri) )
+		//		return;
+
+		//	HubMessage hubMsg = new HubMessage( TIMELINE_TAG );
+		//	hubMsg.appendString( "scrubberPos" ); // command
+		//	hubMsg.appendString( docUri ); // what timeline
+		//	hubMsg.appendFloat( position );
+		//	m_hubService.send( hubMsg );
+		//}
+		public void sendScrubberPosition()
 		{
 			string docUri;
-			if ( !validate(out docUri) )
+			if ( !validate( out docUri ) )
 				return;
 
 			HubMessage hubMsg = new HubMessage( TIMELINE_TAG );
 			hubMsg.appendString( "scrubberPos" ); // command
 			hubMsg.appendString( docUri ); // what timeline
-			hubMsg.appendFloat( position );
+			TimelineDocument document = this.As<TimelineDocument>();
+			hubMsg.appendFloat( document.ScrubberManipulator.Position );
 			m_hubService.send( hubMsg );
-
 		}
 
 		//public void setEditMode( string editMode )
@@ -138,6 +154,8 @@ namespace picoTimelineEditor
 			hubMessage.appendString( docUri );
 			hubMessage.appendInt( (int)stream.Length );
 			hubMessage.appendBytes( stream.ToArray() );
+			TimelineDocument document = this.As<TimelineDocument>();
+			hubMessage.appendFloat( document.ScrubberManipulator.Position );
 
 			m_hubService.send( hubMessage );
 

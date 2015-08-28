@@ -124,6 +124,8 @@ namespace picoTimelineEditor
 
 					string filename = "*";
 
+					float scrubberPosition = 0;
+
 					if ( context != null )
 					{
 						TimelineDocument document = context.As<TimelineDocument>();
@@ -134,11 +136,14 @@ namespace picoTimelineEditor
 							{
 								filename = docUri;
 							}
+
+							scrubberPosition = document.ScrubberManipulator.Position;
 						}
 					}
 
 					hubMsg.appendString( filename );
 					hubMsg.appendString( editMode ); // what mode
+					hubMsg.appendFloat( scrubberPosition );
 					m_hubService.send( hubMsg );
 
 					if ( editMode != "Editing" )
@@ -343,7 +348,7 @@ namespace picoTimelineEditor
 					//hubMsg.appendString( "currentDocument" ); // command
 					hubMsg.appendString( "editMode" ); // command
 					hubMsg.appendString( docUri ); // what timeline
-					//hubMsg.appendFloat( position );
+					hubMsg.appendFloat( document.ScrubberManipulator.Position );
 					hubMsg.appendString( editMode );
 					m_hubService.send( hubMsg );
 				}
