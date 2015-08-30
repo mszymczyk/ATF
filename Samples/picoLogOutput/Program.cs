@@ -11,7 +11,7 @@ using Sce.Atf;
 using Sce.Atf.Applications;
 using Sce.Atf.Applications.WebServices;
 
-namespace TreeListEditor
+namespace pico.LogOutput
 {
     /// <summary>
     /// This is a tree list editor sample application.
@@ -47,14 +47,14 @@ namespace TreeListEditor
                         typeof(ControlHostService),             // docking control host
                         typeof(WindowLayoutService),            // multiple window layout support
                         typeof(WindowLayoutServiceCommands),    // window layout commands
-                        typeof(OutputService),                  // rich text box for displaying error and warning messages. Implements IOutputWriter.
-                        typeof(Outputs),                        // passes messages to all log writers
+						//typeof(OutputService),                  // rich text box for displaying error and warning messages. Implements IOutputWriter.
+						//typeof(Outputs),                        // passes messages to all log writers
                         typeof(StandardFileExitCommand),        // standard File exit menu command
-                        typeof(AtfUsageLogger),                 // logs computer info to an ATF server
-                        typeof(CrashLogger),                    // logs unhandled exceptions to an ATF server
+						//typeof(AtfUsageLogger),                 // logs computer info to an ATF server
+						//typeof(CrashLogger),                    // logs unhandled exceptions to an ATF server
                         typeof(UnhandledExceptionService),      // catches unhandled exceptions, displays info, and gives user a chance to save
-                        typeof(UserFeedbackService),            // displaying a dialog box that allows the user to submit a bug report to SHIP
-                        typeof(VersionUpdateService),           // updates to latest version on SHIP
+						//typeof(UserFeedbackService),            // displaying a dialog box that allows the user to submit a bug report to SHIP
+						//typeof(VersionUpdateService),           // updates to latest version on SHIP
                         typeof(ContextRegistry),                // central context registry with change notification
 						//typeof(PropertyEditor),                 // property grid for editing selected objects
 						//typeof(PropertyEditingCommands),        // commands for PropertyEditor and GridPropertyEditor, like Reset,
@@ -82,7 +82,7 @@ namespace TreeListEditor
                 {
                     using (var mainForm = new MainForm())
                     {
-                        mainForm.Text = "TreeListView Sample".Localize();
+                        mainForm.Text = "picoLogger".Localize();
                         mainForm.Icon = GdiUtil.CreateIcon(ResourceUtil.GetImage(Sce.Atf.Resources.AtfIconImage));
 
                         var batch = new CompositionBatch();
@@ -92,13 +92,13 @@ namespace TreeListEditor
 
                         container.InitializeAll();
 
-                        // Set the switch level for the Atf TraceSource instance so everything is traced. 
-                        Outputs.TraceSource.Switch.Level = SourceLevels.All;
-                        // a very verbose data display that includes callstacks
-                        Outputs.TraceSource.Listeners["Default"].TraceOutputOptions =
-                            TraceOptions.Callstack | TraceOptions.DateTime |
-                            TraceOptions.ProcessId | TraceOptions.ThreadId |
-                            TraceOptions.Timestamp;
+						//// Set the switch level for the Atf TraceSource instance so everything is traced. 
+						//Outputs.TraceSource.Switch.Level = SourceLevels.All;
+						//// a very verbose data display that includes callstacks
+						//Outputs.TraceSource.Listeners["Default"].TraceOutputOptions =
+						//	TraceOptions.Callstack | TraceOptions.DateTime |
+						//	TraceOptions.ProcessId | TraceOptions.ThreadId |
+						//	TraceOptions.Timestamp;
                         
                         Application.Run(mainForm);
                     }

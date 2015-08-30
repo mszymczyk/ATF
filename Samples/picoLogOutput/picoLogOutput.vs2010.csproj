@@ -54,8 +54,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="LogDataContainer.cs" />
-    <Compile Include="LogOutputForm.cs" />
+    <Compile Include="Icons.cs" />
+    <Compile Include="InputThread.cs" />
     <Compile Include="picoLogDataTable.cs" />
     <Compile Include="picoLogOutputEditor.cs" />
     <Compile Include="picoLogOutputForm3.cs">

@@ -18,7 +18,7 @@ namespace pico.LogOutput
     /// <summary>
     /// Tree list view editor for hierarchical file system component</summary>
     [Export(typeof(IInitializable))]
-    class picoLogOutputEditor : IInitializable, IControlHostClient
+    public class picoLogOutputEditor : IInitializable, IControlHostClient
     {
         /// <summary>
         /// Constructor with parameters. Creates and registers UserControl and adds buttons to it.
@@ -48,13 +48,19 @@ namespace pico.LogOutput
         {
             // So the GUI will show up since nothing else imports it...
 
+			m_icons = new Icons();
+
 			//picoLogOutputForm form_All = new picoLogOutputForm( "All", m_contextRegistry, m_settingsService, m_controlHostService );
 			//m_logForms.Add( form_All );
 
+			m_inputThread = new InputThread( this );
+
 			//picoLogOutputForm2 form_All = new picoLogOutputForm2();
 			picoLogOutputForm3 form_All = new picoLogOutputForm3();
-			//picoLogDataTable data = new picoLogDataTable();
+			m_logForms.Add( "All", form_All );
+			picoLogDataTable data = new picoLogDataTable();
 			//form_All.bindData( data.DataTableView );
+			form_All.setup( data, m_icons );
 
 			var info =
                     new ControlInfo(
@@ -111,11 +117,33 @@ namespace pico.LogOutput
 
         #endregion
 
+		public void addDataItem( DataItem dataItem, string channel )
+		{
+			lock( this )
+			{
+				picoLogOutputForm3 form;
+				if ( m_logForms.TryGetValue( channel, out form ) )
+				{
+					//form.addDataItem( dataItem );
+					if (form != null && form.IsHandleCreated)
+						form.BeginInvoke( new MethodInvoker( () => form.addDataItem( dataItem ) ) );
+				}
+			}
+		}
+
+		//private void addDataItemUnsafe( DataItem dataItem )
+		//{
+		//	m_progressWindow.SetProgress( nDone, nTotal );
+		//}
+
         private readonly MainForm m_mainForm;
         private readonly IContextRegistry m_contextRegistry;
 		private readonly ISettingsService m_settingsService;
 		private readonly IControlHostService m_controlHostService;
 
-		private List<picoLogOutputForm> m_logForms = new List<picoLogOutputForm>();
+		//private List<picoLogOutputForm> m_logForms = new List<picoLogOutputForm>();
+		private Dictionary<string, picoLogOutputForm3> m_logForms = new Dictionary<string, picoLogOutputForm3>();
+		private Icons m_icons;
+		private InputThread m_inputThread;
     }
 }

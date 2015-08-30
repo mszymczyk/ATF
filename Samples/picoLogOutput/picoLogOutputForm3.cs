@@ -15,37 +15,37 @@ namespace pico.LogOutput
 		{
 			InitializeComponent();
 
-			m_errorIcon = SystemIcons.Error;
-			m_warningIcon = SystemIcons.Warning;
-			m_infoIcon = SystemIcons.Information;
-
-			//m_errorImage = new Bitmap( SystemIcons.Error.ToBitmap(), 16, 16 );
-			//m_warningImage = new Bitmap( SystemIcons.Warning.ToBitmap(), 16, 16 );
-			//m_infoImage = new Bitmap( SystemIcons.Information.ToBitmap(), 16, 16 );
-			//m_errorImage = new Bitmap( SystemIcons.Error.ToBitmap() );
-			//m_warningImage = new Bitmap( SystemIcons.Warning.ToBitmap() );
-			//m_infoImage = new Bitmap( SystemIcons.Information.ToBitmap() );
-			m_errorImage = _ScaleIcon( SystemIcons.Error );
-			m_warningImage = _ScaleIcon( SystemIcons.Warning );
-			m_infoImage = _ScaleIcon( SystemIcons.Information );
+			dataGridView1.MouseClick += dataGridView1_MouseClick;
+			dataGridView1.KeyUp += dataGridView1_KeyUp;
 
 			filterTextBox.TextChanged += filterTextBox_TextChanged;
 
 			checkBoxErrors.CheckedChanged += checkBox_CheckedChanged;
 			checkBoxWarnings.CheckedChanged += checkBox_CheckedChanged;
 			checkBoxInfos.CheckedChanged += checkBox_CheckedChanged;
+		}
 
-			m_dt = new DataTable();
+		public void setup( picoLogDataTable dataTable, Icons icons )
+		{
+			m_logDataTable = dataTable;
+			m_icons = icons;
 
-			// Two columns.
-			//
-			m_dt.Columns.Add( "Type", typeof( int ) );
-			m_dt.Columns.Add( "Name", typeof( string ) );
-			m_dt.Columns.Add( "Value", typeof( string ) );
+			m_dt = dataTable.Data;
+			m_dv = dataTable.DataView;
 
-			GenerateFlat();
+			dataGridView1.CellFormatting += dataGridView1_CellFormatting;
+			dataGridView1.DataSource = m_dv;
 
-			bindData( m_dt.DefaultView );
+			updateCheckBoxes();
+			updateRowFilter();
+		}
+
+		public void addDataItem( DataItem dataItem )
+		{
+			m_logDataTable.AddItem( dataItem );
+
+			if ( dataGridView1.SelectedRows.Count == 0 )
+				dataGridView1.FirstDisplayedScrollingRowIndex = dataGridView1.RowCount - 1;
 
 			updateCheckBoxes();
 			updateRowFilter();
@@ -56,173 +56,233 @@ namespace pico.LogOutput
 			updateRowFilter();
 		}
 
-		public void GenerateFlat()
-		{
-			int items = 30;
-			for (var i = 0; i < items; i++)
-			{
-				CreateItem();
-			}
-		}
-
-		private void CreateItem()
-		{
-			int typ = s_random.Next( 0, 3 );
-
-			if (typ == 0)
-				m_numErrors += 1;
-			else if (typ == 1)
-				m_numWarnings += 1;
-			else if (typ == 2)
-				m_numInfos += 1;
-
-			var name = CreateString( s_random.Next( 12, 21 ) );
-			object value = CreateString( s_random.Next( 15, 36 ) );
-
-			//var data =
-			//	new DataItem(
-			//		parent,
-			//		name,
-			//		value );
-
-			m_dt.Rows.Add( typ, name, value );
-
-			//return data;
-		}
-
-		private static string CreateString( int characters )
-		{
-			var sb = new StringBuilder();
-
-			var max = Alphabet.Length;
-			for (var i = 0; i < characters; i++)
-			{
-				var ch = Alphabet[s_random.Next( 0, max )];
-				sb.Append( ch );
-			}
-
-			return sb.ToString();
-		}
-
-		private Image _ScaleIcon( Icon sourceIcon )
-		{
-			Size iconSize = SystemInformation.SmallIconSize;
-			Bitmap bitmap = new Bitmap( iconSize.Width, iconSize.Height );
-
-			using (Graphics g = Graphics.FromImage( bitmap ))
-			{
-				g.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.HighQualityBicubic;
-				g.CompositingQuality = System.Drawing.Drawing2D.CompositingQuality.HighQuality;
-				g.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.HighQuality;
-				g.DrawImage( sourceIcon.ToBitmap(), new Rectangle( Point.Empty, iconSize ) );
-			}
-
-			//Icon smallerErrorIcon = Icon.FromHandle( bitmap.GetHicon() );
-			return bitmap;
-		}
-
 		void filterTextBox_TextChanged( object sender, EventArgs e )
 		{
-			//if (m_dataView == null)
-			//	return;
-
-			//string text = filterTextBox.Text;
-			//if ( text.Length < 3 )
-			//{
-			//	m_dataView.RowFilter = String.Empty;
-			//	return;
-			//}
-
-			//string userTextFixed = EscapeLikeValue( text );
-			//string filter = string.Format( "Name LIKE '*{0}*'", userTextFixed );
-			//m_dataView.RowFilter = filter;
-
 			updateRowFilter();
 		}
 
-		public void bindData( DataView dataView )
+		private void buttonClear_Click( object sender, EventArgs e )
 		{
-			m_dataView = dataView;
-
-			dataGridView1.MouseClick += dataGridView1_MouseClick;
-			dataGridView1.CellFormatting += dataGridView1_CellFormatting;
-
-			dataGridView1.DataSource = dataView;
+			m_logDataTable.Clear();
+			updateCheckBoxes();
+			updateRowFilter();
 		}
 
 		void dataGridView1_CellFormatting( object sender, DataGridViewCellFormattingEventArgs e )
 		{
-			//if ( dataGridView1.Columns[e.ColumnIndex].Name == "Type" )
 			if ( e.ColumnIndex == 0 )
 			{
 				if ( e.Value != null )
 				{
 					int ival = (int)e.Value;
-					//if ( ival == 0 )
-					//{
-					//	e.Value = m_errorIcon;
-					//}
-					//else if (ival == 1)
-					//{
-					//	e.Value = m_warningIcon;
-					//}
-					//else if (ival == 2)
-					//{
-					//	e.Value = m_infoIcon;
-					//}
-					if (ival == 0)
+					if (ival == DataItem.Type_Error)
 					{
-						e.Value = m_errorImage;
+						e.Value = m_icons.ErrorIcon;
 					}
-					else if (ival == 1)
+					else if (ival == DataItem.Type_Warning)
 					{
-						e.Value = m_warningImage;
+						e.Value = m_icons.WarningIcon;
 					}
-					else if (ival == 2)
+					else if (ival == DataItem.Type_Info)
 					{
-						e.Value = m_infoImage;
+						e.Value = m_icons.InfoIcon;
 					}
 				}
 			}
+			//else if ( e.ColumnIndex == 2 )
+			//{
+			//	var cell = dataGridView1.Rows[e.RowIndex].Cells[e.ColumnIndex];
+			//	// Set the Cell's ToolTipText.
+			//	cell.ToolTipText = cell.Value.ToString();
+			//}
 		}
 
 		private void dataGridView1_MouseClick( object sender, MouseEventArgs e )
 		{
-			dataGridView1.FirstDisplayedScrollingRowIndex = dataGridView1.RowCount - 1;
-
 			if (e.Button == MouseButtons.Right)
 			{
-				ContextMenu m = new ContextMenu();
-				m.MenuItems.Add( new MenuItem( "Cut" ) );
-				MenuItem copy = new MenuItem( "Copy" );
-				copy.Click += copy_Click;
-				m.MenuItems.Add( copy );
-				m.MenuItems.Add( new MenuItem( "Paste" ) );
-
 				int currentMouseOverRow = dataGridView1.HitTest( e.X, e.Y ).RowIndex;
-
 				if (currentMouseOverRow >= 0)
 				{
-					m.MenuItems.Add( new MenuItem( string.Format( "Do something to row {0}", currentMouseOverRow.ToString() ) ) );
-					dataGridView1.ClearSelection();
-					DataGridViewRow row = dataGridView1.Rows[currentMouseOverRow];
-					row.Selected = true;
-				}
+					// check if right-clicked selected row
+					//
+					bool clickedOnSelectedRow = false;
+					foreach (DataGridViewRow row in dataGridView1.SelectedRows)
+					{
+						if ( row.Index == currentMouseOverRow )
+						{
+							clickedOnSelectedRow = true;
+							break;
+						}
+					}
 
-				m.Show( dataGridView1, new Point( e.X, e.Y ) );
+					if (!clickedOnSelectedRow && Control.ModifierKeys == Keys.Control)
+					{
+						// clicked new row, but control was pressed
+						// add this row to selection
+						//
+						DataGridViewRow row = dataGridView1.Rows[currentMouseOverRow];
+						row.Selected = true;
+						clickedOnSelectedRow = true;
+					}
+
+					if (clickedOnSelectedRow)
+					{
+					}
+					else
+					{
+						// clicked on non-selected row and Control key wasn't pressed
+						// clear selection and select row that was right-clicked
+						//
+						dataGridView1.ClearSelection();
+						DataGridViewRow row = dataGridView1.Rows[currentMouseOverRow];
+						row.Selected = true;
+					}
+
+					ContextMenu m = new ContextMenu();
+
+					MenuItem copyDescription;
+					if (dataGridView1.SelectedRows.Count > 1)
+						copyDescription = new MenuItem( "Copy Descriptions" );
+					else
+						copyDescription = new MenuItem( "Copy Description" );
+					copyDescription.Click += copyDescription_Click;
+
+
+					MenuItem copyTag;
+					if (dataGridView1.SelectedRows.Count > 1)
+						copyTag = new MenuItem( "Copy Tags" );
+					else
+						copyTag = new MenuItem( "Copy Tag" );
+					copyTag.Click += copyTag_Click;
+
+
+					MenuItem copyFileLine;
+					if (dataGridView1.SelectedRows.Count > 1)
+						copyFileLine = new MenuItem( "Copy Files and Lines" );
+					else
+						copyFileLine = new MenuItem( "Copy File and Line" );
+					copyFileLine.Click += copyFileAndLine_Click;
+
+
+					MenuItem copyRowAsCSV;
+					if (dataGridView1.SelectedRows.Count > 1)
+						copyRowAsCSV = new MenuItem( "Copy Rows as CSV" );
+					else
+						copyRowAsCSV = new MenuItem( "Copy Row as CSV" );
+					copyRowAsCSV.Click += copyRowAsCSV_Click;
+
+					m.MenuItems.Add( copyDescription );
+					m.MenuItems.Add( copyTag );
+					m.MenuItems.Add( copyFileLine );
+					m.MenuItems.Add( copyRowAsCSV );
+					//m.MenuItems.Add( new MenuItem( "Paste" ) );
+					//m.MenuItems.Add( new MenuItem( string.Format( "Do something to row {0}", currentMouseOverRow.ToString() ) ) );
+
+					m.Show( dataGridView1, new Point( e.X, e.Y ) );
+				}
 			}
 		}
 
-		void copy_Click( object sender, EventArgs e )
+		void dataGridView1_KeyUp( object sender, KeyEventArgs e )
+		{
+			if ( e.KeyCode == Keys.End && e.Modifiers == Keys.Control )
+			{
+				dataGridView1.ClearSelection();
+				dataGridView1.FirstDisplayedScrollingRowIndex = dataGridView1.RowCount - 1;
+			}
+		}
+
+		//void copyDescription_Click( object sender, EventArgs e )
+		//{
+		//	StringBuilder sb = new StringBuilder();
+		//	foreach( DataGridViewRow row in dataGridView1.SelectedRows )
+		//	{
+		//		string col0 = row.Cells[0].Value.ToString();
+		//		string col1 = row.Cells[1].Value.ToString();
+		//		sb.Append( col0 );
+		//		sb.Append( ',' );
+		//		sb.AppendLine( col1 );
+		//	}
+
+		//	string str = sb.ToString();
+
+		//	System.Windows.Forms.Clipboard.SetText( str );
+		//}
+
+		void copyDescription_Click( object sender, EventArgs e )
 		{
 			StringBuilder sb = new StringBuilder();
-			foreach( DataGridViewRow row in dataGridView1.SelectedRows )
+			foreach (DataGridViewRow row in dataGridView1.SelectedRows)
 			{
-				string col0 = row.Cells[0].Value.ToString();
-				string col1 = row.Cells[1].Value.ToString();
-				sb.Append( col0 );
-				sb.Append( ',' );
-				sb.AppendLine( col1 );
+				sb.AppendLine( row.Cells[2].Value.ToString() );
+			}
+
+			string str = sb.ToString();
+
+			System.Windows.Forms.Clipboard.SetText( str );
+		}
+
+		void copyTag_Click( object sender, EventArgs e )
+		{
+			StringBuilder sb = new StringBuilder();
+			foreach (DataGridViewRow row in dataGridView1.SelectedRows)
+			{
+				sb.AppendLine( row.Cells[3].Value.ToString() );
+			}
+
+			string str = sb.ToString();
+
+			System.Windows.Forms.Clipboard.SetText( str );
+		}
+
+		void copyFileAndLine_Click( object sender, EventArgs e )
+		{
+			StringBuilder sb = new StringBuilder();
+			foreach (DataGridViewRow row in dataGridView1.SelectedRows)
+			{
+				sb.Append( row.Cells[4].Value.ToString() );
+				int lineNo = (int)row.Cells[5].Value;
+				sb.Append( '(' );
+				sb.Append( lineNo.ToString() );
+				sb.Append( ')' );
+				sb.AppendLine();
+			}
+
+			string str = sb.ToString();
+
+			System.Windows.Forms.Clipboard.SetText( str );
+		}
+
+		void copyRowAsCSV_Click( object sender, EventArgs e )
+		{
+			StringBuilder sb = new StringBuilder();
+			foreach (DataGridViewRow row in dataGridView1.SelectedRows)
+			{
+				int type = (int)row.Cells[0].Value;
+				string description = row.Cells[2].Value.ToString();
+				string tag = row.Cells[3].Value.ToString();
+				string file = row.Cells[4].Value.ToString();
+				int line = (int) row.Cells[5].Value;
+
+				if (type == DataItem.Type_Error)
+					sb.Append( "Error" );
+				else if (type == DataItem.Type_Warning)
+					sb.Append( "Warning" );
+				else if (type == DataItem.Type_Info)
+					sb.Append( "Info" );
+
+				sb.Append( ",\"" );
+				sb.Append( description );
+				sb.Append( "\",\"" );
+				sb.Append( tag );
+				sb.Append( "\",\"" );
+				sb.Append( file );
+				sb.Append( "(" );
+				sb.Append( line.ToString() );
+				sb.Append( ")\"" );
+	
+				sb.AppendLine();
 			}
 
 			string str = sb.ToString();
@@ -248,18 +308,18 @@ namespace pico.LogOutput
 
 		private void updateCheckBoxes()
 		{
-			if (m_numErrors != 1)
-				checkBoxErrors.Text = string.Format( "{0} Errors", m_numErrors );
+			if (m_logDataTable.NumErrors != 1)
+				checkBoxErrors.Text = string.Format( "{0} Errors", m_logDataTable.NumErrors );
 			else
 				checkBoxErrors.Text = "1 Error";
 
-			if (m_numWarnings != 1)
-				checkBoxWarnings.Text = string.Format( "{0} Warnings", m_numWarnings );
+			if (m_logDataTable.NumWarnings != 1)
+				checkBoxWarnings.Text = string.Format( "{0} Warnings", m_logDataTable.NumWarnings );
 			else
 				checkBoxWarnings.Text = "1 Warning";
 
-			if (m_numInfos != 1)
-				checkBoxInfos.Text = string.Format( "{0} Messages", m_numInfos );
+			if (m_logDataTable.NumInfos != 1)
+				checkBoxInfos.Text = string.Format( "{0} Messages", m_logDataTable.NumInfos );
 			else
 				checkBoxInfos.Text = "1 Message";
 		}
@@ -308,7 +368,7 @@ namespace pico.LogOutput
 			else
 			{
 				string userTextFixed = EscapeLikeValue( text );
-				rowFilterTextBoxPart = string.Format( "(Name LIKE '*{0}*' OR Value LIKE '*{0}*')", userTextFixed );
+				rowFilterTextBoxPart = string.Format( "(Description LIKE '*{0}*' OR Tag LIKE '*{0}*' OR File LIKE '*{0}*')", userTextFixed );
 
 				finalFilterValuee = string.Format( "{0} AND {1}", rowFilterCheckBoxesPart, rowFilterTextBoxPart );
 			}
@@ -316,21 +376,14 @@ namespace pico.LogOutput
 			//string userTextFixed = EscapeLikeValue( text );
 			//string filter = string.Format( "Name LIKE '*{0}*'", userTextFixed );
 			//m_dataView.RowFilter = filter;
-			m_dataView.RowFilter = finalFilterValuee;
+			m_dv.RowFilter = finalFilterValuee;
 		}
 
-		private DataView m_dataView;
-		private Icon m_errorIcon;
-		private Icon m_warningIcon;
-		private Icon m_infoIcon;
-		private Image m_errorImage;
-		private Image m_warningImage;
-		private Image m_infoImage;
-
-		private int m_numErrors;
-		private int m_numWarnings;
-		private int m_numInfos;
+		private picoLogDataTable m_logDataTable;
 		private DataTable m_dt;
+		private DataView m_dv;
+		private Icons m_icons;
+
 		private static readonly Random s_random = new Random();
 		private const string Alphabet = "     ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
 

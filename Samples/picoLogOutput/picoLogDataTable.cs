@@ -11,29 +11,80 @@ using System.Data;
 
 namespace pico.LogOutput
 {
+	enum MessageType
+	{
+		Error = 0,
+		Warning = 1,
+		Info = 2
+	}
+
+	public class DataItem
+	{
+		public static readonly int Type_Error = 0;
+		public static readonly int Type_Warning = 1;
+		public static readonly int Type_Info = 2;
+
+		public int Type	{ get; set; }
+		//public int Ordinal { get; set; }
+		public string Description { get; set; }
+		public string Tag { get; set; }
+		public string File { get; set; }
+		public int Line { get; set; }
+	}
+
 	public class picoLogDataTable
 	{
 		public picoLogDataTable()
 		{
 			m_dt = new DataTable();
-		
-			// Two columns.
-			//
+
 			m_dt.Columns.Add( "Type", typeof( int ) );
-			m_dt.Columns.Add( "Name", typeof( string ) );
-			m_dt.Columns.Add( "Value", typeof( string ) );
+			m_dt.Columns.Add( "Ordinal", typeof( int ) );
+			m_dt.Columns.Add( "Description", typeof( string ) );
+			m_dt.Columns.Add( "Tag", typeof( string ) );
+			m_dt.Columns.Add( "File", typeof( string ) );
+			m_dt.Columns.Add( "Line", typeof( int ) );
 
 			GenerateFlat();
 		}
+
+		public int MaxRows { get { return m_maxRows; } }
+		public int NumErrors { get { return m_numErrors; } }
+		public int NumWarnings { get { return m_numWarnings; } }
+		public int NumInfos { get { return m_numInfos; } }
 
 		public DataTable Data
 		{
 			get { return m_dt; }
 		}
 
-		public DataView DataTableView
+		public DataView DataView
 		{
 			get { return m_dt.DefaultView; }
+		}
+
+		public void Clear()
+		{
+			m_dt.Clear();
+			m_numErrors = 0;
+			m_numWarnings = 0;
+			m_numInfos = 0;
+		}
+
+		public void AddItem( DataItem item )
+		{
+			if ( m_dt.Rows.Count >= MaxRows )
+				m_dt.Rows.RemoveAt( 0 );
+
+			if (item.Type == DataItem.Type_Error)
+				m_numErrors += 1;
+			else if (item.Type == DataItem.Type_Warning)
+				m_numWarnings += 1;
+			else if (item.Type == DataItem.Type_Info)
+				m_numInfos += 1;
+
+			m_ordinal += 1;
+			m_dt.Rows.Add( item.Type, m_ordinal, item.Description, item.Tag, item.File, item.Line );
 		}
 
 		public void GenerateFlat()
@@ -41,25 +92,22 @@ namespace pico.LogOutput
 			int items = 30;
 			for (var i = 0; i < items; i++)
 			{
-				CreateItem();
+				DataItem di = CreateItem();
+				AddItem( di );
 			}
 		}
 
-		private void CreateItem()
+		private DataItem CreateItem()
 		{
-			int typ = s_random.Next( 0, 3 );
-			var name = CreateString( s_random.Next( 12, 21 ) );
-			object value = CreateString( s_random.Next( 15, 36 ) );
+			DataItem di = new DataItem();
 
-			//var data =
-			//	new DataItem(
-			//		parent,
-			//		name,
-			//		value );
+			di.Type = s_random.Next( 0, 3 );
+			di.Description = CreateString( s_random.Next( 12, 21 ) );
+			di.Tag = CreateString( s_random.Next( 15, 36 ) );
+			di.File = CreateString( s_random.Next( 15, 36 ) );
+			di.Line = s_random.Next( 0, 10000 );
 
-			m_dt.Rows.Add( typ, name, value );
-
-			//return data;
+			return di;
 		}
 
 		private static string CreateString( int characters )
@@ -77,7 +125,14 @@ namespace pico.LogOutput
 		}
 
 		private DataTable m_dt;
-		private static readonly Random s_random = new Random();
-		private const string Alphabet = "     ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
+		private int m_maxRows = 100;
+		private int m_ordinal;
+
+		private int m_numErrors;
+		private int m_numWarnings;
+		private int m_numInfos;
+
+		private static readonly Random s_random = new Random( 1973 );
+		private static readonly string Alphabet = "     ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
 	}
 }
