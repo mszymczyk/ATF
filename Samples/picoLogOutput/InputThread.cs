@@ -10,35 +10,41 @@ namespace pico.LogOutput
 		{
 			m_editor = editor;
 
-			//m_thread = new Thread( Run );
-			//m_thread.Name = "progress dialog";
-			//m_thread.IsBackground = true; //so that the thread can be killed if app dies.
-			//m_thread.SetApartmentState( ApartmentState.STA );
-			//m_thread.CurrentUICulture = Thread.CurrentThread.CurrentUICulture;
-			//m_thread.Start();
+			m_thread = new Thread( Run );
+			m_thread.Name = "progress dialog";
+			m_thread.IsBackground = true; //so that the thread can be killed if app dies.
+			m_thread.SetApartmentState( ApartmentState.STA );
+			m_thread.CurrentUICulture = Thread.CurrentThread.CurrentUICulture;
+			m_thread.Start();
 
-			m_timer = new System.Windows.Forms.Timer();
-			m_timer.Interval = 1000;
-			m_timer.Tick += ( object sender, System.EventArgs e ) =>
-			{
-				DataItem di = CreateItem();
-				m_editor.addDataItem( di, "All" );
-			};
-			m_timer.Start();
+			//m_timer = new System.Windows.Forms.Timer();
+			//m_timer.Interval = 1000;
+			//m_timer.Tick += ( object sender, System.EventArgs e ) =>
+			//{
+			//	DataItem di = CreateItem();
+			//	m_editor.addDataItem( di, "All" );
+			//};
+			//m_timer.Start();
 		}
 
-		//private void Run()
-		//{
+		private void Run()
+		{
+			try
+			{
+				// server never ends...
+				//
+				m_server = new AsynchronousSocketListener( m_editor );
+				m_server.StartListening();
+			}
+			catch( Exception ex )
+			{
+				System.Diagnostics.Debug.WriteLine( "AsynchronousSocketListener exception: " + ex.Message );
+			}
+			//finally
+			//{
 
-		//	try
-		//	{
-
-		//	}
-		//	finally
-		//	{
-
-		//	}
-		//}
+			//}
+		}
 
 		private DataItem CreateItem()
 		{
@@ -85,7 +91,8 @@ namespace pico.LogOutput
 		//}
 
 		private picoLogOutputEditor m_editor;
-		//private Thread m_thread;
-		private System.Windows.Forms.Timer m_timer;
+		private Thread m_thread;
+		//private System.Windows.Forms.Timer m_timer;
+		private AsynchronousSocketListener m_server;
 	}
 }

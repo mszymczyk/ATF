@@ -15,6 +15,7 @@ namespace pico.LogOutput
 		{
 			InitializeComponent();
 
+			dataGridView1.CellFormatting += dataGridView1_CellFormatting;
 			dataGridView1.MouseClick += dataGridView1_MouseClick;
 			dataGridView1.KeyUp += dataGridView1_KeyUp;
 
@@ -23,19 +24,25 @@ namespace pico.LogOutput
 			checkBoxErrors.CheckedChanged += checkBox_CheckedChanged;
 			checkBoxWarnings.CheckedChanged += checkBox_CheckedChanged;
 			checkBoxInfos.CheckedChanged += checkBox_CheckedChanged;
-		}
 
-		public void setup( picoLogDataTable dataTable, Icons icons )
-		{
-			m_logDataTable = dataTable;
-			m_icons = icons;
+			m_logDataTable = new picoLogDataTable();
+			m_dt = m_logDataTable.Data;
+			m_dv = m_logDataTable.DataView;
 
-			m_dt = dataTable.Data;
-			m_dv = dataTable.DataView;
-
-			dataGridView1.CellFormatting += dataGridView1_CellFormatting;
 			dataGridView1.DataSource = m_dv;
 
+			updateCheckBoxes();
+			updateRowFilter();
+		}
+
+		public void setup( Icons icons )
+		{
+			m_icons = icons;
+		}
+
+		public void clearLog()
+		{
+			m_logDataTable.Clear();
 			updateCheckBoxes();
 			updateRowFilter();
 		}
@@ -63,9 +70,7 @@ namespace pico.LogOutput
 
 		private void buttonClear_Click( object sender, EventArgs e )
 		{
-			m_logDataTable.Clear();
-			updateCheckBoxes();
-			updateRowFilter();
+			clearLog();
 		}
 
 		void dataGridView1_CellFormatting( object sender, DataGridViewCellFormattingEventArgs e )

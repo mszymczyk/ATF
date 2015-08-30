@@ -54,6 +54,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AsyncServerSocket.cs" />
     <Compile Include="Icons.cs" />
     <Compile Include="InputThread.cs" />
     <Compile Include="picoLogDataTable.cs" />

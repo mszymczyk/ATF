@@ -28,9 +28,17 @@
 		/// </summary>
 		private void InitializeComponent()
 		{
-			System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle4 = new System.Windows.Forms.DataGridViewCellStyle();
+			System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
+			System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
 			this.dataGridView1 = new System.Windows.Forms.DataGridView();
+			this.columnType = new System.Windows.Forms.DataGridViewImageColumn();
+			this.columnOrdinal = new System.Windows.Forms.DataGridViewTextBoxColumn();
+			this.columnDescription = new System.Windows.Forms.DataGridViewTextBoxColumn();
+			this.columnTag = new System.Windows.Forms.DataGridViewTextBoxColumn();
+			this.columnFile = new System.Windows.Forms.DataGridViewTextBoxColumn();
+			this.columnLine = new System.Windows.Forms.DataGridViewTextBoxColumn();
 			this.flowLayoutPanel1 = new System.Windows.Forms.FlowLayoutPanel();
+			this.buttonClear = new System.Windows.Forms.Button();
 			this.checkBoxErrors = new System.Windows.Forms.CheckBox();
 			this.labelSeparator = new System.Windows.Forms.Label();
 			this.checkBoxWarnings = new System.Windows.Forms.CheckBox();
@@ -40,13 +48,6 @@
 			this.label1 = new System.Windows.Forms.Label();
 			this.filterTextBox = new System.Windows.Forms.TextBox();
 			this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
-			this.columnType = new System.Windows.Forms.DataGridViewImageColumn();
-			this.columnOrdinal = new System.Windows.Forms.DataGridViewTextBoxColumn();
-			this.columnDescription = new System.Windows.Forms.DataGridViewTextBoxColumn();
-			this.columnTag = new System.Windows.Forms.DataGridViewTextBoxColumn();
-			this.columnFile = new System.Windows.Forms.DataGridViewTextBoxColumn();
-			this.columnLine = new System.Windows.Forms.DataGridViewTextBoxColumn();
-			this.buttonClear = new System.Windows.Forms.Button();
 			((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
 			this.flowLayoutPanel1.SuspendLayout();
 			this.tableLayoutPanel1.SuspendLayout();
@@ -57,6 +58,8 @@
 			this.dataGridView1.AllowUserToAddRows = false;
 			this.dataGridView1.AllowUserToDeleteRows = false;
 			this.dataGridView1.AllowUserToResizeRows = false;
+			dataGridViewCellStyle1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(250)))), ((int)(((byte)(250)))), ((int)(((byte)(250)))));
+			this.dataGridView1.AlternatingRowsDefaultCellStyle = dataGridViewCellStyle1;
 			this.dataGridView1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
@@ -77,6 +80,65 @@
 			this.dataGridView1.Size = new System.Drawing.Size(595, 373);
 			this.dataGridView1.TabIndex = 0;
 			// 
+			// columnType
+			// 
+			this.columnType.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.None;
+			this.columnType.DataPropertyName = "Type";
+			this.columnType.HeaderText = "";
+			this.columnType.MinimumWidth = 22;
+			this.columnType.Name = "columnType";
+			this.columnType.ReadOnly = true;
+			this.columnType.Resizable = System.Windows.Forms.DataGridViewTriState.False;
+			this.columnType.Width = 22;
+			// 
+			// columnOrdinal
+			// 
+			this.columnOrdinal.DataPropertyName = "Ordinal";
+			this.columnOrdinal.HeaderText = "";
+			this.columnOrdinal.MinimumWidth = 35;
+			this.columnOrdinal.Name = "columnOrdinal";
+			this.columnOrdinal.ReadOnly = true;
+			this.columnOrdinal.Resizable = System.Windows.Forms.DataGridViewTriState.False;
+			this.columnOrdinal.Width = 35;
+			// 
+			// columnDescription
+			// 
+			this.columnDescription.DataPropertyName = "Description";
+			dataGridViewCellStyle2.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+			this.columnDescription.DefaultCellStyle = dataGridViewCellStyle2;
+			this.columnDescription.HeaderText = "Description";
+			this.columnDescription.MinimumWidth = 50;
+			this.columnDescription.Name = "columnDescription";
+			this.columnDescription.ReadOnly = true;
+			this.columnDescription.Width = 510;
+			// 
+			// columnTag
+			// 
+			this.columnTag.DataPropertyName = "Tag";
+			this.columnTag.HeaderText = "Tag";
+			this.columnTag.MinimumWidth = 20;
+			this.columnTag.Name = "columnTag";
+			this.columnTag.ReadOnly = true;
+			this.columnTag.Width = 150;
+			// 
+			// columnFile
+			// 
+			this.columnFile.DataPropertyName = "File";
+			this.columnFile.HeaderText = "File";
+			this.columnFile.MinimumWidth = 20;
+			this.columnFile.Name = "columnFile";
+			this.columnFile.ReadOnly = true;
+			this.columnFile.Width = 150;
+			// 
+			// columnLine
+			// 
+			this.columnLine.DataPropertyName = "Line";
+			this.columnLine.HeaderText = "Line";
+			this.columnLine.MinimumWidth = 40;
+			this.columnLine.Name = "columnLine";
+			this.columnLine.ReadOnly = true;
+			this.columnLine.Width = 40;
+			// 
 			// flowLayoutPanel1
 			// 
 			this.flowLayoutPanel1.AutoSize = true;
@@ -95,6 +157,16 @@
 			this.flowLayoutPanel1.Name = "flowLayoutPanel1";
 			this.flowLayoutPanel1.Size = new System.Drawing.Size(595, 29);
 			this.flowLayoutPanel1.TabIndex = 1;
+			// 
+			// buttonClear
+			// 
+			this.buttonClear.Location = new System.Drawing.Point(3, 3);
+			this.buttonClear.Name = "buttonClear";
+			this.buttonClear.Size = new System.Drawing.Size(75, 23);
+			this.buttonClear.TabIndex = 8;
+			this.buttonClear.Text = "Clear";
+			this.buttonClear.UseVisualStyleBackColor = true;
+			this.buttonClear.Click += new System.EventHandler(this.buttonClear_Click);
 			// 
 			// checkBoxErrors
 			// 
@@ -182,7 +254,7 @@
 			this.filterTextBox.Anchor = System.Windows.Forms.AnchorStyles.None;
 			this.filterTextBox.Location = new System.Drawing.Point(311, 4);
 			this.filterTextBox.Name = "filterTextBox";
-			this.filterTextBox.Size = new System.Drawing.Size(100, 20);
+			this.filterTextBox.Size = new System.Drawing.Size(150, 20);
 			this.filterTextBox.TabIndex = 4;
 			// 
 			// tableLayoutPanel1
@@ -201,75 +273,6 @@
 			this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
 			this.tableLayoutPanel1.Size = new System.Drawing.Size(601, 414);
 			this.tableLayoutPanel1.TabIndex = 2;
-			// 
-			// columnType
-			// 
-			this.columnType.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.None;
-			this.columnType.DataPropertyName = "Type";
-			this.columnType.HeaderText = "";
-			this.columnType.MinimumWidth = 22;
-			this.columnType.Name = "columnType";
-			this.columnType.ReadOnly = true;
-			this.columnType.Resizable = System.Windows.Forms.DataGridViewTriState.False;
-			this.columnType.Width = 22;
-			// 
-			// columnOrdinal
-			// 
-			this.columnOrdinal.DataPropertyName = "Ordinal";
-			this.columnOrdinal.HeaderText = "";
-			this.columnOrdinal.MinimumWidth = 35;
-			this.columnOrdinal.Name = "columnOrdinal";
-			this.columnOrdinal.ReadOnly = true;
-			this.columnOrdinal.Resizable = System.Windows.Forms.DataGridViewTriState.False;
-			this.columnOrdinal.Width = 35;
-			// 
-			// columnDescription
-			// 
-			this.columnDescription.DataPropertyName = "Description";
-			dataGridViewCellStyle4.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-			this.columnDescription.DefaultCellStyle = dataGridViewCellStyle4;
-			this.columnDescription.HeaderText = "Description";
-			this.columnDescription.MinimumWidth = 50;
-			this.columnDescription.Name = "columnDescription";
-			this.columnDescription.ReadOnly = true;
-			this.columnDescription.Width = 510;
-			// 
-			// columnTag
-			// 
-			this.columnTag.DataPropertyName = "Tag";
-			this.columnTag.HeaderText = "Tag";
-			this.columnTag.MinimumWidth = 20;
-			this.columnTag.Name = "columnTag";
-			this.columnTag.ReadOnly = true;
-			this.columnTag.Width = 150;
-			// 
-			// columnFile
-			// 
-			this.columnFile.DataPropertyName = "File";
-			this.columnFile.HeaderText = "File";
-			this.columnFile.MinimumWidth = 20;
-			this.columnFile.Name = "columnFile";
-			this.columnFile.ReadOnly = true;
-			this.columnFile.Width = 150;
-			// 
-			// columnLine
-			// 
-			this.columnLine.DataPropertyName = "Line";
-			this.columnLine.HeaderText = "Line";
-			this.columnLine.MinimumWidth = 40;
-			this.columnLine.Name = "columnLine";
-			this.columnLine.ReadOnly = true;
-			this.columnLine.Width = 40;
-			// 
-			// buttonClear
-			// 
-			this.buttonClear.Location = new System.Drawing.Point(3, 3);
-			this.buttonClear.Name = "buttonClear";
-			this.buttonClear.Size = new System.Drawing.Size(75, 23);
-			this.buttonClear.TabIndex = 8;
-			this.buttonClear.Text = "Clear";
-			this.buttonClear.UseVisualStyleBackColor = true;
-			this.buttonClear.Click += new System.EventHandler(this.buttonClear_Click);
 			// 
 			// picoLogOutputForm3
 			// 
