@@ -55,6 +55,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AsyncServerSocket.cs" />
+    <Compile Include="CheckedComboBox.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="Icons.cs" />
     <Compile Include="InputThread.cs" />
     <Compile Include="picoLogDataTable.cs" />

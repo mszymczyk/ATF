@@ -31,12 +31,6 @@
 			System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
 			System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
 			this.dataGridView1 = new System.Windows.Forms.DataGridView();
-			this.columnType = new System.Windows.Forms.DataGridViewImageColumn();
-			this.columnOrdinal = new System.Windows.Forms.DataGridViewTextBoxColumn();
-			this.columnDescription = new System.Windows.Forms.DataGridViewTextBoxColumn();
-			this.columnTag = new System.Windows.Forms.DataGridViewTextBoxColumn();
-			this.columnFile = new System.Windows.Forms.DataGridViewTextBoxColumn();
-			this.columnLine = new System.Windows.Forms.DataGridViewTextBoxColumn();
 			this.flowLayoutPanel1 = new System.Windows.Forms.FlowLayoutPanel();
 			this.buttonClear = new System.Windows.Forms.Button();
 			this.checkBoxErrors = new System.Windows.Forms.CheckBox();
@@ -48,6 +42,14 @@
 			this.label1 = new System.Windows.Forms.Label();
 			this.filterTextBox = new System.Windows.Forms.TextBox();
 			this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
+			this.columnType = new System.Windows.Forms.DataGridViewImageColumn();
+			this.columnOrdinal = new System.Windows.Forms.DataGridViewTextBoxColumn();
+			this.columnGroup = new System.Windows.Forms.DataGridViewTextBoxColumn();
+			this.columnDescription = new System.Windows.Forms.DataGridViewTextBoxColumn();
+			this.columnTag = new System.Windows.Forms.DataGridViewTextBoxColumn();
+			this.columnFile = new System.Windows.Forms.DataGridViewTextBoxColumn();
+			this.columnLine = new System.Windows.Forms.DataGridViewTextBoxColumn();
+			this.checkedComboBox1 = new CheckComboBoxTest.CheckedComboBox();
 			((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
 			this.flowLayoutPanel1.SuspendLayout();
 			this.tableLayoutPanel1.SuspendLayout();
@@ -68,6 +70,7 @@
 			this.dataGridView1.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
             this.columnType,
             this.columnOrdinal,
+            this.columnGroup,
             this.columnDescription,
             this.columnTag,
             this.columnFile,
@@ -77,67 +80,8 @@
 			this.dataGridView1.ReadOnly = true;
 			this.dataGridView1.RowHeadersVisible = false;
 			this.dataGridView1.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-			this.dataGridView1.Size = new System.Drawing.Size(595, 373);
+			this.dataGridView1.Size = new System.Drawing.Size(691, 373);
 			this.dataGridView1.TabIndex = 0;
-			// 
-			// columnType
-			// 
-			this.columnType.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.None;
-			this.columnType.DataPropertyName = "Type";
-			this.columnType.HeaderText = "";
-			this.columnType.MinimumWidth = 22;
-			this.columnType.Name = "columnType";
-			this.columnType.ReadOnly = true;
-			this.columnType.Resizable = System.Windows.Forms.DataGridViewTriState.False;
-			this.columnType.Width = 22;
-			// 
-			// columnOrdinal
-			// 
-			this.columnOrdinal.DataPropertyName = "Ordinal";
-			this.columnOrdinal.HeaderText = "";
-			this.columnOrdinal.MinimumWidth = 35;
-			this.columnOrdinal.Name = "columnOrdinal";
-			this.columnOrdinal.ReadOnly = true;
-			this.columnOrdinal.Resizable = System.Windows.Forms.DataGridViewTriState.False;
-			this.columnOrdinal.Width = 35;
-			// 
-			// columnDescription
-			// 
-			this.columnDescription.DataPropertyName = "Description";
-			dataGridViewCellStyle2.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-			this.columnDescription.DefaultCellStyle = dataGridViewCellStyle2;
-			this.columnDescription.HeaderText = "Description";
-			this.columnDescription.MinimumWidth = 50;
-			this.columnDescription.Name = "columnDescription";
-			this.columnDescription.ReadOnly = true;
-			this.columnDescription.Width = 510;
-			// 
-			// columnTag
-			// 
-			this.columnTag.DataPropertyName = "Tag";
-			this.columnTag.HeaderText = "Tag";
-			this.columnTag.MinimumWidth = 20;
-			this.columnTag.Name = "columnTag";
-			this.columnTag.ReadOnly = true;
-			this.columnTag.Width = 150;
-			// 
-			// columnFile
-			// 
-			this.columnFile.DataPropertyName = "File";
-			this.columnFile.HeaderText = "File";
-			this.columnFile.MinimumWidth = 20;
-			this.columnFile.Name = "columnFile";
-			this.columnFile.ReadOnly = true;
-			this.columnFile.Width = 150;
-			// 
-			// columnLine
-			// 
-			this.columnLine.DataPropertyName = "Line";
-			this.columnLine.HeaderText = "Line";
-			this.columnLine.MinimumWidth = 40;
-			this.columnLine.Name = "columnLine";
-			this.columnLine.ReadOnly = true;
-			this.columnLine.Width = 40;
 			// 
 			// flowLayoutPanel1
 			// 
@@ -152,10 +96,11 @@
 			this.flowLayoutPanel1.Controls.Add(this.labelSeparator3);
 			this.flowLayoutPanel1.Controls.Add(this.label1);
 			this.flowLayoutPanel1.Controls.Add(this.filterTextBox);
+			this.flowLayoutPanel1.Controls.Add(this.checkedComboBox1);
 			this.flowLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.flowLayoutPanel1.Location = new System.Drawing.Point(3, 3);
 			this.flowLayoutPanel1.Name = "flowLayoutPanel1";
-			this.flowLayoutPanel1.Size = new System.Drawing.Size(595, 29);
+			this.flowLayoutPanel1.Size = new System.Drawing.Size(691, 29);
 			this.flowLayoutPanel1.TabIndex = 1;
 			// 
 			// buttonClear
@@ -271,8 +216,89 @@
 			this.tableLayoutPanel1.RowCount = 2;
 			this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
 			this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
-			this.tableLayoutPanel1.Size = new System.Drawing.Size(601, 414);
+			this.tableLayoutPanel1.Size = new System.Drawing.Size(697, 414);
 			this.tableLayoutPanel1.TabIndex = 2;
+			// 
+			// columnType
+			// 
+			this.columnType.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.None;
+			this.columnType.DataPropertyName = "Type";
+			this.columnType.HeaderText = "";
+			this.columnType.MinimumWidth = 22;
+			this.columnType.Name = "columnType";
+			this.columnType.ReadOnly = true;
+			this.columnType.Resizable = System.Windows.Forms.DataGridViewTriState.False;
+			this.columnType.Width = 22;
+			// 
+			// columnOrdinal
+			// 
+			this.columnOrdinal.DataPropertyName = "Ordinal";
+			this.columnOrdinal.HeaderText = "";
+			this.columnOrdinal.MinimumWidth = 35;
+			this.columnOrdinal.Name = "columnOrdinal";
+			this.columnOrdinal.ReadOnly = true;
+			this.columnOrdinal.Resizable = System.Windows.Forms.DataGridViewTriState.False;
+			this.columnOrdinal.Width = 35;
+			// 
+			// columnGroup
+			// 
+			this.columnGroup.DataPropertyName = "Group";
+			this.columnGroup.HeaderText = "Group";
+			this.columnGroup.MinimumWidth = 30;
+			this.columnGroup.Name = "columnGroup";
+			this.columnGroup.ReadOnly = true;
+			this.columnGroup.Width = 60;
+			// 
+			// columnDescription
+			// 
+			this.columnDescription.DataPropertyName = "Description";
+			dataGridViewCellStyle2.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+			this.columnDescription.DefaultCellStyle = dataGridViewCellStyle2;
+			this.columnDescription.HeaderText = "Description";
+			this.columnDescription.MinimumWidth = 50;
+			this.columnDescription.Name = "columnDescription";
+			this.columnDescription.ReadOnly = true;
+			this.columnDescription.Width = 510;
+			// 
+			// columnTag
+			// 
+			this.columnTag.DataPropertyName = "Tag";
+			this.columnTag.HeaderText = "Tag";
+			this.columnTag.MinimumWidth = 20;
+			this.columnTag.Name = "columnTag";
+			this.columnTag.ReadOnly = true;
+			this.columnTag.Width = 150;
+			// 
+			// columnFile
+			// 
+			this.columnFile.DataPropertyName = "File";
+			this.columnFile.HeaderText = "File";
+			this.columnFile.MinimumWidth = 20;
+			this.columnFile.Name = "columnFile";
+			this.columnFile.ReadOnly = true;
+			this.columnFile.Width = 150;
+			// 
+			// columnLine
+			// 
+			this.columnLine.DataPropertyName = "Line";
+			this.columnLine.HeaderText = "Line";
+			this.columnLine.MinimumWidth = 40;
+			this.columnLine.Name = "columnLine";
+			this.columnLine.ReadOnly = true;
+			this.columnLine.Width = 40;
+			// 
+			// checkedComboBox1
+			// 
+			this.checkedComboBox1.CheckOnClick = true;
+			this.checkedComboBox1.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawVariable;
+			this.checkedComboBox1.DropDownHeight = 1;
+			this.checkedComboBox1.FormattingEnabled = true;
+			this.checkedComboBox1.IntegralHeight = false;
+			this.checkedComboBox1.Location = new System.Drawing.Point(467, 3);
+			this.checkedComboBox1.Name = "checkedComboBox1";
+			this.checkedComboBox1.Size = new System.Drawing.Size(157, 21);
+			this.checkedComboBox1.TabIndex = 9;
+			this.checkedComboBox1.ValueSeparator = ", ";
 			// 
 			// picoLogOutputForm3
 			// 
@@ -280,7 +306,7 @@
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.Controls.Add(this.tableLayoutPanel1);
 			this.Name = "picoLogOutputForm3";
-			this.Size = new System.Drawing.Size(601, 414);
+			this.Size = new System.Drawing.Size(697, 414);
 			((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).EndInit();
 			this.flowLayoutPanel1.ResumeLayout(false);
 			this.flowLayoutPanel1.PerformLayout();
@@ -304,12 +330,14 @@
 		private System.Windows.Forms.Label labelSeparator;
 		private System.Windows.Forms.Label labelSeparator2;
 		private System.Windows.Forms.Label labelSeparator3;
+		private System.Windows.Forms.Button buttonClear;
+		private CheckComboBoxTest.CheckedComboBox checkedComboBox1;
 		private System.Windows.Forms.DataGridViewImageColumn columnType;
 		private System.Windows.Forms.DataGridViewTextBoxColumn columnOrdinal;
+		private System.Windows.Forms.DataGridViewTextBoxColumn columnGroup;
 		private System.Windows.Forms.DataGridViewTextBoxColumn columnDescription;
 		private System.Windows.Forms.DataGridViewTextBoxColumn columnTag;
 		private System.Windows.Forms.DataGridViewTextBoxColumn columnFile;
 		private System.Windows.Forms.DataGridViewTextBoxColumn columnLine;
-		private System.Windows.Forms.Button buttonClear;
 	}
 }

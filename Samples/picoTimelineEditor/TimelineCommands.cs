@@ -348,8 +348,8 @@ namespace picoTimelineEditor
 					//hubMsg.appendString( "currentDocument" ); // command
 					hubMsg.appendString( "editMode" ); // command
 					hubMsg.appendString( docUri ); // what timeline
-					hubMsg.appendFloat( document.ScrubberManipulator.Position );
 					hubMsg.appendString( editMode );
+					hubMsg.appendFloat( document.ScrubberManipulator.Position );
 					m_hubService.send( hubMsg );
 				}
 			}

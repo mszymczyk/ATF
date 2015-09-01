@@ -25,6 +25,10 @@ namespace pico.LogOutput
 			checkBoxWarnings.CheckedChanged += checkBox_CheckedChanged;
 			checkBoxInfos.CheckedChanged += checkBox_CheckedChanged;
 
+			checkedComboBox1.Items.Add( "Common" );
+			checkedComboBox1.SetItemChecked( 0, true );
+			checkedComboBox1.ItemCheck += checkedComboBox1_ItemCheck;
+
 			m_logDataTable = new picoLogDataTable();
 			m_dt = m_logDataTable.Data;
 			m_dv = m_logDataTable.DataView;
@@ -61,6 +65,11 @@ namespace pico.LogOutput
 		void checkBox_CheckedChanged( object sender, EventArgs e )
 		{
 			updateRowFilter();
+		}
+
+		void checkedComboBox1_ItemCheck( object sender, ItemCheckEventArgs e )
+		{
+			updateRowFilter( e );
 		}
 
 		void filterTextBox_TextChanged( object sender, EventArgs e )
@@ -329,7 +338,7 @@ namespace pico.LogOutput
 				checkBoxInfos.Text = "1 Message";
 		}
 
-		private void updateRowFilter()
+		private void updateRowFilter( ItemCheckEventArgs e = null )
 		{
 			string rowFilterCheckBoxesPart = "(";
 			if (checkBoxErrors.Checked)
@@ -376,6 +385,37 @@ namespace pico.LogOutput
 				rowFilterTextBoxPart = string.Format( "(Description LIKE '*{0}*' OR Tag LIKE '*{0}*' OR File LIKE '*{0}*')", userTextFixed );
 
 				finalFilterValuee = string.Format( "{0} AND {1}", rowFilterCheckBoxesPart, rowFilterTextBoxPart );
+			}
+
+			string groupFilter = null;
+			for ( int i = 0; i < checkedComboBox1.Items.Count; ++i )
+			{
+				object ob = checkedComboBox1.Items[i];
+				//if ( !checkedComboBox1.GetItemChecked( i ) )
+				bool itemChecked;
+				if ( e != null )
+					itemChecked = ( i == e.Index ) ? e.NewValue == CheckState.Checked : checkedComboBox1.GetItemChecked( i );
+				else
+					itemChecked = checkedComboBox1.GetItemChecked( i );
+
+				if ( !itemChecked )
+				{
+					string group = checkedComboBox1.GetItemText( ob );
+
+					if ( string.IsNullOrEmpty( groupFilter ) )
+					{
+						groupFilter = string.Format( "(Group <> '{0}')", group );
+					}
+					else
+					{
+						groupFilter += string.Format( "AND (Group <> '{0}')", group );
+					}
+				}
+			}
+
+			if ( groupFilter != null && groupFilter.Length > 0 )
+			{
+				finalFilterValuee = string.Format( "{0} AND ({1})", finalFilterValuee, groupFilter );
 			}
 
 			//string userTextFixed = EscapeLikeValue( text );

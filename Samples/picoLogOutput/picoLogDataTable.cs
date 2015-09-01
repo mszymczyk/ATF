@@ -26,6 +26,7 @@ namespace pico.LogOutput
 
 		public int Type	{ get; set; }
 		//public int Ordinal { get; set; }
+		public string Group { get; set; }
 		public string Description { get; set; }
 		public string Tag { get; set; }
 		public string File { get; set; }
@@ -40,6 +41,7 @@ namespace pico.LogOutput
 
 			m_dt.Columns.Add( "Type", typeof( int ) );
 			m_dt.Columns.Add( "Ordinal", typeof( int ) );
+			m_dt.Columns.Add( "Group", typeof( string ) );
 			m_dt.Columns.Add( "Description", typeof( string ) );
 			m_dt.Columns.Add( "Tag", typeof( string ) );
 			m_dt.Columns.Add( "File", typeof( string ) );
@@ -84,7 +86,7 @@ namespace pico.LogOutput
 				m_numInfos += 1;
 
 			m_ordinal += 1;
-			m_dt.Rows.Add( item.Type, m_ordinal, item.Description, item.Tag, item.File, item.Line );
+			m_dt.Rows.Add( item.Type, m_ordinal, item.Group, item.Description, item.Tag, item.File, item.Line );
 		}
 
 		public void GenerateFlat()
@@ -102,6 +104,7 @@ namespace pico.LogOutput
 			DataItem di = new DataItem();
 
 			di.Type = s_random.Next( 0, 3 );
+			di.Group = "Common";
 			di.Description = CreateString( s_random.Next( 12, 21 ) );
 			di.Tag = CreateString( s_random.Next( 15, 36 ) );
 			di.File = CreateString( s_random.Next( 15, 36 ) );

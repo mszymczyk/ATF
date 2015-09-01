@@ -119,7 +119,7 @@ namespace pico.Hub
 		public byte[] getFinalByteStream()
 		{
 			byte[] msgBytes = m_memStream.ToArray();
-			byte[] msgSizeBytes = toBytes( msgBytes.Length );
+			byte[] msgSizeBytes = toBytes( msgBytes.Length - 4 );
 			System.Buffer.BlockCopy( msgSizeBytes, 0, msgBytes, 0, 4 );
 			return msgBytes;
 		}

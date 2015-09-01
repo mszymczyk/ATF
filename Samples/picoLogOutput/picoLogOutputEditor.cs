@@ -82,6 +82,8 @@ namespace pico.LogOutput
 			//	form_All,
 			//	info,
 			//	this );
+
+			_AddNewForm( "All" );
         }
 
         #endregion
