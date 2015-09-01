@@ -52,6 +52,55 @@ namespace picoTimelineEditor.DomNodeAdapters
 			set { DomNode.SetAttribute( Schema.intervalCharacterControllerAnimType.animOffsetAttribute, value ); }
 		}
 
+		/// <summary>
+		/// Gets animation's duration in milliseconds
+		/// </summary>
+		[pico.Controls.PropertyEditing.CutomPropertyEditingAttribute( true, "AnimDuration", "AnimFileInfo", "Animation duration in milliseconds" )]
+		public float AnimDuration
+		{
+			get { return ( m_afh != null ) ? m_afh.durationMilliseconds : 0; }
+		}
+
+		/// <summary>
+		/// Gets animation's number of frames
+		/// </summary>
+		[pico.Controls.PropertyEditing.CutomPropertyEditingAttribute( true, "AnimNumFrames", "AnimFileInfo", "Animation frame count" )]
+		public int AnimNumFrames
+		{
+			get { return ( m_afh != null ) ? m_afh.nFrames : 0; }
+		}
+
+		/// <summary>
+		/// Gets animation's framerate (frames per second)
+		/// </summary>
+		[pico.Controls.PropertyEditing.CutomPropertyEditingAttribute( true, "AnimFramerate", "AnimFileInfo", "Animation frames per second" )]
+		public float AnimFramerate
+		{
+			get { return ( m_afh != null ) ? m_afh.framerate : 0; }
+		}
+
+		/// <summary>
+		/// Performs initialization when the adapter is connected to the DomNode.
+		/// </summary>
+		protected override void OnNodeSet()
+		{
+			base.OnNodeSet();
+
+			DomNode.AttributeChanged += DomNode_AttributeChanged;
+
+			if ( AnimFile != null && AnimFile.Length > 0 )
+				m_afh = pico.Anim.AnimFileHeader.ReadFromFile2( AnimFile );
+		}
+
+		private void DomNode_AttributeChanged( object sender, AttributeEventArgs e )
+		{
+			if ( e.AttributeInfo.Equivalent( Schema.intervalCharacterControllerAnimType.animFileAttribute ) )
+			{
+				if ( AnimFile != null && AnimFile.Length > 0 )
+					m_afh = pico.Anim.AnimFileHeader.ReadFromFile2( AnimFile );
+			}
+		}
+
 		#region ITimelineObjectCreator Members
 		ITimelineObject ITimelineObjectCreator.Create()
 		{
@@ -78,6 +127,8 @@ namespace picoTimelineEditor.DomNodeAdapters
 
 			return true;
 		}
+
+		private pico.Anim.AnimFileHeader m_afh;
 	}
 }
 

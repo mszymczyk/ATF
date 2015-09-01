@@ -106,7 +106,7 @@ namespace pico.Controls.PropertyEditing
 
 				string picoDemoPath = Paths.PathToPicoDemoPath( newPath );
 				return picoDemoPath;
-				Uri newUri = new Uri( picoDemoPath, UriKind.Relative );
+				//Uri newUri = new Uri( picoDemoPath, UriKind.Relative );
 				//return newUri;
 				//return newPath;
 			}

@@ -410,7 +410,7 @@
         <!--<xs:attribute name="nearClipPlaneOverride" type="xs:boolean"/>-->
         <xs:attribute name="nearClipPlane" type="xs:float" default="1.0"/>
         <!--<xs:attribute name="farClipPlaneOverride" type="xs:boolean"/>-->
-        <xs:attribute name="farClipPlane" type="xs:float" default="200.0"/>
+        <xs:attribute name="farClipPlane" type="xs:float" default="500.0"/>
 
       </xs:extension>
     </xs:complexContent>

@@ -281,6 +281,19 @@ namespace picoTimelineEditor
 						new BoundedFloatEditor( 0.01f, 10000.0f )
 						) );
 			}
+
+			{
+				PropertyDescriptorCollection propDescCollection = Schema.intervalCameraAnimType.Type.GetTag<PropertyDescriptorCollection>();
+				pico.Controls.PropertyEditing.CustomPropertyDescriptor<IntervalCameraAnim>.CreateDescriptors( propDescCollection );
+			}
+			{
+				PropertyDescriptorCollection propDescCollection = Schema.intervalCharacterControllerAnimType.Type.GetTag<PropertyDescriptorCollection>();
+				pico.Controls.PropertyEditing.CustomPropertyDescriptor<IntervalCharacterControllerAnim>.CreateDescriptors( propDescCollection );
+			}
+			{
+				PropertyDescriptorCollection propDescCollection = Schema.intervalAnimControllerType.Type.GetTag<PropertyDescriptorCollection>();
+				pico.Controls.PropertyEditing.CustomPropertyDescriptor<IntervalAnimController>.CreateDescriptors( propDescCollection );
+			}
 		}
 
 		public int[] GetEnumIntValues( Type type )

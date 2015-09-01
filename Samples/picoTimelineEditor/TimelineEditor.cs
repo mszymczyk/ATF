@@ -218,21 +218,8 @@ namespace picoTimelineEditor
 					ISelectionContext selectionContext = m_contextRegistry.GetActiveContext<ISelectionContext>();
 					if ( selectionContext != null )
 					{
-						selectionContext.SelectionChanged += delegate
-						{
-							object lastSelected = selectionContext.LastSelected;
-
-							Path<object> path = lastSelected as Path<object>;
-							object selected = path != null ? path.Last : lastSelected;
-
-							LuaScript luaScript = selected.As<LuaScript>();
-							if (luaScript != null)
-							{
-								m_luaEditorPanel.Controls.Clear();
-								m_luaEditorPanel.Controls.Add( luaScript.LuaEditorControl );
-								m_luaEditorPanelControlInfo.Name = "Lua Script: " + luaScript.Name;
-							}
-						};
+						object lastSelected = selectionContext.LastSelected;
+						_ChangeLuaScript( lastSelected );
 					}
 				};
 			}
@@ -675,6 +662,12 @@ namespace picoTimelineEditor
 				ISelectionContext selectionContext = document.Cast<ISelectionContext>();
 				selectionContext.Set( node );
 
+				selectionContext.SelectionChanged += delegate
+				{
+					object lastSelected = selectionContext.LastSelected;
+					_ChangeLuaScript( lastSelected );
+				};
+
                 // Initialize Dom extensions now that the data is complete
                 node.InitializeExtensions();
             }
@@ -958,6 +951,25 @@ namespace picoTimelineEditor
 			//	}
 			//}
         }
+
+		private void _ChangeLuaScript( object lastSelected )
+		{
+			Path<object> path = lastSelected as Path<object>;
+			object selected = path != null ? path.Last : lastSelected;
+
+			LuaScript luaScript = selected.As<LuaScript>();
+			if ( luaScript != null )
+			{
+				m_luaEditorPanel.Controls.Clear();
+				m_luaEditorPanel.Controls.Add( luaScript.LuaEditorControl );
+				m_luaEditorPanelControlInfo.Name = "Lua Script: " + luaScript.Name;
+			}
+			else
+			{
+				m_luaEditorPanel.Controls.Clear();
+				m_luaEditorPanelControlInfo.Name = "Lua Script";
+			}
+		}
 
         /// <summary>
         /// A collection of all ITimelineDocuments that have been loaded. This is necessary so that we can 

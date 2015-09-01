@@ -124,7 +124,7 @@ namespace TextureEditor
 					}
 					else
 					{
-						string[] files = System.IO.Directory.GetFiles( PICO_DEMO, "*.metadata", SearchOption.AllDirectories );
+						string[] files = System.IO.Directory.GetFiles( pico.Paths.PICO_DEMO_data, "*.metadata", SearchOption.AllDirectories );
 						foreach ( string s in files )
 						{
 							Uri uri = new Uri( s );
@@ -277,14 +277,15 @@ namespace TextureEditor
 				AddInfo( "Exporting file: " + metadataFilePath + "\n" );
 
 				string inputFile = metadataFilePath.Substring( 0, metadataFilePath.Length - ".metadata.".Length + 1 );
-				string dir_data = PICO_DEMO + "data\\";
-				string dir_dataWin = PICO_DEMO + "dataWin\\";
-				string outputFileWin_tmp = inputFile.Replace( dir_data, dir_dataWin );
+				string outputFileWin_tmp = inputFile.Replace( pico.Paths.PICO_DEMO_data, pico.Paths.PICO_DEMO_dataWin );
 				string outputFileWin = outputFileWin_tmp + ".dds";
 
-				string dir_dataPS4 = PICO_DEMO + "dataPS4\\";
-				string outputFilePS4_tmp = inputFile.Replace( dir_data, dir_dataPS4 );
-				string outputFilePS4 = outputFilePS4_tmp + ".gnf";
+				string outputFilePS4 = null;
+				if ( pico.Paths.HAS_PS4_SDK_INSTALLED )
+				{
+					string outputFilePS4_tmp = inputFile.Replace( pico.Paths.PICO_DEMO_data, pico.Paths.PICO_DEMO_dataPS4 );
+					outputFilePS4 = outputFilePS4_tmp + ".gnf";
+				}
 
 				bool exportRequired = false;
 
@@ -465,7 +466,7 @@ namespace TextureEditor
 							}
 						}
 
-						if ( tm.ExportToGnf )
+						if ( tm.ExportToGnf && outputFilePS4 != null )
 						{
 							string dirPS4 = System.IO.Path.GetDirectoryName( outputFilePS4 );
 							System.IO.Directory.CreateDirectory( dirPS4 );
@@ -507,7 +508,7 @@ namespace TextureEditor
 				System.Diagnostics.Process process = new System.Diagnostics.Process();
 				System.Diagnostics.ProcessStartInfo startInfo = new System.Diagnostics.ProcessStartInfo();
 				startInfo.WindowStyle = System.Diagnostics.ProcessWindowStyle.Hidden;
-				startInfo.FileName = texconv_exe;
+				startInfo.FileName = pico.Paths.texconv_exe;
 				startInfo.Arguments = arg;
 				startInfo.RedirectStandardOutput = true;
 				startInfo.RedirectStandardError = true;
@@ -546,7 +547,7 @@ namespace TextureEditor
 				System.Diagnostics.Process process = new System.Diagnostics.Process();
 				System.Diagnostics.ProcessStartInfo startInfo = new System.Diagnostics.ProcessStartInfo();
 				startInfo.WindowStyle = System.Diagnostics.ProcessWindowStyle.Hidden;
-				startInfo.FileName = "orbis-image2gnf.exe";
+				startInfo.FileName = pico.Paths.orbis_image2gnf_exe;
 				startInfo.Arguments = arg;
 				startInfo.RedirectStandardOutput = true;
 				startInfo.RedirectStandardError = true;
@@ -554,7 +555,7 @@ namespace TextureEditor
 				startInfo.CreateNoWindow = true;
 				process.StartInfo = startInfo;
 				process.OutputDataReceived += ( sender, args ) => AddInfo( "orbis-image2gnf.exe output: " + args.Data + "\n" );
-				process.ErrorDataReceived  += ( sender, args ) => AddError( "texconv output: " + args.Data + "\n" );
+				process.ErrorDataReceived  += ( sender, args ) => AddError( "orbis-image2gnf.exe output: " + args.Data + "\n" );
 				process.Start();
 				process.BeginOutputReadLine();
 				process.WaitForExit();
@@ -574,17 +575,15 @@ namespace TextureEditor
 
 		public static string GetDataWinTexture( string dataTexture )
 		{
-			string dir_data = PICO_DEMO + "data\\";
-			string dir_dataWin = PICO_DEMO + "dataWin\\";
-			string outputFileWin_tmp = dataTexture.Replace( dir_data, dir_dataWin );
+			string outputFileWin_tmp = dataTexture.Replace( pico.Paths.PICO_DEMO_data, pico.Paths.PICO_DEMO_dataWin );
 			string outputFileWin = outputFileWin_tmp + ".dds";
 			return outputFileWin;
 		}
 
-		private static readonly string PICO_ROOT = Path.GetFullPath( Environment.GetEnvironmentVariable( "PICO_ROOT" ) + "\\" );
-		private static readonly string PICO_DEMO = Path.GetFullPath( Environment.GetEnvironmentVariable( "PICO_DEMO" ) + "\\" );
-		private static readonly string texconv_exe = PICO_ROOT + "bin64\\texconv.exe";
-		private static readonly string nvcompress_exe = PICO_ROOT + "bin64\\nvcompress.exe";
+		//private static readonly string PICO_ROOT = Path.GetFullPath( Environment.GetEnvironmentVariable( "PICO_ROOT" ) + "\\" );
+		//private static readonly string PICO_DEMO = Path.GetFullPath( Environment.GetEnvironmentVariable( "PICO_DEMO" ) + "\\" );
+		//private static readonly string texconv_exe = PICO_ROOT + "bin64\\texconv.exe";
+		//private static readonly string nvcompress_exe = PICO_ROOT + "bin64\\nvcompress.exe";
  
 		private MainForm m_mainForm;
 		private SchemaLoader m_schemaLoader;

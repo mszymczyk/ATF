@@ -6,6 +6,20 @@ namespace pico
 {
 	public class Paths
 	{
+		static Paths()
+		{
+			string sdkDirEnvVar = Environment.GetEnvironmentVariable( "SCE_ORBIS_SDK_DIR" );
+			if ( sdkDirEnvVar != null && sdkDirEnvVar.Length > 0 )
+			{
+				PICO_DEMO_dataPS4 = PICO_DEMO + "dataPS4\\";
+
+				SCE_ORBIS_SDK_DIR = Path.GetFullPath( sdkDirEnvVar + "\\" );
+				orbis_image2gnf_exe = SCE_ORBIS_SDK_DIR + "host_tools\\bin\\orbis-image2gnf.exe";
+
+				HAS_PS4_SDK_INSTALLED = true;
+			}
+		}
+
 		public static string UriToPicoDemoPath( Uri uri )
 		{
 			string path = uri.LocalPath;
@@ -60,8 +74,15 @@ namespace pico
 		public static readonly string PICO_DEMO = Path.GetFullPath( Environment.GetEnvironmentVariable( "PICO_DEMO" ) + "\\" );
 		public static readonly string PICO_DEMO_data = PICO_DEMO + "data\\";
 		public static readonly string PICO_DEMO_dataWin = PICO_DEMO + "dataWin\\";
-		public static readonly string PICO_DEMO_dataPS4 = PICO_DEMO + "dataPS4\\";
 		public static readonly string texconv_exe = PICO_ROOT + "bin64\\texconv.exe";
 		public static readonly string nvcompress_exe = PICO_ROOT + "bin64\\nvcompress.exe";
+
+		// ps4 stuff
+		//
+		public static readonly bool HAS_PS4_SDK_INSTALLED;
+
+		public static readonly string PICO_DEMO_dataPS4;
+		public static readonly string SCE_ORBIS_SDK_DIR;
+		public static readonly string orbis_image2gnf_exe;
 	}
 }
