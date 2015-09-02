@@ -6,6 +6,7 @@ using System.Data;
 using System.Linq;
 using System.Text;
 using System.Windows.Forms;
+using System.Reflection;
 
 namespace pico.LogOutput
 {
@@ -15,19 +16,32 @@ namespace pico.LogOutput
 		{
 			InitializeComponent();
 
+			// some performance tweaks
+			// http://stackoverflow.com/questions/10226992/slow-performance-in-populating-datagridview-with-large-data
+			//
+			// DoubleBuffered is supposed to improve performace, but is hidden 
+			//
+			// http://stackoverflow.com/questions/4255148/how-to-improve-painting-performance-of-datagridview
+			// http://stackoverflow.com/questions/118528/horrible-redraw-performance-of-the-datagridview-on-one-of-my-two-screens
+			//
+			Type dgvType = dataGridView1.GetType();
+			PropertyInfo pi = dgvType.GetProperty( "DoubleBuffered", BindingFlags.Instance | BindingFlags.NonPublic );
+			pi.SetValue( dataGridView1, true, null );
+
 			dataGridView1.CellFormatting += dataGridView1_CellFormatting;
 			dataGridView1.MouseClick += dataGridView1_MouseClick;
 			dataGridView1.KeyUp += dataGridView1_KeyUp;
 
 			filterTextBox.TextChanged += filterTextBox_TextChanged;
+			filterTagTextBox.TextChanged += filterTextBox_TextChanged;
 
 			checkBoxErrors.CheckedChanged += checkBox_CheckedChanged;
 			checkBoxWarnings.CheckedChanged += checkBox_CheckedChanged;
 			checkBoxInfos.CheckedChanged += checkBox_CheckedChanged;
 
-			checkedComboBox1.Items.Add( "Common" );
-			checkedComboBox1.SetItemChecked( 0, true );
-			checkedComboBox1.ItemCheck += checkedComboBox1_ItemCheck;
+			//checkedComboBox1.Items.Add( "Common" );
+			//checkedComboBox1.SetItemChecked( 0, true );
+			//checkedComboBox1.ItemCheck += checkedComboBox1_ItemCheck;
 
 			m_logDataTable = new picoLogDataTable();
 			m_dt = m_logDataTable.Data;
@@ -39,9 +53,19 @@ namespace pico.LogOutput
 			updateRowFilter();
 		}
 
+		//public void setup( Icons icons, picoLogDataTable dataTable )
 		public void setup( Icons icons )
 		{
 			m_icons = icons;
+
+			//m_logDataTable = new picoLogDataTable();
+			//m_dt = m_logDataTable.Data;
+			//m_dv = m_logDataTable.DataView;
+
+			//dataGridView1.DataSource = m_dv;
+
+			//updateCheckBoxes();
+			//updateRowFilter();
 		}
 
 		public void clearLog()
@@ -55,7 +79,7 @@ namespace pico.LogOutput
 		{
 			m_logDataTable.AddItem( dataItem );
 
-			if ( dataGridView1.SelectedRows.Count == 0 )
+			if ( dataGridView1.SelectedRows.Count == 0 && dataGridView1.RowCount > 0 )
 				dataGridView1.FirstDisplayedScrollingRowIndex = dataGridView1.RowCount - 1;
 
 			updateCheckBoxes();
@@ -67,10 +91,10 @@ namespace pico.LogOutput
 			updateRowFilter();
 		}
 
-		void checkedComboBox1_ItemCheck( object sender, ItemCheckEventArgs e )
-		{
-			updateRowFilter( e );
-		}
+		//void checkedComboBox1_ItemCheck( object sender, ItemCheckEventArgs e )
+		//{
+		//	updateRowFilter( e );
+		//}
 
 		void filterTextBox_TextChanged( object sender, EventArgs e )
 		{
@@ -229,7 +253,7 @@ namespace pico.LogOutput
 			StringBuilder sb = new StringBuilder();
 			foreach (DataGridViewRow row in dataGridView1.SelectedRows)
 			{
-				sb.AppendLine( row.Cells[2].Value.ToString() );
+				sb.AppendLine( row.Cells[3].Value.ToString() );
 			}
 
 			string str = sb.ToString();
@@ -242,7 +266,7 @@ namespace pico.LogOutput
 			StringBuilder sb = new StringBuilder();
 			foreach (DataGridViewRow row in dataGridView1.SelectedRows)
 			{
-				sb.AppendLine( row.Cells[3].Value.ToString() );
+				sb.AppendLine( row.Cells[2].Value.ToString() );
 			}
 
 			string str = sb.ToString();
@@ -274,17 +298,23 @@ namespace pico.LogOutput
 			foreach (DataGridViewRow row in dataGridView1.SelectedRows)
 			{
 				int type = (int)row.Cells[0].Value;
-				string description = row.Cells[2].Value.ToString();
-				string tag = row.Cells[3].Value.ToString();
+				string tag = row.Cells[2].Value.ToString();
+				string description = row.Cells[3].Value.ToString();
 				string file = row.Cells[4].Value.ToString();
 				int line = (int) row.Cells[5].Value;
 
-				if (type == DataItem.Type_Error)
+				if ( type == DataItem.Type_Fatal )
+					sb.Append( "Fatal" );
+				else if ( type == DataItem.Type_Error )
 					sb.Append( "Error" );
 				else if (type == DataItem.Type_Warning)
 					sb.Append( "Warning" );
 				else if (type == DataItem.Type_Info)
 					sb.Append( "Info" );
+				else if ( type == DataItem.Type_Debug )
+					sb.Append( "Debug" );
+				else if ( type == DataItem.Type_Trace )
+					sb.Append( "Trace" );
 
 				sb.Append( ",\"" );
 				sb.Append( description );
@@ -341,25 +371,25 @@ namespace pico.LogOutput
 		private void updateRowFilter( ItemCheckEventArgs e = null )
 		{
 			string rowFilterCheckBoxesPart = "(";
-			if (checkBoxErrors.Checked)
+			if ( checkBoxErrors.Checked )
 			{
-				rowFilterCheckBoxesPart += "(Type = 0)";
+				rowFilterCheckBoxesPart += "(Type = 1)";
 			}
 
-			if (checkBoxWarnings.Checked)
+			if ( checkBoxWarnings.Checked )
 			{
-				if (checkBoxErrors.Checked)
-					rowFilterCheckBoxesPart += " OR (Type = 1)";
-				else
-					rowFilterCheckBoxesPart += "(Type = 1)";
-			}
-
-			if (checkBoxInfos.Checked)
-			{
-				if (checkBoxErrors.Checked || checkBoxWarnings.Checked)
+				if ( checkBoxErrors.Checked )
 					rowFilterCheckBoxesPart += " OR (Type = 2)";
 				else
 					rowFilterCheckBoxesPart += "(Type = 2)";
+			}
+
+			if ( checkBoxInfos.Checked )
+			{
+				if ( checkBoxErrors.Checked || checkBoxWarnings.Checked )
+					rowFilterCheckBoxesPart += " OR (Type = 3)";
+				else
+					rowFilterCheckBoxesPart += "(Type = 3)";
 			}
 
 			rowFilterCheckBoxesPart += ")";
@@ -369,60 +399,81 @@ namespace pico.LogOutput
 				rowFilterCheckBoxesPart = "(Type = 8)"; // non-existient one
 			}
 
-			string finalFilterValuee = null;
+			string generatedFilterValue = null;
 
 			string rowFilterTextBoxPart = string.Empty;
 			string text = filterTextBox.Text;
-			if (text.Length < 3)
+			if ( text.Length < 3 )
 			{
 				//m_dataView.RowFilter = String.Empty;
 				//return;
-				finalFilterValuee = rowFilterCheckBoxesPart;
+				generatedFilterValue = rowFilterCheckBoxesPart;
 			}
 			else
 			{
 				string userTextFixed = EscapeLikeValue( text );
 				rowFilterTextBoxPart = string.Format( "(Description LIKE '*{0}*' OR Tag LIKE '*{0}*' OR File LIKE '*{0}*')", userTextFixed );
 
-				finalFilterValuee = string.Format( "{0} AND {1}", rowFilterCheckBoxesPart, rowFilterTextBoxPart );
+				generatedFilterValue = string.Format( "{0} AND {1}", rowFilterCheckBoxesPart, rowFilterTextBoxPart );
 			}
 
-			string groupFilter = null;
-			for ( int i = 0; i < checkedComboBox1.Items.Count; ++i )
+			//string groupFilter = null;
+			//for ( int i = 0; i < checkedComboBox1.Items.Count; ++i )
+			//{
+			//	object ob = checkedComboBox1.Items[i];
+			//	//if ( !checkedComboBox1.GetItemChecked( i ) )
+			//	bool itemChecked;
+			//	if ( e != null )
+			//		itemChecked = ( i == e.Index ) ? e.NewValue == CheckState.Checked : checkedComboBox1.GetItemChecked( i );
+			//	else
+			//		itemChecked = checkedComboBox1.GetItemChecked( i );
+
+			//	if ( !itemChecked )
+			//	{
+			//		string group = checkedComboBox1.GetItemText( ob );
+
+			//		if ( string.IsNullOrEmpty( groupFilter ) )
+			//		{
+			//			groupFilter = string.Format( "(Group <> '{0}')", group );
+			//		}
+			//		else
+			//		{
+			//			groupFilter += string.Format( "AND (Group <> '{0}')", group );
+			//		}
+			//	}
+			//}
+
+			//if ( groupFilter != null && groupFilter.Length > 0 )
+			//{
+			//	finalFilterValue = string.Format( "{0} AND ({1})", finalFilterValue, groupFilter );
+			//}
+
+			string finalFilterValue = generatedFilterValue;
+
+			string tagFilter = filterTagTextBox.Text;
+			if ( tagFilter.Length > 3 )
 			{
-				object ob = checkedComboBox1.Items[i];
-				//if ( !checkedComboBox1.GetItemChecked( i ) )
-				bool itemChecked;
-				if ( e != null )
-					itemChecked = ( i == e.Index ) ? e.NewValue == CheckState.Checked : checkedComboBox1.GetItemChecked( i );
-				else
-					itemChecked = checkedComboBox1.GetItemChecked( i );
-
-				if ( !itemChecked )
-				{
-					string group = checkedComboBox1.GetItemText( ob );
-
-					if ( string.IsNullOrEmpty( groupFilter ) )
-					{
-						groupFilter = string.Format( "(Group <> '{0}')", group );
-					}
-					else
-					{
-						groupFilter += string.Format( "AND (Group <> '{0}')", group );
-					}
-				}
-			}
-
-			if ( groupFilter != null && groupFilter.Length > 0 )
-			{
-				finalFilterValuee = string.Format( "{0} AND ({1})", finalFilterValuee, groupFilter );
+				//string tagFilterFixed = EscapeLikeValue( tagFilter );
+				//finalFilterValue = string.Format( "{0} AND ({1})", generatedFilterValue, tagFilterFixed );
+				finalFilterValue = string.Format( "{0} AND ({1})", generatedFilterValue, tagFilter );
 			}
 
 			//string userTextFixed = EscapeLikeValue( text );
 			//string filter = string.Format( "Name LIKE '*{0}*'", userTextFixed );
 			//m_dataView.RowFilter = filter;
-			m_dv.RowFilter = finalFilterValuee;
+			try
+			{
+				m_dv.RowFilter = finalFilterValue;
+			}
+			catch( System.Data.SyntaxErrorException seex )
+			{
+				string msg = seex.Message;
+				m_dv.RowFilter = generatedFilterValue;
+			}
+			//m_dv.RowFilter = string.Empty;
 		}
+
+		public picoLogDataTable LogDataTable { get { return m_logDataTable; } }
 
 		private picoLogDataTable m_logDataTable;
 		private DataTable m_dt;

@@ -28,8 +28,8 @@
 		/// </summary>
 		private void InitializeComponent()
 		{
-			System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
-			System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
+			System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle3 = new System.Windows.Forms.DataGridViewCellStyle();
+			System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle4 = new System.Windows.Forms.DataGridViewCellStyle();
 			this.dataGridView1 = new System.Windows.Forms.DataGridView();
 			this.flowLayoutPanel1 = new System.Windows.Forms.FlowLayoutPanel();
 			this.buttonClear = new System.Windows.Forms.Button();
@@ -44,12 +44,13 @@
 			this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
 			this.columnType = new System.Windows.Forms.DataGridViewImageColumn();
 			this.columnOrdinal = new System.Windows.Forms.DataGridViewTextBoxColumn();
-			this.columnGroup = new System.Windows.Forms.DataGridViewTextBoxColumn();
-			this.columnDescription = new System.Windows.Forms.DataGridViewTextBoxColumn();
 			this.columnTag = new System.Windows.Forms.DataGridViewTextBoxColumn();
+			this.columnDescription = new System.Windows.Forms.DataGridViewTextBoxColumn();
 			this.columnFile = new System.Windows.Forms.DataGridViewTextBoxColumn();
 			this.columnLine = new System.Windows.Forms.DataGridViewTextBoxColumn();
-			this.checkedComboBox1 = new CheckComboBoxTest.CheckedComboBox();
+			this.labelSeparator4 = new System.Windows.Forms.Label();
+			this.label2 = new System.Windows.Forms.Label();
+			this.filterTagTextBox = new System.Windows.Forms.TextBox();
 			((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
 			this.flowLayoutPanel1.SuspendLayout();
 			this.tableLayoutPanel1.SuspendLayout();
@@ -60,27 +61,27 @@
 			this.dataGridView1.AllowUserToAddRows = false;
 			this.dataGridView1.AllowUserToDeleteRows = false;
 			this.dataGridView1.AllowUserToResizeRows = false;
-			dataGridViewCellStyle1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(250)))), ((int)(((byte)(250)))), ((int)(((byte)(250)))));
-			this.dataGridView1.AlternatingRowsDefaultCellStyle = dataGridViewCellStyle1;
+			dataGridViewCellStyle3.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(250)))), ((int)(((byte)(250)))), ((int)(((byte)(250)))));
+			this.dataGridView1.AlternatingRowsDefaultCellStyle = dataGridViewCellStyle3;
 			this.dataGridView1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
 			this.dataGridView1.AutoSizeRowsMode = System.Windows.Forms.DataGridViewAutoSizeRowsMode.AllCellsExceptHeaders;
-			this.dataGridView1.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+			this.dataGridView1.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.DisableResizing;
 			this.dataGridView1.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
             this.columnType,
             this.columnOrdinal,
-            this.columnGroup,
-            this.columnDescription,
             this.columnTag,
+            this.columnDescription,
             this.columnFile,
             this.columnLine});
 			this.dataGridView1.Location = new System.Drawing.Point(3, 38);
 			this.dataGridView1.Name = "dataGridView1";
 			this.dataGridView1.ReadOnly = true;
 			this.dataGridView1.RowHeadersVisible = false;
+			this.dataGridView1.RowHeadersWidthSizeMode = System.Windows.Forms.DataGridViewRowHeadersWidthSizeMode.DisableResizing;
 			this.dataGridView1.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-			this.dataGridView1.Size = new System.Drawing.Size(691, 373);
+			this.dataGridView1.Size = new System.Drawing.Size(867, 373);
 			this.dataGridView1.TabIndex = 0;
 			// 
 			// flowLayoutPanel1
@@ -96,11 +97,13 @@
 			this.flowLayoutPanel1.Controls.Add(this.labelSeparator3);
 			this.flowLayoutPanel1.Controls.Add(this.label1);
 			this.flowLayoutPanel1.Controls.Add(this.filterTextBox);
-			this.flowLayoutPanel1.Controls.Add(this.checkedComboBox1);
+			this.flowLayoutPanel1.Controls.Add(this.labelSeparator4);
+			this.flowLayoutPanel1.Controls.Add(this.label2);
+			this.flowLayoutPanel1.Controls.Add(this.filterTagTextBox);
 			this.flowLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.flowLayoutPanel1.Location = new System.Drawing.Point(3, 3);
 			this.flowLayoutPanel1.Name = "flowLayoutPanel1";
-			this.flowLayoutPanel1.Size = new System.Drawing.Size(691, 29);
+			this.flowLayoutPanel1.Size = new System.Drawing.Size(867, 29);
 			this.flowLayoutPanel1.TabIndex = 1;
 			// 
 			// buttonClear
@@ -216,7 +219,7 @@
 			this.tableLayoutPanel1.RowCount = 2;
 			this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
 			this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
-			this.tableLayoutPanel1.Size = new System.Drawing.Size(697, 414);
+			this.tableLayoutPanel1.Size = new System.Drawing.Size(873, 414);
 			this.tableLayoutPanel1.TabIndex = 2;
 			// 
 			// columnType
@@ -240,26 +243,6 @@
 			this.columnOrdinal.Resizable = System.Windows.Forms.DataGridViewTriState.False;
 			this.columnOrdinal.Width = 35;
 			// 
-			// columnGroup
-			// 
-			this.columnGroup.DataPropertyName = "Group";
-			this.columnGroup.HeaderText = "Group";
-			this.columnGroup.MinimumWidth = 30;
-			this.columnGroup.Name = "columnGroup";
-			this.columnGroup.ReadOnly = true;
-			this.columnGroup.Width = 60;
-			// 
-			// columnDescription
-			// 
-			this.columnDescription.DataPropertyName = "Description";
-			dataGridViewCellStyle2.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-			this.columnDescription.DefaultCellStyle = dataGridViewCellStyle2;
-			this.columnDescription.HeaderText = "Description";
-			this.columnDescription.MinimumWidth = 50;
-			this.columnDescription.Name = "columnDescription";
-			this.columnDescription.ReadOnly = true;
-			this.columnDescription.Width = 510;
-			// 
 			// columnTag
 			// 
 			this.columnTag.DataPropertyName = "Tag";
@@ -267,7 +250,17 @@
 			this.columnTag.MinimumWidth = 20;
 			this.columnTag.Name = "columnTag";
 			this.columnTag.ReadOnly = true;
-			this.columnTag.Width = 150;
+			// 
+			// columnDescription
+			// 
+			this.columnDescription.DataPropertyName = "Description";
+			dataGridViewCellStyle4.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+			this.columnDescription.DefaultCellStyle = dataGridViewCellStyle4;
+			this.columnDescription.HeaderText = "Description";
+			this.columnDescription.MinimumWidth = 50;
+			this.columnDescription.Name = "columnDescription";
+			this.columnDescription.ReadOnly = true;
+			this.columnDescription.Width = 510;
 			// 
 			// columnFile
 			// 
@@ -287,18 +280,35 @@
 			this.columnLine.ReadOnly = true;
 			this.columnLine.Width = 40;
 			// 
-			// checkedComboBox1
+			// labelSeparator4
 			// 
-			this.checkedComboBox1.CheckOnClick = true;
-			this.checkedComboBox1.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawVariable;
-			this.checkedComboBox1.DropDownHeight = 1;
-			this.checkedComboBox1.FormattingEnabled = true;
-			this.checkedComboBox1.IntegralHeight = false;
-			this.checkedComboBox1.Location = new System.Drawing.Point(467, 3);
-			this.checkedComboBox1.Name = "checkedComboBox1";
-			this.checkedComboBox1.Size = new System.Drawing.Size(157, 21);
-			this.checkedComboBox1.TabIndex = 9;
-			this.checkedComboBox1.ValueSeparator = ", ";
+			this.labelSeparator4.Anchor = System.Windows.Forms.AnchorStyles.None;
+			this.labelSeparator4.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
+			this.labelSeparator4.Enabled = false;
+			this.labelSeparator4.Location = new System.Drawing.Point(467, 4);
+			this.labelSeparator4.Name = "labelSeparator4";
+			this.labelSeparator4.Size = new System.Drawing.Size(2, 20);
+			this.labelSeparator4.TabIndex = 9;
+			// 
+			// label2
+			// 
+			this.label2.Anchor = System.Windows.Forms.AnchorStyles.None;
+			this.label2.AutoSize = true;
+			this.label2.Location = new System.Drawing.Point(475, 8);
+			this.label2.Margin = new System.Windows.Forms.Padding(3);
+			this.label2.Name = "label2";
+			this.label2.Size = new System.Drawing.Size(48, 13);
+			this.label2.TabIndex = 10;
+			this.label2.Text = "TagFilter";
+			this.label2.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+			// 
+			// filterTagTextBox
+			// 
+			this.filterTagTextBox.Anchor = System.Windows.Forms.AnchorStyles.None;
+			this.filterTagTextBox.Location = new System.Drawing.Point(529, 4);
+			this.filterTagTextBox.Name = "filterTagTextBox";
+			this.filterTagTextBox.Size = new System.Drawing.Size(240, 20);
+			this.filterTagTextBox.TabIndex = 11;
 			// 
 			// picoLogOutputForm3
 			// 
@@ -306,7 +316,7 @@
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.Controls.Add(this.tableLayoutPanel1);
 			this.Name = "picoLogOutputForm3";
-			this.Size = new System.Drawing.Size(697, 414);
+			this.Size = new System.Drawing.Size(873, 414);
 			((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).EndInit();
 			this.flowLayoutPanel1.ResumeLayout(false);
 			this.flowLayoutPanel1.PerformLayout();
@@ -331,13 +341,14 @@
 		private System.Windows.Forms.Label labelSeparator2;
 		private System.Windows.Forms.Label labelSeparator3;
 		private System.Windows.Forms.Button buttonClear;
-		private CheckComboBoxTest.CheckedComboBox checkedComboBox1;
 		private System.Windows.Forms.DataGridViewImageColumn columnType;
 		private System.Windows.Forms.DataGridViewTextBoxColumn columnOrdinal;
-		private System.Windows.Forms.DataGridViewTextBoxColumn columnGroup;
-		private System.Windows.Forms.DataGridViewTextBoxColumn columnDescription;
 		private System.Windows.Forms.DataGridViewTextBoxColumn columnTag;
+		private System.Windows.Forms.DataGridViewTextBoxColumn columnDescription;
 		private System.Windows.Forms.DataGridViewTextBoxColumn columnFile;
 		private System.Windows.Forms.DataGridViewTextBoxColumn columnLine;
+		private System.Windows.Forms.Label labelSeparator4;
+		private System.Windows.Forms.Label label2;
+		private System.Windows.Forms.TextBox filterTagTextBox;
 	}
 }

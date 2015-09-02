@@ -20,15 +20,18 @@ namespace pico.LogOutput
 
 	public class DataItem
 	{
-		public static readonly int Type_Error = 0;
-		public static readonly int Type_Warning = 1;
-		public static readonly int Type_Info = 2;
+		public static readonly int Type_Fatal = 0;
+		public static readonly int Type_Error = 1;
+		public static readonly int Type_Warning = 2;
+		public static readonly int Type_Info = 3;
+		public static readonly int Type_Debug = 4;
+		public static readonly int Type_Trace = 5;
 
 		public int Type	{ get; set; }
 		//public int Ordinal { get; set; }
-		public string Group { get; set; }
-		public string Description { get; set; }
+		//public string Group { get; set; }
 		public string Tag { get; set; }
+		public string Description { get; set; }
 		public string File { get; set; }
 		public int Line { get; set; }
 	}
@@ -38,19 +41,25 @@ namespace pico.LogOutput
 		public picoLogDataTable()
 		{
 			m_dt = new DataTable();
+			m_dt.CaseSensitive = false;
 
 			m_dt.Columns.Add( "Type", typeof( int ) );
 			m_dt.Columns.Add( "Ordinal", typeof( int ) );
-			m_dt.Columns.Add( "Group", typeof( string ) );
-			m_dt.Columns.Add( "Description", typeof( string ) );
+			//m_dt.Columns.Add( "Group", typeof( string ) );
 			m_dt.Columns.Add( "Tag", typeof( string ) );
+			m_dt.Columns.Add( "Description", typeof( string ) );
 			m_dt.Columns.Add( "File", typeof( string ) );
 			m_dt.Columns.Add( "Line", typeof( int ) );
 
-			GenerateFlat();
+			//GenerateFlat();
 		}
 
-		public int MaxRows { get { return m_maxRows; } }
+		public picoLogOutputForm3 Form { get; set; }
+
+		public int MaxRows {
+			get { return m_maxRows; }
+			set { m_maxRows = value; }
+		}
 		public int NumErrors { get { return m_numErrors; } }
 		public int NumWarnings { get { return m_numWarnings; } }
 		public int NumInfos { get { return m_numInfos; } }
@@ -86,7 +95,8 @@ namespace pico.LogOutput
 				m_numInfos += 1;
 
 			m_ordinal += 1;
-			m_dt.Rows.Add( item.Type, m_ordinal, item.Group, item.Description, item.Tag, item.File, item.Line );
+			//m_dt.Rows.Add( item.Type, m_ordinal, item.Group, item.Description, item.Tag, item.File, item.Line );
+			m_dt.Rows.Add( item.Type, m_ordinal, item.Tag, item.Description, item.File, item.Line );
 		}
 
 		public void GenerateFlat()
@@ -103,10 +113,10 @@ namespace pico.LogOutput
 		{
 			DataItem di = new DataItem();
 
-			di.Type = s_random.Next( 0, 3 );
-			di.Group = "Common";
-			di.Description = CreateString( s_random.Next( 12, 21 ) );
+			di.Type = s_random.Next( 0, 3 ) + 1;
+			//di.Group = "Common";
 			di.Tag = CreateString( s_random.Next( 15, 36 ) );
+			di.Description = CreateString( s_random.Next( 12, 21 ) );
 			di.File = CreateString( s_random.Next( 15, 36 ) );
 			di.Line = s_random.Next( 0, 10000 );
 
@@ -128,7 +138,7 @@ namespace pico.LogOutput
 		}
 
 		private DataTable m_dt;
-		private int m_maxRows = 100;
+		private int m_maxRows = 2000;
 		private int m_ordinal;
 
 		private int m_numErrors;

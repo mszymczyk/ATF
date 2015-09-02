@@ -60,6 +60,8 @@ namespace pico.LogOutput
 						//typeof(PropertyEditingCommands),        // commands for PropertyEditor and GridPropertyEditor, like Reset,
                                                                 //  Reset All, Copy Value, Paste Value, Copy All, Paste All
 						//typeof( StandardEditCommands ),         // standard Edit menu commands for copy/paste
+						typeof( DefaultTabCommands ),             // provides the default commands related to document tab Controls
+
                         
 						///* Different styles of TreeListView */
 						//typeof(List),                           // list view editor component

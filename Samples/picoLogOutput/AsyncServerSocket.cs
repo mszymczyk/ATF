@@ -3,6 +3,7 @@ using System.Net;
 using System.Net.Sockets;
 using System.Text;
 using System.Threading;
+using System.Collections.Generic;
 
 namespace pico.LogOutput
 {
@@ -17,6 +18,7 @@ namespace pico.LogOutput
 		public byte[] buffer = new byte[BufferSize];
 		//// Received data string.
 		//public StringBuilder sb = new StringBuilder();
+		public int nBytesInDataBuffer;
 	}
 
 	public class AsynchronousSocketListener
@@ -109,12 +111,126 @@ namespace pico.LogOutput
 			Socket handler = state.workSocket;
 
 			// Read data from the client socket. 
-			int bytesRead = handler.EndReceive( ar );
+			int bytesReadInThisCall = handler.EndReceive( ar );
+			int bytesRead = bytesReadInThisCall + state.nBytesInDataBuffer;
 
 			if (bytesRead > 0)
 			{
-				int messageSize = BitConverter.ToInt32( state.buffer, 0 );
-				int messageType = BitConverter.ToInt32( state.buffer, 4 );
+				List<_Msg> messages = new List<_Msg>();
+
+				int nBytesReceivedTmp = bytesRead;
+				byte[] receivedDataTmp = state.buffer;
+				int receivedDataTmpOffset = 0;
+
+				while ( nBytesReceivedTmp > 0 )
+				{
+					_Msg lastMessage = m_messageBeingProcessed;
+
+					bool startNewMessage = false;
+
+					if ( lastMessage != null )
+					{
+						if ( lastMessage.payloadSizeReceived_ < lastMessage.payloadSize_ )
+						{
+							// incomplete message
+							//
+							int neededDataSize = lastMessage.payloadSize_ - lastMessage.payloadSizeReceived_;
+							int newDataSize = Math.Min( nBytesReceivedTmp, neededDataSize );
+							//memcpy( lastMessage->payload_ + lastMessage->payloadSizeReceived_, receivedDataTmp, newDataSize );
+							System.Buffer.BlockCopy( receivedDataTmp, receivedDataTmpOffset, lastMessage.payload_, lastMessage.payloadSizeReceived_, newDataSize );
+							receivedDataTmpOffset += newDataSize;
+							nBytesReceivedTmp -= newDataSize;
+							lastMessage.payloadSizeReceived_ += newDataSize;
+
+							if ( lastMessage.payloadSize_ == lastMessage.payloadSizeReceived_ )
+							{
+								messages.Add( lastMessage );
+								m_messageBeingProcessed = null;
+							}
+
+							continue;
+						}
+						else
+						{
+							messages.Add( lastMessage );
+							m_messageBeingProcessed = null;
+
+							// new message
+							//
+							startNewMessage = true;
+						}
+					}
+					else
+					{
+						startNewMessage = true;
+					}
+
+					if ( startNewMessage )
+					{
+						if ( nBytesReceivedTmp < sizeof( int ) )
+						{
+							// wait for more data
+							//
+							byte[] tmpBuf = new byte[4];
+							//memcpy( tmpBuf, receivedDataTmp, nBytesReceivedTmp );
+							//memcpy( dstDataBuffer, tmpBuf, nBytesReceivedTmp );
+							//nBytesInDataBuffer = nBytesReceivedTmp;
+							System.Buffer.BlockCopy( receivedDataTmp, receivedDataTmpOffset, tmpBuf, 0, nBytesReceivedTmp );
+							System.Buffer.BlockCopy( tmpBuf, 0, state.buffer, 0, nBytesReceivedTmp );
+							break;
+						}
+
+						_Msg newMessage = new _Msg();
+						m_messageBeingProcessed = newMessage;
+
+						// message size
+						//
+						int messageSize = BitConverter.ToInt32( receivedDataTmp, receivedDataTmpOffset );
+						receivedDataTmpOffset += 4;
+						nBytesReceivedTmp -= 4;
+
+						newMessage.payloadSize_ = messageSize;
+						newMessage.payloadSizeReceived_ = 0;
+						newMessage.payload_ = new byte[messageSize];
+					}
+
+				}
+
+				state.nBytesInDataBuffer = nBytesReceivedTmp;
+
+				foreach ( _Msg msg in messages )
+				{
+					string messageType = msg.UnpackString();
+					if ( messageType == "cmd" )
+					{
+						string cmd = msg.UnpackString();
+						if ( cmd == "clear" )
+						{
+							string channel = msg.UnpackString();
+							m_editor.clearChannel( channel );
+						}
+						else if ( cmd == "clearAll" )
+						{
+							m_editor.clearAll();
+						}
+					}
+					else if ( messageType == "msg" )
+					{
+						DataItem di = new DataItem();
+
+						string channel = msg.UnpackString();
+						di.Type = msg.UnpackInt();
+						di.Description = msg.UnpackString();
+						di.Tag = msg.UnpackString();
+						di.File = msg.UnpackString();
+						di.Line = msg.UnpackInt();
+
+						m_editor.addDataItem( di, channel );
+					}
+				}
+
+				//int messageSize = BitConverter.ToInt32( state.buffer, 0 );
+				//int messageType = BitConverter.ToInt32( state.buffer, 4 );
 				//// There  might be more data, so store the data received so far.
 				//state.sb.Append( Encoding.ASCII.GetString(
 				//	state.buffer, 0, bytesRead ) );
@@ -134,7 +250,7 @@ namespace pico.LogOutput
 				//else
 				//{
 				// Not all data received. Get more.
-				handler.BeginReceive( state.buffer, 0, StateObject.BufferSize, 0,
+				handler.BeginReceive( state.buffer, state.nBytesInDataBuffer, StateObject.BufferSize, 0,
 				new AsyncCallback( ReadCallback ), state );
 				//}
 			}
@@ -183,6 +299,39 @@ namespace pico.LogOutput
 		//	StartListening();
 		//	return 0;
 		//}
+
+		class _Msg
+		{
+			public byte[] payload_;
+			public int payloadSize_;
+			public int payloadSizeReceived_;
+			public int readOffset_;
+
+			public string UnpackString()
+			{
+				int strLen = BitConverter.ToInt32( payload_, readOffset_ );
+				readOffset_ += 4;
+				if ( strLen > 0 )
+				{
+					string str = Encoding.ASCII.GetString( payload_, readOffset_, strLen );
+					readOffset_ += strLen + 1; // null-terminating char
+					return str;
+				}
+				else
+				{
+					return string.Empty;
+				}
+			}
+
+			public int UnpackInt()
+			{
+				int ival = BitConverter.ToInt32( payload_, readOffset_ );
+				readOffset_ += 4;
+				return ival;
+			}
+		};
+
+		private _Msg m_messageBeingProcessed;
 	}
 
 }

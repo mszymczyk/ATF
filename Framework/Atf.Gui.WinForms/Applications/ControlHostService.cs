@@ -923,7 +923,16 @@ namespace Sce.Atf.Applications
 
         private void BringClientToFront(IControlHostClient client)
         {
-            foreach (ControlInfo info in m_controls)
+			// orig code
+			// foreach ( ControlInfo info in m_controls )
+			//
+			// pico extension
+			// generally speaking, BringToFront will callback dockPanel_ActiveContentChanged
+			// which changes m_controls list while we're iterating through it ( by setting m_controls.ActiveItem )
+			// this causes InvalidOperationException
+			// one of the solutions is to create copy of m_controls and iterate through it
+			//
+            foreach (ControlInfo info in m_controls.ToList())
             {
                 if (client == info.Client)
                 {

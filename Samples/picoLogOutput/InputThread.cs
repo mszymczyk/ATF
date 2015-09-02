@@ -11,7 +11,7 @@ namespace pico.LogOutput
 			m_editor = editor;
 
 			m_thread = new Thread( Run );
-			m_thread.Name = "progress dialog";
+			m_thread.Name = "LogServer";
 			m_thread.IsBackground = true; //so that the thread can be killed if app dies.
 			m_thread.SetApartmentState( ApartmentState.STA );
 			m_thread.CurrentUICulture = Thread.CurrentThread.CurrentUICulture;

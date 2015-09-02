@@ -18,7 +18,7 @@ namespace pico.LogOutput
     /// <summary>
     /// Tree list view editor for hierarchical file system component</summary>
     [Export(typeof(IInitializable))]
-    public class picoLogOutputEditor : IInitializable, IControlHostClient, ICommandClient
+    public class picoLogOutputEditor : IInitializable, IControlHostClient, ICommandClient, IDocumentClient
     {
         /// <summary>
         /// Constructor with parameters. Creates and registers UserControl and adds buttons to it.
@@ -83,7 +83,7 @@ namespace pico.LogOutput
 			//	info,
 			//	this );
 
-			_AddNewForm( "All" );
+			clearAllThreadSafe();
         }
 
         #endregion
@@ -167,7 +167,7 @@ namespace pico.LogOutput
 				switch ((Command) commandTag)
 				{
 					case Command.ClearAll:
-						_ClearAll();
+						clearAll();
 						break;
 				}
 			}
@@ -183,9 +183,120 @@ namespace pico.LogOutput
 
 		#endregion
 
+		#region IDocumentClient Members
+
+		private static readonly DocumentClientInfo s_info = new DocumentClientInfo(
+			"LogChannel".Localize(),
+			new string[] { ".log" },
+			Sce.Atf.Resources.DocumentImage,
+			Sce.Atf.Resources.FolderImage,
+			true );
+
+		/// <summary>
+		/// Gets editor's information about the document client, such as the file type and file
+		/// extensions it supports, whether or not it allows multiple documents to be open, etc.</summary>
+		public DocumentClientInfo Info
+		{
+			get { return s_info; }
+		}
+
+		/// <summary>
+		/// Returns whether the client can open or create a document at the given URI</summary>
+		/// <param name="uri">Document URI</param>
+		/// <returns>True iff the client can open or create a document at the given URI</returns>
+		public bool CanOpen( Uri uri )
+		{
+			return true;
+		}
+
+		/// <summary>
+		/// Opens or creates a document at the given URI.
+		/// Uses LoadOrCreateDocument() to create a D2dTimelineRenderer and D2dTimelineControl.</summary>
+		/// <param name="uri">Document URI</param>
+		/// <returns>Document, or null if the document couldn't be opened or created</returns>
+		public IDocument Open( Uri uri )
+		{
+			return null;
+		}
+
+		/// <summary>
+		/// Makes the document visible to the user</summary>
+		/// <param name="document">Document to show</param>
+		public void Show( IDocument document )
+		{
+		}
+
+		/// <summary>
+		/// Saves the document at the given URI. Persists document data.</summary>
+		/// <param name="document">Document to save</param>
+		/// <param name="uri">New document URI</param>
+		public void Save( IDocument document, Uri uri )
+		{
+		}
+
+		/// <summary>
+		/// Closes the document and removes any views of it from the UI</summary>
+		/// <param name="document">Document to close</param>
+		public void Close( IDocument document )
+		{
+		}
+
+		#endregion
+
 		public void addDataItem( DataItem dataItem, string channel )
 		{
-			lock( this )
+			//lock( this )
+			//{
+			//	picoLogOutputForm3 form;
+			//	if ( m_logForms.TryGetValue( channel, out form ) )
+			//	{
+			//	}
+			//	else
+			//	{
+			//		form = _AddNewForm( channel );
+			//	}
+
+			//	if (form.IsHandleCreated)
+			//		form.BeginInvoke( new MethodInvoker( () => form.addDataItem( dataItem ) ) );
+
+			//	//if ( channel != "All" )
+			//	if ( !object.ReferenceEquals(form, m_logForm_All) )
+			//	{
+			//		if ( m_logForm_All.IsHandleCreated )
+			//			m_logForm_All.BeginInvoke( new MethodInvoker( () => m_logForm_All.addDataItem( dataItem ) ) );
+			//	}
+			//}
+
+			//lock ( this )
+			//{
+			//	picoLogDataTable dataTable;
+			//	if ( m_logForms.TryGetValue( channel, out dataTable ) )
+			//	{
+			//	}
+			//	else
+			//	{
+			//		dataTable = _AddNewForm( channel );
+			//	}
+
+			//	picoLogOutputForm3 form = dataTable.Form;
+
+			//	if ( form.IsHandleCreated )
+			//		form.BeginInvoke( new MethodInvoker( () => form.addDataItem( dataItem ) ) );
+
+			//	//if ( channel != "All" )
+			//	if ( !object.ReferenceEquals( form, m_logForm_All ) )
+			//	{
+			//		if ( m_logForm_All.IsHandleCreated )
+			//			m_logForm_All.BeginInvoke( new MethodInvoker( () => m_logForm_All.addDataItem( dataItem ) ) );
+			//	}
+			//}
+
+			m_mainForm.BeginInvoke( new MethodInvoker( () => addDataItemThreadSafe( dataItem, channel ) ) );
+		}
+
+		public void addDataItemThreadSafe( DataItem dataItem, string channel )
+		{
+			lock ( this )
 			{
 				picoLogOutputForm3 form;
 				if ( m_logForms.TryGetValue( channel, out form ) )
@@ -196,45 +307,83 @@ namespace pico.LogOutput
 					form = _AddNewForm( channel );
 				}
 
-				if (form.IsHandleCreated)
-					form.BeginInvoke( new MethodInvoker( () => form.addDataItem( dataItem ) ) );
+				//if ( form.IsHandleCreated )
+				//	form.BeginInvoke( new MethodInvoker( () => form.addDataItem( dataItem ) ) );
+
+				////if ( channel != "All" )
+				//if ( !object.ReferenceEquals( form, m_logForm_All ) )
+				//{
+				//	if ( m_logForm_All.IsHandleCreated )
+				//		m_logForm_All.BeginInvoke( new MethodInvoker( () => m_logForm_All.addDataItem( dataItem ) ) );
+				//}
+
+				form.addDataItem( dataItem );
+				//if ( !object.ReferenceEquals(form, m_logForm_All) )
+				//	m_logForm_All.addDataItem( dataItem );
 			}
 		}
 
-		private void _ClearAll()
+		public void clearChannel( string channel )
 		{
-			lock (this)
+			if ( m_mainForm.IsHandleCreated )
+				m_mainForm.BeginInvoke( new MethodInvoker( () => clearChannelThreadSafe(channel) ) );
+		}
+
+		public void clearChannelThreadSafe( string channel )
+		{
+			lock ( this )
+			{
+				picoLogOutputForm3 form;
+				if ( m_logForms.TryGetValue( channel, out form ) )
+				{
+					form.clearLog();
+				}
+			}
+		}
+
+		public void clearAll()
+		{
+			if ( m_mainForm.IsHandleCreated )
+				m_mainForm.BeginInvoke( new MethodInvoker( () => clearAllThreadSafe() ) );
+		}
+
+		public void clearAllThreadSafe()
+		{
+			lock ( this )
 			{
 				foreach ( picoLogOutputForm3 form in m_logForms.Values )
 				{
-					//if (form.IsHandleCreated)
-					//	form.BeginInvoke( new MethodInvoker( () => form.clearLog() ) );
 					m_controlHostService.UnregisterControl( form );
 				}
 
 				m_logForms.Clear();
+
+				//m_logForm_All = _AddNewForm( "All" );
+				//m_logForm_All.LogDataTable.MaxRows = 10000;
 			}
 		}
 
 		private picoLogOutputForm3 _AddNewForm( string channel )
 		{
-			picoLogOutputForm3 form = new picoLogOutputForm3();
-			m_logForms.Add( channel, form );
-			//picoLogDataTable data = new picoLogDataTable();
-			form.setup( m_icons );
+			lock ( this )
+			{
+				picoLogOutputForm3 form = new picoLogOutputForm3();
+				m_logForms.Add( channel, form );
+				form.setup( m_icons );
 
-			var info =
-                    new ControlInfo(
-					"All",
-					"All",
-					StandardControlGroup.CenterPermanent );
+				var info =
+						new ControlInfo(
+						channel,
+						channel,
+						StandardControlGroup.Center );
+				info.IsDocument = true;
 
-			m_controlHostService.RegisterControl(
-				form,
-				info,
-				this );
-
-			return form;
+				m_controlHostService.RegisterControl(
+					form,
+					info,
+					this );
+				return form;
+			}
 		}
 
         private readonly MainForm m_mainForm;
@@ -244,6 +393,8 @@ namespace pico.LogOutput
 		private readonly ICommandService m_commandService;
 
 		private Dictionary<string, picoLogOutputForm3> m_logForms = new Dictionary<string, picoLogOutputForm3>();
+		//private picoLogOutputForm3 m_logForm_All;
+		//private Dictionary<string, picoLogDataTable> m_logForms = new Dictionary<string, picoLogDataTable>();
 		private Icons m_icons;
 		private InputThread m_inputThread;
 		//private AsynchronousSocketListener m_server;
