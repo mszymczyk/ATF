@@ -33,7 +33,7 @@ namespace pico.LogOutput
 			dataGridView1.KeyUp += dataGridView1_KeyUp;
 
 			filterTextBox.TextChanged += filterTextBox_TextChanged;
-			filterTagTextBox.TextChanged += filterTextBox_TextChanged;
+			includeTagsTextBox.TextChanged += filterTextBox_TextChanged;
 
 			checkBoxErrors.CheckedChanged += checkBox_CheckedChanged;
 			checkBoxWarnings.CheckedChanged += checkBox_CheckedChanged;
@@ -370,51 +370,61 @@ namespace pico.LogOutput
 
 		private void updateRowFilter( ItemCheckEventArgs e = null )
 		{
-			string rowFilterCheckBoxesPart = "(";
+			string levelFilter = null;
 			if ( checkBoxErrors.Checked )
 			{
-				rowFilterCheckBoxesPart += "(Type = 1)";
+				levelFilter = string.Format( "( (Type = {0})", DataItem.Type_Error );
 			}
 
 			if ( checkBoxWarnings.Checked )
 			{
-				if ( checkBoxErrors.Checked )
-					rowFilterCheckBoxesPart += " OR (Type = 2)";
+				if ( levelFilter != null )
+					levelFilter += string.Format( " OR (Type = {0})", DataItem.Type_Warning );
 				else
-					rowFilterCheckBoxesPart += "(Type = 2)";
+					levelFilter += string.Format( "( (Type = {0})", DataItem.Type_Warning );
 			}
 
 			if ( checkBoxInfos.Checked )
 			{
-				if ( checkBoxErrors.Checked || checkBoxWarnings.Checked )
-					rowFilterCheckBoxesPart += " OR (Type = 3)";
+				if (levelFilter != null)
+					levelFilter += string.Format( " OR (Type = {0})", DataItem.Type_Info );
 				else
-					rowFilterCheckBoxesPart += "(Type = 3)";
+					levelFilter += string.Format( "( (Type = {0})", DataItem.Type_Info );
 			}
 
-			rowFilterCheckBoxesPart += ")";
-
-			if ( rowFilterCheckBoxesPart.Length <= 2 )
+			if (checkBoxDebug.Checked)
 			{
-				rowFilterCheckBoxesPart = "(Type = 8)"; // non-existient one
+				if (levelFilter != null)
+					levelFilter += string.Format( " OR (Type = {0})", DataItem.Type_Debug );
+				else
+					levelFilter += string.Format( "( (Type = {0})", DataItem.Type_Debug );
 			}
+
+			//rowFilterCheckBoxesPart += ")";
+
+			//if ( rowFilterCheckBoxesPart.Length <= 2 )
+			//{
+			//	rowFilterCheckBoxesPart = "(Type = 8)"; // non-existient one
+			//}
+
+			if ( levelFilter != null )
+				levelFilter += " )";
+			else
+				levelFilter = "(Type = 8)"; // non-existient one
 
 			string generatedFilterValue = null;
 
-			string rowFilterTextBoxPart = string.Empty;
 			string text = filterTextBox.Text;
 			if ( text.Length < 3 )
 			{
-				//m_dataView.RowFilter = String.Empty;
-				//return;
-				generatedFilterValue = rowFilterCheckBoxesPart;
+				generatedFilterValue = levelFilter;
 			}
 			else
 			{
 				string userTextFixed = EscapeLikeValue( text );
-				rowFilterTextBoxPart = string.Format( "(Description LIKE '*{0}*' OR Tag LIKE '*{0}*' OR File LIKE '*{0}*')", userTextFixed );
+				string textFilter = string.Format( "(Description LIKE '*{0}*' OR Tag LIKE '*{0}*' OR File LIKE '*{0}*')", userTextFixed );
 
-				generatedFilterValue = string.Format( "{0} AND {1}", rowFilterCheckBoxesPart, rowFilterTextBoxPart );
+				generatedFilterValue = string.Format( "{0} AND {1}", levelFilter, textFilter );
 			}
 
 			//string groupFilter = null;
@@ -450,7 +460,7 @@ namespace pico.LogOutput
 
 			string finalFilterValue = generatedFilterValue;
 
-			string tagFilter = filterTagTextBox.Text;
+			string tagFilter = includeTagsTextBox.Text;
 			if ( tagFilter.Length > 3 )
 			{
 				//string tagFilterFixed = EscapeLikeValue( tagFilter );

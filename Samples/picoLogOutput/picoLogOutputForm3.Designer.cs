@@ -28,9 +28,15 @@
 		/// </summary>
 		private void InitializeComponent()
 		{
-			System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle3 = new System.Windows.Forms.DataGridViewCellStyle();
-			System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle4 = new System.Windows.Forms.DataGridViewCellStyle();
+			System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
+			System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
 			this.dataGridView1 = new System.Windows.Forms.DataGridView();
+			this.columnType = new System.Windows.Forms.DataGridViewImageColumn();
+			this.columnOrdinal = new System.Windows.Forms.DataGridViewTextBoxColumn();
+			this.columnTag = new System.Windows.Forms.DataGridViewTextBoxColumn();
+			this.columnDescription = new System.Windows.Forms.DataGridViewTextBoxColumn();
+			this.columnFile = new System.Windows.Forms.DataGridViewTextBoxColumn();
+			this.columnLine = new System.Windows.Forms.DataGridViewTextBoxColumn();
 			this.flowLayoutPanel1 = new System.Windows.Forms.FlowLayoutPanel();
 			this.buttonClear = new System.Windows.Forms.Button();
 			this.checkBoxErrors = new System.Windows.Forms.CheckBox();
@@ -41,16 +47,15 @@
 			this.labelSeparator3 = new System.Windows.Forms.Label();
 			this.label1 = new System.Windows.Forms.Label();
 			this.filterTextBox = new System.Windows.Forms.TextBox();
-			this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
-			this.columnType = new System.Windows.Forms.DataGridViewImageColumn();
-			this.columnOrdinal = new System.Windows.Forms.DataGridViewTextBoxColumn();
-			this.columnTag = new System.Windows.Forms.DataGridViewTextBoxColumn();
-			this.columnDescription = new System.Windows.Forms.DataGridViewTextBoxColumn();
-			this.columnFile = new System.Windows.Forms.DataGridViewTextBoxColumn();
-			this.columnLine = new System.Windows.Forms.DataGridViewTextBoxColumn();
 			this.labelSeparator4 = new System.Windows.Forms.Label();
 			this.label2 = new System.Windows.Forms.Label();
-			this.filterTagTextBox = new System.Windows.Forms.TextBox();
+			this.includeTagsTextBox = new System.Windows.Forms.TextBox();
+			this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
+			this.checkBoxDebug = new System.Windows.Forms.CheckBox();
+			this.label3 = new System.Windows.Forms.Label();
+			this.label4 = new System.Windows.Forms.Label();
+			this.label5 = new System.Windows.Forms.Label();
+			this.excludeTagsTextBox = new System.Windows.Forms.TextBox();
 			((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
 			this.flowLayoutPanel1.SuspendLayout();
 			this.tableLayoutPanel1.SuspendLayout();
@@ -61,8 +66,8 @@
 			this.dataGridView1.AllowUserToAddRows = false;
 			this.dataGridView1.AllowUserToDeleteRows = false;
 			this.dataGridView1.AllowUserToResizeRows = false;
-			dataGridViewCellStyle3.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(250)))), ((int)(((byte)(250)))), ((int)(((byte)(250)))));
-			this.dataGridView1.AlternatingRowsDefaultCellStyle = dataGridViewCellStyle3;
+			dataGridViewCellStyle1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(250)))), ((int)(((byte)(250)))), ((int)(((byte)(250)))));
+			this.dataGridView1.AlternatingRowsDefaultCellStyle = dataGridViewCellStyle1;
 			this.dataGridView1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
@@ -81,8 +86,66 @@
 			this.dataGridView1.RowHeadersVisible = false;
 			this.dataGridView1.RowHeadersWidthSizeMode = System.Windows.Forms.DataGridViewRowHeadersWidthSizeMode.DisableResizing;
 			this.dataGridView1.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-			this.dataGridView1.Size = new System.Drawing.Size(867, 373);
+			this.dataGridView1.Size = new System.Drawing.Size(1038, 373);
 			this.dataGridView1.TabIndex = 0;
+			// 
+			// columnType
+			// 
+			this.columnType.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.None;
+			this.columnType.DataPropertyName = "Type";
+			this.columnType.HeaderText = "";
+			this.columnType.MinimumWidth = 22;
+			this.columnType.Name = "columnType";
+			this.columnType.ReadOnly = true;
+			this.columnType.Resizable = System.Windows.Forms.DataGridViewTriState.False;
+			this.columnType.Width = 22;
+			// 
+			// columnOrdinal
+			// 
+			this.columnOrdinal.DataPropertyName = "Ordinal";
+			this.columnOrdinal.HeaderText = "";
+			this.columnOrdinal.MinimumWidth = 35;
+			this.columnOrdinal.Name = "columnOrdinal";
+			this.columnOrdinal.ReadOnly = true;
+			this.columnOrdinal.Resizable = System.Windows.Forms.DataGridViewTriState.False;
+			this.columnOrdinal.Width = 35;
+			// 
+			// columnTag
+			// 
+			this.columnTag.DataPropertyName = "Tag";
+			this.columnTag.HeaderText = "Tag";
+			this.columnTag.MinimumWidth = 20;
+			this.columnTag.Name = "columnTag";
+			this.columnTag.ReadOnly = true;
+			// 
+			// columnDescription
+			// 
+			this.columnDescription.DataPropertyName = "Description";
+			dataGridViewCellStyle2.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+			this.columnDescription.DefaultCellStyle = dataGridViewCellStyle2;
+			this.columnDescription.HeaderText = "Description";
+			this.columnDescription.MinimumWidth = 50;
+			this.columnDescription.Name = "columnDescription";
+			this.columnDescription.ReadOnly = true;
+			this.columnDescription.Width = 510;
+			// 
+			// columnFile
+			// 
+			this.columnFile.DataPropertyName = "File";
+			this.columnFile.HeaderText = "File";
+			this.columnFile.MinimumWidth = 20;
+			this.columnFile.Name = "columnFile";
+			this.columnFile.ReadOnly = true;
+			this.columnFile.Width = 150;
+			// 
+			// columnLine
+			// 
+			this.columnLine.DataPropertyName = "Line";
+			this.columnLine.HeaderText = "Line";
+			this.columnLine.MinimumWidth = 40;
+			this.columnLine.Name = "columnLine";
+			this.columnLine.ReadOnly = true;
+			this.columnLine.Width = 40;
 			// 
 			// flowLayoutPanel1
 			// 
@@ -95,15 +158,20 @@
 			this.flowLayoutPanel1.Controls.Add(this.labelSeparator2);
 			this.flowLayoutPanel1.Controls.Add(this.checkBoxInfos);
 			this.flowLayoutPanel1.Controls.Add(this.labelSeparator3);
+			this.flowLayoutPanel1.Controls.Add(this.checkBoxDebug);
+			this.flowLayoutPanel1.Controls.Add(this.label3);
 			this.flowLayoutPanel1.Controls.Add(this.label1);
 			this.flowLayoutPanel1.Controls.Add(this.filterTextBox);
 			this.flowLayoutPanel1.Controls.Add(this.labelSeparator4);
 			this.flowLayoutPanel1.Controls.Add(this.label2);
-			this.flowLayoutPanel1.Controls.Add(this.filterTagTextBox);
+			this.flowLayoutPanel1.Controls.Add(this.includeTagsTextBox);
+			this.flowLayoutPanel1.Controls.Add(this.label4);
+			this.flowLayoutPanel1.Controls.Add(this.label5);
+			this.flowLayoutPanel1.Controls.Add(this.excludeTagsTextBox);
 			this.flowLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.flowLayoutPanel1.Location = new System.Drawing.Point(3, 3);
 			this.flowLayoutPanel1.Name = "flowLayoutPanel1";
-			this.flowLayoutPanel1.Size = new System.Drawing.Size(867, 29);
+			this.flowLayoutPanel1.Size = new System.Drawing.Size(1038, 29);
 			this.flowLayoutPanel1.TabIndex = 1;
 			// 
 			// buttonClear
@@ -189,7 +257,7 @@
 			// 
 			this.label1.Anchor = System.Windows.Forms.AnchorStyles.None;
 			this.label1.AutoSize = true;
-			this.label1.Location = new System.Drawing.Point(276, 8);
+			this.label1.Location = new System.Drawing.Point(340, 8);
 			this.label1.Margin = new System.Windows.Forms.Padding(3);
 			this.label1.Name = "label1";
 			this.label1.Size = new System.Drawing.Size(29, 13);
@@ -200,10 +268,40 @@
 			// filterTextBox
 			// 
 			this.filterTextBox.Anchor = System.Windows.Forms.AnchorStyles.None;
-			this.filterTextBox.Location = new System.Drawing.Point(311, 4);
+			this.filterTextBox.Location = new System.Drawing.Point(375, 4);
 			this.filterTextBox.Name = "filterTextBox";
 			this.filterTextBox.Size = new System.Drawing.Size(150, 20);
 			this.filterTextBox.TabIndex = 4;
+			// 
+			// labelSeparator4
+			// 
+			this.labelSeparator4.Anchor = System.Windows.Forms.AnchorStyles.None;
+			this.labelSeparator4.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
+			this.labelSeparator4.Enabled = false;
+			this.labelSeparator4.Location = new System.Drawing.Point(531, 4);
+			this.labelSeparator4.Name = "labelSeparator4";
+			this.labelSeparator4.Size = new System.Drawing.Size(2, 20);
+			this.labelSeparator4.TabIndex = 9;
+			// 
+			// label2
+			// 
+			this.label2.Anchor = System.Windows.Forms.AnchorStyles.None;
+			this.label2.AutoSize = true;
+			this.label2.Location = new System.Drawing.Point(539, 8);
+			this.label2.Margin = new System.Windows.Forms.Padding(3);
+			this.label2.Name = "label2";
+			this.label2.Size = new System.Drawing.Size(66, 13);
+			this.label2.TabIndex = 10;
+			this.label2.Text = "IncludeTags";
+			this.label2.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+			// 
+			// includeTagsTextBox
+			// 
+			this.includeTagsTextBox.Anchor = System.Windows.Forms.AnchorStyles.None;
+			this.includeTagsTextBox.Location = new System.Drawing.Point(611, 4);
+			this.includeTagsTextBox.Name = "includeTagsTextBox";
+			this.includeTagsTextBox.Size = new System.Drawing.Size(124, 20);
+			this.includeTagsTextBox.TabIndex = 11;
 			// 
 			// tableLayoutPanel1
 			// 
@@ -219,96 +317,61 @@
 			this.tableLayoutPanel1.RowCount = 2;
 			this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
 			this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
-			this.tableLayoutPanel1.Size = new System.Drawing.Size(873, 414);
+			this.tableLayoutPanel1.Size = new System.Drawing.Size(1044, 414);
 			this.tableLayoutPanel1.TabIndex = 2;
 			// 
-			// columnType
+			// checkBoxDebug
 			// 
-			this.columnType.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.None;
-			this.columnType.DataPropertyName = "Type";
-			this.columnType.HeaderText = "";
-			this.columnType.MinimumWidth = 22;
-			this.columnType.Name = "columnType";
-			this.columnType.ReadOnly = true;
-			this.columnType.Resizable = System.Windows.Forms.DataGridViewTriState.False;
-			this.columnType.Width = 22;
+			this.checkBoxDebug.Anchor = System.Windows.Forms.AnchorStyles.None;
+			this.checkBoxDebug.AutoSize = true;
+			this.checkBoxDebug.Checked = true;
+			this.checkBoxDebug.CheckState = System.Windows.Forms.CheckState.Checked;
+			this.checkBoxDebug.Location = new System.Drawing.Point(276, 7);
+			this.checkBoxDebug.MinimumSize = new System.Drawing.Size(50, 0);
+			this.checkBoxDebug.Name = "checkBoxDebug";
+			this.checkBoxDebug.Size = new System.Drawing.Size(50, 14);
+			this.checkBoxDebug.TabIndex = 12;
+			this.checkBoxDebug.UseVisualStyleBackColor = true;
 			// 
-			// columnOrdinal
+			// label3
 			// 
-			this.columnOrdinal.DataPropertyName = "Ordinal";
-			this.columnOrdinal.HeaderText = "";
-			this.columnOrdinal.MinimumWidth = 35;
-			this.columnOrdinal.Name = "columnOrdinal";
-			this.columnOrdinal.ReadOnly = true;
-			this.columnOrdinal.Resizable = System.Windows.Forms.DataGridViewTriState.False;
-			this.columnOrdinal.Width = 35;
+			this.label3.Anchor = System.Windows.Forms.AnchorStyles.None;
+			this.label3.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
+			this.label3.Enabled = false;
+			this.label3.Location = new System.Drawing.Point(332, 4);
+			this.label3.Name = "label3";
+			this.label3.Size = new System.Drawing.Size(2, 20);
+			this.label3.TabIndex = 13;
 			// 
-			// columnTag
+			// label4
 			// 
-			this.columnTag.DataPropertyName = "Tag";
-			this.columnTag.HeaderText = "Tag";
-			this.columnTag.MinimumWidth = 20;
-			this.columnTag.Name = "columnTag";
-			this.columnTag.ReadOnly = true;
+			this.label4.Anchor = System.Windows.Forms.AnchorStyles.None;
+			this.label4.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
+			this.label4.Enabled = false;
+			this.label4.Location = new System.Drawing.Point(741, 4);
+			this.label4.Name = "label4";
+			this.label4.Size = new System.Drawing.Size(2, 20);
+			this.label4.TabIndex = 14;
 			// 
-			// columnDescription
+			// label5
 			// 
-			this.columnDescription.DataPropertyName = "Description";
-			dataGridViewCellStyle4.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-			this.columnDescription.DefaultCellStyle = dataGridViewCellStyle4;
-			this.columnDescription.HeaderText = "Description";
-			this.columnDescription.MinimumWidth = 50;
-			this.columnDescription.Name = "columnDescription";
-			this.columnDescription.ReadOnly = true;
-			this.columnDescription.Width = 510;
+			this.label5.Anchor = System.Windows.Forms.AnchorStyles.None;
+			this.label5.AutoSize = true;
+			this.label5.Location = new System.Drawing.Point(749, 8);
+			this.label5.Margin = new System.Windows.Forms.Padding(3);
+			this.label5.Name = "label5";
+			this.label5.Size = new System.Drawing.Size(69, 13);
+			this.label5.TabIndex = 15;
+			this.label5.Text = "ExcludeTags";
+			this.label5.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
 			// 
-			// columnFile
+			// excludeTagsTextBox
 			// 
-			this.columnFile.DataPropertyName = "File";
-			this.columnFile.HeaderText = "File";
-			this.columnFile.MinimumWidth = 20;
-			this.columnFile.Name = "columnFile";
-			this.columnFile.ReadOnly = true;
-			this.columnFile.Width = 150;
-			// 
-			// columnLine
-			// 
-			this.columnLine.DataPropertyName = "Line";
-			this.columnLine.HeaderText = "Line";
-			this.columnLine.MinimumWidth = 40;
-			this.columnLine.Name = "columnLine";
-			this.columnLine.ReadOnly = true;
-			this.columnLine.Width = 40;
-			// 
-			// labelSeparator4
-			// 
-			this.labelSeparator4.Anchor = System.Windows.Forms.AnchorStyles.None;
-			this.labelSeparator4.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
-			this.labelSeparator4.Enabled = false;
-			this.labelSeparator4.Location = new System.Drawing.Point(467, 4);
-			this.labelSeparator4.Name = "labelSeparator4";
-			this.labelSeparator4.Size = new System.Drawing.Size(2, 20);
-			this.labelSeparator4.TabIndex = 9;
-			// 
-			// label2
-			// 
-			this.label2.Anchor = System.Windows.Forms.AnchorStyles.None;
-			this.label2.AutoSize = true;
-			this.label2.Location = new System.Drawing.Point(475, 8);
-			this.label2.Margin = new System.Windows.Forms.Padding(3);
-			this.label2.Name = "label2";
-			this.label2.Size = new System.Drawing.Size(48, 13);
-			this.label2.TabIndex = 10;
-			this.label2.Text = "TagFilter";
-			this.label2.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-			// 
-			// filterTagTextBox
-			// 
-			this.filterTagTextBox.Anchor = System.Windows.Forms.AnchorStyles.None;
-			this.filterTagTextBox.Location = new System.Drawing.Point(529, 4);
-			this.filterTagTextBox.Name = "filterTagTextBox";
-			this.filterTagTextBox.Size = new System.Drawing.Size(240, 20);
-			this.filterTagTextBox.TabIndex = 11;
+			this.excludeTagsTextBox.Anchor = System.Windows.Forms.AnchorStyles.None;
+			this.excludeTagsTextBox.Location = new System.Drawing.Point(824, 4);
+			this.excludeTagsTextBox.Name = "excludeTagsTextBox";
+			this.excludeTagsTextBox.Size = new System.Drawing.Size(124, 20);
+			this.excludeTagsTextBox.TabIndex = 16;
 			// 
 			// picoLogOutputForm3
 			// 
@@ -316,7 +379,7 @@
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.Controls.Add(this.tableLayoutPanel1);
 			this.Name = "picoLogOutputForm3";
-			this.Size = new System.Drawing.Size(873, 414);
+			this.Size = new System.Drawing.Size(1044, 414);
 			((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).EndInit();
 			this.flowLayoutPanel1.ResumeLayout(false);
 			this.flowLayoutPanel1.PerformLayout();
@@ -349,6 +412,11 @@
 		private System.Windows.Forms.DataGridViewTextBoxColumn columnLine;
 		private System.Windows.Forms.Label labelSeparator4;
 		private System.Windows.Forms.Label label2;
-		private System.Windows.Forms.TextBox filterTagTextBox;
+		private System.Windows.Forms.TextBox includeTagsTextBox;
+		private System.Windows.Forms.CheckBox checkBoxDebug;
+		private System.Windows.Forms.Label label3;
+		private System.Windows.Forms.Label label4;
+		private System.Windows.Forms.Label label5;
+		private System.Windows.Forms.TextBox excludeTagsTextBox;
 	}
 }
