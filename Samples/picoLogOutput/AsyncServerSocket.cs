@@ -42,8 +42,17 @@ namespace pico.LogOutput
 			// running the listener is "host.contoso.com".
 			//IPHostEntry ipHostInfo = Dns.Resolve( Dns.GetHostName() );
 			//IPHostEntry ipHostInfo = Dns.GetHostEntry( Dns.GetHostName() );
-			IPHostEntry ipHostInfo = Dns.GetHostEntry( "localhost" );
-			IPAddress ipAddress = ipHostInfo.AddressList[1];
+			//IPHostEntry ipHostInfo = Dns.GetHostEntry( "localhost" );
+			//IPHostEntry ipHostInfo = Dns.GetHostEntry( "175.50.1.249" );
+			IPHostEntry ipHostInfo = Dns.GetHostEntry( string.Empty );
+			IPAddress ipAddress = null;
+			foreach (var addr in Dns.GetHostEntry(string.Empty).AddressList)
+			{
+				if ( addr.AddressFamily == AddressFamily.InterNetwork )
+					ipAddress = addr;
+			}
+
+			//IPAddress ipAddress = ipHostInfo.AddressList[2];
 			IPEndPoint localEndPoint = new IPEndPoint( ipAddress, 6668 );
 
 			// Create a TCP/IP socket.
@@ -209,9 +218,20 @@ namespace pico.LogOutput
 							string channel = msg.UnpackString();
 							m_editor.clearChannel( channel );
 						}
-						else if ( cmd == "clearAll" )
+						//else if ( cmd == "clearAll" )
+						//{
+						//	m_editor.clearAll();
+						//}
+						else if ( cmd == "rename" )
 						{
-							m_editor.clearAll();
+							string oldChannelName = msg.UnpackString();
+							string newChannelName = msg.UnpackString();
+							m_editor.renameChannel( oldChannelName, newChannelName );
+						}
+						else if ( cmd == "close" )
+						{
+							string channel = msg.UnpackString();
+							m_editor.closeChannel( channel );
 						}
 					}
 					else if ( messageType == "msg" )

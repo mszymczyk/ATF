@@ -32,8 +32,22 @@ namespace pico.LogOutput
 			dataGridView1.MouseClick += dataGridView1_MouseClick;
 			dataGridView1.KeyUp += dataGridView1_KeyUp;
 
+			filterTextBox.ForeColor = SystemColors.GrayText;
+			filterTextBox.Text = FilterTextBoxHelpString;
+			filterTextBox.Leave += filterTextBox_Leave;
+			filterTextBox.Enter += filterTextBox_Enter;
 			filterTextBox.TextChanged += filterTextBox_TextChanged;
+
+			includeTagsTextBox.ForeColor = SystemColors.GrayText;
+			includeTagsTextBox.Text = IncludeExcludeTagHelpString;
+			includeTagsTextBox.Leave += includeExcludeTagsTextBox_Leave;
+			includeTagsTextBox.Enter += includeExcludeTagsTextBox_Enter;
 			includeTagsTextBox.TextChanged += filterTextBox_TextChanged;
+
+			excludeTagsTextBox.ForeColor = SystemColors.GrayText;
+			excludeTagsTextBox.Text = IncludeExcludeTagHelpString;
+			excludeTagsTextBox.Leave += includeExcludeTagsTextBox_Leave;
+			excludeTagsTextBox.Enter += includeExcludeTagsTextBox_Enter;
 			excludeTagsTextBox.TextChanged += filterTextBox_TextChanged;
 
 			checkBoxErrors.CheckedChanged += checkBox_CheckedChanged;
@@ -49,11 +63,28 @@ namespace pico.LogOutput
 			m_dt = m_logDataTable.Data;
 			m_dv = m_logDataTable.DataView;
 
+			//dataGridView1.SelectionChanged += dataGridView1_SelectionChanged;
+			dataGridView1.DataBindingComplete += dataGridView1_DataBindingComplete;
 			dataGridView1.DataSource = m_dv;
 
 			updateCheckBoxes();
 			updateRowFilter();
 		}
+
+		protected override void OnLoad( EventArgs e )
+		{
+			base.OnLoad( e );
+		}
+
+		void dataGridView1_DataBindingComplete( object sender, DataGridViewBindingCompleteEventArgs e )
+		{
+			dataGridView1.ClearSelection();
+		}
+
+		//void dataGridView1_SelectionChanged( object sender, EventArgs e )
+		//{
+		//	string s = e.ToString();
+		//}
 
 		//public void setup( Icons icons, picoLogDataTable dataTable )
 		public void setup( Icons icons )
@@ -101,6 +132,44 @@ namespace pico.LogOutput
 		void filterTextBox_TextChanged( object sender, EventArgs e )
 		{
 			updateRowFilter();
+		}
+
+		private void filterTextBox_Leave( object sender, EventArgs e )
+		{
+			if ( filterTextBox.Text.Length == 0 )
+			{
+				filterTextBox.Text = FilterTextBoxHelpString;
+				filterTextBox.ForeColor = SystemColors.GrayText;
+			}
+		}
+
+		private void filterTextBox_Enter( object sender, EventArgs e )
+		{
+			if ( filterTextBox.Text == FilterTextBoxHelpString )
+			{
+				filterTextBox.Text = "";
+				filterTextBox.ForeColor = SystemColors.WindowText;
+			}
+		}
+
+		void includeExcludeTagsTextBox_Leave( object sender, EventArgs e )
+		{
+			TextBox tb = sender as TextBox;
+			if ( tb.Text.Length == 0 )
+			{
+				tb.Text = IncludeExcludeTagHelpString;
+				tb.ForeColor = SystemColors.GrayText;
+			}
+		}
+
+		void includeExcludeTagsTextBox_Enter( object sender, EventArgs e )
+		{
+			TextBox tb = sender as TextBox;
+			if ( tb.Text == IncludeExcludeTagHelpString )
+			{
+				tb.Text = "";
+				tb.ForeColor = SystemColors.WindowText;
+			}
 		}
 
 		private void buttonClear_Click( object sender, EventArgs e )
@@ -423,7 +492,7 @@ namespace pico.LogOutput
 			string generatedFilterValue = null;
 
 			string text = filterTextBox.Text;
-			if ( text.Length < 3 )
+			if ( text.Length < 3 || text == FilterTextBoxHelpString )
 			{
 				generatedFilterValue = levelFilter;
 			}
@@ -466,48 +535,54 @@ namespace pico.LogOutput
 			//	finalFilterValue = string.Format( "{0} AND ({1})", finalFilterValue, groupFilter );
 			//}
 
-			string includedTagsSet = "";
-			string[] includedTags = includeTagsTextBox.Text.Split( ' ', ',', ';' );
-			int nValidITags = 0;
-			foreach( string itag in includedTags )
-			{
-				if ( itag.Length <= 3 )
-					continue;
-
-				++nValidITags;
-
-				if ( includedTagsSet.Length > 0 )
-					includedTagsSet += ", ";
-
-				includedTagsSet += string.Format( "'{0}'", itag );
-			}
-
 			string finalFilterValue = generatedFilterValue;
 
-			if ( nValidITags > 0 )
+			if ( includeTagsTextBox.Text != IncludeExcludeTagHelpString )
 			{
-				finalFilterValue = string.Format( "{0} AND (Tag IN ({1}))", finalFilterValue, includedTagsSet );
+				string includedTagsSet = "";
+				string[] includedTags = includeTagsTextBox.Text.Split( ' ', ',', ';' );
+				int nValidITags = 0;
+				foreach ( string itag in includedTags )
+				{
+					if ( itag.Length <= 3 )
+						continue;
+
+					++nValidITags;
+
+					if ( includedTagsSet.Length > 0 )
+						includedTagsSet += ", ";
+
+					includedTagsSet += string.Format( "'{0}'", itag );
+				}
+
+				if ( nValidITags > 0 )
+				{
+					finalFilterValue = string.Format( "{0} AND (Tag IN ({1}))", finalFilterValue, includedTagsSet );
+				}
 			}
 
-			string excludedTagsSet = "";
-			string[] excludedTags = excludeTagsTextBox.Text.Split( ' ', ',', ';' );
-			int nValidETags = 0;
-			foreach ( string etag in excludedTags )
+			if ( excludeTagsTextBox.Text != IncludeExcludeTagHelpString )
 			{
-				if ( etag.Length <= 3 )
-					continue;
+				string excludedTagsSet = "";
+				string[] excludedTags = excludeTagsTextBox.Text.Split( ' ', ',', ';' );
+				int nValidETags = 0;
+				foreach ( string etag in excludedTags )
+				{
+					if ( etag.Length <= 3 )
+						continue;
 
-				++nValidETags;
+					++nValidETags;
 
-				if ( excludedTagsSet.Length > 0 )
-					excludedTagsSet += ", ";
+					if ( excludedTagsSet.Length > 0 )
+						excludedTagsSet += ", ";
 
-				excludedTagsSet += string.Format( "'{0}'", etag );
-			}
+					excludedTagsSet += string.Format( "'{0}'", etag );
+				}
 
-			if ( nValidETags > 0 )
-			{
-				finalFilterValue = string.Format( "{0} AND (Tag NOT IN ({1}))", finalFilterValue, excludedTagsSet );
+				if ( nValidETags > 0 )
+				{
+					finalFilterValue = string.Format( "{0} AND (Tag NOT IN ({1}))", finalFilterValue, excludedTagsSet );
+				}
 			}
 
 			//string tagFilter = includeTagsTextBox.Text;
@@ -544,5 +619,7 @@ namespace pico.LogOutput
 		private const string Alphabet = "     ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
 
 		//private string m_rowFilterCheckBoxesPart;
+		private static readonly string FilterTextBoxHelpString = "Search in Tags, Descriptions and Files";
+		private static readonly string IncludeExcludeTagHelpString = "Tags separated by space, colon or semicolon";
 	}
 }

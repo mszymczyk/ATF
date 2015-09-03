@@ -51,7 +51,7 @@ namespace pico.LogOutput
 			m_dt.Columns.Add( "File", typeof( string ) );
 			m_dt.Columns.Add( "Line", typeof( int ) );
 
-			GenerateFlat();
+			//GenerateFlat();
 		}
 
 		public picoLogOutputForm3 Form { get; set; }
@@ -142,7 +142,7 @@ namespace pico.LogOutput
 		}
 
 		private DataTable m_dt;
-		private int m_maxRows = 2000;
+		private int m_maxRows = 10000;
 		private int m_ordinal;
 
 		private int m_numErrors;

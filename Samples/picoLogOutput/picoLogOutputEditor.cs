@@ -50,16 +50,16 @@ namespace pico.LogOutput
         void IInitializable.Initialize()
         {
             // So the GUI will show up since nothing else imports it...
-			m_commandService.RegisterCommand(
-			   Command.ClearAll,
-			   StandardMenu.View,
-			   "LogCommands",
-			   "Clear All",
-			   "Clears All Outputs",
-			   Keys.None,
-			   null,
-			   CommandVisibility.ApplicationMenu,
-			   this );
+			//m_commandService.RegisterCommand(
+			//   Command.ClearAll,
+			//   StandardMenu.View,
+			//   "LogCommands",
+			//   "Clear All",
+			//   "Clears All Outputs",
+			//   Keys.None,
+			//   null,
+			//   CommandVisibility.ApplicationMenu,
+			//   this );
 
 			m_icons = new Icons();
 
@@ -83,7 +83,7 @@ namespace pico.LogOutput
 			//	info,
 			//	this );
 
-			clearAllThreadSafe();
+			//clearAllThreadSafe();
 
 			picoLogOutputForm3 form = _AddNewForm( "StandaloneWin", false );
 			form.LogDataTable.MaxRows = 10000;
@@ -165,15 +165,15 @@ namespace pico.LogOutput
 		/// <param name="commandTag">Command</param>
 		public void DoCommand( object commandTag )
 		{
-			if (commandTag is Command)
-			{
-				switch ((Command) commandTag)
-				{
-					case Command.ClearAll:
-						clearAll();
-						break;
-				}
-			}
+			//if (commandTag is Command)
+			//{
+			//	switch ((Command) commandTag)
+			//	{
+			//		case Command.ClearAll:
+			//			clearAll();
+			//			break;
+			//	}
+			//}
 		}
 
 		/// <summary>
@@ -301,9 +301,11 @@ namespace pico.LogOutput
 		{
 			lock ( this )
 			{
+				ChannelInstance chInst;
 				picoLogOutputForm3 form;
-				if ( m_logForms.TryGetValue( channel, out form ) )
+				if ( m_logForms.TryGetValue( channel, out chInst ) )
 				{
+					form = chInst.form;
 				}
 				else
 				{
@@ -336,42 +338,104 @@ namespace pico.LogOutput
 		{
 			lock ( this )
 			{
-				picoLogOutputForm3 form;
-				if ( m_logForms.TryGetValue( channel, out form ) )
+				ChannelInstance chInst;
+				if ( m_logForms.TryGetValue( channel, out chInst ) )
 				{
+					picoLogOutputForm3 form = chInst.form;
 					form.clearLog();
 				}
 			}
 		}
 
-		public void clearAll()
+		public void renameChannel( string oldName, string newName )
 		{
 			if ( m_mainForm.IsHandleCreated )
-				m_mainForm.BeginInvoke( new MethodInvoker( () => clearAllThreadSafe() ) );
+				m_mainForm.BeginInvoke( new MethodInvoker( () => renameChannelThreadSafe( oldName, newName ) ) );
 		}
 
-		public void clearAllThreadSafe()
+		public void renameChannelThreadSafe( string oldName, string newName )
 		{
 			lock ( this )
 			{
-				foreach ( picoLogOutputForm3 form in m_logForms.Values )
+				ChannelInstance chInst;
+				if ( m_logForms.TryGetValue( oldName, out chInst ) )
 				{
-					m_controlHostService.UnregisterControl( form );
+					m_logForms.Remove( oldName );
+
+					ChannelInstance chInstNewName;
+					if ( m_logForms.TryGetValue( newName, out chInstNewName ) )
+					{
+						// unregister old control
+						// control with newName already exists
+						//
+						m_controlHostService.UnregisterControl( chInst.form );
+					}
+					else
+					{
+						m_logForms.Add( newName, chInst );
+
+						chInst.channelName = newName;
+						chInst.controlInfo.Name = newName;
+						chInst.controlInfo.Description = newName;
+					}
 				}
-
-				m_logForms.Clear();
-
-				//m_logForm_All = _AddNewForm( "All" );
-				//m_logForm_All.LogDataTable.MaxRows = 10000;
 			}
 		}
+
+		public void closeChannel( string channel )
+		{
+			if ( m_mainForm.IsHandleCreated )
+				m_mainForm.BeginInvoke( new MethodInvoker( () => closeChannelThreadSafe( channel ) ) );
+		}
+
+		public void closeChannelThreadSafe( string channel )
+		{
+			lock ( this )
+			{
+				ChannelInstance chInst;
+				if ( m_logForms.TryGetValue( channel, out chInst ) )
+				{
+					m_logForms.Remove( channel );
+					m_controlHostService.UnregisterControl( chInst.form );
+					// dispose this form, to free all resources
+					// without this number of user objects when viewed in taskmanager increases to thousands
+					//
+					chInst.form.Dispose();
+				}
+			}
+		}
+		//public void clearAll()
+		//{
+		//	if ( m_mainForm.IsHandleCreated )
+		//		m_mainForm.BeginInvoke( new MethodInvoker( () => clearAllThreadSafe() ) );
+		//}
+
+		//public void clearAllThreadSafe()
+		//{
+		//	lock ( this )
+		//	{
+		//		foreach ( picoLogOutputForm3 form in m_logForms.Values )
+		//		{
+		//			m_controlHostService.UnregisterControl( form );
+		//		}
+
+		//		m_logForms.Clear();
+
+		//		//m_logForm_All = _AddNewForm( "All" );
+		//		//m_logForm_All.LogDataTable.MaxRows = 10000;
+		//	}
+		//}
 
 		private picoLogOutputForm3 _AddNewForm( string channel, bool canBeClosed )
 		{
 			lock ( this )
 			{
+				ChannelInstance chInst = new ChannelInstance();
+				m_logForms.Add( channel, chInst );
+
+				chInst.channelName = channel;
 				picoLogOutputForm3 form = new picoLogOutputForm3();
-				m_logForms.Add( channel, form );
+				chInst.form = form;
 				form.setup( m_icons );
 
 				var info =
@@ -380,6 +444,8 @@ namespace pico.LogOutput
 						channel,
 						canBeClosed ? StandardControlGroup.Center : StandardControlGroup.CenterPermanent );
 				info.IsDocument = true;
+
+				chInst.controlInfo = info;
 
 				m_controlHostService.RegisterControl(
 					form,
@@ -395,7 +461,14 @@ namespace pico.LogOutput
 		private readonly IControlHostService m_controlHostService;
 		private readonly ICommandService m_commandService;
 
-		private Dictionary<string, picoLogOutputForm3> m_logForms = new Dictionary<string, picoLogOutputForm3>();
+		private class ChannelInstance
+		{
+			public string channelName;
+			public picoLogOutputForm3 form;
+			public ControlInfo controlInfo;
+		}
+
+		private Dictionary<string, ChannelInstance> m_logForms = new Dictionary<string, ChannelInstance>();
 		//private picoLogOutputForm3 m_logForm_All;
 		//private Dictionary<string, picoLogDataTable> m_logForms = new Dictionary<string, picoLogDataTable>();
 		private Icons m_icons;

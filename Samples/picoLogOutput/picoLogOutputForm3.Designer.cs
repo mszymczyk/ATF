@@ -49,16 +49,16 @@
 			this.label3 = new System.Windows.Forms.Label();
 			this.label1 = new System.Windows.Forms.Label();
 			this.filterTextBox = new System.Windows.Forms.TextBox();
-			this.labelSeparator4 = new System.Windows.Forms.Label();
+			this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
+			this.flowLayoutPanel2 = new System.Windows.Forms.FlowLayoutPanel();
 			this.label2 = new System.Windows.Forms.Label();
 			this.includeTagsTextBox = new System.Windows.Forms.TextBox();
-			this.label4 = new System.Windows.Forms.Label();
 			this.label5 = new System.Windows.Forms.Label();
 			this.excludeTagsTextBox = new System.Windows.Forms.TextBox();
-			this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
 			((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
 			this.flowLayoutPanel1.SuspendLayout();
 			this.tableLayoutPanel1.SuspendLayout();
+			this.flowLayoutPanel2.SuspendLayout();
 			this.SuspendLayout();
 			// 
 			// dataGridView1
@@ -80,14 +80,15 @@
             this.columnDescription,
             this.columnFile,
             this.columnLine});
-			this.dataGridView1.Location = new System.Drawing.Point(3, 38);
+			this.dataGridView1.Location = new System.Drawing.Point(3, 70);
 			this.dataGridView1.Name = "dataGridView1";
 			this.dataGridView1.ReadOnly = true;
 			this.dataGridView1.RowHeadersVisible = false;
 			this.dataGridView1.RowHeadersWidthSizeMode = System.Windows.Forms.DataGridViewRowHeadersWidthSizeMode.DisableResizing;
 			this.dataGridView1.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-			this.dataGridView1.Size = new System.Drawing.Size(1038, 373);
+			this.dataGridView1.Size = new System.Drawing.Size(1038, 592);
 			this.dataGridView1.TabIndex = 0;
+			this.dataGridView1.TabStop = false;
 			// 
 			// columnType
 			// 
@@ -162,12 +163,6 @@
 			this.flowLayoutPanel1.Controls.Add(this.label3);
 			this.flowLayoutPanel1.Controls.Add(this.label1);
 			this.flowLayoutPanel1.Controls.Add(this.filterTextBox);
-			this.flowLayoutPanel1.Controls.Add(this.labelSeparator4);
-			this.flowLayoutPanel1.Controls.Add(this.label2);
-			this.flowLayoutPanel1.Controls.Add(this.includeTagsTextBox);
-			this.flowLayoutPanel1.Controls.Add(this.label4);
-			this.flowLayoutPanel1.Controls.Add(this.label5);
-			this.flowLayoutPanel1.Controls.Add(this.excludeTagsTextBox);
 			this.flowLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.flowLayoutPanel1.Location = new System.Drawing.Point(3, 3);
 			this.flowLayoutPanel1.Name = "flowLayoutPanel1";
@@ -291,68 +286,8 @@
 			this.filterTextBox.Anchor = System.Windows.Forms.AnchorStyles.None;
 			this.filterTextBox.Location = new System.Drawing.Point(375, 4);
 			this.filterTextBox.Name = "filterTextBox";
-			this.filterTextBox.Size = new System.Drawing.Size(150, 20);
+			this.filterTextBox.Size = new System.Drawing.Size(270, 20);
 			this.filterTextBox.TabIndex = 4;
-			// 
-			// labelSeparator4
-			// 
-			this.labelSeparator4.Anchor = System.Windows.Forms.AnchorStyles.None;
-			this.labelSeparator4.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
-			this.labelSeparator4.Enabled = false;
-			this.labelSeparator4.Location = new System.Drawing.Point(531, 4);
-			this.labelSeparator4.Name = "labelSeparator4";
-			this.labelSeparator4.Size = new System.Drawing.Size(2, 20);
-			this.labelSeparator4.TabIndex = 9;
-			// 
-			// label2
-			// 
-			this.label2.Anchor = System.Windows.Forms.AnchorStyles.None;
-			this.label2.AutoSize = true;
-			this.label2.Location = new System.Drawing.Point(539, 8);
-			this.label2.Margin = new System.Windows.Forms.Padding(3);
-			this.label2.Name = "label2";
-			this.label2.Size = new System.Drawing.Size(66, 13);
-			this.label2.TabIndex = 10;
-			this.label2.Text = "IncludeTags";
-			this.label2.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-			// 
-			// includeTagsTextBox
-			// 
-			this.includeTagsTextBox.Anchor = System.Windows.Forms.AnchorStyles.None;
-			this.includeTagsTextBox.Location = new System.Drawing.Point(611, 4);
-			this.includeTagsTextBox.Name = "includeTagsTextBox";
-			this.includeTagsTextBox.Size = new System.Drawing.Size(124, 20);
-			this.includeTagsTextBox.TabIndex = 11;
-			// 
-			// label4
-			// 
-			this.label4.Anchor = System.Windows.Forms.AnchorStyles.None;
-			this.label4.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
-			this.label4.Enabled = false;
-			this.label4.Location = new System.Drawing.Point(741, 4);
-			this.label4.Name = "label4";
-			this.label4.Size = new System.Drawing.Size(2, 20);
-			this.label4.TabIndex = 14;
-			// 
-			// label5
-			// 
-			this.label5.Anchor = System.Windows.Forms.AnchorStyles.None;
-			this.label5.AutoSize = true;
-			this.label5.Location = new System.Drawing.Point(749, 8);
-			this.label5.Margin = new System.Windows.Forms.Padding(3);
-			this.label5.Name = "label5";
-			this.label5.Size = new System.Drawing.Size(69, 13);
-			this.label5.TabIndex = 15;
-			this.label5.Text = "ExcludeTags";
-			this.label5.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-			// 
-			// excludeTagsTextBox
-			// 
-			this.excludeTagsTextBox.Anchor = System.Windows.Forms.AnchorStyles.None;
-			this.excludeTagsTextBox.Location = new System.Drawing.Point(824, 4);
-			this.excludeTagsTextBox.Name = "excludeTagsTextBox";
-			this.excludeTagsTextBox.Size = new System.Drawing.Size(124, 20);
-			this.excludeTagsTextBox.TabIndex = 16;
 			// 
 			// tableLayoutPanel1
 			// 
@@ -360,16 +295,72 @@
 			this.tableLayoutPanel1.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
 			this.tableLayoutPanel1.ColumnCount = 1;
 			this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
-			this.tableLayoutPanel1.Controls.Add(this.dataGridView1, 0, 1);
+			this.tableLayoutPanel1.Controls.Add(this.dataGridView1, 0, 2);
 			this.tableLayoutPanel1.Controls.Add(this.flowLayoutPanel1, 0, 0);
+			this.tableLayoutPanel1.Controls.Add(this.flowLayoutPanel2, 0, 1);
 			this.tableLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.tableLayoutPanel1.Location = new System.Drawing.Point(0, 0);
 			this.tableLayoutPanel1.Name = "tableLayoutPanel1";
-			this.tableLayoutPanel1.RowCount = 2;
+			this.tableLayoutPanel1.RowCount = 3;
+			this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
 			this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
 			this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
-			this.tableLayoutPanel1.Size = new System.Drawing.Size(1044, 414);
+			this.tableLayoutPanel1.Size = new System.Drawing.Size(1044, 665);
 			this.tableLayoutPanel1.TabIndex = 2;
+			// 
+			// flowLayoutPanel2
+			// 
+			this.flowLayoutPanel2.AutoSize = true;
+			this.flowLayoutPanel2.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+			this.flowLayoutPanel2.Controls.Add(this.label2);
+			this.flowLayoutPanel2.Controls.Add(this.includeTagsTextBox);
+			this.flowLayoutPanel2.Controls.Add(this.label5);
+			this.flowLayoutPanel2.Controls.Add(this.excludeTagsTextBox);
+			this.flowLayoutPanel2.Dock = System.Windows.Forms.DockStyle.Fill;
+			this.flowLayoutPanel2.Location = new System.Drawing.Point(3, 38);
+			this.flowLayoutPanel2.Name = "flowLayoutPanel2";
+			this.flowLayoutPanel2.Size = new System.Drawing.Size(1038, 26);
+			this.flowLayoutPanel2.TabIndex = 2;
+			// 
+			// label2
+			// 
+			this.label2.Anchor = System.Windows.Forms.AnchorStyles.None;
+			this.label2.AutoSize = true;
+			this.label2.Location = new System.Drawing.Point(3, 6);
+			this.label2.Margin = new System.Windows.Forms.Padding(3);
+			this.label2.Name = "label2";
+			this.label2.Size = new System.Drawing.Size(66, 13);
+			this.label2.TabIndex = 17;
+			this.label2.Text = "IncludeTags";
+			this.label2.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+			// 
+			// includeTagsTextBox
+			// 
+			this.includeTagsTextBox.Anchor = System.Windows.Forms.AnchorStyles.None;
+			this.includeTagsTextBox.Location = new System.Drawing.Point(75, 3);
+			this.includeTagsTextBox.Name = "includeTagsTextBox";
+			this.includeTagsTextBox.Size = new System.Drawing.Size(300, 20);
+			this.includeTagsTextBox.TabIndex = 18;
+			// 
+			// label5
+			// 
+			this.label5.Anchor = System.Windows.Forms.AnchorStyles.None;
+			this.label5.AutoSize = true;
+			this.label5.Location = new System.Drawing.Point(381, 6);
+			this.label5.Margin = new System.Windows.Forms.Padding(3);
+			this.label5.Name = "label5";
+			this.label5.Size = new System.Drawing.Size(69, 13);
+			this.label5.TabIndex = 20;
+			this.label5.Text = "ExcludeTags";
+			this.label5.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+			// 
+			// excludeTagsTextBox
+			// 
+			this.excludeTagsTextBox.Anchor = System.Windows.Forms.AnchorStyles.None;
+			this.excludeTagsTextBox.Location = new System.Drawing.Point(456, 3);
+			this.excludeTagsTextBox.Name = "excludeTagsTextBox";
+			this.excludeTagsTextBox.Size = new System.Drawing.Size(300, 20);
+			this.excludeTagsTextBox.TabIndex = 21;
 			// 
 			// picoLogOutputForm3
 			// 
@@ -377,12 +368,14 @@
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.Controls.Add(this.tableLayoutPanel1);
 			this.Name = "picoLogOutputForm3";
-			this.Size = new System.Drawing.Size(1044, 414);
+			this.Size = new System.Drawing.Size(1044, 665);
 			((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).EndInit();
 			this.flowLayoutPanel1.ResumeLayout(false);
 			this.flowLayoutPanel1.PerformLayout();
 			this.tableLayoutPanel1.ResumeLayout(false);
 			this.tableLayoutPanel1.PerformLayout();
+			this.flowLayoutPanel2.ResumeLayout(false);
+			this.flowLayoutPanel2.PerformLayout();
 			this.ResumeLayout(false);
 			this.PerformLayout();
 
@@ -408,12 +401,11 @@
 		private System.Windows.Forms.DataGridViewTextBoxColumn columnDescription;
 		private System.Windows.Forms.DataGridViewTextBoxColumn columnFile;
 		private System.Windows.Forms.DataGridViewTextBoxColumn columnLine;
-		private System.Windows.Forms.Label labelSeparator4;
-		private System.Windows.Forms.Label label2;
-		private System.Windows.Forms.TextBox includeTagsTextBox;
 		private System.Windows.Forms.CheckBox checkBoxDebug;
 		private System.Windows.Forms.Label label3;
-		private System.Windows.Forms.Label label4;
+		private System.Windows.Forms.FlowLayoutPanel flowLayoutPanel2;
+		private System.Windows.Forms.Label label2;
+		private System.Windows.Forms.TextBox includeTagsTextBox;
 		private System.Windows.Forms.Label label5;
 		private System.Windows.Forms.TextBox excludeTagsTextBox;
 	}
