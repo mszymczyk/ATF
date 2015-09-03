@@ -34,10 +34,12 @@ namespace pico.LogOutput
 
 			filterTextBox.TextChanged += filterTextBox_TextChanged;
 			includeTagsTextBox.TextChanged += filterTextBox_TextChanged;
+			excludeTagsTextBox.TextChanged += filterTextBox_TextChanged;
 
 			checkBoxErrors.CheckedChanged += checkBox_CheckedChanged;
 			checkBoxWarnings.CheckedChanged += checkBox_CheckedChanged;
 			checkBoxInfos.CheckedChanged += checkBox_CheckedChanged;
+			checkBoxDebug.CheckedChanged += checkBox_CheckedChanged;
 
 			//checkedComboBox1.Items.Add( "Common" );
 			//checkedComboBox1.SetItemChecked( 0, true );
@@ -124,6 +126,10 @@ namespace pico.LogOutput
 					else if (ival == DataItem.Type_Info)
 					{
 						e.Value = m_icons.InfoIcon;
+					}
+					else if ( ival == DataItem.Type_Debug )
+					{
+						e.Value = m_icons.DebugIcon;
 					}
 				}
 			}
@@ -366,6 +372,8 @@ namespace pico.LogOutput
 				checkBoxInfos.Text = string.Format( "{0} Messages", m_logDataTable.NumInfos );
 			else
 				checkBoxInfos.Text = "1 Message";
+
+			checkBoxDebug.Text = string.Format( "{0} Debug", m_logDataTable.NumDebug );
 		}
 
 		private void updateRowFilter( ItemCheckEventArgs e = null )
@@ -458,15 +466,57 @@ namespace pico.LogOutput
 			//	finalFilterValue = string.Format( "{0} AND ({1})", finalFilterValue, groupFilter );
 			//}
 
+			string includedTagsSet = "";
+			string[] includedTags = includeTagsTextBox.Text.Split( ' ', ',', ';' );
+			int nValidITags = 0;
+			foreach( string itag in includedTags )
+			{
+				if ( itag.Length <= 3 )
+					continue;
+
+				++nValidITags;
+
+				if ( includedTagsSet.Length > 0 )
+					includedTagsSet += ", ";
+
+				includedTagsSet += string.Format( "'{0}'", itag );
+			}
+
 			string finalFilterValue = generatedFilterValue;
 
-			string tagFilter = includeTagsTextBox.Text;
-			if ( tagFilter.Length > 3 )
+			if ( nValidITags > 0 )
 			{
-				//string tagFilterFixed = EscapeLikeValue( tagFilter );
-				//finalFilterValue = string.Format( "{0} AND ({1})", generatedFilterValue, tagFilterFixed );
-				finalFilterValue = string.Format( "{0} AND ({1})", generatedFilterValue, tagFilter );
+				finalFilterValue = string.Format( "{0} AND (Tag IN ({1}))", finalFilterValue, includedTagsSet );
 			}
+
+			string excludedTagsSet = "";
+			string[] excludedTags = excludeTagsTextBox.Text.Split( ' ', ',', ';' );
+			int nValidETags = 0;
+			foreach ( string etag in excludedTags )
+			{
+				if ( etag.Length <= 3 )
+					continue;
+
+				++nValidETags;
+
+				if ( excludedTagsSet.Length > 0 )
+					excludedTagsSet += ", ";
+
+				excludedTagsSet += string.Format( "'{0}'", etag );
+			}
+
+			if ( nValidETags > 0 )
+			{
+				finalFilterValue = string.Format( "{0} AND (Tag NOT IN ({1}))", finalFilterValue, excludedTagsSet );
+			}
+
+			//string tagFilter = includeTagsTextBox.Text;
+			//if ( tagFilter.Length > 3 )
+			//{
+			//	//string tagFilterFixed = EscapeLikeValue( tagFilter );
+			//	//finalFilterValue = string.Format( "{0} AND ({1})", generatedFilterValue, tagFilterFixed );
+			//	finalFilterValue = string.Format( "{0} AND ({1})", generatedFilterValue, tagFilter );
+			//}
 
 			//string userTextFixed = EscapeLikeValue( text );
 			//string filter = string.Format( "Name LIKE '*{0}*'", userTextFixed );

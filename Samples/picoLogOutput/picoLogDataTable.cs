@@ -51,7 +51,7 @@ namespace pico.LogOutput
 			m_dt.Columns.Add( "File", typeof( string ) );
 			m_dt.Columns.Add( "Line", typeof( int ) );
 
-			//GenerateFlat();
+			GenerateFlat();
 		}
 
 		public picoLogOutputForm3 Form { get; set; }
@@ -63,6 +63,7 @@ namespace pico.LogOutput
 		public int NumErrors { get { return m_numErrors; } }
 		public int NumWarnings { get { return m_numWarnings; } }
 		public int NumInfos { get { return m_numInfos; } }
+		public int NumDebug { get { return m_numDebug; } }
 
 		public DataTable Data
 		{
@@ -80,6 +81,7 @@ namespace pico.LogOutput
 			m_numErrors = 0;
 			m_numWarnings = 0;
 			m_numInfos = 0;
+			m_numDebug = 0;
 		}
 
 		public void AddItem( DataItem item )
@@ -93,6 +95,8 @@ namespace pico.LogOutput
 				m_numWarnings += 1;
 			else if (item.Type == DataItem.Type_Info)
 				m_numInfos += 1;
+			else if ( item.Type == DataItem.Type_Debug )
+				m_numDebug += 1;
 
 			m_ordinal += 1;
 			//m_dt.Rows.Add( item.Type, m_ordinal, item.Group, item.Description, item.Tag, item.File, item.Line );
@@ -113,7 +117,7 @@ namespace pico.LogOutput
 		{
 			DataItem di = new DataItem();
 
-			di.Type = s_random.Next( 0, 3 ) + 1;
+			di.Type = s_random.Next( 0, 4 ) + 1;
 			//di.Group = "Common";
 			di.Tag = CreateString( s_random.Next( 15, 36 ) );
 			di.Description = CreateString( s_random.Next( 12, 21 ) );
@@ -144,6 +148,7 @@ namespace pico.LogOutput
 		private int m_numErrors;
 		private int m_numWarnings;
 		private int m_numInfos;
+		private int m_numDebug;
 
 		private static readonly Random s_random = new Random( 1973 );
 		private static readonly string Alphabet = "     ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";

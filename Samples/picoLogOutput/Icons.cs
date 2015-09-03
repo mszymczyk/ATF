@@ -10,6 +10,7 @@ namespace pico.LogOutput
 			m_errorImage = _ScaleIcon( SystemIcons.Error );
 			m_warningImage = _ScaleIcon( SystemIcons.Warning );
 			m_infoImage = _ScaleIcon( SystemIcons.Information );
+			m_debugImage = _ScaleIcon( SystemIcons.Application );
 		}
 
 		public Image ErrorIcon
@@ -25,6 +26,11 @@ namespace pico.LogOutput
 		public Image InfoIcon
 		{
 			get { return m_infoImage; }
+		}
+
+		public Image DebugIcon
+		{
+			get { return m_debugImage; }
 		}
 
 		private Image _ScaleIcon( Icon sourceIcon )
@@ -46,5 +52,6 @@ namespace pico.LogOutput
 		private Image m_errorImage;
 		private Image m_warningImage;
 		private Image m_infoImage;
+		private Image m_debugImage;
 	}
 }

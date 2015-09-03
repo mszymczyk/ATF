@@ -84,7 +84,10 @@ namespace pico.LogOutput
 			//	this );
 
 			clearAllThreadSafe();
-        }
+
+			picoLogOutputForm3 form = _AddNewForm( "StandaloneWin", false );
+			form.LogDataTable.MaxRows = 10000;
+		}
 
         #endregion
 
@@ -304,7 +307,7 @@ namespace pico.LogOutput
 				}
 				else
 				{
-					form = _AddNewForm( channel );
+					form = _AddNewForm( channel, true );
 				}
 
 				//if ( form.IsHandleCreated )
@@ -363,7 +366,7 @@ namespace pico.LogOutput
 			}
 		}
 
-		private picoLogOutputForm3 _AddNewForm( string channel )
+		private picoLogOutputForm3 _AddNewForm( string channel, bool canBeClosed )
 		{
 			lock ( this )
 			{
@@ -375,7 +378,7 @@ namespace pico.LogOutput
 						new ControlInfo(
 						channel,
 						channel,
-						StandardControlGroup.Center );
+						canBeClosed ? StandardControlGroup.Center : StandardControlGroup.CenterPermanent );
 				info.IsDocument = true;
 
 				m_controlHostService.RegisterControl(

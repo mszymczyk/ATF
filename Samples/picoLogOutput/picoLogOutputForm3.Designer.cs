@@ -45,17 +45,17 @@
 			this.labelSeparator2 = new System.Windows.Forms.Label();
 			this.checkBoxInfos = new System.Windows.Forms.CheckBox();
 			this.labelSeparator3 = new System.Windows.Forms.Label();
+			this.checkBoxDebug = new System.Windows.Forms.CheckBox();
+			this.label3 = new System.Windows.Forms.Label();
 			this.label1 = new System.Windows.Forms.Label();
 			this.filterTextBox = new System.Windows.Forms.TextBox();
 			this.labelSeparator4 = new System.Windows.Forms.Label();
 			this.label2 = new System.Windows.Forms.Label();
 			this.includeTagsTextBox = new System.Windows.Forms.TextBox();
-			this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
-			this.checkBoxDebug = new System.Windows.Forms.CheckBox();
-			this.label3 = new System.Windows.Forms.Label();
 			this.label4 = new System.Windows.Forms.Label();
 			this.label5 = new System.Windows.Forms.Label();
 			this.excludeTagsTextBox = new System.Windows.Forms.TextBox();
+			this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
 			((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
 			this.flowLayoutPanel1.SuspendLayout();
 			this.tableLayoutPanel1.SuspendLayout();
@@ -253,6 +253,27 @@
 			this.labelSeparator3.Size = new System.Drawing.Size(2, 20);
 			this.labelSeparator3.TabIndex = 7;
 			// 
+			// checkBoxDebug
+			// 
+			this.checkBoxDebug.Anchor = System.Windows.Forms.AnchorStyles.None;
+			this.checkBoxDebug.AutoSize = true;
+			this.checkBoxDebug.Location = new System.Drawing.Point(276, 7);
+			this.checkBoxDebug.MinimumSize = new System.Drawing.Size(50, 0);
+			this.checkBoxDebug.Name = "checkBoxDebug";
+			this.checkBoxDebug.Size = new System.Drawing.Size(50, 14);
+			this.checkBoxDebug.TabIndex = 12;
+			this.checkBoxDebug.UseVisualStyleBackColor = true;
+			// 
+			// label3
+			// 
+			this.label3.Anchor = System.Windows.Forms.AnchorStyles.None;
+			this.label3.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
+			this.label3.Enabled = false;
+			this.label3.Location = new System.Drawing.Point(332, 4);
+			this.label3.Name = "label3";
+			this.label3.Size = new System.Drawing.Size(2, 20);
+			this.label3.TabIndex = 13;
+			// 
 			// label1
 			// 
 			this.label1.Anchor = System.Windows.Forms.AnchorStyles.None;
@@ -303,46 +324,6 @@
 			this.includeTagsTextBox.Size = new System.Drawing.Size(124, 20);
 			this.includeTagsTextBox.TabIndex = 11;
 			// 
-			// tableLayoutPanel1
-			// 
-			this.tableLayoutPanel1.AutoSize = true;
-			this.tableLayoutPanel1.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-			this.tableLayoutPanel1.ColumnCount = 1;
-			this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
-			this.tableLayoutPanel1.Controls.Add(this.dataGridView1, 0, 1);
-			this.tableLayoutPanel1.Controls.Add(this.flowLayoutPanel1, 0, 0);
-			this.tableLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
-			this.tableLayoutPanel1.Location = new System.Drawing.Point(0, 0);
-			this.tableLayoutPanel1.Name = "tableLayoutPanel1";
-			this.tableLayoutPanel1.RowCount = 2;
-			this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
-			this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
-			this.tableLayoutPanel1.Size = new System.Drawing.Size(1044, 414);
-			this.tableLayoutPanel1.TabIndex = 2;
-			// 
-			// checkBoxDebug
-			// 
-			this.checkBoxDebug.Anchor = System.Windows.Forms.AnchorStyles.None;
-			this.checkBoxDebug.AutoSize = true;
-			this.checkBoxDebug.Checked = true;
-			this.checkBoxDebug.CheckState = System.Windows.Forms.CheckState.Checked;
-			this.checkBoxDebug.Location = new System.Drawing.Point(276, 7);
-			this.checkBoxDebug.MinimumSize = new System.Drawing.Size(50, 0);
-			this.checkBoxDebug.Name = "checkBoxDebug";
-			this.checkBoxDebug.Size = new System.Drawing.Size(50, 14);
-			this.checkBoxDebug.TabIndex = 12;
-			this.checkBoxDebug.UseVisualStyleBackColor = true;
-			// 
-			// label3
-			// 
-			this.label3.Anchor = System.Windows.Forms.AnchorStyles.None;
-			this.label3.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
-			this.label3.Enabled = false;
-			this.label3.Location = new System.Drawing.Point(332, 4);
-			this.label3.Name = "label3";
-			this.label3.Size = new System.Drawing.Size(2, 20);
-			this.label3.TabIndex = 13;
-			// 
 			// label4
 			// 
 			this.label4.Anchor = System.Windows.Forms.AnchorStyles.None;
@@ -372,6 +353,23 @@
 			this.excludeTagsTextBox.Name = "excludeTagsTextBox";
 			this.excludeTagsTextBox.Size = new System.Drawing.Size(124, 20);
 			this.excludeTagsTextBox.TabIndex = 16;
+			// 
+			// tableLayoutPanel1
+			// 
+			this.tableLayoutPanel1.AutoSize = true;
+			this.tableLayoutPanel1.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+			this.tableLayoutPanel1.ColumnCount = 1;
+			this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
+			this.tableLayoutPanel1.Controls.Add(this.dataGridView1, 0, 1);
+			this.tableLayoutPanel1.Controls.Add(this.flowLayoutPanel1, 0, 0);
+			this.tableLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
+			this.tableLayoutPanel1.Location = new System.Drawing.Point(0, 0);
+			this.tableLayoutPanel1.Name = "tableLayoutPanel1";
+			this.tableLayoutPanel1.RowCount = 2;
+			this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
+			this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
+			this.tableLayoutPanel1.Size = new System.Drawing.Size(1044, 414);
+			this.tableLayoutPanel1.TabIndex = 2;
 			// 
 			// picoLogOutputForm3
 			// 
