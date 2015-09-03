@@ -65,6 +65,7 @@ namespace pico.LogOutput
 
 			//dataGridView1.SelectionChanged += dataGridView1_SelectionChanged;
 			dataGridView1.DataBindingComplete += dataGridView1_DataBindingComplete;
+			m_DataBindingCompleteBound = true;
 			dataGridView1.DataSource = m_dv;
 
 			updateCheckBoxes();
@@ -103,6 +104,12 @@ namespace pico.LogOutput
 
 		public void clearLog()
 		{
+			if ( !m_DataBindingCompleteBound )
+			{
+				m_DataBindingCompleteBound = true;
+				dataGridView1.DataBindingComplete += dataGridView1_DataBindingComplete;
+			}
+
 			m_logDataTable.Clear();
 			updateCheckBoxes();
 			updateRowFilter();
@@ -116,7 +123,13 @@ namespace pico.LogOutput
 				dataGridView1.FirstDisplayedScrollingRowIndex = dataGridView1.RowCount - 1;
 
 			updateCheckBoxes();
-			updateRowFilter();
+			//updateRowFilter();
+
+			if ( m_DataBindingCompleteBound )
+			{
+				m_DataBindingCompleteBound = false;
+				dataGridView1.DataBindingComplete -= dataGridView1_DataBindingComplete;
+			}
 		}
 
 		void checkBox_CheckedChanged( object sender, EventArgs e )
@@ -325,6 +338,9 @@ namespace pico.LogOutput
 
 		void copyDescription_Click( object sender, EventArgs e )
 		{
+			if ( dataGridView1.SelectedRows.Count == 0 )
+				return;
+
 			StringBuilder sb = new StringBuilder();
 			foreach (DataGridViewRow row in dataGridView1.SelectedRows)
 			{
@@ -332,12 +348,15 @@ namespace pico.LogOutput
 			}
 
 			string str = sb.ToString();
-
-			System.Windows.Forms.Clipboard.SetText( str );
+			if ( str != null && str.Length > 0 )
+				System.Windows.Forms.Clipboard.SetText( str );
 		}
 
 		void copyTag_Click( object sender, EventArgs e )
 		{
+			if ( dataGridView1.SelectedRows.Count == 0 )
+				return;
+
 			StringBuilder sb = new StringBuilder();
 			foreach (DataGridViewRow row in dataGridView1.SelectedRows)
 			{
@@ -345,12 +364,15 @@ namespace pico.LogOutput
 			}
 
 			string str = sb.ToString();
-
-			System.Windows.Forms.Clipboard.SetText( str );
+			if ( str != null && str.Length > 0 )
+				System.Windows.Forms.Clipboard.SetText( str );
 		}
 
 		void copyFileAndLine_Click( object sender, EventArgs e )
 		{
+			if ( dataGridView1.SelectedRows.Count == 0 )
+				return;
+
 			StringBuilder sb = new StringBuilder();
 			foreach (DataGridViewRow row in dataGridView1.SelectedRows)
 			{
@@ -363,12 +385,15 @@ namespace pico.LogOutput
 			}
 
 			string str = sb.ToString();
-
-			System.Windows.Forms.Clipboard.SetText( str );
+			if ( str != null && str.Length > 0 )
+				System.Windows.Forms.Clipboard.SetText( str );
 		}
 
 		void copyRowAsCSV_Click( object sender, EventArgs e )
 		{
+			if ( dataGridView1.SelectedRows.Count == 0 )
+				return;
+
 			StringBuilder sb = new StringBuilder();
 			foreach (DataGridViewRow row in dataGridView1.SelectedRows)
 			{
@@ -405,8 +430,8 @@ namespace pico.LogOutput
 			}
 
 			string str = sb.ToString();
-
-			System.Windows.Forms.Clipboard.SetText( str );
+			if ( str != null && str.Length > 0 )
+				System.Windows.Forms.Clipboard.SetText( str );
 		}
 
 		public static string EscapeLikeValue( string valueWithoutWildcards )
@@ -614,6 +639,9 @@ namespace pico.LogOutput
 		private DataTable m_dt;
 		private DataView m_dv;
 		private Icons m_icons;
+		// it's a hacky way to prevent first row being selected when first row is added to DataGridView
+		//
+		private bool m_DataBindingCompleteBound;
 
 		private static readonly Random s_random = new Random();
 		private const string Alphabet = "     ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";

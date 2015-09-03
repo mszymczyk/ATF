@@ -127,6 +127,17 @@ namespace pico.LogOutput
         /// if it wants to re-register this Control.</remarks>
         public bool Close(Control control)
         {
+			lock ( this )
+			{
+				foreach ( ChannelInstance chInst in m_logForms.Values )
+				{
+					if ( chInst.form == control )
+					{
+						m_logForms.Remove( chInst.channelName );
+						break;
+					}
+				}
+			}
             return true;
         }
 
