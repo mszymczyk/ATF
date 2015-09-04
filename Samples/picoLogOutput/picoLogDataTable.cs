@@ -78,6 +78,7 @@ namespace pico.LogOutput
 		public void Clear()
 		{
 			m_dt.Clear();
+			m_ordinal = 0;
 			m_numErrors = 0;
 			m_numWarnings = 0;
 			m_numInfos = 0;
