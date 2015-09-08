@@ -85,7 +85,8 @@ namespace pico.LogOutput
                     using (var mainForm = new MainForm())
                     {
                         mainForm.Text = "picoLogger".Localize();
-                        mainForm.Icon = GdiUtil.CreateIcon(ResourceUtil.GetImage(Sce.Atf.Resources.AtfIconImage));
+						//mainForm.Icon = GdiUtil.CreateIcon(ResourceUtil.GetImage(Sce.Atf.Resources.AtfIconImage));
+						mainForm.Icon = GdiUtil.CreateIcon( ResourceUtil.GetImage( Resources.ProgramIcon ) );
 
                         var batch = new CompositionBatch();
                         batch.AddPart(mainForm);

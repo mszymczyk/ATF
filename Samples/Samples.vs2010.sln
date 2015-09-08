@@ -72,6 +72,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "pico", "pico\pico.csproj", 
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "picoLogOutput.vs2010", "picoLogOutput\picoLogOutput.vs2010.csproj", "{D795EF48-8E6E-4CC1-BD9A-B30B8195B3DA}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "picoServicesLauncher", "picoServicesLauncher\picoServicesLauncher.csproj", "{BABF45EA-A2CE-4791-9BA4-C5CAE0BF76F6}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -540,6 +542,18 @@ Global
 		{D795EF48-8E6E-4CC1-BD9A-B30B8195B3DA}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 		{D795EF48-8E6E-4CC1-BD9A-B30B8195B3DA}.Release|x64.ActiveCfg = Release|Any CPU
 		{D795EF48-8E6E-4CC1-BD9A-B30B8195B3DA}.Release|x86.ActiveCfg = Release|Any CPU
+		{BABF45EA-A2CE-4791-9BA4-C5CAE0BF76F6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BABF45EA-A2CE-4791-9BA4-C5CAE0BF76F6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BABF45EA-A2CE-4791-9BA4-C5CAE0BF76F6}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{BABF45EA-A2CE-4791-9BA4-C5CAE0BF76F6}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{BABF45EA-A2CE-4791-9BA4-C5CAE0BF76F6}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{BABF45EA-A2CE-4791-9BA4-C5CAE0BF76F6}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{BABF45EA-A2CE-4791-9BA4-C5CAE0BF76F6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BABF45EA-A2CE-4791-9BA4-C5CAE0BF76F6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BABF45EA-A2CE-4791-9BA4-C5CAE0BF76F6}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{BABF45EA-A2CE-4791-9BA4-C5CAE0BF76F6}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{BABF45EA-A2CE-4791-9BA4-C5CAE0BF76F6}.Release|x64.ActiveCfg = Release|Any CPU
+		{BABF45EA-A2CE-4791-9BA4-C5CAE0BF76F6}.Release|x86.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

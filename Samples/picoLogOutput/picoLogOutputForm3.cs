@@ -298,10 +298,18 @@ namespace pico.LogOutput
 						copyRowAsCSV = new MenuItem( "Copy Row as CSV" );
 					copyRowAsCSV.Click += copyRowAsCSV_Click;
 
+					MenuItem removeRow;
+					if ( dataGridView1.SelectedRows.Count > 1 )
+						removeRow = new MenuItem( "Remove Rows" );
+					else
+						removeRow = new MenuItem( "RemoveRow " );
+					removeRow.Click += removeRow_Click;
+
 					m.MenuItems.Add( copyDescription );
 					m.MenuItems.Add( copyTag );
 					m.MenuItems.Add( copyFileLine );
 					m.MenuItems.Add( copyRowAsCSV );
+					m.MenuItems.Add( removeRow );
 					//m.MenuItems.Add( new MenuItem( "Paste" ) );
 					//m.MenuItems.Add( new MenuItem( string.Format( "Do something to row {0}", currentMouseOverRow.ToString() ) ) );
 
@@ -310,12 +318,17 @@ namespace pico.LogOutput
 			}
 		}
 
+
 		void dataGridView1_KeyUp( object sender, KeyEventArgs e )
 		{
 			if ( e.KeyCode == Keys.End && e.Modifiers == Keys.Control )
 			{
 				dataGridView1.ClearSelection();
 				dataGridView1.FirstDisplayedScrollingRowIndex = dataGridView1.RowCount - 1;
+			}
+			else if ( e.KeyCode == Keys.Delete )
+			{
+				removeSelectedRows();
 			}
 		}
 
@@ -432,6 +445,29 @@ namespace pico.LogOutput
 			string str = sb.ToString();
 			if ( str != null && str.Length > 0 )
 				System.Windows.Forms.Clipboard.SetText( str );
+		}
+
+		private void removeRow_Click( object sender, EventArgs e )
+		{
+			removeSelectedRows();
+		}
+
+		private void removeSelectedRows()
+		{
+			if ( dataGridView1.SelectedRows.Count == 0 )
+				return;
+
+			List<DataRow> rows = new List<DataRow>();
+			foreach ( DataGridViewRow row in dataGridView1.SelectedRows )
+			{
+				DataRowView drow = (DataRowView)row.DataBoundItem;
+				rows.Add( drow.Row );
+			}
+
+			m_logDataTable.RemoveRows( rows );
+
+			dataGridView1.ClearSelection();
+			updateCheckBoxes();
 		}
 
 		public static string EscapeLikeValue( string valueWithoutWildcards )

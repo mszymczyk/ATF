@@ -38,5 +38,10 @@ namespace picoTimelineEditor
 		/// LuaScript image resource resource filename</summary>
 		[ImageResource( "luaScript.png" )]
 		public static readonly string LuaScriptImage;
+
+		/// <summary>
+		/// Default program icon</summary>
+		[ImageResource( "ProgramIcon.png" )]
+		public static readonly string ProgramIcon;
 	}
 }

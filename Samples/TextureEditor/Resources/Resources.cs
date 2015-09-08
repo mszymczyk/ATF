@@ -44,6 +44,11 @@ namespace TextureEditor
 		[ImageResource( "ShowAlpha.png" )]
 		public static readonly string ShowAlphaChannelImage;
 
+		/// <summary>
+		/// Default program icon</summary>
+		[ImageResource( "ProgramIcon.png" )]
+		public static readonly string ProgramIcon;
+
         private const string ResourcePath = "TextureEditor.Resources.";
 
         static Resources()

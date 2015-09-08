@@ -117,7 +117,8 @@ namespace picoTimelineEditor
             var mainForm = new MainForm(toolStripContainer)
             {
                 Text = "Timeline Editor Sample".Localize(),
-                Icon = GdiUtil.CreateIcon(ResourceUtil.GetImage(Sce.Atf.Resources.AtfIconImage))
+                //Icon = GdiUtil.CreateIcon(ResourceUtil.GetImage(Sce.Atf.Resources.AtfIconImage))
+				Icon = GdiUtil.CreateIcon( ResourceUtil.GetImage( Resources.ProgramIcon ) )
             };
 
 			mainForm.Loaded += ( sender, e ) =>

@@ -85,6 +85,25 @@ namespace pico.LogOutput
 			m_numDebug = 0;
 		}
 
+		public void RemoveRows( List<DataRow> rows )
+		{
+			foreach ( DataRow row in rows )
+			{
+				int type = (int)row[0];
+
+				if ( type == DataItem.Type_Error )
+					m_numErrors -= 1;
+				else if ( type == DataItem.Type_Warning )
+					m_numWarnings -= 1;
+				else if ( type == DataItem.Type_Info )
+					m_numInfos -= 1;
+				else if ( type == DataItem.Type_Debug )
+					m_numDebug -= 1;
+
+				row.Delete();
+			}
+		}
+
 		public void AddItem( DataItem item )
 		{
 			if ( m_dt.Rows.Count >= MaxRows )
