@@ -120,7 +120,18 @@ namespace pico.LogOutput
 			Socket handler = state.workSocket;
 
 			// Read data from the client socket. 
-			int bytesReadInThisCall = handler.EndReceive( ar );
+			int bytesReadInThisCall = 0;
+			try
+			{
+				bytesReadInThisCall = handler.EndReceive( ar );
+			}
+			catch ( SocketException sex )
+			{
+				System.Diagnostics.Debug.WriteLine( "SocketException: " + sex.Message );
+				handler.Close();
+				return;
+			}
+
 			int bytesRead = bytesReadInThisCall + state.nBytesInDataBuffer;
 
 			if (bytesRead > 0)
