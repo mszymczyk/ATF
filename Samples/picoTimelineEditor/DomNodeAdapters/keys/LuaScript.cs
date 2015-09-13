@@ -2,6 +2,7 @@
 
 using System.Windows.Forms;
 
+using Sce.Atf.Dom;
 using Sce.Atf.Adaptation;
 using Sce.Atf.Applications;
 using Sce.Atf.Controls.Timelines;
@@ -64,8 +65,26 @@ namespace picoTimelineEditor.DomNodeAdapters
 			}
 		}
 
+		public override bool CanParentTo( DomNode parent )
+		{
+			return ValidateImpl( parent, 0 );
+		}
+
+		public override bool Validate( DomNode parent )
+		{
+			return ValidateImpl( parent, 1 );
+		}
+
+		private bool ValidateImpl( DomNode parent, int validating )
+		{
+			if (parent.Type != Schema.trackType.Type)
+				return false;
+
+			return true;
+		}
+
 		private ISyntaxEditorControl m_luaEditor;
-    }
+	}
 }
 
 

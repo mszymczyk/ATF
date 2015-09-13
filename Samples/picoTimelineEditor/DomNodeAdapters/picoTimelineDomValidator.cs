@@ -178,6 +178,13 @@ namespace picoTimelineEditor.DomNodeAdapters
 					return false;
 			}
 
+			Key key = child.As<Key>();
+			if (key != null)
+			{
+				if (!key.Validate( parent ))
+					return false;
+			}
+
 			TimelineReference reference = child.As<TimelineReference>();
 			if ( reference != null )
 			{

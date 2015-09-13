@@ -51,6 +51,8 @@ namespace picoTimelineEditor
 			base.OnNodeSet();
         }
 
+		public TimelineEditor TimelineEditor { get; set; }
+
         /// <summary>
         /// Gets the TimeLine instance</summary>
         public Timeline Timeline
@@ -413,6 +415,13 @@ namespace picoTimelineEditor
 					if ( interval != null )
 					{
 						if ( !interval.CanParentTo( parent ) )
+							return false;
+					}
+
+					Key key = item.As<Key>();
+					if (key != null)
+					{
+						if (!key.CanParentTo( parent ))
 							return false;
 					}
 
@@ -979,10 +988,14 @@ namespace picoTimelineEditor
         private void timelineControl_DragEnter(object sender, DragEventArgs e)
         {
             e.Effect = DragDropEffects.None;
-            if (CanInsert2(e))
-            {
-                OnDragEnter(e);
-            }
+			if (CanInsert2( e ))
+			{
+				OnDragEnter( e );
+			}
+			else
+			{
+				TimelineEditor.OnDragEnter( sender, e );
+			}
         }
 
         private void timelineControl_DragOver(object sender, DragEventArgs e)
@@ -992,7 +1005,11 @@ namespace picoTimelineEditor
             {
                 OnDragOver(e);
             }
-        }
+			else
+			{
+				TimelineEditor.OnDragEnter( sender, e );
+			}
+		}
 
         private void timelineControl_DragDrop(object sender, DragEventArgs e)
         {
@@ -1000,7 +1017,11 @@ namespace picoTimelineEditor
             {
                 OnDragDrop(e);
             }
-        }
+			else
+			{
+				TimelineEditor.OnDragDrop( sender, e );
+			}
+		}
 
         private void timelineControl_DragLeave(object sender, EventArgs e)
         {

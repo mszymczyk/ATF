@@ -118,7 +118,8 @@ namespace picoTimelineEditor
             {
                 Text = "Timeline Editor Sample".Localize(),
                 //Icon = GdiUtil.CreateIcon(ResourceUtil.GetImage(Sce.Atf.Resources.AtfIconImage))
-				Icon = GdiUtil.CreateIcon( ResourceUtil.GetImage( Resources.ProgramIcon ) )
+				Icon = GdiUtil.CreateIcon( ResourceUtil.GetImage( Resources.ProgramIcon ) ),
+				AllowDrop = true
             };
 
 			mainForm.Loaded += ( sender, e ) =>

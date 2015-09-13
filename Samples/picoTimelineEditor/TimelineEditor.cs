@@ -283,6 +283,9 @@ namespace picoTimelineEditor
 				//hubComm.sendScrubberPosition( scrubber.Position );
 				hubComm.sendScrubberPosition();
 			};
+
+			m_mainForm.DragEnter += mainForm_DragEnter;
+			m_mainForm.DragDrop += mainForm_DragDrop;
 		}
 
         #endregion
@@ -425,6 +428,51 @@ namespace picoTimelineEditor
         }
 
         #endregion
+
+		private void mainForm_DragEnter( object sender, DragEventArgs e )
+		{
+			OnDragEnter( sender, e );
+		}
+
+		private void mainForm_DragDrop( object sender, DragEventArgs e )
+		{
+			OnDragDrop( sender, e );
+		}
+
+		public void OnDragEnter( object sender, DragEventArgs e )
+		{
+			e.Effect = DragDropEffects.None;
+			if (e.Data.GetDataPresent( DataFormats.FileDrop ))
+			{
+				string[] files = (string[]) e.Data.GetData( DataFormats.FileDrop );
+				foreach (string file in files)
+				{
+					string ext = Path.GetExtension( file );
+					if (ext != ".timeline")
+					{
+						return;
+					}
+
+					string picoPath = pico.Paths.PathToPicoDemoPath( file );
+					if (string.IsNullOrEmpty( picoPath ))
+						return;
+				}
+			}
+
+			e.Effect = DragDropEffects.Copy;
+		}
+
+		public void OnDragDrop( object sender, DragEventArgs e )
+		{
+			if (e.Data.GetDataPresent( DataFormats.FileDrop ))
+			{
+				string[] files = (string[]) e.Data.GetData( DataFormats.FileDrop );
+				foreach (string file in files)
+				{
+					m_documentService.OpenExistingDocument( this, new Uri( file ) );
+				}
+			}
+		}
 
         /// <summary>
         /// Gets the global collection of known TimelineDocuments. Contains master and sub-documents.</summary>
@@ -616,6 +664,7 @@ namespace picoTimelineEditor
 
                     TimelineContext timelineContext = document.Cast<TimelineContext>();
                     timelineContext.ControlInfo = controlInfo;
+					timelineContext.TimelineEditor = this;
 
                     document.Uri = uri;
 
