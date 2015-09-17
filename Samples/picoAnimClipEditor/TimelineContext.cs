@@ -397,34 +397,40 @@ namespace picoAnimClipEditor
 
 				foreach ( object item in items )
 				{
-					Group group = item.As<Group>();
-					if ( group != null )
+					//Group group = item.As<Group>();
+					//if ( group != null )
+					//{
+					//	if ( !group.CanParentTo( parent ) )
+					//		return false;
+					//}
+
+					//Track track = item.As<Track>();
+					//if ( track != null )
+					//{
+					//	if ( !track.CanParentTo( parent ) )
+					//		return false;
+					//}
+
+					//Interval interval = item.As<Interval>();
+					//if ( interval != null )
+					//{
+					//	if ( !interval.CanParentTo( parent ) )
+					//		return false;
+					//}
+
+					//Key key = item.As<Key>();
+					//if (key != null)
+					//{
+					//	if (!key.CanParentTo( parent ))
+					//		return false;
+					//}
+
+					AnimClipElementValidationInterface elem = item.As<AnimClipElementValidationInterface>();
+					if ( elem != null )
 					{
-						if ( !group.CanParentTo( parent ) )
+						if (!elem.CanParentTo( parent ))
 							return false;
 					}
-
-					Track track = item.As<Track>();
-					if ( track != null )
-					{
-						if ( !track.CanParentTo( parent ) )
-							return false;
-					}
-
-					Interval interval = item.As<Interval>();
-					if ( interval != null )
-					{
-						if ( !interval.CanParentTo( parent ) )
-							return false;
-					}
-
-					Key key = item.As<Key>();
-					if (key != null)
-					{
-						if (!key.CanParentTo( parent ))
-							return false;
-					}
-
 				}
 
 

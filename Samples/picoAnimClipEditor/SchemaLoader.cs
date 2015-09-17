@@ -83,6 +83,8 @@ namespace picoAnimClipEditor
                 Schema.markerType.Type.Define(new ExtensionInfo<Marker>());
                 Schema.timelineRefType.Type.Define(new ExtensionInfo<TimelineReference>());
 
+				Schema.trackAnimType.Type.Define( new ExtensionInfo<TrackAnim>() );
+
 				// sound
 				//
 				Schema.keySoundType.Type.Define( new ExtensionInfo<KeySound>() );

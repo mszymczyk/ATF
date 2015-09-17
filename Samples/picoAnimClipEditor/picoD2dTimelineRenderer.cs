@@ -27,27 +27,114 @@ namespace picoAnimClipEditor
 			HeaderWidth = 180;
 
 			//m_picoTextBrush = graphics.CreateSolidBrush( SystemColors.WindowText );
+			TrackBrush2 = graphics.CreateSolidBrush( Color.Green );
 		}
 
-		///// <summary>
-		///// Disposes unmanaged resources</summary>
-		///// <param name="disposing">Whether or not Dispose invoked this method</param>
-		//protected override void Dispose( bool disposing )
-		//{
-		//	if ( !m_picoDisposed )
-		//	{
-		//		if ( disposing )
-		//		{
-		//			m_picoTextBrush.Dispose();
-		//		}
+		/// <summary>
+		/// Disposes unmanaged resources</summary>
+		/// <param name="disposing">Whether or not Dispose invoked this method</param>
+		protected override void Dispose( bool disposing )
+		{
+			if (!m_picoDisposed)
+			{
+				if (disposing)
+				{
+					TrackBrush2.Dispose();
+				}
 
-		//		// dispose any unmanaged resources.
+				// dispose any unmanaged resources.
 
-		//		m_picoDisposed = true;
-		//	}
-		//	// always call base regardles.
-		//	base.Dispose( disposing );
-		//}
+				m_picoDisposed = true;
+			}
+			// always call base regardles.
+			base.Dispose( disposing );
+		}
+
+		/// <summary>
+		/// Draws a group</summary>
+		/// <param name="group">Group</param>
+		/// <param name="bounds">Bounding rectangle, computed during layout phase</param>
+		/// <param name="drawMode">Drawing mode</param>
+		/// <param name="c">Drawing context</param>
+		protected override void Draw( IGroup group, RectangleF bounds, DrawMode drawMode, Context c )
+		{
+			//switch (drawMode & DrawMode.States)
+			//{
+			//	case DrawMode.Normal:
+			//	case DrawMode.Collapsed:
+			//		GroupBrush.StartPoint = new PointF( 0, bounds.Top );
+			//		GroupBrush.EndPoint = new PointF( 0, bounds.Bottom );
+			//		c.Graphics.FillRectangle( bounds, GroupBrush );
+			//		break;
+			//	case DrawMode.Ghost:
+			//		c.Graphics.FillRectangle( bounds, GhostGroupBrush );
+			//		break;
+			//}
+		}
+
+		/// <summary>
+		/// Gets the bounding rectangle for an interval, in timeline coordinates</summary>
+		/// <param name="interval">Interval</param>
+		/// <param name="trackTop">Top of track holding interval</param>
+		/// <param name="c">Drawing context</param>
+		/// <returns>Bounding rectangle for the interval, in timeline coordinates</returns>
+		protected RectangleF GetBounds( float Start, float Length, float trackTop, Context c )
+		{
+			// Calculate the width, in timeline coordinates. If the group is expanded, then
+			//  make sure that interval meets the minimum visible width requirement.
+			float visibleWidth = Length;
+			//if (interval.Track != null &&
+			//	interval.Track.Group != null &&
+			//	interval.Track.Group.Expanded)
+			{
+				float minimumTimelineUnits = c.PixelSize.Width * MinimumDrawnIntervalLength;
+				visibleWidth = Math.Max( visibleWidth, minimumTimelineUnits );
+			}
+
+			return new RectangleF(
+				Start,
+				trackTop,
+				visibleWidth,
+				TrackHeight );
+		}
+
+
+		/// <summary>
+		/// Draws a track</summary>
+		/// <param name="track">Track</param>
+		/// <param name="bounds">Bounding rectangle, in screen space</param>
+		/// <param name="drawMode">Drawing mode</param>
+		/// <param name="c">Drawing context</param>
+		protected override void Draw( ITrack track, RectangleF boundsOrig, DrawMode drawMode, Context c )
+		{
+			float eventTop = 0;// boundsOrig.Top;
+			float trackBottom = eventTop;
+
+			//RectangleF bounds = GetBounds( interval, eventTop, c );
+			RectangleF bounds = GetBounds( 0, 6000, eventTop, c );
+			trackBottom = Math.Max( trackBottom, bounds.Bottom );
+			bounds = GdiUtil.Transform( c.Transform, bounds );
+
+			RectangleF canvasBounds = c.ClientRectangle; //clipBounds minus the left-side header
+			canvasBounds.X = HeaderWidth;
+			canvasBounds.Width -= HeaderWidth;
+
+			if (bounds.IntersectsWith( canvasBounds ))
+			{
+				switch (drawMode & DrawMode.States)
+				{
+					case DrawMode.Normal:
+						//c.Graphics.DrawRectangle( bounds, TrackBrush2 );
+						c.Graphics.FillRectangle( bounds, TrackBrush2 );
+						break;
+					case DrawMode.Collapsed:
+						break;
+					case DrawMode.Ghost:
+						c.Graphics.FillRectangle( bounds, GhostTrackBrush );
+						break;
+				}
+			}
+		}
 
 		///// <summary>
 		///// Draws an interval</summary>
@@ -201,6 +288,10 @@ namespace picoAnimClipEditor
 		///// <summary>
 		///// The brush used for drawing text on intervals, keys, and markers</summary>
 		//protected D2dSolidColorBrush m_picoTextBrush;
-		//private bool m_picoDisposed;
-    }
+		private bool m_picoDisposed;
+
+		/// <summary>
+		/// The brush used for drawing tracks</summary>
+		protected D2dBrush TrackBrush2;
+	}
 }

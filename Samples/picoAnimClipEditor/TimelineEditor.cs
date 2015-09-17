@@ -62,12 +62,14 @@ namespace picoAnimClipEditor
             s_repository.DocumentAdded += repository_DocumentAdded;
             s_repository.DocumentRemoved += repository_DocumentRemoved;
 
-            paletteService.AddItem(Schema.markerType.Type, "Timelines", this);
-            paletteService.AddItem(Schema.groupType.Type, "Timelines", this);
-            paletteService.AddItem(Schema.trackType.Type, "Timelines", this);
-			//paletteService.AddItem(Schema.intervalType.Type, "Timelines", this);
+			//paletteService.AddItem(Schema.markerType.Type, "Timelines", this);
+			//paletteService.AddItem(Schema.groupType.Type, "Timelines", this);
+			//paletteService.AddItem(Schema.trackType.Type, "Timelines", this);
+			paletteService.AddItem(Schema.intervalType.Type, "Timelines", this);
 			//paletteService.AddItem(Schema.keyType.Type, "Timelines", this);
 			//paletteService.AddItem(Schema.timelineRefType.Type, "Timelines", this);
+
+			paletteService.AddItem( Schema.trackAnimType.Type, "Timelines", this );
 
 			// sound
 			//

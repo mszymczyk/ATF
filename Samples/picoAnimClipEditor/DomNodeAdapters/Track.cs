@@ -9,82 +9,82 @@ using Sce.Atf.Dom;
 
 namespace picoAnimClipEditor.DomNodeAdapters
 {
-    /// <summary>
-    /// Adapts DomNode to a Track</summary>
-    public class Track : DomNodeAdapter, ITrack, ICloneable
-    {
-        #region ITrack Members
+	/// <summary>
+	/// Adapts DomNode to a Track</summary>
+	public class Track : DomNodeAdapter, ITrack, ICloneable, AnimClipElementValidationInterface
+	{
+		#region ITrack Members
 
-        /// <summary>
-        /// Gets or sets the track name</summary>
-        public virtual string Name
-        {
-            get { return (string)DomNode.GetAttribute(Schema.trackType.nameAttribute); }
-            set { DomNode.SetAttribute(Schema.trackType.nameAttribute, value); }
-        }
+		/// <summary>
+		/// Gets or sets the track name</summary>
+		public virtual string Name
+		{
+			get { return (string) DomNode.GetAttribute( Schema.trackType.nameAttribute ); }
+			set { DomNode.SetAttribute( Schema.trackType.nameAttribute, value ); }
+		}
 
-        /// <summary>
-        /// Gets the group that contains the track</summary>
-        public IGroup Group
-        {
-            get { return GetParentAs<Group>(); }
-        }
+		/// <summary>
+		/// Gets the group that contains the track</summary>
+		public IGroup Group
+		{
+			get { return GetParentAs<Group>(); }
+		}
 
-        /// <summary>
-        /// Creates a new interval</summary>
-        /// <returns>New interval</returns>
-        public IInterval CreateInterval()
-        {
-            return new DomNode(Schema.intervalType.Type).As<IInterval>();
-        }
+		/// <summary>
+		/// Creates a new interval</summary>
+		/// <returns>New interval</returns>
+		public IInterval CreateInterval()
+		{
+			return new DomNode( Schema.intervalType.Type ).As<IInterval>();
+		}
 
-        /// <summary>
-        /// Gets the list of all intervals in the track. Adding or removing intervals in the IList 
-        /// modifies the underlying data store. For example, if the DOM is being used, the DOM is
-        /// modified when the IList is modified.</summary>
-        public IList<IInterval> Intervals
-        {
-            get { return GetChildList<IInterval>(Schema.trackType.intervalChild); }
-        }
+		/// <summary>
+		/// Gets the list of all intervals in the track. Adding or removing intervals in the IList 
+		/// modifies the underlying data store. For example, if the DOM is being used, the DOM is
+		/// modified when the IList is modified.</summary>
+		public IList<IInterval> Intervals
+		{
+			get { return GetChildList<IInterval>( Schema.trackType.intervalChild ); }
+		}
 
-        /// <summary>
-        /// Creates a new key</summary>
-        /// <returns>New key</returns>
-        public IKey CreateKey()
-        {
-            return new DomNode(Schema.keyType.Type).As<IKey>();
-        }
+		/// <summary>
+		/// Creates a new key</summary>
+		/// <returns>New key</returns>
+		public IKey CreateKey()
+		{
+			return new DomNode( Schema.keyType.Type ).As<IKey>();
+		}
 
-        /// <summary>
-        /// Gets the list of all keys in the track</summary>
-        public IList<IKey> Keys
-        {
-            get { return GetChildList<IKey>(Schema.trackType.keyChild); }
-        }
+		/// <summary>
+		/// Gets the list of all keys in the track</summary>
+		public IList<IKey> Keys
+		{
+			get { return GetChildList<IKey>( Schema.trackType.keyChild ); }
+		}
 
-        #endregion
+		#endregion
 
-        #region ICloneable Members
+		#region ICloneable Members
 
-        /// <summary>
-        /// Copies this timeline object, returning a new timeline object that is not in any timeline-related
-        /// container. If the copy can't be done, null is returned.</summary>
-        /// <returns>A copy of this timeline object or null if copy fails</returns>
-        public virtual object Clone()
-        {
-            DomNode domCopy = DomNode.Copy(new DomNode[] { DomNode })[0];
-            return domCopy.As<ITimelineObject>();
-        }
+		/// <summary>
+		/// Copies this timeline object, returning a new timeline object that is not in any timeline-related
+		/// container. If the copy can't be done, null is returned.</summary>
+		/// <returns>A copy of this timeline object or null if copy fails</returns>
+		public virtual object Clone()
+		{
+			DomNode domCopy = DomNode.Copy( new DomNode[] { DomNode } )[0];
+			return domCopy.As<ITimelineObject>();
+		}
 
-        #endregion
+		#endregion
 
-        /// <summary>
-        /// Returns the Name property. Useful for debugging purposes.</summary>
-        /// <returns>Name property</returns>
-        public override string ToString()
-        {
-            return Name;
-        }
+		/// <summary>
+		/// Returns the Name property. Useful for debugging purposes.</summary>
+		/// <returns>Name property</returns>
+		public override string ToString()
+		{
+			return Name;
+		}
 
 		public virtual bool CanParentTo( DomNode parent )
 		{
@@ -95,7 +95,7 @@ namespace picoAnimClipEditor.DomNodeAdapters
 		{
 			return true;
 		}
-    }
+	}
 }
 
 
