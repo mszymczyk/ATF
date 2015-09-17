@@ -17,13 +17,13 @@ using Sce.Atf.Controls.Timelines;
 using Sce.Atf.Controls.CurveEditing;
 using Sce.Atf.Dom;
 
-using picoTimelineEditor.DomNodeAdapters;
+using picoAnimClipEditor.DomNodeAdapters;
 using Sce.Atf.Controls.Timelines.Direct2D;
 using Sce.Atf.Controls.SyntaxEditorControl;
 
 using pico.Hub;
 
-namespace picoTimelineEditor
+namespace picoAnimClipEditor
 {
     /// <summary>
     /// Editor class that creates and saves timeline documents. 
@@ -69,47 +69,9 @@ namespace picoTimelineEditor
 			//paletteService.AddItem(Schema.keyType.Type, "Timelines", this);
 			//paletteService.AddItem(Schema.timelineRefType.Type, "Timelines", this);
 
-			// pico
-			//
-			//paletteService.AddItem( Schema.trackFaderType.Type, "pico", this );
-			//paletteService.AddItem( Schema.intervalCurveType.Type, "pico", this );
-
-			// random stuff
-			//
-			paletteService.AddItem( Schema.keyLuaScriptType.Type, "pico", this );
-			paletteService.AddItem( Schema.intervalTextType.Type, "pico", this );
-			paletteService.AddItem( Schema.intervalNodeAnimationType.Type, "Anim", this );
-
-			// references
-			//
-			paletteService.AddItem( Schema.refChangeLevelType.Type, "pico", this );
-			paletteService.AddItem( Schema.refPlayTimelineType.Type, "pico", this );
-
 			// sound
 			//
 			paletteService.AddItem( Schema.keySoundType.Type, "Sound", this );
-
-			// anim controller
-			//
-			paletteService.AddItem( Schema.trackAnimControllerType.Type, "Anim", this );
-			paletteService.AddItem( Schema.intervalAnimControllerType.Type, "Anim", this );
-
-			// fader
-			//
-			paletteService.AddItem( Schema.intervalFaderType.Type, "pico", this );
-			paletteService.AddItem( Schema.trackFaderType.Type, "pico", this );
-
-			// Camera
-			//
-			paletteService.AddItem( Schema.groupCameraType.Type, "Camera", this );
-			paletteService.AddItem( Schema.trackCameraAnimType.Type, "Camera", this );
-			paletteService.AddItem( Schema.intervalCameraAnimType.Type, "Camera", this );
-
-			// CharacterController
-			//
-			paletteService.AddItem( Schema.groupCharacterControllerType.Type, "CharacterController", this );
-			paletteService.AddItem( Schema.trackCharacterControllerAnimType.Type, "CharacterController", this );
-			paletteService.AddItem( Schema.intervalCharacterControllerAnimType.Type, "CharacterController", this );
 
             m_contextRegistry = contextRegistry;
             m_documentRegistry = documentRegistry;
@@ -181,8 +143,8 @@ namespace picoTimelineEditor
             {
                 // load this assembly into script domain.
                 m_scriptingService.LoadAssembly(GetType().Assembly);
-                m_scriptingService.ImportAllTypes("TimelineEditorSample");
-                m_scriptingService.ImportAllTypes("TimelineEditorSample.DomNodeAdapters");
+				m_scriptingService.ImportAllTypes( "picoAnimClipEditor" );
+				m_scriptingService.ImportAllTypes( "picoAnimClipEditor.DomNodeAdapters" );
                 m_scriptingService.SetVariable("editor", this);
 
                 m_contextRegistry.ActiveContextChanged += delegate
@@ -191,13 +153,6 @@ namespace picoTimelineEditor
                     IHistoryContext hist = m_contextRegistry.GetActiveContext<IHistoryContext>();
                     m_scriptingService.SetVariable("editingContext", editingContext);
                     m_scriptingService.SetVariable("hist", hist);
-
-					ISelectionContext selectionContext = m_contextRegistry.GetActiveContext<ISelectionContext>();
-					if ( selectionContext != null )
-					{
-						object lastSelected = selectionContext.LastSelected;
-						_ChangeLuaScript( lastSelected );
-					}
 				};
 			}
 
@@ -235,21 +190,6 @@ namespace picoTimelineEditor
             m_settingsService.RegisterUserSettings("Timeline Editor", settings);
             m_settingsService.RegisterSettings(this, settings);
 
-			if (m_curveEditor != null)
-			{
-				m_curveEditor.Control.AutoComputeCurveLimitsEnabled = false;
-				m_curveEditor.Control.OnlyEditSelectedCurves = true;
-				m_curveEditor.MultiSelectionOverlay = true;
-				m_curveEditor.Control.CurvesChanged += ( sender, e ) => m_curveEditor.Control.FitAll();
-			}
-
-			m_luaEditorPanel = new Panel();
-			m_luaEditorPanelControlInfo = new ControlInfo( "Lua Script", "Lua Script Editor", StandardControlGroup.Bottom );
-			m_controlHostService.RegisterControl(
-				m_luaEditorPanel,
-				m_luaEditorPanelControlInfo,
-				this );
-
 			D2dScrubberManipulator.Moved += ( object sender, EventArgs e ) =>
 			{
 				D2dScrubberManipulator scrubber = sender as D2dScrubberManipulator;
@@ -257,7 +197,6 @@ namespace picoTimelineEditor
 					return;
 
 				TimelineHubCommunication hubComm = scrubber.Owner.TimelineDocument.Cast<TimelineHubCommunication>();
-				//hubComm.sendScrubberPosition( scrubber.Position );
 				hubComm.sendScrubberPosition();
 			};
 
@@ -506,10 +445,6 @@ namespace picoTimelineEditor
 				if ( m_domExplorer != null )
 					m_domExplorer.Root = timelineDocument.DomNode;
 			}
-			else
-			{
-				m_contextRegistry.ActiveContext = m_luaEditorPanel;
-			}
         }
 
         /// <summary>
@@ -688,23 +623,9 @@ namespace picoTimelineEditor
 				ISelectionContext selectionContext = document.Cast<ISelectionContext>();
 				selectionContext.Set( node );
 
-				selectionContext.SelectionChanged += delegate
-				{
-					object lastSelected = selectionContext.LastSelected;
-					_ChangeLuaScript( lastSelected );
-				};
-
                 // Initialize Dom extensions now that the data is complete
                 node.InitializeExtensions();
             }
-
-			if ( Path.GetExtension( filePath ).ToLower() == ".cut" )
-			{
-				picoCutToTimelineConverter converter = new picoCutToTimelineConverter( filePath );
-				//node = converter.Convert();
-				converter.Convert( node );
-				//node = new DomNode( Schema.timelineType.Type, Schema.timelineRootElement );
-			}
 
             return document;
         }
@@ -811,23 +732,12 @@ namespace picoTimelineEditor
                         return;
                 }
 
-				//// Check if a URI on a timeline reference has changed, so we can unload
-				////  old document and load new document.
-				//if (e.AttributeInfo.Equivalent(Schema.timelineRefType.refAttribute))
-				//{
-				//	UnloadSubDocument((Uri)e.OldValue);
-				//	LoadSubDocument((Uri)e.NewValue);
-				//}
-
 				// Check if a URI on a timeline reference has changed, so we can unload
 				//  old document and load new document.
-				if ( e.AttributeInfo.Equivalent( Schema.timelineRefType.timelineFilenameAttribute ) )
+				if (e.AttributeInfo.Equivalent( Schema.timelineRefType.refAttribute ))
 				{
-					Uri oldValue = new Uri( pico.Paths.LocalPathToPicoDataAbsolutePath( (string)e.OldValue ) );
-					Uri newValue = new Uri( pico.Paths.LocalPathToPicoDataAbsolutePath( (string)e.NewValue ) );
-
-					UnloadSubDocument( oldValue );
-					LoadSubDocument( newValue );
+					UnloadSubDocument( (Uri) e.OldValue );
+					LoadSubDocument( (Uri) e.NewValue );
 				}
 			}
         }
@@ -957,45 +867,7 @@ namespace picoTimelineEditor
                 //  be useful if another app will consume the XML file without a schema file.
                 PersistDefaultAttributes = true;
             }
-
-			//// Persists relative references instead of absolute references
-			//protected override void WriteElement(DomNode node, System.Xml.XmlWriter writer)
-			//{
-			//	TimelineReference reference = node.As<TimelineReference>();
-			//	Uri originalUri = null;
-			//	if (reference != null && reference.Uri != null && reference.Uri.IsAbsoluteUri)
-			//	{
-			//		originalUri = reference.Uri;
-			//		reference.Uri = Uri.MakeRelativeUri(reference.Uri);
-			//	}
-
-			//	base.WriteElement(node, writer);
-
-			//	if (originalUri != null)
-			//	{
-			//		reference.Uri = originalUri;
-			//	}
-			//}
         }
-
-		private void _ChangeLuaScript( object lastSelected )
-		{
-			Path<object> path = lastSelected as Path<object>;
-			object selected = path != null ? path.Last : lastSelected;
-
-			LuaScript luaScript = selected.As<LuaScript>();
-			if ( luaScript != null )
-			{
-				m_luaEditorPanel.Controls.Clear();
-				m_luaEditorPanel.Controls.Add( luaScript.LuaEditorControl );
-				m_luaEditorPanelControlInfo.Name = "Lua Script: " + luaScript.Name;
-			}
-			else
-			{
-				m_luaEditorPanel.Controls.Clear();
-				m_luaEditorPanelControlInfo.Name = "Lua Script";
-			}
-		}
 
         /// <summary>
         /// A collection of all ITimelineDocuments that have been loaded. This is necessary so that we can 
@@ -1019,9 +891,6 @@ namespace picoTimelineEditor
 		private DomExplorer m_domExplorer = null;
 
 		[Import( AllowDefault = true )]
-		private CurveEditor m_curveEditor = null;
-
-		[Import( AllowDefault = true )]
 		private HubService m_hubService = null;
 
         private IContextRegistry m_contextRegistry;
@@ -1034,21 +903,10 @@ namespace picoTimelineEditor
 
         public static SchemaLoader s_schemaLoader;
         private static readonly DocumentClientInfo s_info = new DocumentClientInfo(
-            "Timeline".Localize(),
-            new string[] { ".timeline", ".cut" },
+            "AnimClipMetadata".Localize(),
+            new string[] { ".animmeta" },
             Sce.Atf.Resources.DocumentImage,
             Sce.Atf.Resources.FolderImage,
             true);
-
-		private Panel m_luaEditorPanel;
-		private ControlInfo m_luaEditorPanelControlInfo;
-
-		//// picoHub
-		////
-		//static string PICO_HUB_IP = "localhost";
-		//static int PICO_HUB_PORT = 6666;
-
-		////Client socket stuff 
-		//System.Net.Sockets.Socket m_picoHubClientSocket;
     }
 }

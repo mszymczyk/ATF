@@ -74,6 +74,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "picoLogOutput.vs2010", "pic
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "picoServicesLauncher", "picoServicesLauncher\picoServicesLauncher.csproj", "{BABF45EA-A2CE-4791-9BA4-C5CAE0BF76F6}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "picoAnimClipEditor.vs2010", "picoAnimClipEditor\picoAnimClipEditor.vs2010.csproj", "{0E9C5A75-39A0-4ACB-BF70-7280002150EF}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -554,6 +556,20 @@ Global
 		{BABF45EA-A2CE-4791-9BA4-C5CAE0BF76F6}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 		{BABF45EA-A2CE-4791-9BA4-C5CAE0BF76F6}.Release|x64.ActiveCfg = Release|Any CPU
 		{BABF45EA-A2CE-4791-9BA4-C5CAE0BF76F6}.Release|x86.ActiveCfg = Release|Any CPU
+		{0E9C5A75-39A0-4ACB-BF70-7280002150EF}.Debug|Any CPU.ActiveCfg = Debug|x86
+		{0E9C5A75-39A0-4ACB-BF70-7280002150EF}.Debug|Mixed Platforms.ActiveCfg = Debug|x86
+		{0E9C5A75-39A0-4ACB-BF70-7280002150EF}.Debug|Mixed Platforms.Build.0 = Debug|x86
+		{0E9C5A75-39A0-4ACB-BF70-7280002150EF}.Debug|x64.ActiveCfg = Debug|x64
+		{0E9C5A75-39A0-4ACB-BF70-7280002150EF}.Debug|x64.Build.0 = Debug|x64
+		{0E9C5A75-39A0-4ACB-BF70-7280002150EF}.Debug|x86.ActiveCfg = Debug|x86
+		{0E9C5A75-39A0-4ACB-BF70-7280002150EF}.Debug|x86.Build.0 = Debug|x86
+		{0E9C5A75-39A0-4ACB-BF70-7280002150EF}.Release|Any CPU.ActiveCfg = Release|x86
+		{0E9C5A75-39A0-4ACB-BF70-7280002150EF}.Release|Mixed Platforms.ActiveCfg = Release|x86
+		{0E9C5A75-39A0-4ACB-BF70-7280002150EF}.Release|Mixed Platforms.Build.0 = Release|x86
+		{0E9C5A75-39A0-4ACB-BF70-7280002150EF}.Release|x64.ActiveCfg = Release|x64
+		{0E9C5A75-39A0-4ACB-BF70-7280002150EF}.Release|x64.Build.0 = Release|x64
+		{0E9C5A75-39A0-4ACB-BF70-7280002150EF}.Release|x86.ActiveCfg = Release|x86
+		{0E9C5A75-39A0-4ACB-BF70-7280002150EF}.Release|x86.Build.0 = Release|x86
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
