@@ -434,9 +434,9 @@ namespace picoTimelineEditor
 					if (string.IsNullOrEmpty( picoPath ))
 						return;
 				}
-			}
 
-			e.Effect = DragDropEffects.Copy;
+				e.Effect = DragDropEffects.Copy;
+			}
 		}
 
 		public void OnDragDrop( object sender, DragEventArgs e )
