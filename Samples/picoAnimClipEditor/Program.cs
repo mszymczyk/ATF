@@ -106,8 +106,10 @@ namespace picoAnimClipEditor
 				//typeof(AutomationService),              // provides facilities to run an automated script using the .NET remoting service
 
 				// pico
-				typeof(HubService)
-                );
+				typeof(HubService),
+
+				typeof(picoAnimListEditor)                // timeline editor component
+			);
             
             var container = new CompositionContainer(catalog);
 

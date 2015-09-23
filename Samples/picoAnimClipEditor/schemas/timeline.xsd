@@ -10,6 +10,7 @@
       <xs:appinfo>
         <!--<scea.dom.collection id="name"/>-->
         <scea.dom.editors.attribute name="name" displayName="Name" description="Name" />
+        <scea.dom.editors.attribute name="animFilename" displayName="Anim Filename" description="Anim Filename" readOnly="true" />
       </xs:appinfo>
       
     </xs:annotation>
@@ -19,6 +20,7 @@
       <xs:element name="timelineRef" type="timelineRefType" minOccurs="0" maxOccurs="unbounded" />
     </xs:sequence>
     <xs:attribute name="name" type="xs:ID" use="required" />
+    <xs:attribute name="animFilename" type="xs:string" use="required" />
   </xs:complexType>
 
   <xs:complexType name="groupType">
@@ -141,6 +143,22 @@
 
 
 
+
+  <xs:complexType name="groupAnimType">
+    <xs:annotation>
+      <xs:appinfo>
+        <scea.dom.editors menuText="GroupAnim" description="GroupAnim" image="picoAnimClipEditor.Resources.group.png" category="pico" />
+        <scea.dom.editors.attribute name="name" displayName="Name" description="Unique Name" />
+      </xs:appinfo>
+    </xs:annotation>
+    <xs:complexContent>
+      <xs:extension base="groupType">
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  
+
+
   <xs:complexType name="trackAnimType">
     <xs:annotation>
       <xs:appinfo>
@@ -154,6 +172,34 @@
     </xs:complexContent>
   </xs:complexType>
 
+
+
+  <xs:complexType name="intervalAnimType">
+    <xs:annotation>
+      <xs:appinfo>
+        <scea.dom.editors menuText="Anim" description="Anim" image="picoAnimClipEditor.Resources.interval.png" category="pico" />
+      </xs:appinfo>
+    </xs:annotation>
+    <xs:complexContent>
+      <xs:extension base="intervalType">
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+
+  
+  <xs:complexType name="keyTagType">
+    <xs:annotation>
+      <xs:appinfo>
+        <scea.dom.editors menuText="Tag" description="Tag" image="picoAnimClipEditor.Resources.key.png" category="Timelines" />
+      </xs:appinfo>
+    </xs:annotation>
+    <xs:complexContent>
+      <xs:extension base="keyType">
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  
   
   
   <xs:complexType name="keySoundType">
@@ -168,7 +214,7 @@
       </xs:appinfo>
     </xs:annotation>
     <xs:complexContent>
-      <xs:extension base="keyType">
+      <xs:extension base="eventType">
         <xs:attribute name="soundBank" type="xs:string" />
         <xs:attribute name="sound" type="xs:string" />
       </xs:extension>

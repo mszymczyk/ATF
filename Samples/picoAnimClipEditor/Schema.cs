@@ -30,6 +30,7 @@ namespace picoAnimClipEditor
         {
             timelineType.Type = getNodeType("timeline", "timelineType");
             timelineType.nameAttribute = timelineType.Type.GetAttributeInfo("name");
+            timelineType.animFilenameAttribute = timelineType.Type.GetAttributeInfo("animFilename");
             timelineType.groupChild = timelineType.Type.GetChildInfo("group");
             timelineType.markerChild = timelineType.Type.GetChildInfo("marker");
             timelineType.timelineRefChild = timelineType.Type.GetChildInfo("timelineRef");
@@ -76,11 +77,29 @@ namespace picoAnimClipEditor
             timelineRefType.colorAttribute = timelineRefType.Type.GetAttributeInfo("color");
             timelineRefType.refAttribute = timelineRefType.Type.GetAttributeInfo("ref");
 
+            groupAnimType.Type = getNodeType("timeline", "groupAnimType");
+            groupAnimType.nameAttribute = groupAnimType.Type.GetAttributeInfo("name");
+            groupAnimType.expandedAttribute = groupAnimType.Type.GetAttributeInfo("expanded");
+            groupAnimType.descriptionAttribute = groupAnimType.Type.GetAttributeInfo("description");
+            groupAnimType.trackChild = groupAnimType.Type.GetChildInfo("track");
+
             trackAnimType.Type = getNodeType("timeline", "trackAnimType");
             trackAnimType.nameAttribute = trackAnimType.Type.GetAttributeInfo("name");
             trackAnimType.descriptionAttribute = trackAnimType.Type.GetAttributeInfo("description");
             trackAnimType.intervalChild = trackAnimType.Type.GetChildInfo("interval");
             trackAnimType.keyChild = trackAnimType.Type.GetChildInfo("key");
+
+            intervalAnimType.Type = getNodeType("timeline", "intervalAnimType");
+            intervalAnimType.startAttribute = intervalAnimType.Type.GetAttributeInfo("start");
+            intervalAnimType.descriptionAttribute = intervalAnimType.Type.GetAttributeInfo("description");
+            intervalAnimType.nameAttribute = intervalAnimType.Type.GetAttributeInfo("name");
+            intervalAnimType.lengthAttribute = intervalAnimType.Type.GetAttributeInfo("length");
+            intervalAnimType.colorAttribute = intervalAnimType.Type.GetAttributeInfo("color");
+
+            keyTagType.Type = getNodeType("timeline", "keyTagType");
+            keyTagType.startAttribute = keyTagType.Type.GetAttributeInfo("start");
+            keyTagType.descriptionAttribute = keyTagType.Type.GetAttributeInfo("description");
+            keyTagType.nameAttribute = keyTagType.Type.GetAttributeInfo("name");
 
             keySoundType.Type = getNodeType("timeline", "keySoundType");
             keySoundType.startAttribute = keySoundType.Type.GetAttributeInfo("start");
@@ -96,6 +115,7 @@ namespace picoAnimClipEditor
         {
             public static DomNodeType Type;
             public static AttributeInfo nameAttribute;
+            public static AttributeInfo animFilenameAttribute;
             public static ChildInfo groupChild;
             public static ChildInfo markerChild;
             public static ChildInfo timelineRefChild;
@@ -164,6 +184,15 @@ namespace picoAnimClipEditor
             public static AttributeInfo refAttribute;
         }
 
+        public static class groupAnimType
+        {
+            public static DomNodeType Type;
+            public static AttributeInfo nameAttribute;
+            public static AttributeInfo expandedAttribute;
+            public static AttributeInfo descriptionAttribute;
+            public static ChildInfo trackChild;
+        }
+
         public static class trackAnimType
         {
             public static DomNodeType Type;
@@ -171,6 +200,24 @@ namespace picoAnimClipEditor
             public static AttributeInfo descriptionAttribute;
             public static ChildInfo intervalChild;
             public static ChildInfo keyChild;
+        }
+
+        public static class intervalAnimType
+        {
+            public static DomNodeType Type;
+            public static AttributeInfo startAttribute;
+            public static AttributeInfo descriptionAttribute;
+            public static AttributeInfo nameAttribute;
+            public static AttributeInfo lengthAttribute;
+            public static AttributeInfo colorAttribute;
+        }
+
+        public static class keyTagType
+        {
+            public static DomNodeType Type;
+            public static AttributeInfo startAttribute;
+            public static AttributeInfo descriptionAttribute;
+            public static AttributeInfo nameAttribute;
         }
 
         public static class keySoundType

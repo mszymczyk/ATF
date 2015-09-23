@@ -47,6 +47,8 @@ namespace picoAnimClipEditor
             m_control.Layout += controls_Layout;
             m_control.ResumeLayout();
 
+			TreeControl.MouseDoubleClick += TreeControl_MouseDoubleClick;
+
             m_controlHostService.RegisterControl(
                 m_control,
                 new ControlInfo(
@@ -56,6 +58,23 @@ namespace picoAnimClipEditor
                     "https://github.com/SonyWWS/ATF/search?utf8=%E2%9C%93&q=picoAnimListEditor+or+Palette".Localize()),
                 this);
         }
+
+		void TreeControl_MouseDoubleClick( object sender, MouseEventArgs e )
+		{
+			TreeControl tc = (TreeControl) sender;
+			//Point localPos = tc.PointToClient( new Point(e.X, e.Y) );
+			//Point localPos2 = tc.PointToClient( e.Location );
+			//TreeControl.Node nod = tc.GetNodeAt( localPos );
+			TreeControl.Node nod = tc.GetNodeAt( e.Location );
+			if ( nod != null )
+			{
+				picoAnimListEditorElement ale = nod.Tag as picoAnimListEditorElement;
+				if ( ale != null )
+				{
+
+				}
+			}
+		}
 
         /// <summary>
         /// Gets or sets the category comparer. The default value is null. By default, the

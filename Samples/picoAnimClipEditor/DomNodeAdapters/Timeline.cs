@@ -86,7 +86,25 @@ namespace picoAnimClipEditor.DomNodeAdapters
         {
             GetChildList<ITimelineReference>(Schema.timelineType.timelineRefChild).Add(reference);
         }
-    }
+
+		/// <summary>
+		/// Creates a new group of given type</summary>
+		/// <returns>New group</returns>
+		public IGroup CreateGroup( DomNodeType type )
+		{
+			Group group = new DomNode( type ).As<Group>();
+
+			NodeTypePaletteItem paletteItem = type.GetTag<NodeTypePaletteItem>();
+			AttributeInfo idAttribute = type.IdAttribute;
+			if ( paletteItem != null &&
+                idAttribute != null )
+			{
+				group.DomNode.SetAttribute( idAttribute, paletteItem.Name );
+			}
+
+			return group;
+		}
+	}
 }
 
 

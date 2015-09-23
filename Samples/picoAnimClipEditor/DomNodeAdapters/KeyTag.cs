@@ -9,20 +9,9 @@ using Sce.Atf.Controls.Timelines;
 namespace picoAnimClipEditor.DomNodeAdapters
 {
     /// <summary>
-    /// Adapts DomNode to a Key</summary>
-	public class Key : BaseEvent, IKey, AnimClipElementValidationInterface
+    /// Adapts DomNode to a KeyTag</summary>
+	public class KeyTag : DomNodeAdapter, AnimClipElementValidationInterface
     {
-        #region IKey Members
-
-        /// <summary>
-        /// Gets the track that contains the key</summary>
-        public ITrack Track
-        {
-            get { return GetParentAs<ITrack>(); }
-        }
-
-        #endregion
-
 		public virtual bool CanParentTo( DomNode parent )
 		{
 			return true;

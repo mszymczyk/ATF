@@ -64,7 +64,7 @@ namespace picoAnimClipEditor
 				Schema.timelineType.Type.Define( new ExtensionInfo<TimelineDocument>() );
                 Schema.timelineType.Type.Define(new ExtensionInfo<TimelineContext>());
                 Schema.timelineType.Type.Define(new ExtensionInfo<MultipleHistoryContext>());
-				Schema.timelineType.Type.Define( new ExtensionInfo<TimelineHubCommunication>() );
+				//Schema.timelineType.Type.Define( new ExtensionInfo<TimelineHubCommunication>() );
 
                 // register extensions
                 Schema.timelineType.Type.Define(new ExtensionInfo<UniqueIdValidator>());
@@ -83,7 +83,11 @@ namespace picoAnimClipEditor
                 Schema.markerType.Type.Define(new ExtensionInfo<Marker>());
                 Schema.timelineRefType.Type.Define(new ExtensionInfo<TimelineReference>());
 
+				Schema.groupAnimType.Type.Define( new ExtensionInfo<GroupAnim>() );
 				Schema.trackAnimType.Type.Define( new ExtensionInfo<TrackAnim>() );
+				Schema.intervalAnimType.Type.Define( new ExtensionInfo<IntervalAnim>() );
+
+				Schema.keySoundType.Type.Define( new ExtensionInfo<KeyTag>() );
 
 				// sound
 				//

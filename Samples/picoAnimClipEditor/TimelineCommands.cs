@@ -113,43 +113,43 @@ namespace picoAnimClipEditor
 					//if ( ! hubComm.Connected )
 					//	return;
 
-					string editMode = m_editMode.SelectedItem as string;
-					//hubComm.setEditMode( editMode );
+					//string editMode = m_editMode.SelectedItem as string;
+					////hubComm.setEditMode( editMode );
 
-					if ( editMode == "Editing" )
-						m_hubService.BlockOutboundTraffic = false;
-
-					HubMessage hubMsg = new HubMessage( TimelineHubCommunication.TIMELINE_TAG );
-					hubMsg.appendString( "editMode" ); // command
-
-					string filename = "*";
-
-					float scrubberPosition = 0;
-
-					if ( context != null )
-					{
-						TimelineDocument document = context.As<TimelineDocument>();
-						if ( document != null )
-						{
-							string docUri = pico.Paths.UriToPicoDemoPath( document.Uri );
-							if ( docUri.Length > 0 )
-							{
-								filename = docUri;
-							}
-
-							scrubberPosition = document.ScrubberManipulator.Position;
-						}
-					}
-
-					hubMsg.appendString( filename );
-					hubMsg.appendString( editMode ); // what mode
-					hubMsg.appendFloat( scrubberPosition );
-					m_hubService.send( hubMsg );
-
-					if ( editMode != "Editing" )
+					//if ( editMode == "Editing" )
 					//	m_hubService.BlockOutboundTraffic = false;
-					//else
-						m_hubService.BlockOutboundTraffic = true;
+
+					//HubMessage hubMsg = new HubMessage( TimelineHubCommunication.TIMELINE_TAG );
+					//hubMsg.appendString( "editMode" ); // command
+
+					//string filename = "*";
+
+					//float scrubberPosition = 0;
+
+					//if ( context != null )
+					//{
+					//	TimelineDocument document = context.As<TimelineDocument>();
+					//	if ( document != null )
+					//	{
+					//		string docUri = pico.Paths.UriToPicoDemoPath( document.Uri );
+					//		if ( docUri.Length > 0 )
+					//		{
+					//			filename = docUri;
+					//		}
+
+					//		scrubberPosition = document.ScrubberManipulator.Position;
+					//	}
+					//}
+
+					//hubMsg.appendString( filename );
+					//hubMsg.appendString( editMode ); // what mode
+					//hubMsg.appendFloat( scrubberPosition );
+					//m_hubService.send( hubMsg );
+
+					//if ( editMode != "Editing" )
+					////	m_hubService.BlockOutboundTraffic = false;
+					////else
+					//	m_hubService.BlockOutboundTraffic = true;
 				};
 
 			TimelineMenu.GetToolStrip().Items.Add( m_editMode );
@@ -339,20 +339,20 @@ namespace picoAnimClipEditor
 			string editMode = m_editMode.SelectedItem as string;
 			//hubComm.setEditMode( editMode );
 
-			if ( editMode == "Editing" && m_hubService.CanSendData )
-			{
-				string docUri = pico.Paths.UriToPicoDemoPath( document.Uri );
-				if ( docUri.Length > 0 )
-				{
-					HubMessage hubMsg = new HubMessage( TimelineHubCommunication.TIMELINE_TAG );
-					//hubMsg.appendString( "currentDocument" ); // command
-					hubMsg.appendString( "editMode" ); // command
-					hubMsg.appendString( docUri ); // what timeline
-					hubMsg.appendString( editMode );
-					hubMsg.appendFloat( document.ScrubberManipulator.Position );
-					m_hubService.send( hubMsg );
-				}
-			}
+			//if ( editMode == "Editing" && m_hubService.CanSendData )
+			//{
+			//	string docUri = pico.Paths.UriToPicoDemoPath( document.Uri );
+			//	if ( docUri.Length > 0 )
+			//	{
+			//		HubMessage hubMsg = new HubMessage( TimelineHubCommunication.TIMELINE_TAG );
+			//		//hubMsg.appendString( "currentDocument" ); // command
+			//		hubMsg.appendString( "editMode" ); // command
+			//		hubMsg.appendString( docUri ); // what timeline
+			//		hubMsg.appendString( editMode );
+			//		hubMsg.appendFloat( document.ScrubberManipulator.Position );
+			//		m_hubService.send( hubMsg );
+			//	}
+			//}
 
 			//string editMode = hubComm.getEditMode();
 			//for ( int i = 0; i < m_editMode.Items.Count; ++i )

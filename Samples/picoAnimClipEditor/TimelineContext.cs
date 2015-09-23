@@ -594,10 +594,27 @@ namespace picoAnimClipEditor
         /// <returns>True iff the context can delete</returns>
         public bool CanDelete()
         {
-            foreach (TimelinePath timelineObject in Selection.AsIEnumerable<TimelinePath>())
-                if (!TimelineControl.IsEditable(timelineObject))
-                    return false;
-            return Selection.Count > 0;
+			// pico TODO: we can override this to disable deletion of some elements, like initial group, initial track and interval anim
+			//
+			foreach ( TimelinePath timelineObject in Selection.AsIEnumerable<TimelinePath>() )
+			{
+				if ( !TimelineControl.IsEditable( timelineObject ) )
+					return false;
+
+				GroupAnim group = timelineObject.As<GroupAnim>();
+				if ( group != null )
+					return false;
+
+				TrackAnim track = timelineObject.As<TrackAnim>();
+				if ( track != null )
+					return false;
+
+				IntervalAnim interval = timelineObject.As<IntervalAnim>();
+				if ( interval != null )
+					return false;
+			} 
+			
+			return Selection.Count > 0;
         }
 
         /// <summary>
