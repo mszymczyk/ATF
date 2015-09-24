@@ -68,6 +68,9 @@
   <PropertyGroup>
     <NoWin32Manifest>true</NoWin32Manifest>
   </PropertyGroup>
+  <PropertyGroup>
+    <ApplicationIcon>ProgramIcon.ico</ApplicationIcon>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="IronPython.Modules">
       <HintPath>..\..\ThirdParty\IronPython\IronPython.Modules.dll</HintPath>
@@ -216,6 +219,9 @@
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Resources\ProgramIcon.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="ProgramIcon.ico" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
