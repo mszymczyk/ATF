@@ -21,6 +21,8 @@
     </xs:sequence>
     <xs:attribute name="name" type="xs:ID" use="required" />
     <xs:attribute name="animFilename" type="xs:string" use="required" />
+    <xs:attribute name="animUserName" type="xs:string"/>
+    <xs:attribute name="animCategory" type="xs:string"/>
   </xs:complexType>
 
   <xs:complexType name="groupType">
@@ -147,7 +149,7 @@
   <xs:complexType name="groupAnimType">
     <xs:annotation>
       <xs:appinfo>
-        <scea.dom.editors menuText="GroupAnim" description="GroupAnim" image="picoAnimClipEditor.Resources.group.png" category="pico" />
+        <scea.dom.editors menuText="AnimClip" description="AnimClip" image="picoAnimClipEditor.Resources.group.png" category="pico" />
         <scea.dom.editors.attribute name="name" displayName="Name" description="Unique Name" />
       </xs:appinfo>
     </xs:annotation>
@@ -214,7 +216,7 @@
       </xs:appinfo>
     </xs:annotation>
     <xs:complexContent>
-      <xs:extension base="eventType">
+      <xs:extension base="keyType">
         <xs:attribute name="soundBank" type="xs:string" />
         <xs:attribute name="sound" type="xs:string" />
       </xs:extension>

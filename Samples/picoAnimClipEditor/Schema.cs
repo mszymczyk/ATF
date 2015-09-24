@@ -31,6 +31,8 @@ namespace picoAnimClipEditor
             timelineType.Type = getNodeType("timeline", "timelineType");
             timelineType.nameAttribute = timelineType.Type.GetAttributeInfo("name");
             timelineType.animFilenameAttribute = timelineType.Type.GetAttributeInfo("animFilename");
+            timelineType.animUserNameAttribute = timelineType.Type.GetAttributeInfo("animUserName");
+            timelineType.animCategoryAttribute = timelineType.Type.GetAttributeInfo("animCategory");
             timelineType.groupChild = timelineType.Type.GetChildInfo("group");
             timelineType.markerChild = timelineType.Type.GetChildInfo("marker");
             timelineType.timelineRefChild = timelineType.Type.GetChildInfo("timelineRef");
@@ -116,6 +118,8 @@ namespace picoAnimClipEditor
             public static DomNodeType Type;
             public static AttributeInfo nameAttribute;
             public static AttributeInfo animFilenameAttribute;
+            public static AttributeInfo animUserNameAttribute;
+            public static AttributeInfo animCategoryAttribute;
             public static ChildInfo groupChild;
             public static ChildInfo markerChild;
             public static ChildInfo timelineRefChild;

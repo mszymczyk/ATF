@@ -9,7 +9,7 @@ namespace picoAnimClipEditor.DomNodeAdapters
 {
     /// <summary>
     /// Adapts DomNode to a Key</summary>
-	public class KeySound : DomNodeAdapter
+	public class KeySound : DomNodeAdapter, AnimClipElementValidationInterface
     {
 		/// <summary>
 		/// Gets and sets the sound bank</summary>
@@ -26,7 +26,25 @@ namespace picoAnimClipEditor.DomNodeAdapters
 			get { return (string)DomNode.GetAttribute( Schema.keySoundType.soundAttribute ); }
 			set { DomNode.SetAttribute( Schema.keySoundType.soundAttribute, value ); }
 		}
-    }
+
+		public virtual bool CanParentTo( DomNode parent )
+		{
+			return ValidateImpl( parent, 0 );
+		}
+
+		public virtual bool Validate( DomNode parent )
+		{
+			return ValidateImpl( parent, 1 );
+		}
+
+		private bool ValidateImpl( DomNode parent, int validating )
+		{
+			if ( parent.Type != Schema.trackType.Type )
+				return false;
+
+			return true;
+		}
+	}
 }
 
 

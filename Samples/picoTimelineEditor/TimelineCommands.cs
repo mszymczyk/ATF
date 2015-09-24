@@ -32,6 +32,7 @@ namespace picoTimelineEditor
             m_commandService = commandService;
             m_contextRegistry = contextRegistry;
 			m_hubService = hubService;
+			m_hubService.BlockOutboundTraffic = true;
         }
 
         #region IInitializable Members

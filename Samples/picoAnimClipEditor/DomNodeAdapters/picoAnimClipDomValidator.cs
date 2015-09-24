@@ -113,33 +113,39 @@ namespace picoAnimClipEditor.DomNodeAdapters
 
 		private bool ValidatePair( DomNode parent, DomNode child )
 		{
-			Group group = child.As<Group>();
-			if ( group != null )
+			AnimClipElementValidationInterface vi = child.As<AnimClipElementValidationInterface>();
+			if ( vi != null )
 			{
-				if ( !group.Validate( parent ) )
+				if ( !vi.Validate( parent ) )
 					return false;
 			}
+			//Group group = child.As<Group>();
+			//if ( group != null )
+			//{
+			//	if ( !group.Validate( parent ) )
+			//		return false;
+			//}
 
-			Track track = child.As<Track>();
-			if ( track != null )
-			{
-				if ( !track.Validate( parent ) )
-					return false;
-			}
+			//Track track = child.As<Track>();
+			//if ( track != null )
+			//{
+			//	if ( !track.Validate( parent ) )
+			//		return false;
+			//}
 
-			Interval interval = child.As<Interval>();
-			if ( interval != null )
-			{
-				if ( !interval.Validate( parent ) )
-					return false;
-			}
+			//Interval interval = child.As<Interval>();
+			//if ( interval != null )
+			//{
+			//	if ( !interval.Validate( parent ) )
+			//		return false;
+			//}
 
-			Key key = child.As<Key>();
-			if (key != null)
-			{
-				if (!key.Validate( parent ))
-					return false;
-			}
+			//Key key = child.As<Key>();
+			//if (key != null)
+			//{
+			//	if (!key.Validate( parent ))
+			//		return false;
+			//}
 
 			return true;
 		}

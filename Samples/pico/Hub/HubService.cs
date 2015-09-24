@@ -27,7 +27,7 @@ namespace pico.Hub
 		/// Finishes initializing component by connecting to picoHub</summary>
 		void IInitializable.Initialize()
 		{
-			BlockOutboundTraffic = true;
+			BlockOutboundTraffic = false;
 			BlockInboundTraffic = false;
 
 			try
@@ -104,10 +104,7 @@ namespace pico.Hub
 
 		public void send( HubMessage msg )
 		{
-			if ( m_picoHubClientSocketOutbound == null )
-				return;
-
-			if ( BlockOutboundTraffic )
+			if ( ! CanSendData )
 				return;
 
 			byte[] bytes = msg.getFinalByteStream();
@@ -252,7 +249,7 @@ namespace pico.Hub
 			if ( strLen > 0 )
 			{
 				string str = Encoding.ASCII.GetString( payload_, readOffset_, strLen );
-				readOffset_ += strLen; // null-terminating char
+				readOffset_ += strLen;
 				return str;
 			}
 			else
@@ -261,12 +258,12 @@ namespace pico.Hub
 			}
 		}
 
-		public string UnpackStringRaw( int strLen )
+		public string UnpackString( int strLen )
 		{
 			if ( strLen > 0 )
 			{
 				string str = Encoding.ASCII.GetString( payload_, readOffset_, strLen );
-				readOffset_ += strLen; // null-terminating char
+				readOffset_ += strLen;
 				return str;
 			}
 			else

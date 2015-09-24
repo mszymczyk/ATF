@@ -31,6 +31,32 @@ namespace picoAnimClipEditor.DomNodeAdapters
 		{
 			return true;
 		}
+
+		public string AnimFile
+		{
+			get { return m_animFile; }
+			set
+			{
+				if ( value != m_animFile )
+				{
+					m_animFile = value;
+					if ( m_animFile != null && m_animFile.Length > 0 )
+						m_afh = pico.Anim.AnimFileHeader.ReadFromFile2( m_animFile );
+				}
+			}
+		}
+
+		/// <summary>
+		/// Gets animation's duration in milliseconds
+		/// </summary>
+		[pico.Controls.PropertyEditing.CutomPropertyEditingAttribute( true, "AnimDuration", "AnimFileInfo", "Animation duration in milliseconds" )]
+		public float AnimDuration
+		{
+			get { return (m_afh != null) ? m_afh.durationMilliseconds : 0; }
+		}
+
+		private string m_animFile;
+		private pico.Anim.AnimFileHeader m_afh;
 	}
 }
 

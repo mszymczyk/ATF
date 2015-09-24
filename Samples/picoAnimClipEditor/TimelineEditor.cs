@@ -25,6 +25,13 @@ using pico.Hub;
 
 namespace picoAnimClipEditor
 {
+	public enum EditMode
+	{
+		Standalone,
+		Editing,
+		Preview
+	};
+
     /// <summary>
     /// Editor class that creates and saves timeline documents. 
     /// There is just one instance of this class in this application.
@@ -37,7 +44,7 @@ namespace picoAnimClipEditor
     [Export(typeof(IPaletteClient))]
     [Export(typeof(IInitializable))]
     [PartCreationPolicy(CreationPolicy.Shared)]
-    public class TimelineEditor : IDocumentClient, IControlHostClient, IPaletteClient, IInitializable
+    public partial class TimelineEditor : IDocumentClient, IControlHostClient, IPaletteClient, IInitializable
     {
         /// <summary>
         /// Constructor that subscribes to document events and adds palette information</summary>
@@ -205,12 +212,19 @@ namespace picoAnimClipEditor
 
 				//TimelineHubCommunication hubComm = scrubber.Owner.TimelineDocument.Cast<TimelineHubCommunication>();
 				//hubComm.sendScrubberPosition();
+				hubService_sendScrubberPosition();
 			};
 
 			m_mainForm.DragEnter += mainForm_DragEnter;
 			m_mainForm.DragDrop += mainForm_DragDrop;
 
-			m_animListEditor.AddItem( new picoAnimListEditorElement( "princess_attacked_on_ledge.anim", "assets\\ksiezniczkaCharacter\\anim\\princess_attacked_on_ledge.anim" ), "princess", this );
+			m_mainForm.Loaded += ( sender, e ) =>
+			{
+				hubService_sendRefreshList();
+			};
+
+			m_animListEditor.TreeControl.MouseDoubleClick += AnimListEditorTreeControl_MouseDoubleClick;
+			//m_animListEditor.AddItem( new picoAnimListEditorElement( "princess_attacked_on_ledge.anim", "assets\\ksiezniczkaCharacter\\anim\\princess_attacked_on_ledge.anim" ), "princess", this );
 		}
 
         #endregion
@@ -549,6 +563,7 @@ namespace picoAnimClipEditor
 
             // Check if the repository contains this Uri. Remember that document Uris have to be absolute.
             bool isNewToThisEditor = true;
+			bool isNewFile = false;
             DomNode node = null;
             TimelineDocument document = (TimelineDocument)s_repository.GetDocument(uri);
 
@@ -570,19 +585,7 @@ namespace picoAnimClipEditor
             {
                 // create new document by creating a Dom node of the root type defined by the schema
                 node = new DomNode(Schema.timelineType.Type, Schema.timelineRootElement);
-
-				Timeline tim = node.As<Timeline>();
-				IGroup group = tim.CreateGroup( Schema.groupAnimType.Type );
-				tim.Groups.Add( group );
-				GroupAnim groupAnim = group.Cast<GroupAnim>();
-				ITrack track = groupAnim.CreateTrack( Schema.trackAnimType.Type );
-				group.Tracks.Add( track );
-
-				IInterval interval = new DomNode( Schema.intervalAnimType.Type ).Cast<IInterval>();
-				track.Intervals.Add( interval );
-				Interval intervalAnim = interval.Cast<Interval>();
-				interval.Length = 5000;
-				interval.Name = "Anim";
+				isNewFile = true;
             }
 
             if (node != null)
@@ -649,6 +652,11 @@ namespace picoAnimClipEditor
 				//TimelineHubCommunication hubComm = node.Cast<TimelineHubCommunication>();
 				//hubComm.setup( m_hubService, s_schemaLoader );
 
+				Timeline tim = node.As<Timeline>();
+				string picoDemoPath = pico.Paths.PathToPicoDemoPath( filePath );
+				if ( !string.IsNullOrEmpty( picoDemoPath ) )
+					tim.setAnimFile( Path.ChangeExtension( picoDemoPath, ".anim" ), m_animListEditorElementToUseWhenCreatingNewDocument );
+
 				// select this document initially, so timeline properties are visible
 				//
 				ISelectionContext selectionContext = document.Cast<ISelectionContext>();
@@ -657,6 +665,9 @@ namespace picoAnimClipEditor
                 // Initialize Dom extensions now that the data is complete
                 node.InitializeExtensions();
             }
+
+			if ( isNewFile )
+				document.Dirty = true;
 
             return document;
         }
@@ -900,31 +911,31 @@ namespace picoAnimClipEditor
             }
         }
 
-		private void hubService_MessageReceived( object sender, pico.Hub.MessagesReceivedEventArgs args )
-		{
-			// callback on main thread
-			//
-			string tagExpected = "animClipEditor";
-			foreach( HubMessageIn msg in args.Messages )
-			{
-				string tag = msg.UnpackStringRaw( tagExpected.Length );
-				if ( tag != tagExpected )
-					return;
+		//private void hubService_MessageReceived( object sender, pico.Hub.MessagesReceivedEventArgs args )
+		//{
+		//	// callback on main thread
+		//	//
+		//	string tagExpected = "animClipEditor";
+		//	foreach( HubMessageIn msg in args.Messages )
+		//	{
+		//		string tag = msg.UnpackString( tagExpected.Length );
+		//		if ( tag != tagExpected )
+		//			return;
 
-				string cmd = msg.UnpackString();
-				if ( cmd == "animInfo" )
-				{
-					int nAnims = msg.UnpackInt();
-					for ( int ianim = 0; ianim < nAnims; ++ianim )
-					{
-						string userName = msg.UnpackString();
-						string fileName = msg.UnpackString();
+		//		string cmd = msg.UnpackString();
+		//		if ( cmd == "animInfo" )
+		//		{
+		//			int nAnims = msg.UnpackInt();
+		//			for ( int ianim = 0; ianim < nAnims; ++ianim )
+		//			{
+		//				string userName = msg.UnpackString();
+		//				string fileName = msg.UnpackString();
 
-						m_animListEditor.AddItem( new picoAnimListEditorElement( userName, fileName ), "ksiezniczka", this );
-					}
-				}
-			}
-		}
+		//				m_animListEditor.AddItem( new picoAnimListEditorElement( userName, fileName ), "ksiezniczka", this );
+		//			}
+		//		}
+		//	}
+		//}
 
         /// <summary>
         /// A collection of all ITimelineDocuments that have been loaded. This is necessary so that we can 
@@ -958,15 +969,25 @@ namespace picoAnimClipEditor
         private IDocumentService m_documentService;
         private ISettingsService m_settingsService;
 
+		private picoAnimListEditorElement m_animListEditorElementToUseWhenCreatingNewDocument;
+
         private bool m_reloading; // true while reloading the document in response to a FileWatcher.FileChanged event
         private readonly Dictionary<Uri, DateTime> m_loadedWriteTimes = new Dictionary<Uri, DateTime>();
 
         public static SchemaLoader s_schemaLoader;
         private static readonly DocumentClientInfo s_info = new DocumentClientInfo(
             "AnimClipMetadata".Localize(),
-            new string[] { ".animmetadata" },
+            new string[] { ".animdata" },
             Sce.Atf.Resources.DocumentImage,
             Sce.Atf.Resources.FolderImage,
             true);
+
+		public EditMode EditMode { get { return m_editMode; } }
+		public void setEditMode( string editMode )
+		{
+			Enum.TryParse<EditMode>( editMode, out m_editMode );
+		}
+
+		private EditMode m_editMode;
     }
 }

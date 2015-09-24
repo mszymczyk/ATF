@@ -11,6 +11,7 @@ using Sce.Atf.Controls.Timelines;
 using ScrubberManipulator = Sce.Atf.Controls.Timelines.Direct2D.D2dScrubberManipulator;
 
 using pico.Hub;
+using picoAnimClipEditor.DomNodeAdapters;
 
 namespace picoAnimClipEditor
 {
@@ -27,11 +28,12 @@ namespace picoAnimClipEditor
         /// <param name="commandService">Command service</param>
         /// <param name="contextRegistry">Context registry</param>
         [ImportingConstructor]
-        public TimelineCommands(ICommandService commandService, IContextRegistry contextRegistry, HubService hubService )
+        public TimelineCommands(ICommandService commandService, IContextRegistry contextRegistry, HubService hubService, TimelineEditor editor )
         {
             m_commandService = commandService;
             m_contextRegistry = contextRegistry;
 			m_hubService = hubService;
+			m_animClipEditor = editor;
         }
 
         #region IInitializable Members
@@ -98,58 +100,13 @@ namespace picoAnimClipEditor
 			//m_editMode.ComboBox.Width = m_editMode.ComboBox.Width / 2;
 			m_editMode.ComboBox.Items.Add( "Standalone" );
 			m_editMode.ComboBox.Items.Add( "Editing" );
+			m_editMode.ComboBox.Items.Add( "Preview" );
 			m_editMode.ComboBox.SelectedIndex = 0;
 			m_editMode.ToolTipText = "Selects editor operation mode".Localize();
 			m_editMode.ComboBox.SelectedIndexChanged += (object sender, System.EventArgs e) =>
 				{
-					TimelineContext context = m_contextRegistry.GetActiveContext<TimelineContext>();
-					//if ( context == null )
-					//	return;
-
-					//TimelineHubCommunication hubComm = context.As<TimelineHubCommunication>();
-					//if ( hubComm == null )
-					//	return;
-
-					//if ( ! hubComm.Connected )
-					//	return;
-
-					//string editMode = m_editMode.SelectedItem as string;
-					////hubComm.setEditMode( editMode );
-
-					//if ( editMode == "Editing" )
-					//	m_hubService.BlockOutboundTraffic = false;
-
-					//HubMessage hubMsg = new HubMessage( TimelineHubCommunication.TIMELINE_TAG );
-					//hubMsg.appendString( "editMode" ); // command
-
-					//string filename = "*";
-
-					//float scrubberPosition = 0;
-
-					//if ( context != null )
-					//{
-					//	TimelineDocument document = context.As<TimelineDocument>();
-					//	if ( document != null )
-					//	{
-					//		string docUri = pico.Paths.UriToPicoDemoPath( document.Uri );
-					//		if ( docUri.Length > 0 )
-					//		{
-					//			filename = docUri;
-					//		}
-
-					//		scrubberPosition = document.ScrubberManipulator.Position;
-					//	}
-					//}
-
-					//hubMsg.appendString( filename );
-					//hubMsg.appendString( editMode ); // what mode
-					//hubMsg.appendFloat( scrubberPosition );
-					//m_hubService.send( hubMsg );
-
-					//if ( editMode != "Editing" )
-					////	m_hubService.BlockOutboundTraffic = false;
-					////else
-					//	m_hubService.BlockOutboundTraffic = true;
+					string editMode = m_editMode.SelectedItem as string;
+					m_animClipEditor.changeEditMode( editMode );
 				};
 
 			TimelineMenu.GetToolStrip().Items.Add( m_editMode );
@@ -319,52 +276,21 @@ namespace picoAnimClipEditor
         private ICommandService m_commandService;
         private IContextRegistry m_contextRegistry;
 		private HubService m_hubService;
+		private TimelineEditor m_animClipEditor;
 
 		private void contextRegistry_ActiveContextChanged( object sender, System.EventArgs e )
 		{
-			m_autoPlay.contextRegistry_ActiveContextChanged( sender, e );
+			//m_autoPlay.contextRegistry_ActiveContextChanged( sender, e );
 
 			TimelineContext context = m_contextRegistry.GetActiveContext<TimelineContext>();
 			if ( context == null )
 				return;
 
-			TimelineDocument document = context.As<TimelineDocument>();
-			if ( document == null )
-				return;
-
-			//TimelineHubCommunication hubComm = context.As<TimelineHubCommunication>();
-			//if ( hubComm == null )
-			//	return;
-
-			string editMode = m_editMode.SelectedItem as string;
-			//hubComm.setEditMode( editMode );
-
-			//if ( editMode == "Editing" && m_hubService.CanSendData )
-			//{
-			//	string docUri = pico.Paths.UriToPicoDemoPath( document.Uri );
-			//	if ( docUri.Length > 0 )
-			//	{
-			//		HubMessage hubMsg = new HubMessage( TimelineHubCommunication.TIMELINE_TAG );
-			//		//hubMsg.appendString( "currentDocument" ); // command
-			//		hubMsg.appendString( "editMode" ); // command
-			//		hubMsg.appendString( docUri ); // what timeline
-			//		hubMsg.appendString( editMode );
-			//		hubMsg.appendFloat( document.ScrubberManipulator.Position );
-			//		m_hubService.send( hubMsg );
-			//	}
-			//}
-
-			//string editMode = hubComm.getEditMode();
-			//for ( int i = 0; i < m_editMode.Items.Count; ++i )
-			//{
-			//	object item = m_editMode.Items[i];
-			//	string sitem = item as string;
-			//	if ( sitem == editMode )
-			//	{
-			//		m_editMode.SelectedIndex = i;
-			//		break;
-			//	}
-			//}
+			if ( m_animClipEditor.EditMode != EditMode.Standalone && m_hubService.CanSendData )
+			{
+				Timeline tim = context.Cast<Timeline>();
+				m_animClipEditor.changePreview( tim.AnimCategory, tim.AnimUserName );
+			}
 		}
 
 		class TimelineAutoPlay
