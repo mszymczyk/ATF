@@ -46,7 +46,7 @@ namespace TextureEditor
 
 		/// <summary>
 		/// Default program icon</summary>
-		[ImageResource( "ProgramIcon.png" )]
+		[ImageResource( "ProgramIcon.ico" )]
 		public static readonly string ProgramIcon;
 
         private const string ResourcePath = "TextureEditor.Resources.";

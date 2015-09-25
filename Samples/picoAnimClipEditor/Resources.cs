@@ -41,7 +41,7 @@ namespace picoAnimClipEditor
 
 		/// <summary>
 		/// Default program icon</summary>
-		[ImageResource( "ProgramIcon.png" )]
+		[ImageResource( "ProgramIcon.ico" )]
 		public static readonly string ProgramIcon;
 	}
 }

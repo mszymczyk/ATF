@@ -150,6 +150,7 @@
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
     </None>
     <EmbeddedResource Include="Resources\About.rtf" />
+    <EmbeddedResource Include="Resources\ProgramIcon.ico" />
     <EmbeddedResource Include="schemas\CurveSchema.xsd">
       <SubType>Designer</SubType>
     </EmbeddedResource>
@@ -216,9 +217,6 @@
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Resources\luaScript.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Resources\ProgramIcon.png" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="ProgramIcon.ico" />
