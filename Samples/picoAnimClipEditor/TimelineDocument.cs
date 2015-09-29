@@ -73,7 +73,7 @@ namespace picoAnimClipEditor
                 m_timelineControl.TimelineDocument = this;
 
                 m_timelineControl.SetZoomRange(0.01f, 50f, 1f, 100f);
-				m_timelineControl.XZoom = 0.035f;
+				m_timelineControl.XZoom = 0.25f;
 				//m_timelineControl.YZoom = 1.0f;
 				AttachManipulators();
             }

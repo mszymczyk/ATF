@@ -241,6 +241,9 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="ProgramIcon.ico" />
+    <EmbeddedResource Include="Resources\animdataOk.png" />
+    <EmbeddedResource Include="Resources\animdataOutdated.png" />
+    <EmbeddedResource Include="Resources\animdataMissing.png" />
     <EmbeddedResource Include="Resources\ProgramIcon.ico" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />

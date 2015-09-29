@@ -173,6 +173,12 @@ namespace picoAnimClipEditor
                 m_fileWatcherService.FileChanged += fileWatcherService_FileChanged;
             }
 
+			if ( m_directoryWatcherService != null )
+			{
+				m_directoryWatcherService.Register( pico.Paths.PICO_DEMO_data, new string[] { "*.anim", "*.animdata" }, true );
+				m_directoryWatcherService.FileChanged += directoryWatcherService_FileChanged;
+			}
+
             m_documentService.DocumentOpened += documentService_DocumentOpened;
             if (m_liveConnectService != null)
             {
@@ -257,6 +263,10 @@ namespace picoAnimClipEditor
 					info.Label = ale.UserName;
 					info.Description = ale.UserName;
 					info.HoverText = ale.FileName;
+					if ( string.IsNullOrEmpty( ale.IconName ) )
+						info.ImageIndex = -1;
+					else
+						info.ImageIndex = info.GetImageList().Images.IndexOfKey( ale.IconName );
 				}
 			}
         }
@@ -899,6 +909,42 @@ namespace picoAnimClipEditor
                 });
         }
 
+		void directoryWatcherService_FileChanged( object sender, FileSystemEventArgs e )
+		{
+			string picoDemoPath = pico.Paths.PathToPicoDemoPath( e.FullPath );
+			if ( string.IsNullOrEmpty( picoDemoPath ) )
+				return;
+
+			string ext = Path.GetExtension( picoDemoPath );
+
+			if ( ext == ".anim" )
+				_UpdateAnimRecursively( picoDemoPath, m_animListEditor.TreeView.Root );
+			else if ( ext == ".animdata" )
+			{
+				picoDemoPath = Path.ChangeExtension( picoDemoPath, ".anim" );
+				_UpdateAnimRecursively( picoDemoPath, m_animListEditor.TreeView.Root );
+			}
+		}
+
+		private void _UpdateAnimRecursively( string picoDemoPath, object root )
+		{
+			foreach ( object item in m_animListEditor.TreeView.GetChildren( root ) )
+			{
+				picoAnimListEditorElement ale = item as picoAnimListEditorElement;
+				if ( ale != null )
+				{
+					if ( ale.FileName == picoDemoPath )
+					{
+						ale.updateIcon();
+						//m_animListEditor.TreeControl.Invalidate();
+						m_animListEditor.TreeControlAdapter.Refresh( item );
+					}
+				}
+
+				_UpdateAnimRecursively( picoDemoPath, item );
+			}
+		}
+
         public class TimelineXmlWriter : DomXmlWriter
         {
             public TimelineXmlWriter(XmlSchemaTypeCollection typeCollection)
@@ -949,6 +995,9 @@ namespace picoAnimClipEditor
         [Import(AllowDefault=true)]
         private IFileWatcherService m_fileWatcherService = null;
 
+		[Import( AllowDefault=true )]
+		private IDirectoryWatcherService m_directoryWatcherService = null;
+
         [Import(AllowDefault = true)] 
         private MainForm m_mainForm = null;
 
@@ -989,5 +1038,7 @@ namespace picoAnimClipEditor
 		}
 
 		private EditMode m_editMode;
+
+		public HubService HubService { get { return m_hubService; } }
     }
 }

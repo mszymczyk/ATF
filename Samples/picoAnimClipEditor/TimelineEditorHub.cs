@@ -57,7 +57,9 @@ namespace picoAnimClipEditor
 						string userName = msg.UnpackString();
 						string fileName = msg.UnpackString();
 
-						m_animListEditor.AddItem( new picoAnimListEditorElement( category, userName, fileName ), category, this );
+						picoAnimListEditorElement ale = new picoAnimListEditorElement( category, userName, fileName );
+						ale.updateIcon();
+						m_animListEditor.AddItem( ale, category, this );
 					}
 				}
 			}

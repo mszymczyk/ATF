@@ -88,6 +88,7 @@ namespace picoAnimClipEditor
                                                         //  Reset All, Copy Value, Paste Value, Copy All, Paste All
                 typeof(PerformanceMonitor),             // displays the frame rate and memory usage
                 typeof(FileWatcherService),                // service to watch for changes to files
+				typeof(DirectoryWatcherService),		// service to watch for changes to whole directories
                 typeof(DefaultTabCommands),             // provides the default commands related to document tab Controls
                 typeof(SkinService),                    // allows for customization of an application’s appearance by using inheritable properties that can be applied at run-time
 

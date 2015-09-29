@@ -3,11 +3,14 @@
 using System.IO;
 using System.Collections.Generic;
 
+using Sce.Atf;
 using Sce.Atf.Controls.Timelines;
 using Sce.Atf.Dom;
 using Sce.Atf.Adaptation;
 
 #pragma warning disable 0649 // suppress "field never set" warning
+
+using pico.Hub;
 
 namespace picoAnimClipEditor.DomNodeAdapters
 {
@@ -112,14 +115,18 @@ namespace picoAnimClipEditor.DomNodeAdapters
 			set { DomNode.SetAttribute( Schema.timelineType.animCategoryAttribute, value ); }
 		}
 
-		///// <summary>
-		///// Performs initialization when the adapter is connected to the DomNode.
-		///// Raises the DomNodeAdapter NodeSet event. Creates read only data for animdata
-		///// </summary>
-		//protected override void OnNodeSet()
-		//{
-		//	base.OnNodeSet();
-		//}
+		/// <summary>
+		/// Performs initialization when the adapter is connected to the DomNode.
+		/// Raises the DomNodeAdapter NodeSet event. Creates read only data for animdata
+		/// </summary>
+		protected override void OnNodeSet()
+		{
+			DomNode.AttributeChanged += DomNode_AttributeChanged;
+			DomNode.ChildInserted += DomNode_ChildInserted;
+			DomNode.ChildRemoved += DomNode_ChildRemoved;
+
+			base.OnNodeSet();
+		}
 
 		public void setAnimFile( string animFile, picoAnimListEditorElement ale )
 		{
@@ -185,6 +192,11 @@ namespace picoAnimClipEditor.DomNodeAdapters
 			}
 		}
 
+		//public void setHubService( HubService hubService )
+		//{
+		//	m_hubService = hubService;
+		//}
+
 		/// <summary>
 		/// Creates a new group of given type</summary>
 		/// <returns>New group</returns>
@@ -202,6 +214,94 @@ namespace picoAnimClipEditor.DomNodeAdapters
 
 			return group;
 		}
+
+		private void DomNode_AttributeChanged( object sender, AttributeEventArgs e )
+		{
+			// TODO: there's a crash when undoing reference additions
+			sendReloadAnimData();
+		}
+
+		private void DomNode_ChildInserted( object sender, ChildEventArgs e )
+		{
+			// TODO: there's a crash when undoing reference additions
+			sendReloadAnimData();
+		}
+
+		private void DomNode_ChildRemoved( object sender, ChildEventArgs e )
+		{
+			// TODO: there's a crash when undoing reference additions
+			sendReloadAnimData();
+		}
+
+		private bool validate( HubService hubService, TimelineDocument document, out string docUri )
+		{
+			docUri = "";
+
+			if ( hubService == null )
+				return false;
+
+			if ( !hubService.Connected )
+			{
+				Outputs.WriteLine( OutputMessageType.Error, "Editor is not connected to picoHub" );
+				return false;
+			}
+
+			if ( hubService.BlockOutboundTraffic )
+			{
+				return false;
+			}
+
+			//if ( m_editMode != "Editing" )
+			//	return false;
+
+			docUri = pico.Paths.UriToPicoDemoPath( document.Uri );
+			if ( docUri.Length == 0 )
+			{
+				Outputs.WriteLine( OutputMessageType.Error, "Timeline document {0} is not located within PICO_DEMO\\data folder!", document.Uri.LocalPath );
+				return false;
+			}
+
+			return true;
+		}
+
+		private void sendReloadAnimData()
+		{
+			TimelineContext tc = this.As<TimelineContext>();
+			TimelineEditor te = tc.TimelineEditor;
+			HubService hubService = te.HubService;
+
+			if ( m_isWriting )
+				return;
+
+			TimelineDocument document = this.As<TimelineDocument>();
+
+			string docUri;
+			if ( !validate( hubService, document, out docUri ) )
+				return;
+
+			docUri = Path.ChangeExtension( docUri, ".anim" );
+
+			m_isWriting = true;
+
+			MemoryStream stream = new MemoryStream();
+			var writer = new TimelineEditor.TimelineXmlWriter( TimelineEditor.s_schemaLoader.TypeCollection );
+
+			writer.Write( DomNode, stream, document.Uri );
+
+			HubMessage hubMessage = new HubMessage( TimelineEditor.ANIMCLIPEDITOR_TAG );
+			hubMessage.appendString( "reloadAnimData" );
+			hubMessage.appendString( docUri );
+			hubMessage.appendInt( (int) stream.Length );
+			hubMessage.appendBytes( stream.ToArray() );
+			hubMessage.appendFloat( document.ScrubberManipulator.Position );
+
+			hubService.send( hubMessage );
+
+			m_isWriting = false;
+		}
+
+		//private HubService m_hubService;
+		private bool m_isWriting; // to prevent endless recursion while serializing DOM with TimelineXmlWriter
 	}
 }
 
