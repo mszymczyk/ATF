@@ -12,6 +12,7 @@ using Sce.Atf.Applications;
 using Sce.Atf.Dom;
 using Sce.Atf.Controls.CurveEditing;
 
+using pico.Controls;
 using pico.Hub;
 
 namespace picoAnimClipEditor
@@ -108,6 +109,7 @@ namespace picoAnimClipEditor
 
 				// pico
 				typeof(HubService),
+				typeof(TouchPad),
 
 				typeof(picoAnimListEditor)                // timeline editor component
 			);

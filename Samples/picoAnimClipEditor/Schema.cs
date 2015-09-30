@@ -109,6 +109,8 @@ namespace picoAnimClipEditor
             keySoundType.nameAttribute = keySoundType.Type.GetAttributeInfo("name");
             keySoundType.soundBankAttribute = keySoundType.Type.GetAttributeInfo("soundBank");
             keySoundType.soundAttribute = keySoundType.Type.GetAttributeInfo("sound");
+            keySoundType.positionalAttribute = keySoundType.Type.GetAttributeInfo("positional");
+            keySoundType.positionAttribute = keySoundType.Type.GetAttributeInfo("position");
 
             timelineRootElement = getRootElement(NS, "timeline");
         }
@@ -232,6 +234,8 @@ namespace picoAnimClipEditor
             public static AttributeInfo nameAttribute;
             public static AttributeInfo soundBankAttribute;
             public static AttributeInfo soundAttribute;
+            public static AttributeInfo positionalAttribute;
+            public static AttributeInfo positionAttribute;
         }
 
         public static ChildInfo timelineRootElement;

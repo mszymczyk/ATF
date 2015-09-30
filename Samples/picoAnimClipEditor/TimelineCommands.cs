@@ -107,6 +107,8 @@ namespace picoAnimClipEditor
 				{
 					string editMode = m_editMode.SelectedItem as string;
 					m_animClipEditor.changeEditMode( editMode );
+
+					m_autoPlay.onEditModeChanged( m_animClipEditor.EditMode );	
 				};
 
 			TimelineMenu.GetToolStrip().Items.Add( m_editMode );
@@ -305,53 +307,54 @@ namespace picoAnimClipEditor
 					if ( scrubber == null )
 						return;
 
-					int inewPos = (int)scrubber.Position;
+					int inewPos = (int) scrubber.Position;
 					m_scrubberPosTextBox.Text = inewPos.ToString();
 				};
 
-				m_stopWatch = new System.Diagnostics.Stopwatch();
+				//m_stopWatch = new System.Diagnostics.Stopwatch();
 
-				m_timer = new Timer();
-				m_timer.Interval = 16; // 10 secs
-				m_timer.Tick += (object sender, System.EventArgs e ) =>
-				{
-					long milis = m_stopWatch.ElapsedMilliseconds;
-					float newPosition = setScrubberPosition( (float)milis, true );
+				//m_timer = new Timer();
+				//m_timer.Interval = 16; // 10 secs
+				//m_timer.Tick += ( object sender, System.EventArgs e ) =>
+				//{
+				//	long milis = m_stopWatch.ElapsedMilliseconds;
+				//	float newPosition = setScrubberPosition( (float) milis, true );
 
-					m_stopWatch.Restart();
-				};
+				//	m_stopWatch.Restart();
+				//};
 
-				m_playTimelineButton = new ToolStripButton();
-				m_playTimelineButton.Name = "PlayTimeline";
-				m_playTimelineButton.Text = "Play".Localize();
-				m_playTimelineButton.Click += delegate
-				{
-					if ( m_playTimelineButton.Text == "Play" )
-					{
-						// start playing timeline
-						//
-						m_playTimelineButton.Text = "Pause";
-						m_playTimelineButtonOrigColor = m_playTimelineButton.BackColor;
-						m_playTimelineButton.BackColor = System.Drawing.Color.Red;
-						m_stopWatch.Restart();
-						m_timer.Start();
+				//m_playTimelineButton = new ToolStripButton();
+				//m_playTimelineButton.Name = "PlayTimeline";
+				//m_playTimelineButton.Text = "Play".Localize();
+				//m_playTimelineButton.Click += delegate
+				//{
+				//	if ( m_playTimelineButton.Text == "Play" )
+				//	{
+				//		// start playing timeline
+				//		//
+				//		m_playTimelineButton.Text = "Pause";
+				//		m_playTimelineButtonOrigColor = m_playTimelineButton.BackColor;
+				//		m_playTimelineButton.BackColor = System.Drawing.Color.Red;
+				//		m_stopWatch.Restart();
+				//		m_timer.Start();
 
-					}
-					else
-					{
-						// stop playing timeline
-						//
-						m_playTimelineButton.Text = "Play";
-						m_playTimelineButton.BackColor = m_playTimelineButtonOrigColor;
-						m_timer.Stop();
-					}
-				};
+				//	}
+				//	else
+				//	{
+				//		// stop playing timeline
+				//		//
+				//		m_playTimelineButton.Text = "Play";
+				//		m_playTimelineButton.BackColor = m_playTimelineButtonOrigColor;
+				//		m_timer.Stop();
+				//	}
+				//};
 
 				MenuInfo menuInfo = TimelineMenu;
 				//MenuInfo menuInfo = MenuInfo.Edit;
-				menuInfo.GetToolStrip().Items.Add( m_playTimelineButton );
+				//menuInfo.GetToolStrip().Items.Add( m_playTimelineButton );
 
 				m_resetTimelineButton = new ToolStripButton();
+				m_resetTimelineButton.Enabled = false;
 				m_resetTimelineButton.Name = "ResetTimeline";
 				m_resetTimelineButton.Text = "Reset".Localize();
 				m_resetTimelineButton.Click += delegate
@@ -363,6 +366,7 @@ namespace picoAnimClipEditor
 
 
 				m_scrubberPosTextBox = new ToolStripTextBox();
+				m_scrubberPosTextBox.Enabled = false;
 				m_scrubberPosTextBox.Name = "m_scrubberPosTextBox";
 				m_scrubberPosTextBox.Text = "0";
 				m_scrubberPosTextBox.LostFocus += ( object sender, System.EventArgs e ) =>
@@ -370,7 +374,7 @@ namespace picoAnimClipEditor
 					int pos;
 					if ( int.TryParse( m_scrubberPosTextBox.Text, out pos ) )
 					{
-						setScrubberPosition( (float)pos, false );
+						setScrubberPosition( (float) pos, false );
 					}
 				};
 				m_scrubberPosTextBox.KeyPress += ( object sender, KeyPressEventArgs e ) =>
@@ -380,7 +384,7 @@ namespace picoAnimClipEditor
 						int pos;
 						if ( int.TryParse( m_scrubberPosTextBox.Text, out pos ) )
 						{
-							setScrubberPosition( (float)pos, false );
+							setScrubberPosition( (float) pos, false );
 						}
 					}
 				};
@@ -406,19 +410,38 @@ namespace picoAnimClipEditor
 				return document.ScrubberManipulator.Position;
 			}
 
-			public void contextRegistry_ActiveContextChanged( object sender, System.EventArgs e )
+			//public void contextRegistry_ActiveContextChanged( object sender, System.EventArgs e )
+			//{
+			//	m_timer.Stop();
+			//	m_stopWatch.Stop();
+			//}
+
+			public void onEditModeChanged( EditMode editMode )
 			{
-				m_timer.Stop();
-				m_stopWatch.Stop();
+				if ( editMode == EditMode.Standalone )
+				{
+					m_resetTimelineButton.Enabled = false;
+					m_scrubberPosTextBox.Enabled = false;
+				}
+				else if ( editMode == EditMode.Editing )
+				{
+					m_resetTimelineButton.Enabled = true;
+					m_scrubberPosTextBox.Enabled = true;
+				}
+				else if ( editMode == EditMode.Preview )
+				{
+					m_resetTimelineButton.Enabled = false;
+					m_scrubberPosTextBox.Enabled = false;
+				}
 			}
 
 			private IContextRegistry m_contextRegistry;
-			private ToolStripButton m_playTimelineButton;
+			//private ToolStripButton m_playTimelineButton;
 			private ToolStripButton m_resetTimelineButton;
 			private ToolStripTextBox m_scrubberPosTextBox;
-			private System.Drawing.Color m_playTimelineButtonOrigColor;
-			private System.Windows.Forms.Timer m_timer;
-			private System.Diagnostics.Stopwatch m_stopWatch;
+			//private System.Drawing.Color m_playTimelineButtonOrigColor;
+			//private System.Windows.Forms.Timer m_timer;
+			//private System.Diagnostics.Stopwatch m_stopWatch;
 		};
 
 		private TimelineAutoPlay m_autoPlay;

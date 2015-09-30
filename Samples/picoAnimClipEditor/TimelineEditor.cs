@@ -208,6 +208,13 @@ namespace picoAnimClipEditor
             m_settingsService.RegisterUserSettings("Timeline Editor", settings);
             m_settingsService.RegisterSettings(this, settings);
 
+			var settings2 = new BoundPropertyDescriptor[] {
+                new BoundPropertyDescriptor(typeof(TimelineEditor),
+                    () => TimelineEditor.LastSoundBankFilename,
+                    "LastSoundBankFilename", "Operation", "Last Sound Bank File selected by user")
+			};
+			m_settingsService.RegisterSettings( this, settings2 );
+
 			m_hubService.MessageReceived += hubService_MessageReceived;
 
 			D2dScrubberManipulator.Moved += ( object sender, EventArgs e ) =>
@@ -495,6 +502,10 @@ namespace picoAnimClipEditor
 
 				if ( m_domExplorer != null )
 					m_domExplorer.Root = timelineDocument.DomNode;
+			}
+			else
+			{
+				m_contextRegistry.ActiveContext = null;
 			}
         }
 
@@ -1013,7 +1024,8 @@ namespace picoAnimClipEditor
 		[Import( AllowDefault = true )]
 		private picoAnimListEditor m_animListEditor = null;
 
-        private IContextRegistry m_contextRegistry;
+        private static IContextRegistry m_contextRegistry;
+		public static IContextRegistry ContextRegistry { get { return m_contextRegistry; } }
         private IDocumentRegistry m_documentRegistry;
         private IDocumentService m_documentService;
         private ISettingsService m_settingsService;
@@ -1040,5 +1052,8 @@ namespace picoAnimClipEditor
 		private EditMode m_editMode;
 
 		public HubService HubService { get { return m_hubService; } }
+
+		public static string LastSoundBankFilename { get { return ms_LastSoundBankFilename; } set { ms_LastSoundBankFilename = value; } }
+		private static string ms_LastSoundBankFilename = "";
     }
 }

@@ -213,12 +213,18 @@
                                     converter="Sce.Atf.Controls.PropertyEditing.ReadOnlyConverter"
                                     category="Sound" />
         <scea.dom.editors.attribute name="sound" displayName="Sound Name" description="Sound to be played from sound bank" category="Sound" />
+        <scea.dom.editors.attribute name="positional" displayName="Positional" description="Whether sound is located in space relative to character"
+                                    editor="Sce.Atf.Controls.PropertyEditing.BoolEditor,Atf.Gui.WinForms"
+                                    category="Sound"
+                                    />
       </xs:appinfo>
     </xs:annotation>
     <xs:complexContent>
       <xs:extension base="keyType">
         <xs:attribute name="soundBank" type="xs:string" />
         <xs:attribute name="sound" type="xs:string" />
+        <xs:attribute name="positional" type="xs:boolean" default="false"/>
+        <xs:attribute name="position" type="xs:string" />
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>

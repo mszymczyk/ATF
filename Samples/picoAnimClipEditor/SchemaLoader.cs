@@ -167,6 +167,36 @@ namespace picoAnimClipEditor
 			//	PropertyDescriptorCollection propDescCollection = Schema.intervalAnimControllerType.Type.GetTag<PropertyDescriptorCollection>();
 			//	pico.Controls.PropertyEditing.CustomPropertyDescriptor<IntervalAnimController>.CreateDescriptors( propDescCollection );
 			//}
+			{
+				PropertyDescriptorCollection propDescCollection = Schema.keySoundType.Type.GetTag<PropertyDescriptorCollection>();
+				//pico.Controls.PropertyEditing.CustomPropertyDescriptor<IntervalCameraAnim>.CreateDescriptors( propDescCollection );
+
+				//var formatEditor = new LongEnumEditor( typeof(SharpDX.DXGI.Format), null );
+				//var formatEditor = new LongEnumEditor();
+				var formatEditor = new DynamicLongEnumEditor( new KeySoundPositionLister() );
+				//formatEditor.DefineEnum( presets.ToArray(), null );
+				formatEditor.MaxDropDownItems = 12;
+				var apd = new CustomEnableAttributePropertyDescriptor(
+					"Position".Localize(),
+					Schema.keySoundType.positionAttribute,
+					"Sound".Localize(),
+					"Specifies intended usage of exported texture".Localize(),
+					false,
+					formatEditor
+					//, new CustomEnableAttributePropertyDescriptorCallback(
+					//	( DomNode domNode, CustomEnableAttributePropertyDescriptor descriptor ) =>
+					//	{
+					//		TextureMetadata tp = domNode.Cast<TextureMetadata>();
+					//		if ( tp.CopySourceFile )
+					//			return true;
+
+					//		return false;
+					//	}
+					//)
+					 , new CustomEnableAttributePropertyDescriptorCallback( Schema.keySoundType.positionalAttribute, CustomEnableAttributePropertyDescriptorCallback.Condition.ReadOnlyIfSetToFalse )
+				);
+				propDescCollection.Add( apd );
+			}
 		}
 
 		public int[] GetEnumIntValues( Type type )

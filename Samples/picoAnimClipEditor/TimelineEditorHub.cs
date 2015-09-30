@@ -62,6 +62,22 @@ namespace picoAnimClipEditor
 						m_animListEditor.AddItem( ale, category, this );
 					}
 				}
+				else if ( cmd == "requestPlaybackInfo" )
+				{
+					string editMode = m_editMode.ToString();
+					changeEditMode( editMode );
+				}
+				else if ( cmd == "scrubberPos" )
+				{
+					TimelineDocument document = ActiveDocument;
+					if ( document == null )
+						continue;
+
+					float scrubberPos = msg.UnpackFloat();
+					m_receivingScrubberPos = true;
+					document.ScrubberManipulator.Position = scrubberPos;
+					m_receivingScrubberPos = false;
+				}
 			}
 		}
 
@@ -74,7 +90,7 @@ namespace picoAnimClipEditor
 
 		private void hubService_sendScrubberPosition()
 		{
-			if ( m_editMode != EditMode.Editing )
+			if ( m_editMode != EditMode.Editing || m_receivingScrubberPos )
 				return;
 
 			TimelineContext context = m_contextRegistry.GetActiveContext<TimelineContext>();
@@ -163,5 +179,7 @@ namespace picoAnimClipEditor
 				}
 			}
 		}
+
+		private bool m_receivingScrubberPos;
 	}
 }

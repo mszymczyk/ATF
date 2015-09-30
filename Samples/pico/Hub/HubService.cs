@@ -45,6 +45,7 @@ namespace pico.Hub
 
 				// Create a client socket and connect it to the endpoint 
 				m_picoHubClientSocketOutbound = new System.Net.Sockets.Socket( System.Net.Sockets.AddressFamily.InterNetwork, System.Net.Sockets.SocketType.Stream, System.Net.Sockets.ProtocolType.Tcp );
+				m_picoHubClientSocketOutbound.NoDelay = true;
 				m_picoHubClientSocketOutbound.Connect( clientEndPoint );
 			}
 			catch( SocketException sex )
@@ -196,6 +197,11 @@ namespace pico.Hub
 			writeBytes( m_memStream, toBytes( val ) );
 		}
 
+		public void appendByte( byte val )
+		{
+			m_memStream.WriteByte( val );
+		}
+
 		public void appendBytes( byte[] bytes )
 		{
 			writeBytes( m_memStream, bytes );
@@ -277,6 +283,13 @@ namespace pico.Hub
 			int ival = BitConverter.ToInt32( payload_, readOffset_ );
 			readOffset_ += 4;
 			return ival;
+		}
+
+		public float UnpackFloat()
+		{
+			float fval = BitConverter.ToSingle( payload_, readOffset_ );
+			readOffset_ += 4;
+			return fval;
 		}
 	};
 
