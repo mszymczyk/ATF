@@ -12,13 +12,15 @@ using Sce.Atf.Controls.Timelines;
 using Sce.Atf.Controls.CurveEditing;
 using Sce.Atf.VectorMath;
 
+using pico.Timeline;
+
 #pragma warning disable 0649 // suppress "field never set" warning
 
 namespace picoTimelineEditor.DomNodeAdapters
 {
     /// <summary>
     /// Adapts DomNode to an Interval</summary>
-	public class IntervalFader : Interval, ICurveSet, ITimelineObjectCreator
+	public class IntervalFader : Interval, ICurveSet, ITimelineObjectCreator, ITimelineValidationCallback
     {
 		/// <summary>
 		/// Gets and sets the event's name</summary>
@@ -208,12 +210,12 @@ namespace picoTimelineEditor.DomNodeAdapters
 		}
 		#endregion
 
-		public override bool CanParentTo( DomNode parent )
+		public bool CanParentTo( DomNode parent )
 		{
 			return ValidateImpl( parent, 0 );
 		}
 
-		public override bool Validate( DomNode parent )
+		public bool Validate( DomNode parent )
 		{
 			return ValidateImpl( parent, 1 );
 		}

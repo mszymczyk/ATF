@@ -4,13 +4,15 @@ using Sce.Atf.Adaptation;
 using Sce.Atf.Dom;
 using Sce.Atf.Controls.Timelines;
 
+using pico.Timeline;
+
 #pragma warning disable 0649 // suppress "field never set" warning
 
 namespace picoTimelineEditor.DomNodeAdapters
 {
     /// <summary>
     /// Adapts DomNode to a Key</summary>
-    public class ReferenceChangeLevel : TimelineReference
+	public class ReferenceChangeLevel : TimelineReference, ITimelineValidationCallback
     {
 		/// <summary>
 		/// Gets and sets the sound bank</summary>
@@ -38,12 +40,12 @@ namespace picoTimelineEditor.DomNodeAdapters
 			set { DomNode.SetAttribute( Schema.refChangeLevelType.unloadCurrentlevelAttribute, value ); }
 		}
 
-		public override bool CanParentTo( DomNode parent )
+		public bool CanParentTo( DomNode parent )
 		{
 			return ValidateImpl( parent, 0 );
 		}
 
-		public override bool Validate( DomNode parent )
+		public bool Validate( DomNode parent )
 		{
 			return ValidateImpl( parent, 1 );
 		}

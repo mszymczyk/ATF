@@ -7,11 +7,13 @@ using Sce.Atf.Adaptation;
 using Sce.Atf.Controls.Timelines;
 using Sce.Atf.Dom;
 
+using pico.Timeline;
+
 namespace picoTimelineEditor.DomNodeAdapters
 {
     /// <summary>
     /// Adapts DomNode to a Track</summary>
-    public class TrackCharacterControllerAnim : Track
+	public class TrackCharacterControllerAnim : Track, ITimelineValidationCallback
     {
         #region ITrack Members
 
@@ -25,12 +27,12 @@ namespace picoTimelineEditor.DomNodeAdapters
 
         #endregion
 
-		public override bool CanParentTo( DomNode parent )
+		public bool CanParentTo( DomNode parent )
 		{
 			return ValidateImpl( parent, 0 );
 		}
 
-		public override bool Validate( DomNode parent )
+		public bool Validate( DomNode parent )
 		{
 			return ValidateImpl( parent, 1 );
 		}

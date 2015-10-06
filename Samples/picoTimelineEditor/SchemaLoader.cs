@@ -100,6 +100,7 @@ namespace picoTimelineEditor
 				// sound
 				//
 				Schema.keySoundType.Type.Define( new ExtensionInfo<KeySound>() );
+				Schema.keyCharacterSoundType.Type.Define( new ExtensionInfo<KeySound>() );
 
 				// fader
 				//

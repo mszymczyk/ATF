@@ -217,6 +217,15 @@ namespace picoTimelineEditor
             keySoundType.soundBankAttribute = keySoundType.Type.GetAttributeInfo("soundBank");
             keySoundType.soundAttribute = keySoundType.Type.GetAttributeInfo("sound");
 
+            keyCharacterSoundType.Type = getNodeType("timeline", "keyCharacterSoundType");
+            keyCharacterSoundType.startAttribute = keyCharacterSoundType.Type.GetAttributeInfo("start");
+            keyCharacterSoundType.descriptionAttribute = keyCharacterSoundType.Type.GetAttributeInfo("description");
+            keyCharacterSoundType.nameAttribute = keyCharacterSoundType.Type.GetAttributeInfo("name");
+            keyCharacterSoundType.soundBankAttribute = keyCharacterSoundType.Type.GetAttributeInfo("soundBank");
+            keyCharacterSoundType.soundAttribute = keyCharacterSoundType.Type.GetAttributeInfo("sound");
+            keyCharacterSoundType.positionalAttribute = keyCharacterSoundType.Type.GetAttributeInfo("positional");
+            keyCharacterSoundType.positionAttribute = keyCharacterSoundType.Type.GetAttributeInfo("position");
+
             refChangeLevelType.Type = getNodeType("timeline", "refChangeLevelType");
             refChangeLevelType.nameAttribute = refChangeLevelType.Type.GetAttributeInfo("name");
             refChangeLevelType.startAttribute = refChangeLevelType.Type.GetAttributeInfo("start");
@@ -504,6 +513,18 @@ namespace picoTimelineEditor
             public static AttributeInfo nameAttribute;
             public static AttributeInfo soundBankAttribute;
             public static AttributeInfo soundAttribute;
+        }
+
+        public static class keyCharacterSoundType
+        {
+            public static DomNodeType Type;
+            public static AttributeInfo startAttribute;
+            public static AttributeInfo descriptionAttribute;
+            public static AttributeInfo nameAttribute;
+            public static AttributeInfo soundBankAttribute;
+            public static AttributeInfo soundAttribute;
+            public static AttributeInfo positionalAttribute;
+            public static AttributeInfo positionAttribute;
         }
 
         public static class refChangeLevelType

@@ -15,6 +15,7 @@ using Sce.Atf.Controls.Timelines.Direct2D;
 using Sce.Atf.Dom;
 
 using picoAnimClipEditor.DomNodeAdapters;
+using pico.Timeline;
 
 namespace picoAnimClipEditor
 {
@@ -373,11 +374,6 @@ namespace picoAnimClipEditor
                     TimelineControl.IsEditable( TimelineControl.TargetGroup ) )
 				)
 			{
-				//// allow drag-n-drop only for single items
-				////
-				//if ( items.Length > 1 )
-				//	return false;
-
 				Point clientPoint = m_timelineControl.PointToClient( new Point( e.X, e.Y ) );
 				PointF mouseLocation = clientPoint;
 				ITimelineObject dropTarget = Pick( mouseLocation );
@@ -397,35 +393,7 @@ namespace picoAnimClipEditor
 
 				foreach ( object item in items )
 				{
-					//Group group = item.As<Group>();
-					//if ( group != null )
-					//{
-					//	if ( !group.CanParentTo( parent ) )
-					//		return false;
-					//}
-
-					//Track track = item.As<Track>();
-					//if ( track != null )
-					//{
-					//	if ( !track.CanParentTo( parent ) )
-					//		return false;
-					//}
-
-					//Interval interval = item.As<Interval>();
-					//if ( interval != null )
-					//{
-					//	if ( !interval.CanParentTo( parent ) )
-					//		return false;
-					//}
-
-					//Key key = item.As<Key>();
-					//if (key != null)
-					//{
-					//	if (!key.CanParentTo( parent ))
-					//		return false;
-					//}
-
-					AnimClipElementValidationInterface elem = item.As<AnimClipElementValidationInterface>();
+					ITimelineValidationCallback elem = item.As<ITimelineValidationCallback>();
 					if ( elem != null )
 					{
 						if (!elem.CanParentTo( parent ))
@@ -433,58 +401,8 @@ namespace picoAnimClipEditor
 					}
 				}
 
-
-				//GroupCamera groupCamera = AnyOfType<GroupCamera>( items );
-				//if ( groupCamera != null )
-				//{
-				//	if ( ParentHasChildOfType<GroupCamera>(DomNode) )
-				//		return false;
-
-				//	if ( dropTarget == null )
-				//		return true;
-				//	else
-				//		return false;
-				//}
-
-				//TrackCameraAnim trackCameraAnim = AnyOfType<TrackCameraAnim>( items );
-				//if ( trackCameraAnim != null )
-				//{
-				//	if ( !dropTarget.Is<GroupCamera>() )
-				//		return false;
-
-				//	if ( ParentHasChildOfType<TrackCameraAnim>( dropTarget.Cast<GroupCamera>().DomNode ) )
-				//		return false;
-				//}
-
-				//IntervalCameraAnim intervalCameraAnim = AnyOfType<IntervalCameraAnim>( items );
-				//if ( intervalCameraAnim != null )
-				//{
-				//	if ( !dropTarget.Is<TrackCameraAnim>() )
-				//		return false;
-				//}
-
-				//IntervalAnimController intervalAnimController = AnyOfType<IntervalAnimController>( items );
-				//if ( intervalAnimController != null )
-				//{
-				//	//if ( !DropTargetIs<TrackCameraAnim>( dropTarget ) )
-				//	//{
-				//	//}
-				//	if ( !dropTarget.Is<TrackAnimController>() )
-				//		return false;
-				//}
-
-				//if ( DropTargetIs<TrackCameraAnim>( dropTarget ) )
-				//{
-				//	if ( AnyNotOfType<IntervalCameraAnim>( items ) )
-				//		return false;
-				//}
-
 				return true;
 			}
-
-			//string[] formats = e.Data.GetFormats();
-			//string data = e.Data.GetData( typeof( string ) ) as string;
-			//object data2 = e.Data.GetData( "application/x-maya-data" );
 
 			return false;
 		}

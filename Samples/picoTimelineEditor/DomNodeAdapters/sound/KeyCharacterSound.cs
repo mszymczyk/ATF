@@ -16,7 +16,7 @@ namespace picoAnimClipEditor.DomNodeAdapters
 	{
 		public string[] GetNames( PropertyEditorControlContext context )
 		{
-			KeySound keySound = context.LastSelectedObject.As<KeySound>();
+			KeyCharacterSound keySound = context.LastSelectedObject.As<KeyCharacterSound>();
 			if ( keySound == null )
 				// returning an non-empty string is necessary to avaid LongEnumEditorCrash
 				//
@@ -26,10 +26,10 @@ namespace picoAnimClipEditor.DomNodeAdapters
 		}
 	}
 
-    /// <summary>
-    /// Adapts DomNode to a Key</summary>
-	public class KeySound : DomNodeAdapter, ITimelineValidationCallback
-    {
+	/// <summary>
+	/// Adapts DomNode to a Key</summary>
+	public class KeyCharacterSound : DomNodeAdapter, ITimelineValidationCallback
+	{
 		/// <summary>
 		/// Performs initialization when the adapter is connected to the DomNode.
 		/// Raises the DomNodeAdapter NodeSet event. Creates read only data for animdata
@@ -38,27 +38,27 @@ namespace picoAnimClipEditor.DomNodeAdapters
 		{
 			base.OnNodeSet();
 
-			if ( string.IsNullOrEmpty( SoundBank ) )
-			{
-				SoundBank = TimelineEditor.LastSoundBankFilename;
-			}
+			//if ( string.IsNullOrEmpty( SoundBank ) )
+			//{
+			//	SoundBank = TimelineEditor.LastSoundBankFilename;
+			//}
 
 			DomNode.AttributeChanged += DomNode_AttributeChanged;
 		}
 
 		private void DomNode_AttributeChanged( object sender, AttributeEventArgs e )
 		{
-			if ( e.AttributeInfo.Equivalent(Schema.keySoundType.soundBankAttribute) )
-			{
-				TimelineEditor.LastSoundBankFilename = SoundBank;
-			}
+			//if ( e.AttributeInfo.Equivalent( Schema.keySoundType.soundBankAttribute ) )
+			//{
+			//	TimelineEditor.LastSoundBankFilename = SoundBank;
+			//}
 		}
 
 		/// <summary>
 		/// Gets and sets the sound bank</summary>
 		public string SoundBank
 		{
-			get { return (string)DomNode.GetAttribute( Schema.keySoundType.soundBankAttribute); }
+			get { return (string) DomNode.GetAttribute( Schema.keySoundType.soundBankAttribute ); }
 			set { DomNode.SetAttribute( Schema.keySoundType.soundBankAttribute, value ); }
 		}
 
@@ -66,7 +66,7 @@ namespace picoAnimClipEditor.DomNodeAdapters
 		/// Gets and sets the sound name</summary>
 		public string Sound
 		{
-			get { return (string)DomNode.GetAttribute( Schema.keySoundType.soundAttribute ); }
+			get { return (string) DomNode.GetAttribute( Schema.keySoundType.soundAttribute ); }
 			set { DomNode.SetAttribute( Schema.keySoundType.soundAttribute, value ); }
 		}
 

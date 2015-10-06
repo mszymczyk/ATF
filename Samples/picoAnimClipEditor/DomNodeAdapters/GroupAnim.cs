@@ -7,13 +7,15 @@ using Sce.Atf.Adaptation;
 using Sce.Atf.Controls.Timelines;
 using Sce.Atf.Dom;
 
+using pico.Timeline;
+
 #pragma warning disable 0649 // suppress "field never set" warning
 
 namespace picoAnimClipEditor.DomNodeAdapters
 {
     /// <summary>
     /// Adapts DomNode to a group of anim tracks</summary>
-	public class GroupAnim : DomNodeAdapter, AnimClipElementValidationInterface
+	public class GroupAnim : DomNodeAdapter, ITimelineValidationCallback
     {
 		public virtual bool CanParentTo( DomNode parent )
 		{

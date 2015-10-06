@@ -15,6 +15,7 @@ using Sce.Atf.Controls.Timelines.Direct2D;
 using Sce.Atf.Dom;
 
 using picoTimelineEditor.DomNodeAdapters;
+using pico.Timeline;
 
 namespace picoTimelineEditor
 {
@@ -397,40 +398,47 @@ namespace picoTimelineEditor
 
 				foreach ( object item in items )
 				{
-					Group group = item.As<Group>();
-					if ( group != null )
+					ITimelineValidationCallback elem = item.As<ITimelineValidationCallback>();
+					if ( elem != null )
 					{
-						if ( !group.CanParentTo( parent ) )
+						if ( !elem.CanParentTo( parent ) )
 							return false;
-					}
+					} 
+					
+					//Group group = item.As<Group>();
+					//if ( group != null )
+					//{
+					//	if ( !group.CanParentTo( parent ) )
+					//		return false;
+					//}
 
-					Track track = item.As<Track>();
-					if ( track != null )
-					{
-						if ( !track.CanParentTo( parent ) )
-							return false;
-					}
+					//Track track = item.As<Track>();
+					//if ( track != null )
+					//{
+					//	if ( !track.CanParentTo( parent ) )
+					//		return false;
+					//}
 
-					Interval interval = item.As<Interval>();
-					if ( interval != null )
-					{
-						if ( !interval.CanParentTo( parent ) )
-							return false;
-					}
+					//Interval interval = item.As<Interval>();
+					//if ( interval != null )
+					//{
+					//	if ( !interval.CanParentTo( parent ) )
+					//		return false;
+					//}
 
-					Key key = item.As<Key>();
-					if (key != null)
-					{
-						if (!key.CanParentTo( parent ))
-							return false;
-					}
+					//Key key = item.As<Key>();
+					//if (key != null)
+					//{
+					//	if (!key.CanParentTo( parent ))
+					//		return false;
+					//}
 
-					TimelineReference reference = item.As<TimelineReference>();
-					if ( reference != null )
-					{
-						if ( !reference.CanParentTo( parent ) )
-							return false;
-					}
+					//TimelineReference reference = item.As<TimelineReference>();
+					//if ( reference != null )
+					//{
+					//	if ( !reference.CanParentTo( parent ) )
+					//		return false;
+					//}
 				}
 
 

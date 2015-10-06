@@ -7,13 +7,15 @@ using Sce.Atf;
 using Sce.Atf.Controls.Timelines;
 using Sce.Atf.Dom;
 
+using pico.Timeline;
+
 #pragma warning disable 0649 // suppress "field never set" warning
 
 namespace picoAnimClipEditor.DomNodeAdapters
 {
     /// <summary>
     /// Adapts DomNode to an Interval</summary>
-	public class IntervalAnim : DomNodeAdapter, AnimClipElementValidationInterface
+	public class IntervalAnim : DomNodeAdapter, ITimelineValidationCallback
     {
 		public virtual bool CanParentTo( DomNode parent )
 		{

@@ -7,11 +7,13 @@ using Sce.Atf.Adaptation;
 using Sce.Atf.Controls.Timelines;
 using Sce.Atf.Dom;
 
+using pico.Timeline;
+
 namespace picoAnimClipEditor.DomNodeAdapters
 {
 	/// <summary>
 	/// Adapts DomNode to a Track</summary>
-	public class Track : DomNodeAdapter, ITrack, ICloneable, AnimClipElementValidationInterface
+	public class Track : DomNodeAdapter, ITrack, ICloneable, ITimelineValidationCallback
 	{
 		#region ITrack Members
 

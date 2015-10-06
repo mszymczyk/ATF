@@ -55,15 +55,15 @@ namespace picoTimelineEditor.DomNodeAdapters
 
         #endregion
 
-		public virtual bool CanParentTo( DomNode parent )
-		{
-			return true;
-		}
+		//public virtual bool CanParentTo( DomNode parent )
+		//{
+		//	return true;
+		//}
 
-		public virtual bool Validate( DomNode parent )
-		{
-			return true;
-		}
+		//public virtual bool Validate( DomNode parent )
+		//{
+		//	return true;
+		//}
     }
 }
 

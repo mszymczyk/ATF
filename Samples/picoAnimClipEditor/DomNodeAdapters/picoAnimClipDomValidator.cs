@@ -6,6 +6,8 @@ using Sce.Atf.Adaptation;
 using Sce.Atf.Dom;
 //using Sce.Atf.Controls.Timelines;
 
+using pico.Timeline;
+
 namespace picoAnimClipEditor.DomNodeAdapters
 {
 	//public static class ITimelineObjectExtensions
@@ -113,40 +115,12 @@ namespace picoAnimClipEditor.DomNodeAdapters
 
 		private bool ValidatePair( DomNode parent, DomNode child )
 		{
-			AnimClipElementValidationInterface vi = child.As<AnimClipElementValidationInterface>();
+			ITimelineValidationCallback vi = child.As<ITimelineValidationCallback>();
 			if ( vi != null )
 			{
 				if ( !vi.Validate( parent ) )
 					return false;
 			}
-			//Group group = child.As<Group>();
-			//if ( group != null )
-			//{
-			//	if ( !group.Validate( parent ) )
-			//		return false;
-			//}
-
-			//Track track = child.As<Track>();
-			//if ( track != null )
-			//{
-			//	if ( !track.Validate( parent ) )
-			//		return false;
-			//}
-
-			//Interval interval = child.As<Interval>();
-			//if ( interval != null )
-			//{
-			//	if ( !interval.Validate( parent ) )
-			//		return false;
-			//}
-
-			//Key key = child.As<Key>();
-			//if (key != null)
-			//{
-			//	if (!key.Validate( parent ))
-			//		return false;
-			//}
-
 			return true;
 		}
 

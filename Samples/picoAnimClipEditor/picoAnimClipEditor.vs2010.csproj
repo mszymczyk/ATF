@@ -110,7 +110,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="picoAnimListEditor.cs" />
-    <Compile Include="DomNodeAdapters\AnimClipElementValidationInterface.cs" />
     <Compile Include="DomNodeAdapters\GroupAnim.cs" />
     <Compile Include="DomNodeAdapters\IntervalAnim.cs" />
     <Compile Include="DomNodeAdapters\KeyTag.cs" />

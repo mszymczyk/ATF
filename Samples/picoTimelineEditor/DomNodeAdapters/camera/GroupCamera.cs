@@ -7,13 +7,15 @@ using Sce.Atf.Adaptation;
 using Sce.Atf.Controls.Timelines;
 using Sce.Atf.Dom;
 
+using pico.Timeline;
+
 #pragma warning disable 0649 // suppress "field never set" warning
 
 namespace picoTimelineEditor.DomNodeAdapters
 {
 	/// <summary>
 	/// Adapts DomNode to a special purpose group of camera tracks</summary>
-	public class GroupCamera : Group
+	public class GroupCamera : Group, ITimelineValidationCallback
 	{
 		/// <summary>
 		/// Performs initialization when the adapter is connected to the diagram annotation's DomNode.
@@ -73,12 +75,12 @@ namespace picoTimelineEditor.DomNodeAdapters
 
 		#endregion
 
-		public override bool CanParentTo( DomNode parent )
+		public bool CanParentTo( DomNode parent )
 		{
 			return ValidateImpl( parent, 0 );
 		}
 
-		public override bool Validate( DomNode parent )
+		public bool Validate( DomNode parent )
 		{
 			return ValidateImpl( parent, 1 );
 		}

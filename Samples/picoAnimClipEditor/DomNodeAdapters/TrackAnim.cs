@@ -8,12 +8,13 @@ using Sce.Atf.Controls.Timelines;
 using Sce.Atf.Dom;
 
 using pico;
+using pico.Timeline;
 
 namespace picoAnimClipEditor.DomNodeAdapters
 {
 	/// <summary>
 	/// Adapts DomNode to a Track</summary>
-	public class TrackAnim : DomNodeAdapter, AnimClipElementValidationInterface, IFileChangedNotification
+	public class TrackAnim : DomNodeAdapter, ITimelineValidationCallback, IFileChangedNotification
 	{
 		/// <summary>
 		/// Returns the Name property. Useful for debugging purposes.</summary>

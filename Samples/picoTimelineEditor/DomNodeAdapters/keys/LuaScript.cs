@@ -8,13 +8,15 @@ using Sce.Atf.Applications;
 using Sce.Atf.Controls.Timelines;
 using Sce.Atf.Controls.SyntaxEditorControl;
 
+using pico.Timeline;
+
 //#pragma warning disable 0649 // suppress "field never set" warning
 
 namespace picoTimelineEditor.DomNodeAdapters
 {
     /// <summary>
     /// Adapts DomNode to a Key</summary>
-    public class LuaScript : Key
+	public class LuaScript : Key, ITimelineValidationCallback
     {
 		///// <summary>
 		///// Performs initialization when the adapter is connected to the editing context's DomNode.
@@ -65,12 +67,12 @@ namespace picoTimelineEditor.DomNodeAdapters
 			}
 		}
 
-		public override bool CanParentTo( DomNode parent )
+		public bool CanParentTo( DomNode parent )
 		{
 			return ValidateImpl( parent, 0 );
 		}
 
-		public override bool Validate( DomNode parent )
+		public bool Validate( DomNode parent )
 		{
 			return ValidateImpl( parent, 1 );
 		}

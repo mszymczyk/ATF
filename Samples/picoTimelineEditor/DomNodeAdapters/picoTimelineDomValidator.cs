@@ -4,7 +4,8 @@ using System.Collections.Generic;
 using Sce.Atf;
 using Sce.Atf.Adaptation;
 using Sce.Atf.Dom;
-//using Sce.Atf.Controls.Timelines;
+
+using pico.Timeline;
 
 namespace picoTimelineEditor.DomNodeAdapters
 {
@@ -157,40 +158,47 @@ namespace picoTimelineEditor.DomNodeAdapters
 
 		private bool ValidatePair( DomNode parent, DomNode child )
 		{
-			Group group = child.As<Group>();
-			if ( group != null )
+			ITimelineValidationCallback vi = child.As<ITimelineValidationCallback>();
+			if ( vi != null )
 			{
-				if ( !group.Validate( parent ) )
+				if ( !vi.Validate( parent ) )
 					return false;
 			}
 
-			Track track = child.As<Track>();
-			if ( track != null )
-			{
-				if ( !track.Validate( parent ) )
-					return false;
-			}
+			//Group group = child.As<Group>();
+			//if ( group != null )
+			//{
+			//	if ( !group.Validate( parent ) )
+			//		return false;
+			//}
 
-			Interval interval = child.As<Interval>();
-			if ( interval != null )
-			{
-				if ( !interval.Validate( parent ) )
-					return false;
-			}
+			//Track track = child.As<Track>();
+			//if ( track != null )
+			//{
+			//	if ( !track.Validate( parent ) )
+			//		return false;
+			//}
 
-			Key key = child.As<Key>();
-			if (key != null)
-			{
-				if (!key.Validate( parent ))
-					return false;
-			}
+			//Interval interval = child.As<Interval>();
+			//if ( interval != null )
+			//{
+			//	if ( !interval.Validate( parent ) )
+			//		return false;
+			//}
 
-			TimelineReference reference = child.As<TimelineReference>();
-			if ( reference != null )
-			{
-				if ( !reference.Validate( parent ) )
-					return false;
-			}
+			//Key key = child.As<Key>();
+			//if (key != null)
+			//{
+			//	if (!key.Validate( parent ))
+			//		return false;
+			//}
+
+			//TimelineReference reference = child.As<TimelineReference>();
+			//if ( reference != null )
+			//{
+			//	if ( !reference.Validate( parent ) )
+			//		return false;
+			//}
 
 			return true;
 		}
