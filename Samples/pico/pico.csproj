@@ -53,12 +53,15 @@
     <Compile Include="Controls\TouchPad.Designer.cs">
       <DependentUpon>TouchPad.cs</DependentUpon>
     </Compile>
+    <Compile Include="Hub\HubServiceCommands.cs" />
+    <Compile Include="IFileChangedNotification.cs" />
     <Compile Include="picoColor.cs" />
     <Compile Include="Controls\PropertyEditing\CustomEnableAttributePropertyDescriptor.cs" />
     <Compile Include="Controls\PropertyEditing\picoFileUriEditor.cs" />
     <Compile Include="Paths.cs" />
     <Compile Include="Hub\HubService.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="TimelineExt\TimelineExtensions.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\Framework\Atf.Core\Atf.Core.vs2010.csproj">

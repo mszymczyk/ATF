@@ -107,7 +107,7 @@ namespace picoAnimClipEditor.DomNodeAdapters
 			TimelineContext tc = TimelineEditor.ContextRegistry.GetActiveContext<TimelineContext>();
 			//DomNode timelineNode = DomNode.GetRoot();
 			Timeline tim = tc.As<Timeline>();
-			if ( tim.AnimCategory == "princess" )
+			if ( tim.AnimCategory == "princess" || tim.AnimCategory == "monster" || tim.AnimCategory == "queen" )
 			{
 				string[] availablePositions = new string[] {
 					"leftHand",

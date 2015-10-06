@@ -28,7 +28,28 @@
 		/// </summary>
 		private void InitializeComponent()
 		{
+			this.buttonFrameSelection = new System.Windows.Forms.Button();
+			this.labelHint = new System.Windows.Forms.Label();
 			this.SuspendLayout();
+			// 
+			// buttonFrameSelection
+			// 
+			this.buttonFrameSelection.Location = new System.Drawing.Point(0, 0);
+			this.buttonFrameSelection.Name = "buttonFrameSelection";
+			this.buttonFrameSelection.Size = new System.Drawing.Size(100, 23);
+			this.buttonFrameSelection.TabIndex = 0;
+			this.buttonFrameSelection.Text = "Frame Selection";
+			this.buttonFrameSelection.UseVisualStyleBackColor = true;
+			// 
+			// labelHint
+			// 
+			this.labelHint.AutoSize = true;
+			this.labelHint.Enabled = false;
+			this.labelHint.Location = new System.Drawing.Point(0, 25);
+			this.labelHint.Name = "labelHint";
+			this.labelHint.Size = new System.Drawing.Size(100, 23);
+			this.labelHint.TabIndex = 0;
+			this.labelHint.Text = "label1";
 			// 
 			// TouchPad
 			// 
@@ -38,6 +59,9 @@
 		}
 
 		#endregion
+
+		private System.Windows.Forms.Button buttonFrameSelection;
+		private System.Windows.Forms.Label labelHint;
 
 	}
 }

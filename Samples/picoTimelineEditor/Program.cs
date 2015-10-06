@@ -88,6 +88,7 @@ namespace picoTimelineEditor
                                                         //  Reset All, Copy Value, Paste Value, Copy All, Paste All
                 typeof(PerformanceMonitor),             // displays the frame rate and memory usage
                 typeof(FileWatcherService),                // service to watch for changes to files
+				typeof(DirectoryWatcherService),
                 typeof(DefaultTabCommands),             // provides the default commands related to document tab Controls
                 typeof(SkinService),                    // allows for customization of an application’s appearance by using inheritable properties that can be applied at run-time
 
@@ -106,7 +107,8 @@ namespace picoTimelineEditor
                 typeof(AutomationService),              // provides facilities to run an automated script using the .NET remoting service
 
 				// pico
-				typeof(HubService)
+				typeof(HubService),
+				typeof(HubServiceCommands)
                 );
             
             var container = new CompositionContainer(catalog);

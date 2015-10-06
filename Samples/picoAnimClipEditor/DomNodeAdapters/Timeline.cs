@@ -240,16 +240,16 @@ namespace picoAnimClipEditor.DomNodeAdapters
 			if ( hubService == null )
 				return false;
 
-			if ( !hubService.Connected )
-			{
-				Outputs.WriteLine( OutputMessageType.Error, "Editor is not connected to picoHub" );
-				return false;
-			}
+			//if ( !hubService.Connected )
+			//{
+			//	Outputs.WriteLine( OutputMessageType.Error, "Editor is not connected to picoHub" );
+			//	return false;
+			//}
 
-			if ( hubService.BlockOutboundTraffic )
-			{
-				return false;
-			}
+			//if ( hubService.BlockOutboundTraffic )
+			//{
+			//	return false;
+			//}
 
 			//if ( m_editMode != "Editing" )
 			//	return false;

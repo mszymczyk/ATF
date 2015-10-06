@@ -7,11 +7,13 @@ using Sce.Atf.Adaptation;
 using Sce.Atf.Controls.Timelines;
 using Sce.Atf.Dom;
 
+using pico;
+
 namespace picoAnimClipEditor.DomNodeAdapters
 {
 	/// <summary>
 	/// Adapts DomNode to a Track</summary>
-	public class TrackAnim : DomNodeAdapter, AnimClipElementValidationInterface
+	public class TrackAnim : DomNodeAdapter, AnimClipElementValidationInterface, IFileChangedNotification
 	{
 		/// <summary>
 		/// Returns the Name property. Useful for debugging purposes.</summary>
@@ -42,6 +44,40 @@ namespace picoAnimClipEditor.DomNodeAdapters
 					m_animFile = value;
 					if ( m_animFile != null && m_animFile.Length > 0 )
 						m_afh = pico.Anim.AnimFileHeader.ReadFromFile2( m_animFile );
+				}
+			}
+		}
+
+
+		#region IFileChangedNotification
+
+		void IFileChangedNotification.OnFileChanged( System.IO.FileSystemEventArgs e, string ext, string picoDemoPath )
+		{
+			if ( ext != ".anim" )
+				return;
+
+			if ( picoDemoPath != m_animFile )
+				return;
+
+			ReloadAnimFile();
+		}
+
+		#endregion
+
+		public void ReloadAnimFile()
+		{
+			if ( m_animFile != null && m_animFile.Length > 0 )
+			{
+				pico.Anim.AnimFileHeader afh = pico.Anim.AnimFileHeader.ReadFromFile2( m_animFile );
+				if ( afh != null )
+				{
+					m_afh = afh;
+
+					Track track = this.As<Track>();
+					foreach( IInterval interval in track.Intervals )
+					{
+						interval.Length = m_afh.durationMilliseconds;
+					}
 				}
 			}
 		}

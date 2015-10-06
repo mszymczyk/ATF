@@ -22,6 +22,7 @@ using Sce.Atf.Controls.Timelines.Direct2D;
 using Sce.Atf.Controls.SyntaxEditorControl;
 
 using pico.Hub;
+using pico.Timeline;
 
 namespace picoAnimClipEditor
 {
@@ -237,7 +238,6 @@ namespace picoAnimClipEditor
 			};
 
 			m_animListEditor.TreeControl.MouseDoubleClick += AnimListEditorTreeControl_MouseDoubleClick;
-			//m_animListEditor.AddItem( new picoAnimListEditorElement( "princess_attacked_on_ledge.anim", "assets\\ksiezniczkaCharacter\\anim\\princess_attacked_on_ledge.anim" ), "princess", this );
 		}
 
         #endregion
@@ -929,7 +929,19 @@ namespace picoAnimClipEditor
 			string ext = Path.GetExtension( picoDemoPath );
 
 			if ( ext == ".anim" )
+			{
 				_UpdateAnimRecursively( picoDemoPath, m_animListEditor.TreeView.Root );
+
+				m_hubServiceCommands.ReloadResource( picoDemoPath );
+
+				string animDataFullPath = Path.ChangeExtension( e.FullPath, ".animdata" );
+				IDocument document = m_documentRegistry.GetDocument( new Uri( animDataFullPath ) );
+				if ( document != null )
+				{
+					ITimeline tim = document.As<ITimeline>();
+					tim.NotifyFileChange( e, ext, picoDemoPath );
+				}
+			}
 			else if ( ext == ".animdata" )
 			{
 				picoDemoPath = Path.ChangeExtension( picoDemoPath, ".anim" );
@@ -1020,6 +1032,9 @@ namespace picoAnimClipEditor
 
 		[Import( AllowDefault = true )]
 		private HubService m_hubService = null;
+
+		[Import( AllowDefault = true )]
+		private HubServiceCommands m_hubServiceCommands = null;
 
 		[Import( AllowDefault = true )]
 		private picoAnimListEditor m_animListEditor = null;

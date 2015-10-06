@@ -340,7 +340,7 @@ namespace picoTimelineEditor
 			string editMode = m_editMode.SelectedItem as string;
 			//hubComm.setEditMode( editMode );
 
-			if ( editMode == "Editing" && m_hubService.CanSendData )
+			if ( editMode == "Editing" )
 			{
 				string docUri = pico.Paths.UriToPicoDemoPath( document.Uri );
 				if ( docUri.Length > 0 )

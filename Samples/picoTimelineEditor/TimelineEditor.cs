@@ -22,6 +22,7 @@ using Sce.Atf.Controls.Timelines.Direct2D;
 using Sce.Atf.Controls.SyntaxEditorControl;
 
 using pico.Hub;
+using pico.Timeline;
 
 namespace picoTimelineEditor
 {
@@ -205,6 +206,12 @@ namespace picoTimelineEditor
             {
                 m_fileWatcherService.FileChanged += fileWatcherService_FileChanged;
             }
+
+			if ( m_directoryWatcherService != null )
+			{
+				m_directoryWatcherService.Register( pico.Paths.PICO_DEMO_data, new string[] { "*.anim" }, true );
+				m_directoryWatcherService.FileChanged += directoryWatcherService_FileChanged;
+			}
 
             m_documentService.DocumentOpened += documentService_DocumentOpened;
             if (m_liveConnectService != null)
@@ -947,6 +954,26 @@ namespace picoTimelineEditor
                 });
         }
 
+		void directoryWatcherService_FileChanged( object sender, FileSystemEventArgs e )
+		{
+			string picoDemoPath = pico.Paths.PathToPicoDemoPath( e.FullPath );
+			if ( string.IsNullOrEmpty( picoDemoPath ) )
+				return;
+
+			string ext = Path.GetExtension( picoDemoPath );
+
+			if ( ext == ".anim" )
+			{
+				m_hubServiceCommands.ReloadResource( picoDemoPath );
+
+				foreach( IDocument document in m_documentRegistry.Documents )
+				{
+					ITimeline timeline = document.As<ITimeline>();
+					timeline.NotifyFileChange( e, ext, picoDemoPath );
+				}
+			}
+		}
+
         public class TimelineXmlWriter : DomXmlWriter
         {
             public TimelineXmlWriter(XmlSchemaTypeCollection typeCollection)
@@ -1009,6 +1036,9 @@ namespace picoTimelineEditor
         [Import(AllowDefault=true)]
         private IFileWatcherService m_fileWatcherService = null;
 
+		[Import( AllowDefault=true )]
+		private IDirectoryWatcherService m_directoryWatcherService = null;
+
         [Import(AllowDefault = true)] 
         private MainForm m_mainForm = null;
 
@@ -1023,6 +1053,9 @@ namespace picoTimelineEditor
 
 		[Import( AllowDefault = true )]
 		private HubService m_hubService = null;
+
+		[Import( AllowDefault = true )]
+		private HubServiceCommands m_hubServiceCommands = null;
 
         private IContextRegistry m_contextRegistry;
         private IDocumentRegistry m_documentRegistry;

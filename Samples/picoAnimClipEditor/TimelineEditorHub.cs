@@ -39,6 +39,9 @@ namespace picoAnimClipEditor
 			//
 			foreach ( HubMessageIn msg in args.Messages )
 			{
+				if ( msg.payloadSize_ <= ANIMCLIPEDITOR_TAG.Length )
+					continue;
+
 				string tag = msg.UnpackString( ANIMCLIPEDITOR_TAG.Length );
 				if ( tag != ANIMCLIPEDITOR_TAG )
 					return;

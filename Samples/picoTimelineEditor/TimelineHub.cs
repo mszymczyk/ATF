@@ -49,13 +49,13 @@ namespace picoTimelineEditor
 			sendReloadTimeline();
 		}
 
-		public bool Connected { get; set; }
+		//public bool Connected { get; set; }
 
 		public void setup( HubService hubService, SchemaLoader schemaLoader )
 		{
 			m_schemaLoader = schemaLoader;
 			m_hubService = hubService;
-			Connected = m_hubService.Connected;
+			//Connected = m_hubService.Connected;
 		}
 
 		private bool validate( out string docUri )
@@ -65,11 +65,11 @@ namespace picoTimelineEditor
 			if ( m_hubService == null )
 				return false;
 
-			if ( !m_hubService.Connected )
-			{
-				Outputs.WriteLine( OutputMessageType.Error, "Editor is not connected to picoHub" );
-				return false;
-			}
+			//if ( !m_hubService.Connected )
+			//{
+			//	Outputs.WriteLine( OutputMessageType.Error, "Editor is not connected to picoHub" );
+			//	return false;
+			//}
 
 			if ( m_hubService.BlockOutboundTraffic )
 			{

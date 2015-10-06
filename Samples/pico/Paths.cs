@@ -8,6 +8,16 @@ namespace pico
 	{
 		static Paths()
 		{
+			string PICO_ROOT_env = Environment.GetEnvironmentVariable( "PICO_ROOT" );
+			PICO_ROOT = FixDriveLetter( Path.GetFullPath( PICO_ROOT_env + "\\" ) );
+			string PICO_DEMO_env = Environment.GetEnvironmentVariable( "PICO_DEMO" );
+			PICO_DEMO = FixDriveLetter( Path.GetFullPath( PICO_DEMO_env + "\\" ) );
+
+			PICO_DEMO_data = PICO_DEMO + "data\\";
+			PICO_DEMO_dataWin = PICO_DEMO + "dataWin\\";
+			texconv_exe = PICO_ROOT + "bin64\\texconv.exe";
+			nvcompress_exe = PICO_ROOT + "bin64\\nvcompress.exe";
+
 			string sdkDirEnvVar = Environment.GetEnvironmentVariable( "SCE_ORBIS_SDK_DIR" );
 			if ( sdkDirEnvVar != null && sdkDirEnvVar.Length > 0 )
 			{
@@ -70,12 +80,23 @@ namespace pico
 			return str;
 		}
 
-		public static readonly string PICO_ROOT = Path.GetFullPath( Environment.GetEnvironmentVariable( "PICO_ROOT" ) + "\\" );
-		public static readonly string PICO_DEMO = Path.GetFullPath( Environment.GetEnvironmentVariable( "PICO_DEMO" ) + "\\" );
-		public static readonly string PICO_DEMO_data = PICO_DEMO + "data\\";
-		public static readonly string PICO_DEMO_dataWin = PICO_DEMO + "dataWin\\";
-		public static readonly string texconv_exe = PICO_ROOT + "bin64\\texconv.exe";
-		public static readonly string nvcompress_exe = PICO_ROOT + "bin64\\nvcompress.exe";
+		private static string FixDriveLetter( string path )
+		{
+			if ( path.Length == 0 )
+				return path;
+
+			char[] ca = path.ToCharArray();
+			ca[0] = char.ToUpper( ca[0] );
+			string newPath = new string( ca );
+			return newPath;
+		}
+
+		public static readonly string PICO_ROOT;// = Path.GetFullPath( Environment.GetEnvironmentVariable( "PICO_ROOT" ) + "\\" );
+		public static readonly string PICO_DEMO;// = Path.GetFullPath( Environment.GetEnvironmentVariable( "PICO_DEMO" ) + "\\" );
+		public static readonly string PICO_DEMO_data;// = PICO_DEMO + "data\\";
+		public static readonly string PICO_DEMO_dataWin;// = PICO_DEMO + "dataWin\\";
+		public static readonly string texconv_exe;// = PICO_ROOT + "bin64\\texconv.exe";
+		public static readonly string nvcompress_exe;// = PICO_ROOT + "bin64\\nvcompress.exe";
 
 		// ps4 stuff
 		//

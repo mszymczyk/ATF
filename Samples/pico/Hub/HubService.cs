@@ -90,23 +90,43 @@ namespace pico.Hub
 
 		#endregion
 
-		public bool Connected
-		{
-			get { return m_picoHubClientSocketOutbound != null; }
-		}
+		//public bool Connected
+		//{
+		//	get { return m_picoHubClientSocketOutbound != null; }
+		//}
 
 		public bool BlockOutboundTraffic { get; set; }
 		public bool BlockInboundTraffic { get; set; }
 
-		public bool CanSendData
-		{
-			get { return Connected && !BlockOutboundTraffic; }
-		}
+		//public bool CanSendData
+		//{
+		//	get { return (m_picoHubClientSocketOutbound != null) && !BlockOutboundTraffic; }
+		//}
 
 		public void send( HubMessage msg )
 		{
-			if ( ! CanSendData )
+			//if ( ! CanSendData )
+			//	return;
+			if ( m_picoHubClientSocketOutbound == null )
+			{
+				Outputs.WriteLine( OutputMessageType.Error, "HubService is not connected to picoHub" );
 				return;
+			}
+
+			if ( BlockOutboundTraffic )
+				return;
+
+			byte[] bytes = msg.getFinalByteStream();
+			m_picoHubClientSocketOutbound.Send( bytes );
+		}
+
+		public void sendAlways( HubMessage msg )
+		{
+			if ( m_picoHubClientSocketOutbound == null )
+			{
+				Outputs.WriteLine( OutputMessageType.Error, "HubService is not connected to picoHub" );
+				return;
+			}
 
 			byte[] bytes = msg.getFinalByteStream();
 			m_picoHubClientSocketOutbound.Send( bytes );

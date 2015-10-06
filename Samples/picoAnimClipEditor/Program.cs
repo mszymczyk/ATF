@@ -109,6 +109,7 @@ namespace picoAnimClipEditor
 
 				// pico
 				typeof(HubService),
+				typeof(HubServiceCommands),
 				typeof(TouchPad),
 
 				typeof(picoAnimListEditor)                // timeline editor component

@@ -288,7 +288,7 @@ namespace picoAnimClipEditor
 			if ( context == null )
 				return;
 
-			if ( m_animClipEditor.EditMode != EditMode.Standalone && m_hubService.CanSendData )
+			if ( m_animClipEditor.EditMode != EditMode.Standalone && !m_hubService.BlockOutboundTraffic )
 			{
 				Timeline tim = context.Cast<Timeline>();
 				m_animClipEditor.changePreview( tim.AnimCategory, tim.AnimUserName );

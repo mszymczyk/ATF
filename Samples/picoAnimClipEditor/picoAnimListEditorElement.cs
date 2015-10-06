@@ -2,6 +2,8 @@
 
 using System;
 using System.IO;
+using System.Xml;
+using System.Linq;
 
 namespace picoAnimClipEditor
 {
@@ -36,7 +38,60 @@ namespace picoAnimClipEditor
 				}
 				else
 				{
-					m_iconName = "picoAnimClipEditor.Resources.animdataOk.png";
+					// open file and check if SfxTrack contains anything
+					//
+					try
+					{
+						XmlDocument doc = new XmlDocument();
+						doc.Load( animdata );
+						XmlElement docElement = doc.DocumentElement;
+
+						XmlNamespaceManager nsMgr = new XmlNamespaceManager( doc.NameTable );
+						nsMgr.AddNamespace( "timeline", "timeline" );
+
+						XmlNodeList groupList = docElement.SelectNodes( "timeline:group", nsMgr );
+						bool foundKeyOrInterval = false;
+
+						foreach ( XmlNode groupNode in groupList )
+						{
+							XmlElement group = (XmlElement) groupNode;
+							string groupType = group.GetAttribute( "xsi:type" );
+							if ( groupType != null && groupType == "groupAnimType" )
+								continue;
+
+							XmlNodeList trackList = group.SelectNodes( "timeline:track", nsMgr );
+							foreach ( XmlNode trackNode in trackList )
+							{
+								XmlNodeList keys = trackNode.SelectNodes( "timeline:key", nsMgr );
+								if ( keys.Count > 0 )
+								{
+									foundKeyOrInterval = true;
+									break;
+								}
+
+								XmlNodeList intervals = trackNode.SelectNodes( "timeline:interval", nsMgr );
+								if ( intervals.Count > 0 )
+								{
+									foundKeyOrInterval = true;
+									break;
+								}
+							}
+
+							if ( foundKeyOrInterval )
+								break;
+						}
+
+						if ( foundKeyOrInterval )
+							m_iconName = "picoAnimClipEditor.Resources.animdataOk.png";
+						else
+							m_iconName = "picoAnimClipEditor.Resources.animdataMissing.png";
+					}
+					catch ( Exception ex )
+					{
+						System.Diagnostics.Debug.WriteLine( ex.Message );
+						System.Diagnostics.Debug.WriteLine( ex.StackTrace );
+						m_iconName = "picoAnimClipEditor.Resources.animdataMissing.png";
+					}
 				}
 			}
 			else
