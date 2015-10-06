@@ -11,13 +11,15 @@ using Sce.Atf.Controls.Timelines;
 using Sce.Atf.Controls.CurveEditing;
 using Sce.Atf.VectorMath;
 
+using pico;
+
 #pragma warning disable 0649 // suppress "field never set" warning
 
 namespace picoTimelineEditor.DomNodeAdapters
 {
     /// <summary>
     /// Adapts DomNode to an Interval</summary>
-	public class IntervalAnimController : Interval, ITimelineObjectCreator
+	public class IntervalAnimController : Interval, ITimelineObjectCreator, IFileChangedNotification
     {
 
 		///// <summary>
@@ -101,16 +103,14 @@ namespace picoTimelineEditor.DomNodeAdapters
 
 			DomNode.AttributeChanged += DomNode_AttributeChanged;
 
-			if ( AnimFile != null && AnimFile.Length > 0 )
-				m_afh = pico.Anim.AnimFileHeader.ReadFromFile2( AnimFile );
+			ReloadAnimFile();
 		}
 
 		private void DomNode_AttributeChanged( object sender, AttributeEventArgs e )
 		{
 			if ( e.AttributeInfo.Equivalent( Schema.intervalAnimControllerType.animFileAttribute ) )
 			{
-				if ( AnimFile != null && AnimFile.Length > 0 )
-					m_afh = pico.Anim.AnimFileHeader.ReadFromFile2( AnimFile );
+				ReloadAnimFile();
 			}
 		}
 
@@ -122,6 +122,31 @@ namespace picoTimelineEditor.DomNodeAdapters
 			return i;
 		}
 		#endregion
+
+		#region IFileChangedNotification
+
+		void IFileChangedNotification.OnFileChanged( System.IO.FileSystemEventArgs e, string ext, string picoDemoPath )
+		{
+			if ( ext != ".anim" )
+				return;
+
+			if ( picoDemoPath != AnimFile )
+				return;
+
+			ReloadAnimFile();
+		}
+
+		#endregion
+
+		public void ReloadAnimFile()
+		{
+			if ( AnimFile != null && AnimFile.Length > 0 )
+			{
+				pico.Anim.AnimFileHeader afh = pico.Anim.AnimFileHeader.ReadFromFile2( AnimFile );
+				if ( afh != null )
+					m_afh = afh;
+			}
+		}
 
 		public override bool CanParentTo( DomNode parent )
 		{
