@@ -11,6 +11,7 @@ using System.Windows.Forms;
 using Sce.Atf;
 using Sce.Atf.Applications;
 using Sce.Atf.Controls.Adaptable;
+using Sce.Atf.Controls;
 
 using pico.Hub;
 
@@ -26,13 +27,38 @@ namespace pico.Controls
 		public TouchPad()
 		{
 			InitializeComponent();
-			Controls.Add( buttonFrameSelection );
+			//Controls.Add( buttonFrameSelection );
 			labelHint.Text =
 @"Hold left mouse button to rotate camera
 Use WASDQZ to move
 Hold left SHIFT to move quicker";
-
 			Controls.Add( labelHint );
+
+			splitButtonFrameSelection.ShowSplit = true;
+			splitButtonFrameSelection.ContextMenuStrip = new System.Windows.Forms.ContextMenuStrip();
+			splitButtonFrameSelection.ContextMenuStrip.Items.Add( "+XYZ" );
+			splitButtonFrameSelection.ContextMenuStrip.Items.Add( "-XYZ" );
+
+			splitButtonFrameSelection.ContextMenuStrip.Items.Add( "+X" );
+			splitButtonFrameSelection.ContextMenuStrip.Items.Add( "-X" );
+			splitButtonFrameSelection.ContextMenuStrip.Items.Add( "+Y" );
+			splitButtonFrameSelection.ContextMenuStrip.Items.Add( "-Y" );
+			splitButtonFrameSelection.ContextMenuStrip.Items.Add( "+Z" );
+			splitButtonFrameSelection.ContextMenuStrip.Items.Add( "-Z" );
+
+			splitButtonFrameSelection.ContextMenuStrip.ItemClicked += ContextMenuStrip_ItemClicked;
+			splitButtonFrameSelection.Click += splitButtonFrameSelection_Click;
+			splitButtonFrameSelection.Text = splitButtonFrameSelection.ContextMenuStrip.Items[0].ToString();
+			Controls.Add( splitButtonFrameSelection );
+
+			Controls.Add( checkBoxFollowSelection );
+			checkBoxFollowSelection.CheckedChanged += checkBoxFollowSelection_CheckedChanged;
+
+			//wyDay.Controls.SplitButton sb = new wyDay.Controls.SplitButton();
+			//sb.Text = "SplitButton";
+			//sb.Name = "SplitButton";
+			//sb.Location = new System.Drawing.Point( 0, 100 );
+			//Controls.Add( sb );
 
 			MouseDown += TouchPad_MouseDown;
 			MouseUp += TouchPad_MouseUp;
@@ -41,7 +67,7 @@ Hold left SHIFT to move quicker";
 			LostFocus += TouchPad_LostFocus;
 			KeyDown += TouchPad_KeyDown;
 			KeyUp += TouchPad_KeyUp;
-			buttonFrameSelection.Click += buttonFrameSelection_Click;
+			//buttonFrameSelection.Click += buttonFrameSelection_Click;
 		}
 
 		#region IInitializable
@@ -51,7 +77,7 @@ Hold left SHIFT to move quicker";
 		/// events, and creating PropertyDescriptors for settings</summary>
 		void IInitializable.Initialize()
 		{
-			ControlInfo controlInfo = new ControlInfo( "TouchPad", "Touch Pad", StandardControlGroup.Bottom );
+			ControlInfo controlInfo = new ControlInfo( "CameraController", "Camera Controller", StandardControlGroup.Bottom );
 			m_controlHostService.RegisterControl(
 				this,
 				controlInfo,
@@ -126,11 +152,40 @@ Hold left SHIFT to move quicker";
 			}
 		}
 
-		void buttonFrameSelection_Click( object sender, EventArgs e )
+		//void buttonFrameSelection_Click( object sender, EventArgs e )
+		//{
+		//	HubMessage hubMsg = new HubMessage( APPPARAM_TAG );
+		//	hubMsg.appendString( "touchPad" );
+		//	hubMsg.appendString( "frameSelection" );
+		//	m_hubService.send( hubMsg );
+		//}
+
+		void ContextMenuStrip_ItemClicked( object sender, ToolStripItemClickedEventArgs e )
+		{
+			string text = e.ClickedItem.ToString();
+			splitButtonFrameSelection.Text = text;
+
+			splitButtonFrameSelection_Click( sender, e );
+		}
+
+		void splitButtonFrameSelection_Click( object sender, EventArgs e )
 		{
 			HubMessage hubMsg = new HubMessage( APPPARAM_TAG );
 			hubMsg.appendString( "touchPad" );
 			hubMsg.appendString( "frameSelection" );
+			hubMsg.appendString( splitButtonFrameSelection.Text );
+			m_hubService.send( hubMsg );
+		}
+
+		void checkBoxFollowSelection_CheckedChanged( object sender, EventArgs e )
+		{
+			HubMessage hubMsg = new HubMessage( APPPARAM_TAG );
+			hubMsg.appendString( "touchPad" );
+			hubMsg.appendString( "followSelection" );
+			if ( checkBoxFollowSelection.Checked )
+				hubMsg.appendInt( 1 );
+			else
+				hubMsg.appendInt( 0 );
 			m_hubService.send( hubMsg );
 		}
 

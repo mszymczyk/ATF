@@ -28,18 +28,10 @@
 		/// </summary>
 		private void InitializeComponent()
 		{
-			this.buttonFrameSelection = new System.Windows.Forms.Button();
 			this.labelHint = new System.Windows.Forms.Label();
+			this.splitButtonFrameSelection = new Sce.Atf.Controls.SplitButton();
+			this.checkBoxFollowSelection = new System.Windows.Forms.CheckBox();
 			this.SuspendLayout();
-			// 
-			// buttonFrameSelection
-			// 
-			this.buttonFrameSelection.Location = new System.Drawing.Point(0, 0);
-			this.buttonFrameSelection.Name = "buttonFrameSelection";
-			this.buttonFrameSelection.Size = new System.Drawing.Size(100, 23);
-			this.buttonFrameSelection.TabIndex = 0;
-			this.buttonFrameSelection.Text = "Frame Selection";
-			this.buttonFrameSelection.UseVisualStyleBackColor = true;
 			// 
 			// labelHint
 			// 
@@ -51,6 +43,26 @@
 			this.labelHint.TabIndex = 0;
 			this.labelHint.Text = "label1";
 			// 
+			// splitButtonFrameSelection
+			// 
+			this.splitButtonFrameSelection.AutoSize = true;
+			this.splitButtonFrameSelection.Location = new System.Drawing.Point(0, 0);
+			this.splitButtonFrameSelection.Name = "splitButtonFrameSelection";
+			this.splitButtonFrameSelection.Size = new System.Drawing.Size(96, 23);
+			this.splitButtonFrameSelection.TabIndex = 0;
+			this.splitButtonFrameSelection.Text = "splitButton1";
+			this.splitButtonFrameSelection.UseVisualStyleBackColor = true;
+			// 
+			// checkBoxFollowSelection
+			// 
+			this.checkBoxFollowSelection.AutoSize = true;
+			this.checkBoxFollowSelection.Location = new System.Drawing.Point(100, 4);
+			this.checkBoxFollowSelection.Name = "checkBoxFollowSelection";
+			this.checkBoxFollowSelection.Size = new System.Drawing.Size(104, 24);
+			this.checkBoxFollowSelection.TabIndex = 0;
+			this.checkBoxFollowSelection.Text = "Follow Selection";
+			this.checkBoxFollowSelection.UseVisualStyleBackColor = true;
+			// 
 			// TouchPad
 			// 
 			this.BackColor = System.Drawing.SystemColors.ActiveCaption;
@@ -60,8 +72,9 @@
 
 		#endregion
 
-		private System.Windows.Forms.Button buttonFrameSelection;
 		private System.Windows.Forms.Label labelHint;
+		private Sce.Atf.Controls.SplitButton splitButtonFrameSelection;
+		private System.Windows.Forms.CheckBox checkBoxFollowSelection;
 
 	}
 }

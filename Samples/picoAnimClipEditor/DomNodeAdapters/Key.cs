@@ -12,7 +12,7 @@ namespace picoAnimClipEditor.DomNodeAdapters
 {
     /// <summary>
     /// Adapts DomNode to a Key</summary>
-	public class Key : BaseEvent, IKey, ITimelineValidationCallback
+	public abstract class Key : BaseEvent, IKey, ITimelineValidationCallback
     {
         #region IKey Members
 

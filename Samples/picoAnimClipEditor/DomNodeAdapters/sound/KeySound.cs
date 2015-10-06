@@ -1,4 +1,4 @@
-//Copyright © 2014 Sony Computer Entertainment America LLC. See License.txt.
+using System.Drawing;
 
 using Sce.Atf.Dom;
 using Sce.Atf.Controls.Timelines;
@@ -12,24 +12,36 @@ using pico.Timeline;
 
 namespace picoAnimClipEditor.DomNodeAdapters
 {
-	class KeySoundPositionLister : DynamicLongEnumEditorLister
-	{
-		public string[] GetNames( PropertyEditorControlContext context )
-		{
-			KeySound keySound = context.LastSelectedObject.As<KeySound>();
-			if ( keySound == null )
-				// returning an non-empty string is necessary to avaid LongEnumEditorCrash
-				//
-				return new string[] { "fake" };
+	//class KeySoundPositionLister : DynamicLongEnumEditorLister
+	//{
+	//	public string[] GetNames( PropertyEditorControlContext context )
+	//	{
+	//		KeySound keySound = context.LastSelectedObject.As<KeySound>();
+	//		if ( keySound == null )
+	//			// returning an non-empty string is necessary to avaid LongEnumEditorCrash
+	//			//
+	//			return new string[] { "fake" };
 
-			return keySound.GetAvailablePositions();
-		}
-	}
+	//		return keySound.GetAvailablePositions();
+	//	}
+	//}
 
     /// <summary>
     /// Adapts DomNode to a Key</summary>
-	public class KeySound : DomNodeAdapter, ITimelineValidationCallback
+	public class KeySound : Key
     {
+		#region IEvent Members
+
+		/// <summary>
+		/// Gets and sets the event's color</summary>
+		public override Color Color
+		{
+			get { return Color.Aqua; }
+			set { }
+		}
+
+		#endregion
+
 		/// <summary>
 		/// Performs initialization when the adapter is connected to the DomNode.
 		/// Raises the DomNodeAdapter NodeSet event. Creates read only data for animdata
@@ -86,12 +98,12 @@ namespace picoAnimClipEditor.DomNodeAdapters
 			set { DomNode.SetAttribute( Schema.keySoundType.positionAttribute, value ); }
 		}
 
-		public virtual bool CanParentTo( DomNode parent )
+		public override bool CanParentTo( DomNode parent )
 		{
 			return ValidateImpl( parent, 0 );
 		}
 
-		public virtual bool Validate( DomNode parent )
+		public override bool Validate( DomNode parent )
 		{
 			return ValidateImpl( parent, 1 );
 		}
@@ -104,29 +116,29 @@ namespace picoAnimClipEditor.DomNodeAdapters
 			return true;
 		}
 
-		public string[] GetAvailablePositions()
-		{
-			TimelineContext tc = TimelineEditor.ContextRegistry.GetActiveContext<TimelineContext>();
-			//DomNode timelineNode = DomNode.GetRoot();
-			Timeline tim = tc.As<Timeline>();
-			if ( tim.AnimCategory == "princess" || tim.AnimCategory == "monster" || tim.AnimCategory == "queen" )
-			{
-				string[] availablePositions = new string[] {
-					"leftHand",
-					"rightHand",
-					"leftFoot",
-					"rightFoot",
-					"head",
-					"pelvis"
-				};
+		//public string[] GetAvailablePositions()
+		//{
+		//	TimelineContext tc = TimelineEditor.ContextRegistry.GetActiveContext<TimelineContext>();
+		//	//DomNode timelineNode = DomNode.GetRoot();
+		//	Timeline tim = tc.As<Timeline>();
+		//	if ( tim.AnimCategory == "princess" || tim.AnimCategory == "monster" || tim.AnimCategory == "queen" )
+		//	{
+		//		string[] availablePositions = new string[] {
+		//			"leftHand",
+		//			"rightHand",
+		//			"leftFoot",
+		//			"rightFoot",
+		//			"head",
+		//			"pelvis"
+		//		};
 
-				return availablePositions;
-			}
+		//		return availablePositions;
+		//	}
 
-			// returning an non-empty string is necessary to avaid LongEnumEditorCrash
-			//
-			return new string[] { "fake2" };
-		}
+		//	// returning an non-empty string is necessary to avaid LongEnumEditorCrash
+		//	//
+		//	return new string[] { "fake2" };
+		//}
 	}
 }
 
