@@ -111,6 +111,7 @@
     <Compile Include="DomNodeAdapters\keys\LuaScript.cs" />
     <Compile Include="DomNodeAdapters\references\ReferenceChangeLevel.cs" />
     <Compile Include="DomNodeAdapters\references\ReferencePlayTimeline.cs" />
+    <Compile Include="DomNodeAdapters\sound\KeyCharacterSound.cs" />
     <Compile Include="DomNodeAdapters\sound\KeySound.cs" />
     <Compile Include="DomNodeAdapters\text\IntervalText.cs" />
     <Compile Include="DomNodeAdapters\TimelineReference.cs" />

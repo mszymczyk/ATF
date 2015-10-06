@@ -1,5 +1,7 @@
 //Copyright © 2014 Sony Computer Entertainment America LLC. See License.txt.
 
+using System.Drawing;
+
 using Sce.Atf.Dom;
 using Sce.Atf.Controls.Timelines;
 using Sce.Atf.Controls.PropertyEditing;
@@ -10,26 +12,25 @@ using pico.Timeline;
 
 #pragma warning disable 0649 // suppress "field never set" warning
 
-namespace picoAnimClipEditor.DomNodeAdapters
+namespace picoTimelineEditor.DomNodeAdapters
 {
-	class KeySoundPositionLister : DynamicLongEnumEditorLister
-	{
-		public string[] GetNames( PropertyEditorControlContext context )
-		{
-			KeyCharacterSound keySound = context.LastSelectedObject.As<KeyCharacterSound>();
-			if ( keySound == null )
-				// returning an non-empty string is necessary to avaid LongEnumEditorCrash
-				//
-				return new string[] { "fake" };
-
-			return keySound.GetAvailablePositions();
-		}
-	}
-
 	/// <summary>
 	/// Adapts DomNode to a Key</summary>
-	public class KeyCharacterSound : DomNodeAdapter, ITimelineValidationCallback
+	public class KeyCharacterSound : Key, ITimelineValidationCallback
 	{
+		#region IEvent Members
+
+		/// <summary>
+		/// Gets and sets the event's color</summary>
+		public override Color Color
+		{
+			get { return Color.Aqua; }
+			set { }
+		}
+
+		#endregion
+
+
 		/// <summary>
 		/// Performs initialization when the adapter is connected to the DomNode.
 		/// Raises the DomNodeAdapter NodeSet event. Creates read only data for animdata
@@ -48,84 +49,48 @@ namespace picoAnimClipEditor.DomNodeAdapters
 
 		private void DomNode_AttributeChanged( object sender, AttributeEventArgs e )
 		{
-			//if ( e.AttributeInfo.Equivalent( Schema.keySoundType.soundBankAttribute ) )
+			//if ( e.AttributeInfo.Equivalent( Schema.keyCharacterSoundType.soundBankAttribute ) )
 			//{
 			//	TimelineEditor.LastSoundBankFilename = SoundBank;
 			//}
 		}
 
 		/// <summary>
-		/// Gets and sets the sound bank</summary>
-		public string SoundBank
-		{
-			get { return (string) DomNode.GetAttribute( Schema.keySoundType.soundBankAttribute ); }
-			set { DomNode.SetAttribute( Schema.keySoundType.soundBankAttribute, value ); }
-		}
-
-		/// <summary>
-		/// Gets and sets the sound name</summary>
-		public string Sound
-		{
-			get { return (string) DomNode.GetAttribute( Schema.keySoundType.soundAttribute ); }
-			set { DomNode.SetAttribute( Schema.keySoundType.soundAttribute, value ); }
-		}
-
-		/// <summary>
 		/// Gets and sets whether sound is positional or not</summary>
 		public bool Positional
 		{
-			get { return (bool) DomNode.GetAttribute( Schema.keySoundType.positionalAttribute ); }
-			set { DomNode.SetAttribute( Schema.keySoundType.positionalAttribute, value ); }
+			get { return (bool) DomNode.GetAttribute( Schema.keyCharacterSoundType.positionalAttribute ); }
+			set { DomNode.SetAttribute( Schema.keyCharacterSoundType.positionalAttribute, value ); }
 		}
 
 		/// <summary>
 		/// Gets and sets the local position on character</summary>
 		public string Position
 		{
-			get { return (string) DomNode.GetAttribute( Schema.keySoundType.positionAttribute ); }
-			set { DomNode.SetAttribute( Schema.keySoundType.positionAttribute, value ); }
+			get { return (string) DomNode.GetAttribute( Schema.keyCharacterSoundType.positionAttribute ); }
+			set { DomNode.SetAttribute( Schema.keyCharacterSoundType.positionAttribute, value ); }
 		}
 
-		public virtual bool CanParentTo( DomNode parent )
+		bool ITimelineValidationCallback.CanParentTo( DomNode parent )
 		{
 			return ValidateImpl( parent, 0 );
 		}
 
-		public virtual bool Validate( DomNode parent )
+		bool ITimelineValidationCallback.Validate( DomNode parent )
 		{
 			return ValidateImpl( parent, 1 );
 		}
 
 		private bool ValidateImpl( DomNode parent, int validating )
 		{
-			if ( parent.Type != Schema.trackType.Type )
-				return false;
+			if ( parent.Type == Schema.trackAnimControllerType.Type
+				|| parent.Type == Schema.trackCharacterControllerAnimType.Type
+				|| parent.Type == Schema.intervalAnimControllerType.Type
+				|| parent.Type == Schema.intervalCharacterControllerAnimType.Type
+				)
+				return true;
 
-			return true;
-		}
-
-		public string[] GetAvailablePositions()
-		{
-			TimelineContext tc = TimelineEditor.ContextRegistry.GetActiveContext<TimelineContext>();
-			//DomNode timelineNode = DomNode.GetRoot();
-			Timeline tim = tc.As<Timeline>();
-			if ( tim.AnimCategory == "princess" || tim.AnimCategory == "monster" || tim.AnimCategory == "queen" )
-			{
-				string[] availablePositions = new string[] {
-					"leftHand",
-					"rightHand",
-					"leftFoot",
-					"rightFoot",
-					"head",
-					"pelvis"
-				};
-
-				return availablePositions;
-			}
-
-			// returning an non-empty string is necessary to avaid LongEnumEditorCrash
-			//
-			return new string[] { "fake2" };
+			return false;
 		}
 	}
 }

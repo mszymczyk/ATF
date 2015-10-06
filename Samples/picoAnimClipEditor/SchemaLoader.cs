@@ -180,7 +180,7 @@ namespace picoAnimClipEditor
 					"Position".Localize(),
 					Schema.keySoundType.positionAttribute,
 					"Sound".Localize(),
-					"Specifies intended usage of exported texture".Localize(),
+					"Specifies joint on character where to attach sound source".Localize(),
 					false,
 					formatEditor
 					//, new CustomEnableAttributePropertyDescriptorCallback(

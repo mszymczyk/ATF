@@ -589,6 +589,7 @@
       <xs:extension base="keyType">
         <xs:attribute name="soundBank" type="xs:string" />
         <xs:attribute name="sound" type="xs:string" />
+        <!--blue-->
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>
@@ -598,7 +599,7 @@
   <xs:complexType name="keyCharacterSoundType">
     <xs:annotation>
       <xs:appinfo>
-        <scea.dom.editors menuText="Sound" description="Sound" image="picoAnimClipEditor.Resources.key.png" category="pico" />
+        <scea.dom.editors menuText="CharacterSound" description="CharacterSound" image="picoTimelineEditor.Resources.key.png" category="pico" />
         <scea.dom.editors.attribute name="soundBank" displayName="Sound Bank" description="Sound Bank"
                                     editor="pico.Controls.PropertyEditing.picoFileUriEditor,pico:Sound banks (*.bnk)|*.bnk"
                                     converter="Sce.Atf.Controls.PropertyEditing.ReadOnlyConverter"
@@ -613,7 +614,7 @@
     <xs:complexContent>
       <xs:extension base="keySoundType">
         <xs:attribute name="positional" type="xs:boolean" default="false"/>
-        <xs:attribute name="position" type="xs:string" />
+        <xs:attribute name="position" type="xs:string" default="pelvis" />
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>

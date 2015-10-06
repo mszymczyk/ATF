@@ -10,7 +10,7 @@ namespace picoTimelineEditor.DomNodeAdapters
 {
     /// <summary>
     /// Adapts DomNode to a Key</summary>
-    public class Key : BaseEvent, IKey
+    public abstract class Key : BaseEvent, IKey
     {
         #region IKey Members
 

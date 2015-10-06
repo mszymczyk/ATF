@@ -89,6 +89,7 @@ namespace picoTimelineEditor
 			// sound
 			//
 			paletteService.AddItem( Schema.keySoundType.Type, "Sound", this );
+			paletteService.AddItem( Schema.keyCharacterSoundType.Type, "Sound", this );
 
 			// anim controller
 			//

@@ -79,7 +79,7 @@ namespace picoTimelineEditor
                 Schema.trackType.Type.Define(new ExtensionInfo<Track>());
                 Schema.intervalType.Type.Define(new ExtensionInfo<Interval>());
                 Schema.eventType.Type.Define(new ExtensionInfo<BaseEvent>());
-                Schema.keyType.Type.Define(new ExtensionInfo<Key>());
+				//Schema.keyType.Type.Define(new ExtensionInfo<Key>());
                 Schema.markerType.Type.Define(new ExtensionInfo<Marker>());
                 Schema.timelineRefType.Type.Define(new ExtensionInfo<TimelineReference>());
 
@@ -100,7 +100,7 @@ namespace picoTimelineEditor
 				// sound
 				//
 				Schema.keySoundType.Type.Define( new ExtensionInfo<KeySound>() );
-				Schema.keyCharacterSoundType.Type.Define( new ExtensionInfo<KeySound>() );
+				Schema.keyCharacterSoundType.Type.Define( new ExtensionInfo<KeyCharacterSound>() );
 
 				// fader
 				//
@@ -294,6 +294,30 @@ namespace picoTimelineEditor
 			{
 				PropertyDescriptorCollection propDescCollection = Schema.intervalAnimControllerType.Type.GetTag<PropertyDescriptorCollection>();
 				pico.Controls.PropertyEditing.CustomPropertyDescriptor<IntervalAnimController>.CreateDescriptors( propDescCollection );
+			}
+
+			{
+				PropertyDescriptorCollection propDescCollection = Schema.keyCharacterSoundType.Type.GetTag<PropertyDescriptorCollection>();
+				var formatEditor = new LongEnumEditor();
+				formatEditor.DefineEnum( new string[] { 
+					"leftHand",
+					"rightHand",
+					"leftFoot",
+					"rightFoot",
+					"head",
+					"pelvis"
+					} );
+				formatEditor.MaxDropDownItems = 12;
+				var apd = new CustomEnableAttributePropertyDescriptor(
+					"Position".Localize(),
+					Schema.keyCharacterSoundType.positionAttribute,
+					"Sound".Localize(),
+					"Specifies joint on character where to attach sound source".Localize(),
+					false,
+					formatEditor
+					 , new CustomEnableAttributePropertyDescriptorCallback( Schema.keyCharacterSoundType.positionalAttribute, CustomEnableAttributePropertyDescriptorCallback.Condition.ReadOnlyIfSetToFalse )
+				);
+				propDescCollection.Add( apd );
 			}
 		}
 
