@@ -202,7 +202,7 @@ namespace picoAnimClipEditor
             new D2dScaleManipulator(m_timelineControl);
             m_splitManipulator = new D2dSplitManipulator(m_timelineControl);
             D2dSnapManipulator snapManipulator = new D2dSnapManipulator(m_timelineControl);
-            D2dScrubberManipulator scrubberManipulator = new ScrubberManipulator(m_timelineControl);
+			pico.Timeline.picoD2dScrubberManipulator scrubberManipulator = new pico.Timeline.picoD2dScrubberManipulator( m_timelineControl );
 			m_scrubberManipulator = scrubberManipulator;
 
             //// Allow the snap manipulator to snap objects to the scrubber.
