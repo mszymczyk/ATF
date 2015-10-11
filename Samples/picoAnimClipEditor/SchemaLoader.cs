@@ -77,7 +77,7 @@ namespace picoAnimClipEditor
                 Schema.timelineType.Type.Define(new ExtensionInfo<Timeline>());
                 Schema.groupType.Type.Define(new ExtensionInfo<Group>());
                 Schema.trackType.Type.Define(new ExtensionInfo<Track>());
-                Schema.intervalType.Type.Define(new ExtensionInfo<Interval>());
+				//Schema.intervalType.Type.Define(new ExtensionInfo<Interval>());
                 Schema.eventType.Type.Define(new ExtensionInfo<BaseEvent>());
 				//Schema.keyType.Type.Define(new ExtensionInfo<Key>());
                 Schema.markerType.Type.Define(new ExtensionInfo<Marker>());
@@ -92,6 +92,7 @@ namespace picoAnimClipEditor
 				// sound
 				//
 				Schema.keySoundType.Type.Define( new ExtensionInfo<KeySound>() );
+				Schema.intervalCharacterSoundType.Type.Define( new ExtensionInfo<IntervalCharacterSound>() );
 
                 // the timeline schema defines only one type collection
                 break;
@@ -111,10 +112,10 @@ namespace picoAnimClipEditor
 
 			IList<XmlNode> xmlNodes;
 
-			foreach ( DomNodeType nodeType in m_typeCollection.GetNodeTypes() )
+			foreach (DomNodeType nodeType in m_typeCollection.GetNodeTypes())
 			{
 				// parse XML annotation for property descriptors
-				if ( annotations.TryGetValue( nodeType, out xmlNodes ) )
+				if (annotations.TryGetValue( nodeType, out xmlNodes ))
 				{
 					PropertyDescriptorCollection propertyDescriptors = Sce.Atf.Dom.PropertyDescriptor.ParseXml( nodeType, xmlNodes );
 
@@ -123,9 +124,9 @@ namespace picoAnimClipEditor
 					//  Please request this feature from the ATF team if you need it and a ParseXml overload
 					//  can probably be created.
 					System.ComponentModel.PropertyDescriptor gameFlow = propertyDescriptors["Special Event"];
-					if ( gameFlow != null )
+					if (gameFlow != null)
 					{
-						FlagsUITypeEditor editor = (FlagsUITypeEditor)gameFlow.GetEditor( typeof( FlagsUITypeEditor ) );
+						FlagsUITypeEditor editor = (FlagsUITypeEditor) gameFlow.GetEditor( typeof( FlagsUITypeEditor ) );
 						editor.DefineFlags( new string[] {
                             "Reward==Give player the reward",
                             "Trophy==Give player the trophy",
@@ -141,10 +142,10 @@ namespace picoAnimClipEditor
 
 					// parse type annotation to create palette items
 					XmlNode xmlNode = FindElement( xmlNodes, "scea.dom.editors" );
-					if ( xmlNode != null )
+					if (xmlNode != null)
 					{
 						string menuText = FindAttribute( xmlNode, "menuText" );
-						if ( menuText != null ) // must have menu text and category
+						if (menuText != null) // must have menu text and category
 						{
 							string description = FindAttribute( xmlNode, "description" );
 							string image = FindAttribute( xmlNode, "image" );
@@ -203,6 +204,30 @@ namespace picoAnimClipEditor
 						, new CustomEnableAttributePropertyDescriptorCallback( Schema.keySoundType.positionalAttribute, CustomEnableAttributePropertyDescriptorCallback.Condition.ReadOnlyIfSetToFalse )
 				);
 				propDescCollection.Add( apd );
+			}
+			{
+				PropertyDescriptorCollection propDescCollection = Schema.intervalCharacterSoundType.Type.GetTag<PropertyDescriptorCollection>();
+				var formatEditor = new LongEnumEditor();
+				formatEditor.DefineEnum( new string[] { 
+					"leftHand",
+					"rightHand",
+					"leftFoot",
+					"rightFoot",
+					"head",
+					"pelvis"
+					} );
+				formatEditor.MaxDropDownItems = 12;
+				var apd = new CustomEnableAttributePropertyDescriptor(
+					"Position".Localize(),
+					Schema.keySoundType.positionAttribute,
+					"Sound".Localize(),
+					"Specifies joint on character where to attach sound source".Localize(),
+					false,
+					formatEditor
+						, new CustomEnableAttributePropertyDescriptorCallback( Schema.intervalCharacterSoundType.positionalAttribute, CustomEnableAttributePropertyDescriptorCallback.Condition.ReadOnlyIfSetToFalse )
+				);
+				propDescCollection.Add( apd );
+
 			}
 		}
 

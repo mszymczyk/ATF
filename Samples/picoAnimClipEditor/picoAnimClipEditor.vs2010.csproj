@@ -109,6 +109,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="DomNodeAdapters\sound\IntervalCharacterSound.cs" />
     <Compile Include="picoAnimListEditor.cs" />
     <Compile Include="DomNodeAdapters\GroupAnim.cs" />
     <Compile Include="DomNodeAdapters\IntervalAnim.cs" />

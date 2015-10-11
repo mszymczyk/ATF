@@ -112,6 +112,17 @@ namespace picoAnimClipEditor
             keySoundType.positionalAttribute = keySoundType.Type.GetAttributeInfo("positional");
             keySoundType.positionAttribute = keySoundType.Type.GetAttributeInfo("position");
 
+            intervalCharacterSoundType.Type = getNodeType("timeline", "intervalCharacterSoundType");
+            intervalCharacterSoundType.startAttribute = intervalCharacterSoundType.Type.GetAttributeInfo("start");
+            intervalCharacterSoundType.descriptionAttribute = intervalCharacterSoundType.Type.GetAttributeInfo("description");
+            intervalCharacterSoundType.nameAttribute = intervalCharacterSoundType.Type.GetAttributeInfo("name");
+            intervalCharacterSoundType.lengthAttribute = intervalCharacterSoundType.Type.GetAttributeInfo("length");
+            intervalCharacterSoundType.colorAttribute = intervalCharacterSoundType.Type.GetAttributeInfo("color");
+            intervalCharacterSoundType.soundBankAttribute = intervalCharacterSoundType.Type.GetAttributeInfo("soundBank");
+            intervalCharacterSoundType.soundAttribute = intervalCharacterSoundType.Type.GetAttributeInfo("sound");
+            intervalCharacterSoundType.positionalAttribute = intervalCharacterSoundType.Type.GetAttributeInfo("positional");
+            intervalCharacterSoundType.positionAttribute = intervalCharacterSoundType.Type.GetAttributeInfo("position");
+
             timelineRootElement = getRootElement(NS, "timeline");
         }
 
@@ -232,6 +243,20 @@ namespace picoAnimClipEditor
             public static AttributeInfo startAttribute;
             public static AttributeInfo descriptionAttribute;
             public static AttributeInfo nameAttribute;
+            public static AttributeInfo soundBankAttribute;
+            public static AttributeInfo soundAttribute;
+            public static AttributeInfo positionalAttribute;
+            public static AttributeInfo positionAttribute;
+        }
+
+        public static class intervalCharacterSoundType
+        {
+            public static DomNodeType Type;
+            public static AttributeInfo startAttribute;
+            public static AttributeInfo descriptionAttribute;
+            public static AttributeInfo nameAttribute;
+            public static AttributeInfo lengthAttribute;
+            public static AttributeInfo colorAttribute;
             public static AttributeInfo soundBankAttribute;
             public static AttributeInfo soundAttribute;
             public static AttributeInfo positionalAttribute;

@@ -85,6 +85,7 @@ namespace picoAnimClipEditor
 			// sound
 			//
 			paletteService.AddItem( Schema.keySoundType.Type, "Timelines", this );
+			paletteService.AddItem( Schema.intervalCharacterSoundType.Type, "Timelines", this );
 
             m_contextRegistry = contextRegistry;
             m_documentRegistry = documentRegistry;

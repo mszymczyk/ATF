@@ -231,6 +231,39 @@
 
   
   
+  
+  <xs:complexType name="intervalCharacterSoundType">
+    <xs:annotation>
+      <xs:appinfo>
+        <scea.dom.editors menuText="CharacterSoundInterval" description="CharacterSoundInterval" image="picoAnimClipEditor.Resources.interval.png" category="pico" />
+        <scea.dom.editors.attribute name="color" displayName="Color" description="Display Color"
+                                    editor="Sce.Atf.Controls.PropertyEditing.ColorPickerEditor,Atf.Gui.WinForms"
+                                    converter="Sce.Atf.Controls.PropertyEditing.IntColorConverter" />
+        <scea.dom.editors.attribute name="soundBank" displayName="Sound Bank" description="Sound Bank"
+                                    editor="pico.Controls.PropertyEditing.picoFileUriEditor,pico:Sound banks (*.bnk)|*.bnk"
+                                    converter="Sce.Atf.Controls.PropertyEditing.ReadOnlyConverter"
+                                    category="Sound" />
+        <scea.dom.editors.attribute name="sound" displayName="Sound Name" description="Sound to be played from sound bank" category="Sound" />
+        <scea.dom.editors.attribute name="positional" displayName="Positional" description="Whether sound is located in space relative to character"
+                                    editor="Sce.Atf.Controls.PropertyEditing.BoolEditor,Atf.Gui.WinForms"
+                                    category="Sound"
+                                    />
+      </xs:appinfo>
+    </xs:annotation>
+    <xs:complexContent>
+      <xs:extension base="intervalType">
+        <xs:attribute name="soundBank" type="xs:string" />
+        <xs:attribute name="sound" type="xs:string" />
+        <xs:attribute name="positional" type="xs:boolean" default="false"/>
+        <xs:attribute name="position" type="xs:string" default="pelvis" />
+        <xs:attribute name="color" type="xs:integer" default="-16384"/>
+        <!--blue-->
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+
+
   <xs:element name="timeline" type="timelineType"/>
 
 </xs:schema>

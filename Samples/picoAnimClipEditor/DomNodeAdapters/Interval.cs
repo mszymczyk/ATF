@@ -13,7 +13,7 @@ namespace picoAnimClipEditor.DomNodeAdapters
 {
     /// <summary>
     /// Adapts DomNode to an Interval</summary>
-    public class Interval : BaseEvent, IInterval
+    public abstract class Interval : BaseEvent, IInterval
     {
         #region IEvent and IInterval Members
 
