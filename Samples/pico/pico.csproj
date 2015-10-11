@@ -61,6 +61,7 @@
     <Compile Include="Paths.cs" />
     <Compile Include="Hub\HubService.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="ResourcesRegistry.cs" />
     <Compile Include="Timeline\ITimelineValidationCallback.cs" />
     <Compile Include="Timeline\picoD2dScrubberManipulator.cs" />
     <Compile Include="Timeline\TimelineExtensions.cs" />
@@ -83,6 +84,14 @@
     <EmbeddedResource Include="Controls\TouchPad.resx">
       <DependentUpon>TouchPad.cs</DependentUpon>
     </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\Pause16.png" />
+    <EmbeddedResource Include="Resources\Pause24.png" />
+    <EmbeddedResource Include="Resources\Pause32.png" />
+    <EmbeddedResource Include="Resources\Play16.png" />
+    <EmbeddedResource Include="Resources\Play24.png" />
+    <EmbeddedResource Include="Resources\Play32.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

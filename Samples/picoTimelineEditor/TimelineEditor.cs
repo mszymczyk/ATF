@@ -26,6 +26,12 @@ using pico.Timeline;
 
 namespace picoTimelineEditor
 {
+	public enum EditMode
+	{
+		Standalone,
+		Editing
+	};
+
     /// <summary>
     /// Editor class that creates and saves timeline documents. 
     /// There is just one instance of this class in this application.
@@ -38,7 +44,7 @@ namespace picoTimelineEditor
     [Export(typeof(IPaletteClient))]
     [Export(typeof(IInitializable))]
     [PartCreationPolicy(CreationPolicy.Shared)]
-    public class TimelineEditor : IDocumentClient, IControlHostClient, IPaletteClient, IInitializable
+    public partial class TimelineEditor : IDocumentClient, IControlHostClient, IPaletteClient, IInitializable
     {
         /// <summary>
         /// Constructor that subscribes to document events and adds palette information</summary>
@@ -1024,6 +1030,14 @@ namespace picoTimelineEditor
 				m_luaEditorPanelControlInfo.Name = "Lua Script";
 			}
 		}
+
+		public EditMode EditMode { get { return m_editMode; } }
+		public void setEditMode( string editMode )
+		{
+			Enum.TryParse<EditMode>( editMode, out m_editMode );
+		}
+
+		private EditMode m_editMode;
 
         /// <summary>
         /// A collection of all ITimelineDocuments that have been loaded. This is necessary so that we can 

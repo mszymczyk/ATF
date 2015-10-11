@@ -169,6 +169,7 @@
     <Compile Include="TimelineContext.cs" />
     <Compile Include="TimelineDocument.cs" />
     <Compile Include="TimelineEditor.cs" />
+    <Compile Include="TimelineEditorHub.cs" />
     <Compile Include="TimelineHub.cs" />
     <Compile Include="TimelineValidator.cs" />
   </ItemGroup>
@@ -221,6 +222,12 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="ProgramIcon.ico" />
+    <EmbeddedResource Include="Resources\Standalone16.png" />
+    <EmbeddedResource Include="Resources\Standalone24.png" />
+    <EmbeddedResource Include="Resources\Standalone32.png" />
+    <EmbeddedResource Include="Resources\Editing16.png" />
+    <EmbeddedResource Include="Resources\Editing24.png" />
+    <EmbeddedResource Include="Resources\Editing32.png" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
