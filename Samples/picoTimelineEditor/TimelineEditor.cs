@@ -217,6 +217,9 @@ namespace picoTimelineEditor
 			if ( m_directoryWatcherService != null )
 			{
 				m_directoryWatcherService.Register( pico.Paths.PICO_DEMO_data, new string[] { "*.anim" }, true );
+				// FileChanged event won't be fired when file is created
+				// there are issues with large files (file is created but not fully copied, etc...)
+				//
 				m_directoryWatcherService.FileChanged += directoryWatcherService_FileChanged;
 			}
 
