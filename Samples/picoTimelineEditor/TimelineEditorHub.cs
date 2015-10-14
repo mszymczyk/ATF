@@ -50,5 +50,33 @@ namespace picoTimelineEditor
 
 			m_hubService.sendAlways( hubMsg );
 		}
+
+		public void hubService_sendReloadTimeline( TimelineDocument document )
+		{
+			if (m_isWriting)
+				return;
+
+			m_isWriting = true;
+
+			MemoryStream stream = new MemoryStream();
+			var writer = new TimelineXmlWriter( s_schemaLoader.TypeCollection );
+			//writer.PersistDefaultAttributes = true;
+
+			//writer.Write( DomNode, stream, m_timelineDocument.Uri );
+
+			//HubMessage hubMessage = new HubMessage( TIMELINE_TAG );
+			//hubMessage.appendString( "reloadTimeline" );
+			//hubMessage.appendString( docUri );
+			//hubMessage.appendInt( (int) stream.Length );
+			//hubMessage.appendBytes( stream.ToArray() );
+			//TimelineDocument document = this.As<TimelineDocument>();
+			//hubMessage.appendFloat( document.ScrubberManipulator.Position );
+
+			//m_hubService.send( hubMessage );
+
+			m_isWriting = false;
+		}
+
+		private bool m_isWriting; // to prevent endless recursion while serializing DOM with TimelineXmlWriter
 	}
 }

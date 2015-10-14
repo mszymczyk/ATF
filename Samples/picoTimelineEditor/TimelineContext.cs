@@ -620,7 +620,20 @@ namespace picoTimelineEditor
 
         #endregion
 
-        /// <summary>
+		#region TransactionContext Members
+
+		/// <summary>
+        /// Performs custom actions after a transaction ends</summary>
+		protected override void OnEnded()
+		{
+			base.OnEnded();
+
+			TimelineEditor.hubService_sendReloadTimeline( this.Cast<TimelineDocument>() );
+		}
+
+		#endregion
+
+		/// <summary>
         /// Inserts items via drag-and-drop</summary>
         /// <param name="e">DragEventArgs containing drag and drop event data</param>
         public void Insert(DragEventArgs e)

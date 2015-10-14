@@ -204,9 +204,16 @@ namespace picoTimelineEditor.DomNodeAdapters
 		#region ITimelineObjectCreator Members
 		ITimelineObject ITimelineObjectCreator.Create()
 		{
-			DomNode dn = new DomNode( Schema.intervalFaderType.Type );
-			IntervalFader i = dn.As<IntervalFader>();
-			return i;
+			DomNodeType nodeType = Schema.intervalFaderType.Type;
+			DomNode dn = new DomNode( nodeType );
+
+			NodeTypePaletteItem paletteItem = nodeType.GetTag<NodeTypePaletteItem>();
+			if (paletteItem != null)
+				dn.SetAttribute( nodeType.IdAttribute, paletteItem.Name );
+			else
+				dn.SetAttribute( nodeType.IdAttribute, "Fader" );
+
+			return dn.Cast<ITimelineObject>();
 		}
 		#endregion
 

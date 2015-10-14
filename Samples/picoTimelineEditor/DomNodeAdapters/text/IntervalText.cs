@@ -39,9 +39,16 @@ namespace picoTimelineEditor.DomNodeAdapters
 		#region ITimelineObjectCreator Members
 		ITimelineObject ITimelineObjectCreator.Create()
 		{
-			DomNode dn = new DomNode( Schema.intervalTextType.Type );
-			IntervalText i = dn.As<IntervalText>();
-			return i;
+			DomNodeType nodeType = Schema.intervalTextType.Type;
+			DomNode dn = new DomNode( nodeType );
+
+			NodeTypePaletteItem paletteItem = nodeType.GetTag<NodeTypePaletteItem>();
+			if (paletteItem != null)
+				dn.SetAttribute( nodeType.IdAttribute, paletteItem.Name );
+			else
+				dn.SetAttribute( nodeType.IdAttribute, "Text" );
+
+			return dn.Cast<ITimelineObject>();
 		}
 		#endregion
 

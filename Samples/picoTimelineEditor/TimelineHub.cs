@@ -34,19 +34,19 @@ namespace picoTimelineEditor
 		private void DomNode_AttributeChanged( object sender, AttributeEventArgs e )
 		{
 			// TODO: there's a crash when undoing reference additions
-			sendReloadTimeline();
+			//sendReloadTimeline();
 		}
 
 		private void DomNode_ChildInserted( object sender, ChildEventArgs e )
 		{
 			// TODO: there's a crash when undoing reference additions
-			sendReloadTimeline();
+			//sendReloadTimeline();
 		}
 
 		private void DomNode_ChildRemoved( object sender, ChildEventArgs e )
 		{
 			// TODO: there's a crash when undoing reference additions
-			sendReloadTimeline();
+			//sendReloadTimeline();
 		}
 
 		//public bool Connected { get; set; }
@@ -132,41 +132,41 @@ namespace picoTimelineEditor
 
 		//public string getEditMode()	{ return m_editMode; }
 
-		private void sendReloadTimeline()
-		{
-			if ( m_isWriting )
-				return;
+		//private void sendReloadTimeline()
+		//{
+		//	if ( m_isWriting )
+		//		return;
 
-			string docUri;
-			if ( !validate( out docUri ) )
-				return;
+		//	string docUri;
+		//	if ( !validate( out docUri ) )
+		//		return;
 
-			m_isWriting = true;
+		//	m_isWriting = true;
 
-			MemoryStream stream = new MemoryStream();
-			var writer = new TimelineEditor.TimelineXmlWriter( m_schemaLoader.TypeCollection );
-			//writer.PersistDefaultAttributes = true;
+		//	MemoryStream stream = new MemoryStream();
+		//	var writer = new TimelineEditor.TimelineXmlWriter( m_schemaLoader.TypeCollection );
+		//	//writer.PersistDefaultAttributes = true;
 
-			writer.Write( DomNode, stream, m_timelineDocument.Uri );
+		//	writer.Write( DomNode, stream, m_timelineDocument.Uri );
 
-			HubMessage hubMessage = new HubMessage( TIMELINE_TAG );
-			hubMessage.appendString( "reloadTimeline" );
-			hubMessage.appendString( docUri );
-			hubMessage.appendInt( (int)stream.Length );
-			hubMessage.appendBytes( stream.ToArray() );
-			TimelineDocument document = this.As<TimelineDocument>();
-			hubMessage.appendFloat( document.ScrubberManipulator.Position );
+		//	HubMessage hubMessage = new HubMessage( TIMELINE_TAG );
+		//	hubMessage.appendString( "reloadTimeline" );
+		//	hubMessage.appendString( docUri );
+		//	hubMessage.appendInt( (int)stream.Length );
+		//	hubMessage.appendBytes( stream.ToArray() );
+		//	TimelineDocument document = this.As<TimelineDocument>();
+		//	hubMessage.appendFloat( document.ScrubberManipulator.Position );
 
-			m_hubService.send( hubMessage );
+		//	m_hubService.send( hubMessage );
 
-			m_isWriting = false;
-		}
+		//	m_isWriting = false;
+		//}
 
         private TimelineDocument m_timelineDocument;
         private D2dTimelineControl m_timelineControl;
 		private SchemaLoader m_schemaLoader;
 		private HubService m_hubService;
-		private bool m_isWriting; // to prevent endless recursion while serializing DOM with TimelineXmlWriter
+		//private bool m_isWriting; // to prevent endless recursion while serializing DOM with TimelineXmlWriter
 		public static readonly string TIMELINE_TAG = "timeline";
 		//private string m_editMode;
 	};
