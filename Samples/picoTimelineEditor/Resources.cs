@@ -44,15 +44,15 @@ namespace picoTimelineEditor
 		[ImageResource( "ProgramIcon.ico" )]
 		public static readonly string ProgramIcon;
 
-		/// <summary>
-		/// Editing icon name</summary>
-		[ImageResource( "Editing16.png", "Editing24.png", "Editing32.png" )]
-		public static readonly string EditingImage;
+		///// <summary>
+		///// Editing icon name</summary>
+		//[ImageResource( "Editing16.png", "Editing24.png", "Editing32.png" )]
+		//public static readonly string EditingImage;
 
-		/// <summary>
-		/// Standalone icon name</summary>
-		[ImageResource( "Standalone16.png", "Standalone24.png", "Standalone32.png" )]
-		public static readonly string StandaloneImage;
+		///// <summary>
+		///// Standalone icon name</summary>
+		//[ImageResource( "Standalone16.png", "Standalone24.png", "Standalone32.png" )]
+		//public static readonly string StandaloneImage;
 
 	}
 }

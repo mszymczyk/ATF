@@ -702,9 +702,6 @@ namespace picoTimelineEditor
                     }
                 }
 
-				TimelineHubCommunication hubComm = node.Cast<TimelineHubCommunication>();
-				hubComm.setup( m_hubService, s_schemaLoader );
-
 				// select this document initially, so timeline properties are visible
 				//
 				ISelectionContext selectionContext = document.Cast<ISelectionContext>();

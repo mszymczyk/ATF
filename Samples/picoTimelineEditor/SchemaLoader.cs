@@ -64,7 +64,6 @@ namespace picoTimelineEditor
 				Schema.timelineType.Type.Define( new ExtensionInfo<TimelineDocument>() );
                 Schema.timelineType.Type.Define(new ExtensionInfo<TimelineContext>());
                 Schema.timelineType.Type.Define(new ExtensionInfo<MultipleHistoryContext>());
-				Schema.timelineType.Type.Define( new ExtensionInfo<TimelineHubCommunication>() );
 
                 // register extensions
                 Schema.timelineType.Type.Define(new ExtensionInfo<UniqueIdValidator>());

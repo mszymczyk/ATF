@@ -49,6 +49,9 @@ namespace picoTimelineEditor
 				string cmd = msg.UnpackString();
 				if ( cmd == "levelChanged" )
 				{
+					// commands must be send exactly in the order it is below
+					//
+
 					foreach ( IDocument document in m_documentRegistry.Documents )
 					{
 						if ( !document.Dirty )
@@ -57,29 +60,8 @@ namespace picoTimelineEditor
 						hubService_sendReloadTimeline( document.Cast<TimelineDocument>(), false );
 					}
 
-					//m_animListEditor.RemoveAllItems();
 					hubService_sendSelectTimeline();
 					hubService_sendPlayPause();
-					//hubService_sendScrubberPosition();
-				}
-				else if ( cmd == "animList" )
-				{
-					//string category = msg.UnpackString();
-					//int nAnims = msg.UnpackInt();
-					//for ( int ianim = 0; ianim < nAnims; ++ianim )
-					//{
-					//	string userName = msg.UnpackString();
-					//	string fileName = msg.UnpackString();
-
-					//	picoAnimListEditorElement ale = new picoAnimListEditorElement( category, userName, fileName );
-					//	ale.updateIcon();
-					//	m_animListEditor.AddItem( ale, category, this );
-					//}
-				}
-				else if ( cmd == "requestPlaybackInfo" )
-				{
-					//string editMode = m_editMode.ToString();
-					//changeEditMode( editMode );
 				}
 				else if ( cmd == "scrubberPosPico" )
 				{
@@ -120,7 +102,7 @@ namespace picoTimelineEditor
 			if ( string.IsNullOrEmpty( docUri ) )
 				docUri = ".*";
 
-			HubMessage hubMsg = new HubMessage( TimelineHubCommunication.TIMELINE_TAG );
+			HubMessage hubMsg = new HubMessage( TIMELINEEDITOR_TAG );
 			hubMsg.appendString( "selectTimeline" ); // command
 			hubMsg.appendString( docUri ); // what timeline
 			m_hubService.send( hubMsg );
@@ -129,57 +111,8 @@ namespace picoTimelineEditor
 				hubService_sendScrubberPosition();
 		}
 
-		//public void changeEditMode( EditMode editMode )
-		//{
-		//	m_editMode = editMode;
-
-		//	HubMessage hubMsg = new HubMessage( TIMELINEEDITOR_TAG );
-		//	hubMsg.appendString( "editMode" ); // command
-
-		//	string docUri = null;
-		//	float scrubberPosition = 0;
-		//	IDocument document = m_documentRegistry.ActiveDocument;
-		//	if ( document != null )
-		//	{
-		//		docUri = pico.Paths.UriToPicoDemoPath( document.Uri );
-		//		TimelineDocument timelineDocument = document.As<TimelineDocument>();
-		//		scrubberPosition = timelineDocument.ScrubberManipulator.Position;
-		//	}
-
-		//	if ( string.IsNullOrEmpty( docUri ) )
-		//		docUri = "*";
-
-		//	hubMsg.appendString( docUri );
-		//	hubMsg.appendString( editMode.ToString() ); // what mode
-		//	hubMsg.appendFloat( scrubberPosition );
-
-		//	m_hubService.sendAlways( hubMsg );
-		//}
-
 		public void hubService_sendPlayPause()
 		{
-			//HubMessage hubMsg = new HubMessage( TIMELINEEDITOR_TAG );
-			//hubMsg.appendString( "editMode" ); // command
-
-			//string docUri = null;
-			//float scrubberPosition = 0;
-			//IDocument document = m_documentRegistry.ActiveDocument;
-			//if ( document != null )
-			//{
-			//	docUri = pico.Paths.UriToPicoDemoPath( document.Uri );
-			//	TimelineDocument timelineDocument = document.As<TimelineDocument>();
-			//	scrubberPosition = timelineDocument.ScrubberManipulator.Position;
-			//}
-
-			//if ( string.IsNullOrEmpty( docUri ) )
-			//	docUri = "*";
-
-			//hubMsg.appendString( docUri );
-			//hubMsg.appendString( play ? "Preview" : "Editing" ); // what mode
-			//hubMsg.appendFloat( scrubberPosition );
-
-			//m_hubService.send( hubMsg );
-
 			HubMessage hubMsg = new HubMessage( TIMELINEEDITOR_TAG );
 			hubMsg.appendString( "playPause" ); // command
 			hubMsg.appendInt( Playing ? 1 : 0 );
@@ -196,44 +129,14 @@ namespace picoTimelineEditor
 			m_hubService.send( hubMsg );
 		}
 
-		//private bool hubService_validate( out string docUri )
-		//{
-		//	docUri = "";
-
-		//	if ( m_hubService == null )
-		//		return false;
-
-		//	if ( m_hubService.BlockOutboundTraffic )
-		//		return false;
-
-		//	IDocument document = m_documentRegistry.ActiveDocument;
-		//	if ( document == null )
-		//		return false;
-
-		//	docUri = pico.Paths.UriToPicoDemoPath( document.Uri );
-		//	if ( docUri.Length == 0 )
-		//	{
-		//		Outputs.WriteLine( OutputMessageType.Error, "Timeline document {0} is not located within PICO_DEMO\\data folder!", document.Uri.LocalPath );
-		//		return false;
-		//	}
-
-		//	return true;
-		//}
-
 		public void hubService_sendScrubberPosition()
 		{
-			//if ( m_editMode != EditMode.Editing || m_receivingScrubberPos )
 			if ( m_receivingScrubberPos )
 				return;
-
-			//string docFilename;
-			//if ( ! hubService_validate(out docFilename) )
-			//	return;
 
 			HubMessage hubMsg = new HubMessage( TIMELINEEDITOR_TAG );
 			hubMsg.appendString( "scrubberPos" );
 
-			//hubMsg.appendString( docFilename );
 			string docUri = null;
 			float scrubberPosition = 0;
 
