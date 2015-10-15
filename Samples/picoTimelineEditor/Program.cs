@@ -134,6 +134,8 @@ namespace picoTimelineEditor
 						batchConverter.batchConvert();
 					}
 				}
+
+				pico.ServicesLauncher.LaunchServices();
 			};
 
             var batch = new CompositionBatch();

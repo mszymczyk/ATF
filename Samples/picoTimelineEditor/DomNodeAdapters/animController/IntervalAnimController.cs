@@ -118,9 +118,16 @@ namespace picoTimelineEditor.DomNodeAdapters
 		#region ITimelineObjectCreator Members
 		ITimelineObject ITimelineObjectCreator.Create()
 		{
-			DomNode dn = new DomNode( Schema.intervalAnimControllerType.Type );
-			IntervalAnimController i = dn.As<IntervalAnimController>();
-			return i;
+			DomNodeType nodeType = Schema.intervalAnimControllerType.Type;
+			DomNode dn = new DomNode( nodeType );
+
+			NodeTypePaletteItem paletteItem = nodeType.GetTag<NodeTypePaletteItem>();
+			if (paletteItem != null)
+				dn.SetAttribute( nodeType.IdAttribute, paletteItem.Name );
+			else
+				dn.SetAttribute( nodeType.IdAttribute, "AnimController" );
+
+			return dn.Cast<ITimelineObject>();
 		}
 		#endregion
 

@@ -54,8 +54,7 @@ namespace picoTimelineEditor
 						if ( !document.Dirty )
 							continue;
 
-						TimelineHubCommunication hubComm = document.Cast<TimelineHubCommunication>();
-						hubComm.sendReloadTimeline( false );
+						hubService_sendReloadTimeline( document.Cast<TimelineDocument>(), false );
 					}
 
 					//m_animListEditor.RemoveAllItems();
@@ -258,6 +257,37 @@ namespace picoTimelineEditor
 			m_hubService.send( hubMsg );
 		}
 
+		public void hubService_sendReloadTimeline( TimelineDocument document, bool scrollToTime )
+		{
+			if (m_isWriting)
+				return;
+
+			string docUri = pico.Paths.UriToPicoDemoPath( document.Uri );
+			if ( string.IsNullOrEmpty( docUri ) )
+			{
+				Outputs.WriteLine( OutputMessageType.Error, "Document's path is not within PICO_DEMO directory!" );
+				return;
+			}
+
+			m_isWriting = true;
+
+			MemoryStream stream = new MemoryStream();
+			var writer = new TimelineXmlWriter( s_schemaLoader.TypeCollection );
+
+			HubMessage hubMessage = new HubMessage( TIMELINEEDITOR_TAG );
+			hubMessage.appendString( "reloadTimeline" );
+			hubMessage.appendString( docUri );
+			hubMessage.appendInt( scrollToTime ? 1 : 0 );
+			hubMessage.appendInt( (int) stream.Length );
+			hubMessage.appendBytes( stream.ToArray() );
+			hubMessage.appendFloat( document.ScrubberManipulator.Position );
+
+			m_hubService.send( hubMessage );
+
+			m_isWriting = false;
+		}
+
 		private bool m_receivingScrubberPos;
+		private bool m_isWriting; // to prevent endless recursion while serializing DOM with TimelineXmlWriter
 	}
 }

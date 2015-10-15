@@ -17,6 +17,9 @@ namespace pico
 			PICO_DEMO_dataWin = PICO_DEMO + "dataWin\\";
 			texconv_exe = PICO_ROOT + "bin64\\texconv.exe";
 			nvcompress_exe = PICO_ROOT + "bin64\\nvcompress.exe";
+			picoServicesLauncher_exe = PICO_ROOT + "bin\\picoServicesLauncher.exe";
+			picoHub_exe = PICO_ROOT + "bin64\\picoHub.exe";
+			picoLogOutput_exe = PICO_ROOT + "bin\\picoLogOutput.exe";
 
 			string sdkDirEnvVar = Environment.GetEnvironmentVariable( "SCE_ORBIS_SDK_DIR" );
 			if ( sdkDirEnvVar != null && sdkDirEnvVar.Length > 0 )
@@ -97,6 +100,9 @@ namespace pico
 		public static readonly string PICO_DEMO_dataWin;
 		public static readonly string texconv_exe;
 		public static readonly string nvcompress_exe;
+		public static readonly string picoServicesLauncher_exe;
+		public static readonly string picoHub_exe;
+		public static readonly string picoLogOutput_exe;
 
 		// ps4 stuff
 		//
