@@ -177,7 +177,7 @@ namespace picoAnimClipEditor.DomNodeAdapters
 						{
 							trackAnim.AnimFile = animFile;
 							System.Diagnostics.Debug.Assert( track.Intervals.Count == 1 );
-							Interval interval = track.Intervals[0].Cast<Interval>();
+							IntervalAnim interval = track.Intervals[0].Cast<IntervalAnim>();
 							if ( interval.Length != trackAnim.AnimDuration )
 							{
 								interval.Length = trackAnim.AnimDuration;

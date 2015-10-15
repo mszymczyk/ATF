@@ -40,8 +40,7 @@ namespace TextureEditor
 			ControlInfo cinfo = new ControlInfo("Texture Preview", "texture viewer", StandardControlGroup.CenterPermanent);
 			m_controlHostService.RegisterControl(m_previewWindow, cinfo, null);
 
-			string PICO_DEMO = Environment.GetEnvironmentVariable( "PICO_DEMO" );
-			m_resourceLister.SetRootFolder( new CustomFileSystemResourceFolder( PICO_DEMO ) );
+			m_resourceLister.SetRootFolder( new CustomFileSystemResourceFolder( pico.Paths.PICO_DEMO ) );
 
 			//m_resourceLister.SelectionChanged += resourceLister_SelectionChanged;
 			m_resourceLister.ThumbnailControl.SelectionChanged += resourceLister_SelectionChanged_ThumbnailView;

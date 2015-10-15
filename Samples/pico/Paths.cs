@@ -91,12 +91,12 @@ namespace pico
 			return newPath;
 		}
 
-		public static readonly string PICO_ROOT;// = Path.GetFullPath( Environment.GetEnvironmentVariable( "PICO_ROOT" ) + "\\" );
-		public static readonly string PICO_DEMO;// = Path.GetFullPath( Environment.GetEnvironmentVariable( "PICO_DEMO" ) + "\\" );
-		public static readonly string PICO_DEMO_data;// = PICO_DEMO + "data\\";
-		public static readonly string PICO_DEMO_dataWin;// = PICO_DEMO + "dataWin\\";
-		public static readonly string texconv_exe;// = PICO_ROOT + "bin64\\texconv.exe";
-		public static readonly string nvcompress_exe;// = PICO_ROOT + "bin64\\nvcompress.exe";
+		public static readonly string PICO_ROOT;
+		public static readonly string PICO_DEMO;
+		public static readonly string PICO_DEMO_data;
+		public static readonly string PICO_DEMO_dataWin;
+		public static readonly string texconv_exe;
+		public static readonly string nvcompress_exe;
 
 		// ps4 stuff
 		//

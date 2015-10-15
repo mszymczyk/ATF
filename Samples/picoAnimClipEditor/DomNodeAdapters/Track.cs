@@ -88,14 +88,22 @@ namespace picoAnimClipEditor.DomNodeAdapters
 			return Name;
 		}
 
-		public virtual bool CanParentTo( DomNode parent )
+		public bool CanParentTo( DomNode parent )
 		{
-			return true;
+			return ValidateImpl( parent, 0 );
 		}
 
-		public virtual bool Validate( DomNode parent )
+		public bool Validate( DomNode parent )
 		{
-			return true;
+			return ValidateImpl( parent, 1 );
+		}
+
+		private bool ValidateImpl( DomNode parent, int validating )
+		{
+			if ( parent.Type == Schema.groupType.Type || parent.Type == Schema.trackType.Type )
+				return true;
+
+			return false;
 		}
 	}
 }

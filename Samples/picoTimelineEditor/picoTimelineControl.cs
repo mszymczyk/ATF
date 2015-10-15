@@ -34,7 +34,7 @@ namespace picoTimelineEditor
 		public override float ConstrainFrameOffset( float offset )
 		{
 			//return (float)Math.Round(offset);
-			return (float)MathUtil.Snap( offset, 10.0f );
+			return (float)MathUtil.Snap( offset, 100.0f );
 		}
 
 

@@ -124,6 +124,8 @@ namespace picoTimelineEditor
             m_controlHostService = controlHostService;
             m_documentService = documentService;
             m_settingsService = settingsService;
+
+			Playing = true;
         }
 
         /// <summary>
@@ -267,15 +269,18 @@ namespace picoTimelineEditor
 				m_luaEditorPanelControlInfo,
 				this );
 
+			m_hubService.MessageReceived += hubService_receiveMessages;
+
 			D2dScrubberManipulator.Moved += ( object sender, EventArgs e ) =>
 			{
 				D2dScrubberManipulator scrubber = sender as D2dScrubberManipulator;
 				if ( scrubber == null )
 					return;
 
-				TimelineHubCommunication hubComm = scrubber.Owner.TimelineDocument.Cast<TimelineHubCommunication>();
-				//hubComm.sendScrubberPosition( scrubber.Position );
-				hubComm.sendScrubberPosition();
+				//TimelineHubCommunication hubComm = scrubber.Owner.TimelineDocument.Cast<TimelineHubCommunication>();
+				////hubComm.sendScrubberPosition( scrubber.Position );
+				//hubComm.sendScrubberPosition();
+				hubService_sendScrubberPosition();
 			};
 
 			m_mainForm.DragEnter += mainForm_DragEnter;
@@ -1041,6 +1046,7 @@ namespace picoTimelineEditor
 		}
 
 		private EditMode m_editMode;
+		public static bool Playing { get; set; }
 
         /// <summary>
         /// A collection of all ITimelineDocuments that have been loaded. This is necessary so that we can 

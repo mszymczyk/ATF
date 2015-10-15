@@ -579,11 +579,6 @@ namespace TextureEditor
 			string outputFileWin = outputFileWin_tmp + ".dds";
 			return outputFileWin;
 		}
-
-		//private static readonly string PICO_ROOT = Path.GetFullPath( Environment.GetEnvironmentVariable( "PICO_ROOT" ) + "\\" );
-		//private static readonly string PICO_DEMO = Path.GetFullPath( Environment.GetEnvironmentVariable( "PICO_DEMO" ) + "\\" );
-		//private static readonly string texconv_exe = PICO_ROOT + "bin64\\texconv.exe";
-		//private static readonly string nvcompress_exe = PICO_ROOT + "bin64\\nvcompress.exe";
  
 		private MainForm m_mainForm;
 		private SchemaLoader m_schemaLoader;

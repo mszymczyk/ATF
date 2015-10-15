@@ -219,7 +219,7 @@ namespace picoAnimClipEditor
 				formatEditor.MaxDropDownItems = 12;
 				var apd = new CustomEnableAttributePropertyDescriptor(
 					"Position".Localize(),
-					Schema.keySoundType.positionAttribute,
+					Schema.intervalCharacterSoundType.positionAttribute,
 					"Sound".Localize(),
 					"Specifies joint on character where to attach sound source".Localize(),
 					false,

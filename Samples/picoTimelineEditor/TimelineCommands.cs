@@ -27,12 +27,13 @@ namespace picoTimelineEditor
         /// <param name="commandService">Command service</param>
         /// <param name="contextRegistry">Context registry</param>
         [ImportingConstructor]
-        public TimelineCommands(ICommandService commandService, IContextRegistry contextRegistry, HubService hubService, TimelineEditor timelineEditor )
+        public TimelineCommands(ICommandService commandService, IContextRegistry contextRegistry, IDocumentRegistry documentRegistry, HubService hubService, TimelineEditor timelineEditor )
         {
             m_commandService = commandService;
             m_contextRegistry = contextRegistry;
+			m_documentRegistry = documentRegistry;
 			m_hubService = hubService;
-			m_hubService.BlockOutboundTraffic = true;
+			//m_hubService.BlockOutboundTraffic = true;
 			m_timelineEditor = timelineEditor;
         }
 
@@ -157,27 +158,27 @@ namespace picoTimelineEditor
 			//TimelineMenu.GetToolStrip().Items.Add( m_editMode );
 
 
-			m_commandService.RegisterCommand(
-				Command.EditingMode,
-				"Timeline",
-				null,
-				"Editing Mode",
-				"Enable Editing Mode",
-				Keys.E,
-				Resources.EditingImage,
-				CommandVisibility.Default,
-				this );
+			//m_commandService.RegisterCommand(
+			//	Command.EditingMode,
+			//	"Timeline",
+			//	null,
+			//	"Editing Mode",
+			//	"Enable Editing Mode",
+			//	Keys.E,
+			//	Resources.EditingImage,
+			//	CommandVisibility.Default,
+			//	this );
 
-			m_commandService.RegisterCommand(
-				Command.StandaloneMode,
-				"Timeline",
-				null,
-				"Standalone Mode",
-				"Enable Standalone Mode",
-				Keys.R,
-				Resources.StandaloneImage,
-				CommandVisibility.Default,
-				this );
+			//m_commandService.RegisterCommand(
+			//	Command.StandaloneMode,
+			//	"Timeline",
+			//	null,
+			//	"Standalone Mode",
+			//	"Enable Standalone Mode",
+			//	Keys.R,
+			//	Resources.StandaloneImage,
+			//	CommandVisibility.Default,
+			//	this );
 
 			m_playPauseCommandInfo = m_commandService.RegisterCommand(
 				Command.PlayPause,
@@ -230,18 +231,46 @@ namespace picoTimelineEditor
                         commandState.Check = document.SplitManipulator != null ? document.SplitManipulator.Active : false;
                         break;
 
-					case Command.EditingMode:
-						commandState.Check = m_timelineEditor.EditMode == EditMode.Editing;
-						break;
-					case Command.StandaloneMode:
-						commandState.Check = m_timelineEditor.EditMode == EditMode.Standalone;
-						break;
+					//case Command.EditingMode:
+					//	commandState.Check = m_timelineEditor.EditMode == EditMode.Editing;
+					//	break;
+					//case Command.StandaloneMode:
+					//	commandState.Check = m_timelineEditor.EditMode == EditMode.Standalone;
+					//	break;
 
 					case Command.PlayPause:
-						if (m_playPauseCommandInfo.ImageName == pico.ResourcesRegistry.PlayImage)
-							commandState.Text = "Play";
-						else
+						//if (m_playPauseCommandInfo.ImageName == pico.ResourcesRegistry.PlayImage)
+						//	commandState.Text = "Play";
+						//else
+						//	commandState.Text = "Pause";
+
+						CommandService cs = (CommandService) m_commandService;
+
+						if ( TimelineEditor.Playing && m_playPauseCommandInfo.ImageName != pico.ResourcesRegistry.PauseImage )
+						{
+							m_playPauseCommandInfo.ImageName = pico.ResourcesRegistry.PauseImage;
 							commandState.Text = "Pause";
+
+							if ( cs != null )
+								cs.RefreshImage( m_playPauseCommandInfo );
+						}
+						else if ( !TimelineEditor.Playing && m_playPauseCommandInfo.ImageName != pico.ResourcesRegistry.PlayImage  )
+						{
+							m_playPauseCommandInfo.ImageName = pico.ResourcesRegistry.PlayImage;
+							commandState.Text = "Play";
+
+							if ( cs != null )
+								cs.RefreshImage( m_playPauseCommandInfo );
+						}
+
+						//m_timelineEditor.hubService_sendPlayPause();
+
+						//if ( m_playPauseCommandInfo.ImageName == pico.ResourcesRegistry.PlayImage )
+						//{
+						//}
+						//else
+						//{
+						//}
 						break;
                 }
             }
@@ -263,35 +292,35 @@ namespace picoTimelineEditor
             {
 				Command command = (Command)commandTag;
 
-				if (command == Command.EditingMode)
-				{
-					if ( doing )
-						m_timelineEditor.changeEditMode( EditMode.Editing );
-					return true;
-				}
-				else if (command == Command.StandaloneMode)
-				{
-					if (doing)
-						m_timelineEditor.changeEditMode( EditMode.Standalone );
-					return true;
-				}
-				else if (command == Command.PlayPause)
+				//if (command == Command.EditingMode)
+				//{
+				//	if ( doing )
+				//	{
+				//		m_timelineEditor.changeEditMode( EditMode.Editing );
+				//		setPlayPause( false );
+				//	}
+				//	return true;
+				//}
+				//else if (command == Command.StandaloneMode)
+				//{
+				//	if ( doing )
+				//	{
+				//		m_timelineEditor.changeEditMode( EditMode.Standalone );
+				//	}
+				//	return true;
+				//}
+				//else
+				if (command == Command.PlayPause)
 				{
 					if ( doing )
 					{
-						if (m_playPauseCommandInfo.ImageName == pico.ResourcesRegistry.PlayImage)
-						{
-							m_playPauseCommandInfo.ImageName = pico.ResourcesRegistry.PauseImage;
-						}
-						else
-						{
-							m_playPauseCommandInfo.ImageName = pico.ResourcesRegistry.PlayImage;
-						}
-
-						CommandService cs = (CommandService) m_commandService;
-						if (cs != null)
-							cs.RefreshImage( m_playPauseCommandInfo );
+						togglePlayPause();
 					}
+					//else
+					//{
+					//	if ( m_timelineEditor.EditMode != EditMode.Editing )
+					//		return false;
+					//}
 
 					return true;
 				}
@@ -399,50 +428,95 @@ namespace picoTimelineEditor
             RemoveTrack,
             RemoveEmptyGroupsAndTracks,
             ToggleSplitMode,
-			EditingMode,
-			StandaloneMode,
+			//EditingMode,
+			//StandaloneMode,
 			PlayPause
         }
 
         private ICommandService m_commandService;
         private IContextRegistry m_contextRegistry;
+		private IDocumentRegistry m_documentRegistry;
 		private HubService m_hubService;
 		private TimelineEditor m_timelineEditor;
 
+		private void togglePlayPause()
+		{
+			TimelineEditor.Playing = !TimelineEditor.Playing;
+			setPlayPause( TimelineEditor.Playing );
+		}
+
+		private void setPlayPause( bool play )
+		{
+			TimelineEditor.Playing = play;
+
+			//if ( TimelineEditor.Playing )
+			//{
+			//	m_playPauseCommandInfo.ImageName = pico.ResourcesRegistry.PauseImage;
+			//}
+			//else
+			//{
+			//	m_playPauseCommandInfo.ImageName = pico.ResourcesRegistry.PlayImage;
+			//}
+
+			m_timelineEditor.hubService_sendPlayPause();
+			//m_timelineEditor.hubService_sendScrubberPosition();
+
+			//if ( m_playPauseCommandInfo.ImageName == pico.ResourcesRegistry.PlayImage )
+			//{
+			//}
+			//else
+			//{
+			//}
+
+			//CommandService cs = (CommandService) m_commandService;
+			//if ( cs != null )
+			//	cs.RefreshImage( m_playPauseCommandInfo );
+		}
+
 		private void contextRegistry_ActiveContextChanged( object sender, System.EventArgs e )
 		{
-			m_autoPlay.contextRegistry_ActiveContextChanged( sender, e );
+			//m_autoPlay.contextRegistry_ActiveContextChanged( sender, e );
 
-			TimelineContext context = m_contextRegistry.GetActiveContext<TimelineContext>();
-			if ( context == null )
-				return;
+			m_timelineEditor.hubService_sendSelectTimeline();
+			m_timelineEditor.hubService_sendPlayPause();
 
-			TimelineDocument document = context.As<TimelineDocument>();
-			if ( document == null )
-				return;
-
-			//TimelineHubCommunication hubComm = context.As<TimelineHubCommunication>();
-			//if ( hubComm == null )
+			//TimelineContext context = m_contextRegistry.GetActiveContext<TimelineContext>();
+			//if ( context == null )
 			//	return;
 
-			//string editMode = m_editMode.SelectedItem as string;
-			string editMode = m_timelineEditor.EditMode.ToString();
-			//hubComm.setEditMode( editMode );
+			//TimelineDocument document = context.As<TimelineDocument>();
+			//if ( document == null )
+			//	return;
 
-			if ( editMode == "Editing" )
-			{
-				string docUri = pico.Paths.UriToPicoDemoPath( document.Uri );
-				if ( docUri.Length > 0 )
-				{
-					HubMessage hubMsg = new HubMessage( TimelineHubCommunication.TIMELINE_TAG );
-					//hubMsg.appendString( "currentDocument" ); // command
-					hubMsg.appendString( "editMode" ); // command
-					hubMsg.appendString( docUri ); // what timeline
-					hubMsg.appendString( editMode );
-					hubMsg.appendFloat( document.ScrubberManipulator.Position );
-					m_hubService.send( hubMsg );
-				}
-			}
+			////TimelineHubCommunication hubComm = context.As<TimelineHubCommunication>();
+			////if ( hubComm == null )
+			////	return;
+
+			//////string editMode = m_editMode.SelectedItem as string;
+			////string editMode = m_timelineEditor.EditMode.ToString();
+			//////hubComm.setEditMode( editMode );
+
+			////if ( editMode == "Editing" )
+			////{
+			////	string docUri = pico.Paths.UriToPicoDemoPath( document.Uri );
+			////	if ( docUri.Length > 0 )
+			////	{
+			////		HubMessage hubMsg = new HubMessage( TimelineHubCommunication.TIMELINE_TAG );
+			////		//hubMsg.appendString( "currentDocument" ); // command
+			////		hubMsg.appendString( "editMode" ); // command
+			////		hubMsg.appendString( docUri ); // what timeline
+			////		hubMsg.appendString( editMode );
+			////		hubMsg.appendFloat( document.ScrubberManipulator.Position );
+			////		m_hubService.send( hubMsg );
+			////	}
+			////}
+
+			//string docUri = pico.Paths.UriToPicoDemoPath( document.Uri );
+
+			//HubMessage hubMsg = new HubMessage( TimelineHubCommunication.TIMELINE_TAG );
+			//hubMsg.appendString( "selectTimeline" ); // command
+			//hubMsg.appendString( docUri ); // what timeline
+			//m_hubService.send( hubMsg );
 
 			//string editMode = hubComm.getEditMode();
 			//for ( int i = 0; i < m_editMode.Items.Count; ++i )
@@ -473,47 +547,47 @@ namespace picoTimelineEditor
 					m_scrubberPosTextBox.Text = inewPos.ToString();
 				};
 
-				m_stopWatch = new System.Diagnostics.Stopwatch();
+				//m_stopWatch = new System.Diagnostics.Stopwatch();
 
-				m_timer = new Timer();
-				m_timer.Interval = 16; // 10 secs
-				m_timer.Tick += (object sender, System.EventArgs e ) =>
-				{
-					long milis = m_stopWatch.ElapsedMilliseconds;
-					float newPosition = setScrubberPosition( (float)milis, true );
+				//m_timer = new Timer();
+				//m_timer.Interval = 16; // 10 secs
+				//m_timer.Tick += (object sender, System.EventArgs e ) =>
+				//{
+				//	long milis = m_stopWatch.ElapsedMilliseconds;
+				//	float newPosition = setScrubberPosition( (float)milis, true );
 
-					m_stopWatch.Restart();
-				};
+				//	m_stopWatch.Restart();
+				//};
 
-				m_playTimelineButton = new ToolStripButton();
-				m_playTimelineButton.Name = "PlayTimeline";
-				m_playTimelineButton.Text = "Play".Localize();
-				m_playTimelineButton.Click += delegate
-				{
-					if ( m_playTimelineButton.Text == "Play" )
-					{
-						// start playing timeline
-						//
-						m_playTimelineButton.Text = "Pause";
-						m_playTimelineButtonOrigColor = m_playTimelineButton.BackColor;
-						m_playTimelineButton.BackColor = System.Drawing.Color.Red;
-						m_stopWatch.Restart();
-						m_timer.Start();
+				//m_playTimelineButton = new ToolStripButton();
+				//m_playTimelineButton.Name = "PlayTimeline";
+				//m_playTimelineButton.Text = "Play".Localize();
+				//m_playTimelineButton.Click += delegate
+				//{
+				//	if ( m_playTimelineButton.Text == "Play" )
+				//	{
+				//		// start playing timeline
+				//		//
+				//		m_playTimelineButton.Text = "Pause";
+				//		m_playTimelineButtonOrigColor = m_playTimelineButton.BackColor;
+				//		m_playTimelineButton.BackColor = System.Drawing.Color.Red;
+				//		m_stopWatch.Restart();
+				//		m_timer.Start();
 
-					}
-					else
-					{
-						// stop playing timeline
-						//
-						m_playTimelineButton.Text = "Play";
-						m_playTimelineButton.BackColor = m_playTimelineButtonOrigColor;
-						m_timer.Stop();
-					}
-				};
+				//	}
+				//	else
+				//	{
+				//		// stop playing timeline
+				//		//
+				//		m_playTimelineButton.Text = "Play";
+				//		m_playTimelineButton.BackColor = m_playTimelineButtonOrigColor;
+				//		m_timer.Stop();
+				//	}
+				//};
 
 				MenuInfo menuInfo = TimelineMenu;
 				//MenuInfo menuInfo = MenuInfo.Edit;
-				menuInfo.GetToolStrip().Items.Add( m_playTimelineButton );
+				//menuInfo.GetToolStrip().Items.Add( m_playTimelineButton );
 
 				m_resetTimelineButton = new ToolStripButton();
 				m_resetTimelineButton.Name = "ResetTimeline";
@@ -570,19 +644,19 @@ namespace picoTimelineEditor
 				return document.ScrubberManipulator.Position;
 			}
 
-			public void contextRegistry_ActiveContextChanged( object sender, System.EventArgs e )
-			{
-				m_timer.Stop();
-				m_stopWatch.Stop();
-			}
+			//public void contextRegistry_ActiveContextChanged( object sender, System.EventArgs e )
+			//{
+			//	m_timer.Stop();
+			//	m_stopWatch.Stop();
+			//}
 
 			private IContextRegistry m_contextRegistry;
-			private ToolStripButton m_playTimelineButton;
+			//private ToolStripButton m_playTimelineButton;
 			private ToolStripButton m_resetTimelineButton;
 			private ToolStripTextBox m_scrubberPosTextBox;
-			private System.Drawing.Color m_playTimelineButtonOrigColor;
-			private System.Windows.Forms.Timer m_timer;
-			private System.Diagnostics.Stopwatch m_stopWatch;
+			//private System.Drawing.Color m_playTimelineButtonOrigColor;
+			//private System.Windows.Forms.Timer m_timer;
+			//private System.Diagnostics.Stopwatch m_stopWatch;
 		};
 
 		private TimelineAutoPlay m_autoPlay;
@@ -592,5 +666,6 @@ namespace picoTimelineEditor
             new MenuInfo( "Timeline", "Timeline".Localize( "this is the name of a menu" ), "Timeline Commands".Localize() );
 
 		private CommandInfo m_playPauseCommandInfo;
+		//private bool m_playing;
 	}
 }

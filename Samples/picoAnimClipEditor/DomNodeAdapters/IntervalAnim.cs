@@ -15,14 +15,14 @@ namespace picoAnimClipEditor.DomNodeAdapters
 {
     /// <summary>
     /// Adapts DomNode to an Interval</summary>
-	public class IntervalAnim : DomNodeAdapter, ITimelineValidationCallback
+	public class IntervalAnim : Interval, ITimelineValidationCallback
     {
-		public virtual bool CanParentTo( DomNode parent )
+		public override bool CanParentTo( DomNode parent )
 		{
 			return true;
 		}
 
-		public virtual bool Validate( DomNode parent )
+		public override bool Validate( DomNode parent )
 		{
 			return true;
 		}
