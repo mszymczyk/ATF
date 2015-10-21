@@ -948,6 +948,19 @@ namespace picoAnimClipEditor
 				picoDemoPath = Path.ChangeExtension( picoDemoPath, ".anim" );
 				_UpdateAnimRecursively( picoDemoPath, m_animListEditor.TreeView.Root );
 			}
+			//else if ( ext == ".bnk" )
+			//{
+			//	pico.ScreamInterop.RefreshBank( picoDemoPath );
+			//	ISelectionContext selCtx = m_contextRegistry.GetActiveContext<ISelectionContext>();
+			//	if ( selCtx != null )
+			//	{
+			//		List<object> oldSelection = new List<object>();
+			//		IEnumerable<object> oldSel = selCtx.Selection;
+			//		oldSel.ForEach( oldSelection.Add );
+			//		selCtx.Set( new object() );
+			//		selCtx.SetRange( oldSelection );
+			//	}
+			//}
 		}
 
 		private void _UpdateAnimRecursively( string picoDemoPath, object root )

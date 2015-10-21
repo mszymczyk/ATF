@@ -171,18 +171,6 @@ namespace picoAnimClipEditor
 			{
 				//PropertyDescriptorCollection propDescCollection = Schema.keySoundType.Type.GetTag<PropertyDescriptorCollection>();
 
-				//var formatEditor = new DynamicLongEnumEditor( new KeySoundPositionLister() );
-				//formatEditor.MaxDropDownItems = 12;
-				//var apd = new CustomEnableAttributePropertyDescriptor(
-				//	"Position".Localize(),
-				//	Schema.keySoundType.positionAttribute,
-				//	"Sound".Localize(),
-				//	"Specifies joint on character where to attach sound source".Localize(),
-				//	false,
-				//	formatEditor
-				//	 , new CustomEnableAttributePropertyDescriptorCallback( Schema.keySoundType.positionalAttribute, CustomEnableAttributePropertyDescriptorCallback.Condition.ReadOnlyIfSetToFalse )
-				//);
-				//propDescCollection.Add( apd );
 				PropertyDescriptorCollection propDescCollection = Schema.keySoundType.Type.GetTag<PropertyDescriptorCollection>();
 				var formatEditor = new LongEnumEditor();
 				formatEditor.DefineEnum( new string[] { 
@@ -204,6 +192,18 @@ namespace picoAnimClipEditor
 						, new CustomEnableAttributePropertyDescriptorCallback( Schema.keySoundType.positionalAttribute, CustomEnableAttributePropertyDescriptorCallback.Condition.ReadOnlyIfSetToFalse )
 				);
 				propDescCollection.Add( apd );
+
+				var formatEditor2 = new DynamicLongEnumEditor( new KeySoundLister() );
+				formatEditor2.MaxDropDownItems = 12;
+				var apd2 = new AttributePropertyDescriptor(
+					"Sound".Localize(),
+					Schema.keySoundType.soundAttribute,
+					"Sound".Localize(),
+					"Sound to be played from sound bank".Localize(),
+					false,
+					formatEditor2
+				);
+				propDescCollection.Add( apd2 );
 			}
 			{
 				PropertyDescriptorCollection propDescCollection = Schema.intervalCharacterSoundType.Type.GetTag<PropertyDescriptorCollection>();

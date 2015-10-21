@@ -139,12 +139,18 @@ namespace picoAnimClipEditor
             //  components, via the System.Lazy class. IInitializable allows components to defer some operations
             //  until all MEF composition has been completed.
             container.InitializeAll();
-            
+
+			pico.ServicesLauncher.LaunchServices();
+
+			pico.ScreamInterop.StartUp();
+
             // Show the main form and start message handling. The main Form Load event provides a final chance
             //  for components to perform initialization and configuration.
             Application.Run(mainForm);
 
             container.Dispose();
-        }
+
+			pico.ScreamInterop.ShutDown();
+		}
     }
 }

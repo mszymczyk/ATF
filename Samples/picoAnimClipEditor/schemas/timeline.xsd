@@ -212,7 +212,7 @@
                                     editor="pico.Controls.PropertyEditing.picoFileUriEditor,pico:Sound banks (*.bnk)|*.bnk"
                                     converter="Sce.Atf.Controls.PropertyEditing.ReadOnlyConverter"
                                     category="Sound" />
-        <scea.dom.editors.attribute name="sound" displayName="Sound Name" description="Sound to be played from sound bank" category="Sound" />
+        <!--<scea.dom.editors.attribute name="sound" displayName="Sound Name" description="Sound to be played from sound bank" category="Sound" />-->
         <scea.dom.editors.attribute name="positional" displayName="Positional" description="Whether sound is located in space relative to character"
                                     editor="Sce.Atf.Controls.PropertyEditing.BoolEditor,Atf.Gui.WinForms"
                                     category="Sound"

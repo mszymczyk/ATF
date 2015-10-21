@@ -56,7 +56,7 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'">
     <DebugSymbols>true</DebugSymbols>
-    <OutputPath>..\..\bin\Debug.vs2010\</OutputPath>
+    <OutputPath>$(PICO_ROOT)bin\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
     <NoWarn>649</NoWarn>
@@ -67,7 +67,7 @@
     <CodeAnalysisIgnoreBuiltInRules>false</CodeAnalysisIgnoreBuiltInRules>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'">
-    <OutputPath>..\..\bin\Release.vs2010\</OutputPath>
+    <OutputPath>$(PICO_ROOT)bin\</OutputPath>
     <DefineConstants>TRACE</DefineConstants>
     <Optimize>true</Optimize>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
@@ -205,6 +205,10 @@
     <ProjectReference Include="..\..\Framework\Atf.SyntaxEditorControl\Atf.SyntaxEditorControl.vs2010.csproj">
       <Project>{d1a78912-9ad2-4555-8560-b251a4d751dc}</Project>
       <Name>Atf.SyntaxEditorControl.vs2010</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\picoScreamInterop\picoScreamInterop.csproj">
+      <Project>{9513d8ed-840e-41c8-85cf-9eb49aea7a82}</Project>
+      <Name>picoScreamInterop</Name>
     </ProjectReference>
     <ProjectReference Include="..\pico\pico.csproj">
       <Project>{78c1e637-8be0-46e0-89c1-517659588d9a}</Project>

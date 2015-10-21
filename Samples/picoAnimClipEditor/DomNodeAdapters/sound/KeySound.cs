@@ -26,6 +26,25 @@ namespace picoAnimClipEditor.DomNodeAdapters
 	//	}
 	//}
 
+	class KeySoundLister : DynamicLongEnumEditorLister
+	{
+		public string[] GetNames( PropertyEditorControlContext context )
+		{
+			KeySound keySound = context.LastSelectedObject.As<KeySound>();
+			if ( keySound == null )
+				// returning an non-empty string is necessary to avaid LongEnumEditorCrash
+				//
+				return new string[] { "#objectIsNotKeySound" };
+
+			//return keySound.GetAvailablePositions();
+			string[] soundNames = pico.ScreamInterop.GetBankSounds( keySound.SoundBank );
+			if ( soundNames == null || soundNames.Length == 0 )
+				return new string[] { "#noSoundsFound" };
+
+			return soundNames;
+		}
+	}
+
     /// <summary>
     /// Adapts DomNode to a Key</summary>
 	public class KeySound : Key
