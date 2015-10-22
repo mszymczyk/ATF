@@ -169,8 +169,6 @@ namespace picoAnimClipEditor
 			//	pico.Controls.PropertyEditing.CustomPropertyDescriptor<IntervalAnimController>.CreateDescriptors( propDescCollection );
 			//}
 			{
-				//PropertyDescriptorCollection propDescCollection = Schema.keySoundType.Type.GetTag<PropertyDescriptorCollection>();
-
 				PropertyDescriptorCollection propDescCollection = Schema.keySoundType.Type.GetTag<PropertyDescriptorCollection>();
 				var formatEditor = new LongEnumEditor();
 				formatEditor.DefineEnum( new string[] { 
@@ -193,8 +191,8 @@ namespace picoAnimClipEditor
 				);
 				propDescCollection.Add( apd );
 
-				var formatEditor2 = new DynamicLongEnumEditor( new KeySoundLister() );
-				formatEditor2.MaxDropDownItems = 12;
+				var formatEditor2 = new DynamicEnumUITypeEditor( new KeySoundLister() );
+				formatEditor2.MaxDropDownItems = 16;
 				var apd2 = new AttributePropertyDescriptor(
 					"Sound".Localize(),
 					Schema.keySoundType.soundAttribute,
@@ -228,6 +226,17 @@ namespace picoAnimClipEditor
 				);
 				propDescCollection.Add( apd );
 
+				var formatEditor2 = new DynamicEnumUITypeEditor( new IntervalCharacterSoundLister() );
+				formatEditor2.MaxDropDownItems = 16;
+				var apd2 = new AttributePropertyDescriptor(
+					"Sound".Localize(),
+					Schema.intervalCharacterSoundType.soundAttribute,
+					"Sound".Localize(),
+					"Sound to be played from sound bank".Localize(),
+					false,
+					formatEditor2
+				);
+				propDescCollection.Add( apd2 );
 			}
 		}
 

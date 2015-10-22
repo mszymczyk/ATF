@@ -12,31 +12,16 @@ using pico.Timeline;
 
 namespace picoAnimClipEditor.DomNodeAdapters
 {
-	//class KeySoundPositionLister : DynamicLongEnumEditorLister
-	//{
-	//	public string[] GetNames( PropertyEditorControlContext context )
-	//	{
-	//		KeySound keySound = context.LastSelectedObject.As<KeySound>();
-	//		if ( keySound == null )
-	//			// returning an non-empty string is necessary to avaid LongEnumEditorCrash
-	//			//
-	//			return new string[] { "fake" };
-
-	//		return keySound.GetAvailablePositions();
-	//	}
-	//}
-
-	class KeySoundLister : DynamicLongEnumEditorLister
+	class KeySoundLister : DynamicEnumUITypeEditorLister
 	{
-		public string[] GetNames( PropertyEditorControlContext context )
+		public string[] GetNames( object instance )
 		{
-			KeySound keySound = context.LastSelectedObject.As<KeySound>();
+			KeySound keySound = instance.As<KeySound>();
 			if ( keySound == null )
 				// returning an non-empty string is necessary to avaid LongEnumEditorCrash
 				//
 				return new string[] { "#objectIsNotKeySound" };
 
-			//return keySound.GetAvailablePositions();
 			string[] soundNames = pico.ScreamInterop.GetBankSounds( keySound.SoundBank );
 			if ( soundNames == null || soundNames.Length == 0 )
 				return new string[] { "#noSoundsFound" };
@@ -134,30 +119,6 @@ namespace picoAnimClipEditor.DomNodeAdapters
 
 			return true;
 		}
-
-		//public string[] GetAvailablePositions()
-		//{
-		//	TimelineContext tc = TimelineEditor.ContextRegistry.GetActiveContext<TimelineContext>();
-		//	//DomNode timelineNode = DomNode.GetRoot();
-		//	Timeline tim = tc.As<Timeline>();
-		//	if ( tim.AnimCategory == "princess" || tim.AnimCategory == "monster" || tim.AnimCategory == "queen" )
-		//	{
-		//		string[] availablePositions = new string[] {
-		//			"leftHand",
-		//			"rightHand",
-		//			"leftFoot",
-		//			"rightFoot",
-		//			"head",
-		//			"pelvis"
-		//		};
-
-		//		return availablePositions;
-		//	}
-
-		//	// returning an non-empty string is necessary to avaid LongEnumEditorCrash
-		//	//
-		//	return new string[] { "fake2" };
-		//}
 	}
 }
 

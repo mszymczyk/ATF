@@ -5,6 +5,7 @@ using Sce.Atf.Controls.Timelines;
 using Sce.Atf.Controls.PropertyEditing;
 using Sce.Atf.Adaptation;
 using pico.Controls.PropertyEditing;
+using System.ComponentModel;
 
 using pico.Timeline;
 
@@ -12,6 +13,24 @@ using pico.Timeline;
 
 namespace picoAnimClipEditor.DomNodeAdapters
 {
+	class IntervalCharacterSoundLister : DynamicEnumUITypeEditorLister
+	{
+		public string[] GetNames( object instance )
+		{
+			IntervalCharacterSound intervalCharacterSound = instance.As<IntervalCharacterSound>();
+			if ( intervalCharacterSound == null )
+				// returning an non-empty string is necessary to avaid LongEnumEditorCrash
+				//
+				return new string[] { "#objectIsNotIntervalCharacterSound" };
+
+			string[] soundNames = pico.ScreamInterop.GetBankSounds( intervalCharacterSound.SoundBank );
+			if ( soundNames == null || soundNames.Length == 0 )
+				return new string[] { "#noSoundsFound" };
+
+			return soundNames;
+		}
+	}
+
     /// <summary>
     /// Adapts DomNode to a Key</summary>
 	public class IntervalCharacterSound : Interval, ITimelineValidationCallback, ITimelineObjectCreator
@@ -84,7 +103,7 @@ namespace picoAnimClipEditor.DomNodeAdapters
 		public string SoundBank
 		{
 			get { return (string) DomNode.GetAttribute( Schema.intervalCharacterSoundType.soundBankAttribute ); }
-			set { DomNode.SetAttribute( Schema.intervalCharacterSoundType.soundBankAttribute, value ); }
+			set	{ DomNode.SetAttribute( Schema.intervalCharacterSoundType.soundBankAttribute, value ); }
 		}
 
 		/// <summary>

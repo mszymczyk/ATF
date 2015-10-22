@@ -46,7 +46,7 @@
   <ItemGroup>
     <Compile Include="Anim\AnimFileHeader.cs" />
     <Compile Include="Controls\PropertyEditing\CustomPropertyDescriptor.cs" />
-    <Compile Include="Controls\PropertyEditing\DynamicLongEnumEditor.cs" />
+    <Compile Include="Controls\PropertyEditing\DynamicEnumUITypeEditor.cs" />
     <Compile Include="Controls\TouchPad.cs">
       <SubType>Component</SubType>
     </Compile>

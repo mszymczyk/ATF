@@ -115,8 +115,8 @@ namespace picoAnimClipEditor
 
 			m_refreshSoundNames = new ToolStripButton();
 			m_refreshSoundNames.Enabled = true;
-			m_refreshSoundNames.Name = "RefreshSoundNames";
-			m_refreshSoundNames.Text = "RefreshSoundNames".Localize();
+			m_refreshSoundNames.Name = "RefreshSoundBanks";
+			m_refreshSoundNames.Text = "RefreshSoundBanks".Localize();
 			m_refreshSoundNames.Click += delegate
 			{
 				pico.ScreamInterop.RefreshAllBanks();

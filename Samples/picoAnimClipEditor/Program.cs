@@ -142,7 +142,29 @@ namespace picoAnimClipEditor
 
 			pico.ServicesLauncher.LaunchServices();
 
-			pico.ScreamInterop.StartUp();
+			if ( !pico.ScreamInterop.StartUp( new pico.ScreamInterop.LogCallbackType(
+				delegate( int messageType, string text )
+				{
+					Console.Write( text );
+
+					OutputMessageType omt = OutputMessageType.Info;
+					if ( messageType <= 1 )
+						omt = OutputMessageType.Error;
+					else if ( messageType == 2 )
+						omt = OutputMessageType.Warning;
+					else if ( messageType == 3 || messageType == 6 )
+						omt = OutputMessageType.Info;
+					else
+						// ignore
+						return;
+
+					Outputs.WriteLine( omt, text );
+				}
+				) )
+				)
+			{
+				Outputs.WriteLine( OutputMessageType.Error, "Couldn't launch Scream interop native dll" );
+			}
 
             // Show the main form and start message handling. The main Form Load event provides a final chance
             //  for components to perform initialization and configuration.
