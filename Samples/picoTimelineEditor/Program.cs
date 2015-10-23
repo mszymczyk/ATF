@@ -32,6 +32,10 @@ namespace picoTimelineEditor
         [STAThread]
 		static void Main( string[] args )
         {
+			// this must be called prior to loading HubService component
+			//
+			pico.ServicesLauncher.LaunchServices();
+
             // It's important to call these before starting the app; otherwise theming and bitmaps
             //  may not render correctly.
             Application.EnableVisualStyles();
@@ -147,8 +151,6 @@ namespace picoTimelineEditor
             //  components, via the System.Lazy class. IInitializable allows components to defer some operations
             //  until all MEF composition has been completed.
             container.InitializeAll();
-
-			pico.ServicesLauncher.LaunchServices();
 
             // Show the main form and start message handling. The main Form Load event provides a final chance
             //  for components to perform initialization and configuration.

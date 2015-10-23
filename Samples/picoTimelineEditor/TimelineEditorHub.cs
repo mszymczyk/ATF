@@ -176,6 +176,7 @@ namespace picoTimelineEditor
 
 			MemoryStream stream = new MemoryStream();
 			var writer = new TimelineXmlWriter( s_schemaLoader.TypeCollection );
+			writer.Write( document.DomNode, stream, document.Uri );
 
 			HubMessage hubMessage = new HubMessage( TIMELINEEDITOR_TAG );
 			hubMessage.appendString( "reloadTimeline" );

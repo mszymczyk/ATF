@@ -80,8 +80,20 @@ namespace pico.Hub
 			if ( BlockOutboundTraffic )
 				return;
 
-			byte[] bytes = msg.getFinalByteStream();
-			m_picoHubClientSocketOutbound.Send( bytes );
+			try
+			{
+				byte[] bytes = msg.getFinalByteStream();
+
+				m_picoHubClientSocketOutbound.Send( bytes );
+			}
+			catch ( SocketException sex )
+			{
+				Outputs.WriteLine( OutputMessageType.Error, "SocketException: send failed! " + sex.Message );
+			}
+			catch ( Exception ex )
+			{
+				Outputs.WriteLine( OutputMessageType.Error, "Exception: send failed! " + ex.Message );
+			}
 		}
 
 		public void sendAlways( HubMessage msg )
@@ -92,8 +104,19 @@ namespace pico.Hub
 				return;
 			}
 
-			byte[] bytes = msg.getFinalByteStream();
-			m_picoHubClientSocketOutbound.Send( bytes );
+			try
+			{
+				byte[] bytes = msg.getFinalByteStream();
+				m_picoHubClientSocketOutbound.Send( bytes );
+			}
+			catch ( SocketException sex )
+			{
+				Outputs.WriteLine( OutputMessageType.Error, "SocketException: send failed! " + sex.Message );
+			}
+			catch ( Exception ex )
+			{
+				Outputs.WriteLine( OutputMessageType.Error, "Exception: send failed! " + ex.Message );
+			}
 		}
 
 		public EventHandler< MessagesReceivedEventArgs > MessageReceived;

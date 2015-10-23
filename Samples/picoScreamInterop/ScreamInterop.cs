@@ -11,6 +11,10 @@ namespace pico
 	/// </summary>
     public static class ScreamInterop
     {
+		[UnmanagedFunctionPointer( CallingConvention.StdCall, CharSet = CharSet.Ansi )]
+		public delegate void LogCallbackType( int messageType, string text );
+		private static LogCallbackType s_logInstance;
+
 		[DllImport( "kernel32", CharSet = CharSet.Auto, SetLastError = true )]
 		public static extern IntPtr LoadLibrary( string fileName );
 
@@ -20,7 +24,7 @@ namespace pico
 		private static extern bool FreeLibrary( IntPtr hModule );
 
 		[DllImportAttribute( "picoScreamInteropNative.dll", EntryPoint = "picoScreamInteropNative_Initialize", CallingConvention = CallingConvention.StdCall )]
-		private static extern int NativeStartUp();
+		private static extern int NativeStartUp( LogCallbackType logCallback );
 
 		[DllImportAttribute( "picoScreamInteropNative.dll", EntryPoint = "picoScreamInteropNative_Shutdown", CallingConvention = CallingConvention.StdCall )]
 		private static extern int NativeShutDown();
@@ -34,19 +38,27 @@ namespace pico
 		[DllImportAttribute( "picoScreamInteropNative.dll", EntryPoint = "picoScreamInteropNative_GetBankSounds", CallingConvention = CallingConvention.StdCall )]
 		private static extern void NativeGetBankSounds( string bankName, out IntPtr unmanagedStringArray, out int iStringCount );
 
-
 		public static void RefreshBank( string bankName )
 		{
+			if ( s_libHandle == IntPtr.Zero )
+				return;
+
 			NativeRefreshBank( bankName );
 		}
 
 		public static void RefreshAllBanks()
 		{
+			if ( s_libHandle == IntPtr.Zero )
+				return;
+
 			NativeRefreshAllBanks();
 		}
 
 		public static string[] GetBankSounds( string bankName )
 		{
+			if ( s_libHandle == IntPtr.Zero )
+				return null;
+
 			IntPtr unmanagedStringArray = IntPtr.Zero;
 			int StringCount = 0;
 			NativeGetBankSounds( bankName, out unmanagedStringArray, out StringCount );
@@ -68,20 +80,27 @@ namespace pico
 		}
 
 
-		public static void StartUp()
+		public static bool StartUp( LogCallbackType logCallback )
 		{
 			s_libHandle = LoadLibrary( "picoScreamInteropNative.dll" );
+			if ( s_libHandle == IntPtr.Zero )
+				return false;
 
-			NativeStartUp();
+			s_logInstance = logCallback;
+
+			NativeStartUp( s_logInstance );
 
 			//string[] sounds = GetBankSounds( "sounds/beach.bnk" );
+			return true;
 		}
 
 		public static void ShutDown()
 		{
-			NativeShutDown();
-
-			FreeLibrary( s_libHandle );
+			if ( s_libHandle != IntPtr.Zero )
+			{
+				NativeShutDown();
+				FreeLibrary( s_libHandle );
+			}
 		}
 
 		private static IntPtr s_libHandle;
