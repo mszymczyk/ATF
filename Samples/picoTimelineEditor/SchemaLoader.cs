@@ -90,6 +90,8 @@ namespace picoTimelineEditor
 				Schema.keyLuaScriptType.Type.Define( new ExtensionInfo<LuaScript>() );
 				Schema.intervalTextType.Type.Define( new ExtensionInfo<IntervalText>() );
 				Schema.intervalNodeAnimationType.Type.Define( new ExtensionInfo<IntervalNodeAnimation>() );
+				Schema.trackBlendFactorType.Type.Define( new ExtensionInfo<TrackBlendFactor>() );
+				Schema.intervalBlendFactorType.Type.Define( new ExtensionInfo<IntervalBlendFactor>() );
 
 				// references
 				//

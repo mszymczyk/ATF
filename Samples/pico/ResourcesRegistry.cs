@@ -19,6 +19,16 @@ namespace pico
 		[ImageResource( "Play16.png", "Play24.png", "Play32.png" )]
 		public static readonly string PlayImage;
 
+		/// <summary>
+		/// Play icon name</summary>
+		[ImageResource( "FlipVertically16.png", "FlipVertically24.png", "FlipVertically32.png" )]
+		public static readonly string FlipVerticallyImage;
+
+		/// <summary>
+		/// Play icon name</summary>
+		[ImageResource( "FlipHorizontally16.png", "FlipHorizontally24.png", "FlipHorizontally32.png" )]
+		public static readonly string FlipHorizontallyImage;
+
 		private const string ResourcePath = "pico.Resources.";
 
 		static ResourcesRegistry()

@@ -86,6 +86,8 @@ namespace picoTimelineEditor
 			paletteService.AddItem( Schema.keyLuaScriptType.Type, "pico", this );
 			paletteService.AddItem( Schema.intervalTextType.Type, "pico", this );
 			paletteService.AddItem( Schema.intervalNodeAnimationType.Type, "Anim", this );
+			paletteService.AddItem( Schema.intervalBlendFactorType.Type, "pico", this );
+			paletteService.AddItem( Schema.trackBlendFactorType.Type, "pico", this );
 
 			// references
 			//
@@ -263,6 +265,7 @@ namespace picoTimelineEditor
 			}
 
 			m_luaEditorPanel = new Panel();
+			m_luaEditorPanel.Name = "m_luaEditorPanel";
 			m_luaEditorPanelControlInfo = new ControlInfo( "Lua Script", "Lua Script Editor", StandardControlGroup.Bottom );
 			m_controlHostService.RegisterControl(
 				m_luaEditorPanel,
@@ -528,9 +531,14 @@ namespace picoTimelineEditor
 				if ( m_domExplorer != null )
 					m_domExplorer.Root = timelineDocument.DomNode;
 			}
-			else
+			else if ( object.ReferenceEquals( control, m_luaEditorPanel ) )
 			{
-				m_contextRegistry.ActiveContext = m_luaEditorPanel;
+				ISelectionContext selectionContext = m_contextRegistry.GetActiveContext<ISelectionContext>();
+				if ( selectionContext != null )
+				{
+					if ( selectionContext.LastSelected.Is<LuaScript>() )
+						m_contextRegistry.ActiveContext = m_luaEditorPanel;
+				}
 			}
         }
 

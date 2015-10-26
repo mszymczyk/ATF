@@ -8,6 +8,7 @@ using Sce.Atf;
 using Sce.Atf.Adaptation;
 using Sce.Atf.Applications;
 using Sce.Atf.Controls.Timelines;
+using Sce.Atf.Controls.CurveEditing;
 using ScrubberManipulator = Sce.Atf.Controls.Timelines.Direct2D.D2dScrubberManipulator;
 
 using pico.Hub;
@@ -103,6 +104,28 @@ namespace picoTimelineEditor
 				"Toggles Play/Pause",
 				Keys.Space,
 				pico.ResourcesRegistry.PlayImage,
+				CommandVisibility.Default,
+				this );
+
+			m_commandService.RegisterCommand(
+				Command.FlipCurveVertically,
+				"Timeline",
+				null,
+				"Flip Curve Vertically",
+				"Flips selected curve vertically",
+				Keys.None,
+				pico.ResourcesRegistry.FlipVerticallyImage,
+				CommandVisibility.Default,
+				this );
+
+			m_commandService.RegisterCommand(
+				Command.FlipCurveHorizontally,
+				"Timeline",
+				null,
+				"Flip Curve Horizontally",
+				"Flips selected curve horizontally",
+				Keys.None,
+				pico.ResourcesRegistry.FlipHorizontallyImage,
 				CommandVisibility.Default,
 				this );
 		}
@@ -276,6 +299,152 @@ namespace picoTimelineEditor
                             "Remove Empty Groups and Tracks");
                         }
                         return true;
+
+					case Command.FlipCurveVertically:
+						{
+							if ( activeInterval == null )
+								return false;
+
+							ICurveSet curveSet = activeInterval.As<ICurveSet>();
+							if ( curveSet == null )
+								return false;
+
+							bool anyCurveHasEnoughControlPoints = false;
+							foreach ( ICurve curve in curveSet.Curves )
+							{
+								if ( curve.ControlPoints.Count > 1 )
+								{
+									anyCurveHasEnoughControlPoints = true;
+									break;
+								}
+							}
+
+							if ( !anyCurveHasEnoughControlPoints )
+								return false;
+
+							if ( doing )
+							{
+								transactionContext.DoTransaction( delegate
+								{
+									foreach ( ICurve curve in curveSet.Curves )
+									{
+										if ( curve.ControlPoints.Count > 1 )
+										{
+											float maxY = curve.ControlPoints[0].Y;
+											float minY = curve.ControlPoints[0].Y;
+
+											foreach ( IControlPoint cp in curve.ControlPoints )
+											{
+												maxY = MathUtil.Max<float>( maxY, cp.Y );
+												minY = MathUtil.Min<float>( minY, cp.Y );
+											}
+
+											float rangeY = maxY - minY;
+											if ( rangeY > 0.0001f )
+											{
+												float rcpRangeY = 1.0f / rangeY;
+												foreach ( IControlPoint cp in curve.ControlPoints )
+												{
+													float y = cp.Y - minY;
+													y *= rcpRangeY;
+													y = 1 - MathUtil.Clamp( y, 0, 1 );
+													y *= rangeY;
+													y += minY;
+													cp.Y = y;
+												}
+												CurveUtils.ComputeTangent( curve );
+											}
+										}
+									}
+								},
+								"Flip curves vertically" );
+							}
+
+							return true;
+						}
+
+					case Command.FlipCurveHorizontally:
+						{
+							if ( activeInterval == null )
+								return false;
+
+							ICurveSet curveSet = activeInterval.As<ICurveSet>();
+							if ( curveSet == null )
+								return false;
+
+							bool anyCurveHasEnoughControlPoints = false;
+							foreach ( ICurve curve in curveSet.Curves )
+							{
+								if ( curve.ControlPoints.Count > 1 )
+								{
+									anyCurveHasEnoughControlPoints = true;
+									break;
+								}
+							}
+							
+							if ( ! anyCurveHasEnoughControlPoints )
+								return false;
+
+							if ( doing )
+							{
+								transactionContext.DoTransaction( delegate
+								{
+									foreach ( ICurve curve in curveSet.Curves )
+									{
+										if ( curve.ControlPoints.Count > 1 )
+										{
+											float maxX = curve.ControlPoints[0].X;
+											float minX = curve.ControlPoints[0].X;
+
+											// we need to make a copy of control points in reverse order
+											// because after horizontal flip control points must have their X coordinate
+											// in order, left to right
+											//
+											List<Sce.Atf.VectorMath.Vec2F> controlPoints = new List<Sce.Atf.VectorMath.Vec2F>();
+
+											for ( int i = curve.ControlPoints.Count-1; i >= 0; --i )
+											{
+												IControlPoint cp = curve.ControlPoints[i];
+												maxX = MathUtil.Max<float>( maxX, cp.X );
+												minX = MathUtil.Min<float>( minX, cp.X );
+												controlPoints.Add( new Sce.Atf.VectorMath.Vec2F( cp.X, cp.Y ) );
+											}
+
+											// it's not right to just change X coordinate of all control points
+											// we would end with control points ordered by decreasing X coordinate
+											// which atf curve editor doesn't accept
+											// so:
+											// delete all control points and recreate them in the right order
+											//
+
+											curve.Clear();
+
+											float rangeX = maxX - minX;
+											if ( rangeX > 0.0001f )
+											{
+												float rcpRangeX = 1.0f / rangeX;
+												foreach ( Sce.Atf.VectorMath.Vec2F cp in controlPoints )
+												{
+													float x = cp.X - minX;
+													x *= rcpRangeX;
+													x = 1 - MathUtil.Clamp( x, 0, 1 );
+													x *= rangeX;
+													x += minX;
+													IControlPoint newCP = curve.CreateControlPoint();
+													newCP.X = x;
+													newCP.Y = cp.Y;
+													curve.AddControlPoint( newCP );
+												}
+												CurveUtils.ComputeTangent( curve );
+											}
+										}
+									}
+								},
+								"Flip curves horizontally" );
+							}
+
+							return true;
+						}
                 }
             }
             else if (commandTag is StandardCommand)
@@ -300,7 +469,9 @@ namespace picoTimelineEditor
             RemoveTrack,
             RemoveEmptyGroupsAndTracks,
             ToggleSplitMode,
-			PlayPause
+			PlayPause,
+			FlipCurveVertically,
+			FlipCurveHorizontally
         }
 
         private ICommandService m_commandService;

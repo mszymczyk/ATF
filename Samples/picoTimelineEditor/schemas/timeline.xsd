@@ -303,7 +303,7 @@
   <xs:complexType name="trackFaderType">
     <xs:annotation>
       <xs:appinfo>
-        <scea.dom.editors menuText="TrackFader" description="TrackFader" image="picoTimelineEditor.Resources.track.png" category="pico" />
+        <scea.dom.editors menuText="TrackFader" description="Only one per timeline" image="picoTimelineEditor.Resources.track.png" category="pico" />
       </xs:appinfo>
     </xs:annotation>
     <xs:complexContent>
@@ -708,9 +708,47 @@
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>
-  
-  
-  
+
+
+
+  <xs:complexType name="trackBlendFactorType">
+    <xs:annotation>
+      <xs:appinfo>
+        <scea.dom.editors menuText="TrackBlendFactor" description="Only one per group" image="picoTimelineEditor.Resources.track.png" category="pico" />
+      </xs:appinfo>
+    </xs:annotation>
+    <xs:complexContent>
+      <xs:extension base="trackType">
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+
+  <xs:complexType name="intervalBlendFactorType">
+    <xs:annotation>
+      <xs:appinfo>
+        <scea.dom.editors menuText="BlendFactor" description="BlendFactor" image="picoTimelineEditor.Resources.interval.png" category="pico" />
+        <scea.dom.editors.attribute name="name" displayName="Name" description="Unique Name" />
+        <scea.dom.editors.attribute name="length" displayName="Length" description="Length or Duration" />
+        <scea.dom.editors.attribute name="color" displayName="Color" description="Display Color"
+          editor="Sce.Atf.Controls.PropertyEditing.ColorPickerEditor,Atf.Gui.WinForms"
+          converter="Sce.Atf.Controls.PropertyEditing.IntColorConverter" />
+      </xs:appinfo>
+    </xs:annotation>
+    <xs:complexContent>
+      <xs:extension base="intervalType">
+        <xs:sequence>
+          <xs:element name="curve" type="curveType" minOccurs="0" maxOccurs="unbounded"/>
+        </xs:sequence>
+        <xs:attribute name="name" type="xs:ID" use="required" />
+        <xs:attribute name="length" type="xs:float" default="1000.0"/>
+        <xs:attribute name="color" type="xs:integer" default="-6354"/>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+
+
   <xs:element name="timeline" type="timelineType"/>
 
 </xs:schema>

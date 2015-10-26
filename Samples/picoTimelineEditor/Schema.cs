@@ -251,6 +251,20 @@ namespace picoTimelineEditor
             intervalTextType.textNodeNameAttribute = intervalTextType.Type.GetAttributeInfo("textNodeName");
             intervalTextType.textTagAttribute = intervalTextType.Type.GetAttributeInfo("textTag");
 
+            trackBlendFactorType.Type = getNodeType("timeline", "trackBlendFactorType");
+            trackBlendFactorType.nameAttribute = trackBlendFactorType.Type.GetAttributeInfo("name");
+            trackBlendFactorType.descriptionAttribute = trackBlendFactorType.Type.GetAttributeInfo("description");
+            trackBlendFactorType.intervalChild = trackBlendFactorType.Type.GetChildInfo("interval");
+            trackBlendFactorType.keyChild = trackBlendFactorType.Type.GetChildInfo("key");
+
+            intervalBlendFactorType.Type = getNodeType("timeline", "intervalBlendFactorType");
+            intervalBlendFactorType.startAttribute = intervalBlendFactorType.Type.GetAttributeInfo("start");
+            intervalBlendFactorType.descriptionAttribute = intervalBlendFactorType.Type.GetAttributeInfo("description");
+            intervalBlendFactorType.nameAttribute = intervalBlendFactorType.Type.GetAttributeInfo("name");
+            intervalBlendFactorType.lengthAttribute = intervalBlendFactorType.Type.GetAttributeInfo("length");
+            intervalBlendFactorType.colorAttribute = intervalBlendFactorType.Type.GetAttributeInfo("color");
+            intervalBlendFactorType.curveChild = intervalBlendFactorType.Type.GetChildInfo("curve");
+
             timelineRootElement = getRootElement(NS, "timeline");
         }
 
@@ -559,6 +573,26 @@ namespace picoTimelineEditor
             public static AttributeInfo colorAttribute;
             public static AttributeInfo textNodeNameAttribute;
             public static AttributeInfo textTagAttribute;
+        }
+
+        public static class trackBlendFactorType
+        {
+            public static DomNodeType Type;
+            public static AttributeInfo nameAttribute;
+            public static AttributeInfo descriptionAttribute;
+            public static ChildInfo intervalChild;
+            public static ChildInfo keyChild;
+        }
+
+        public static class intervalBlendFactorType
+        {
+            public static DomNodeType Type;
+            public static AttributeInfo startAttribute;
+            public static AttributeInfo descriptionAttribute;
+            public static AttributeInfo nameAttribute;
+            public static AttributeInfo lengthAttribute;
+            public static AttributeInfo colorAttribute;
+            public static ChildInfo curveChild;
         }
 
         public static ChildInfo timelineRootElement;

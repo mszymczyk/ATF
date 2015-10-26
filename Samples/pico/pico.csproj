@@ -94,6 +94,16 @@
     <EmbeddedResource Include="Resources\Play24.png" />
     <EmbeddedResource Include="Resources\Play32.png" />
   </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\FlipVertically16.png" />
+    <EmbeddedResource Include="Resources\FlipVertically24.png" />
+    <EmbeddedResource Include="Resources\FlipVertically32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\FlipHorizontally16.png" />
+    <EmbeddedResource Include="Resources\FlipHorizontally24.png" />
+    <EmbeddedResource Include="Resources\FlipHorizontally32.png" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
