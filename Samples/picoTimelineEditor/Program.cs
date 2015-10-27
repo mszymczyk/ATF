@@ -103,6 +103,7 @@ namespace picoTimelineEditor
                 typeof(TimelineEditor),                 // timeline editor component
                 typeof(TimelineCommands),               // defines Timeline-specific commands
                 typeof(HelpAboutCommand),               // Help -> About command
+				typeof(TimelineSettingEditor),			// setting editor
 
                 // Testing related
                 typeof(PythonService),                  // scripting service for automated tests

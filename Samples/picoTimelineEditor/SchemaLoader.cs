@@ -131,6 +131,10 @@ namespace picoTimelineEditor
 				Schema.trackCharacterControllerAnimType.Type.Define( new ExtensionInfo<TrackCharacterControllerAnim>() );
 				Schema.intervalCharacterControllerAnimType.Type.Define( new ExtensionInfo<IntervalCharacterControllerAnim>() );
 
+				// settings
+				//
+				Schema.intervalSettingType.Type.Define( new ExtensionInfo<IntervalSetting>() );
+
                 // the timeline schema defines only one type collection
                 break;
             }

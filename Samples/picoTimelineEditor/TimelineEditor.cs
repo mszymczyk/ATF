@@ -121,6 +121,10 @@ namespace picoTimelineEditor
 			paletteService.AddItem( Schema.trackCharacterControllerAnimType.Type, "CharacterController", this );
 			paletteService.AddItem( Schema.intervalCharacterControllerAnimType.Type, "CharacterController", this );
 
+			// settings
+			//
+			paletteService.AddItem( Schema.intervalSettingType.Type, "pico", this );
+
             m_contextRegistry = contextRegistry;
             m_documentRegistry = documentRegistry;
             m_controlHostService = controlHostService;

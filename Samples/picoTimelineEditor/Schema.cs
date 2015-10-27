@@ -265,6 +265,21 @@ namespace picoTimelineEditor
             intervalBlendFactorType.colorAttribute = intervalBlendFactorType.Type.GetAttributeInfo("color");
             intervalBlendFactorType.curveChild = intervalBlendFactorType.Type.GetChildInfo("curve");
 
+            settingType.Type = getNodeType("timeline", "settingType");
+            settingType.descriptionAttribute = settingType.Type.GetAttributeInfo("description");
+
+            cresLodSettingType.Type = getNodeType("timeline", "cresLodSettingType");
+            cresLodSettingType.descriptionAttribute = cresLodSettingType.Type.GetAttributeInfo("description");
+            cresLodSettingType.lodDistance0Attribute = cresLodSettingType.Type.GetAttributeInfo("lodDistance0");
+
+            intervalSettingType.Type = getNodeType("timeline", "intervalSettingType");
+            intervalSettingType.startAttribute = intervalSettingType.Type.GetAttributeInfo("start");
+            intervalSettingType.descriptionAttribute = intervalSettingType.Type.GetAttributeInfo("description");
+            intervalSettingType.nameAttribute = intervalSettingType.Type.GetAttributeInfo("name");
+            intervalSettingType.lengthAttribute = intervalSettingType.Type.GetAttributeInfo("length");
+            intervalSettingType.colorAttribute = intervalSettingType.Type.GetAttributeInfo("color");
+            intervalSettingType.settingChild = intervalSettingType.Type.GetChildInfo("setting");
+
             timelineRootElement = getRootElement(NS, "timeline");
         }
 
@@ -593,6 +608,30 @@ namespace picoTimelineEditor
             public static AttributeInfo lengthAttribute;
             public static AttributeInfo colorAttribute;
             public static ChildInfo curveChild;
+        }
+
+        public static class settingType
+        {
+            public static DomNodeType Type;
+            public static AttributeInfo descriptionAttribute;
+        }
+
+        public static class cresLodSettingType
+        {
+            public static DomNodeType Type;
+            public static AttributeInfo descriptionAttribute;
+            public static AttributeInfo lodDistance0Attribute;
+        }
+
+        public static class intervalSettingType
+        {
+            public static DomNodeType Type;
+            public static AttributeInfo startAttribute;
+            public static AttributeInfo descriptionAttribute;
+            public static AttributeInfo nameAttribute;
+            public static AttributeInfo lengthAttribute;
+            public static AttributeInfo colorAttribute;
+            public static ChildInfo settingChild;
         }
 
         public static ChildInfo timelineRootElement;

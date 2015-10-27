@@ -749,6 +749,58 @@
 
 
 
+  <xs:complexType name="settingType">
+    <xs:annotation>
+      <xs:appinfo>
+        <scea.dom.editors.attribute name="description" displayName="Description" description="Event description" />
+      </xs:appinfo>
+    </xs:annotation>
+    <xs:attribute name="description" type="xs:string"/>
+  </xs:complexType>
+
+
+
+  <xs:complexType name="cresLodSettingType">
+    <xs:annotation>
+      <xs:appinfo>
+        <scea.dom.editors menuText="cresLod" description="cresLod" image="picoTimelineEditor.Resources.marker.png" category="Timelines" />
+        <scea.dom.editors.attribute name="lodDistance0" displayName="lodDistance0" description="lodDistance0" />
+      </xs:appinfo>
+    </xs:annotation>
+    <xs:complexContent>
+      <xs:extension base="settingType">
+        <xs:attribute name="lodDistance0" type="xs:float"/>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  
+  
+  
+  <xs:complexType name="intervalSettingType">
+    <xs:annotation>
+      <xs:appinfo>
+        <scea.dom.editors menuText="Setting" description="Setting" image="picoTimelineEditor.Resources.interval.png" category="pico" />
+        <scea.dom.editors.attribute name="name" displayName="Name" description="Unique Name" />
+        <scea.dom.editors.attribute name="length" displayName="Length" description="Length or Duration" />
+        <scea.dom.editors.attribute name="color" displayName="Color" description="Display Color"
+          editor="Sce.Atf.Controls.PropertyEditing.ColorPickerEditor,Atf.Gui.WinForms"
+          converter="Sce.Atf.Controls.PropertyEditing.IntColorConverter" />
+      </xs:appinfo>
+    </xs:annotation>
+    <xs:complexContent>
+      <xs:extension base="intervalType">
+        <xs:sequence>
+          <xs:element name="setting" type="settingType" minOccurs="0" maxOccurs="unbounded"/>
+        </xs:sequence>
+        <xs:attribute name="name" type="xs:ID" use="required" />
+        <xs:attribute name="length" type="xs:float" default="1000.0"/>
+        <xs:attribute name="color" type="xs:integer" default="-18658"/>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  
+
+
   <xs:element name="timeline" type="timelineType"/>
 
 </xs:schema>
