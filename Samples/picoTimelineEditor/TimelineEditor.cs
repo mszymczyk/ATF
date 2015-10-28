@@ -585,7 +585,7 @@ namespace picoTimelineEditor
         /// <summary>
         /// Creates the timeline renderer</summary>
         /// <returns>The renderer to use for one timeline control</returns>
-        protected virtual D2dTimelineRenderer CreateTimelineRenderer()
+		protected virtual picoD2dTimelineRenderer CreateTimelineRenderer()
         {
 			//return new D2dDefaultTimelineRenderer();
 			return new picoD2dTimelineRenderer();
@@ -661,7 +661,8 @@ namespace picoTimelineEditor
 
 					if ( document.Renderer == null )
 					{
-						D2dTimelineRenderer renderer = CreateTimelineRenderer();
+						picoD2dTimelineRenderer renderer = CreateTimelineRenderer();
+						renderer.ContextRegistry = m_contextRegistry;
 						document.Renderer = renderer;
 						renderer.Init( document.TimelineControl.D2dGraphics );
 					}

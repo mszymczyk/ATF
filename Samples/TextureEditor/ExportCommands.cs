@@ -337,7 +337,7 @@ namespace TextureEditor
 
 				if ( ! exportRequired )
 				{
-					AddInfo( "File is up-to-date " + inputFile + "\n" );
+					//AddInfo( "File is up-to-date " + inputFile + "\n" );
 					return 0;
 				}
 

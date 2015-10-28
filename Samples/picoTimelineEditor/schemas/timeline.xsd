@@ -752,10 +752,10 @@
   <xs:complexType name="settingType">
     <xs:annotation>
       <xs:appinfo>
-        <scea.dom.editors.attribute name="description" displayName="Description" description="Event description" />
+        <!--<scea.dom.editors.attribute name="description" displayName="Description" description="Event description" />-->
       </xs:appinfo>
     </xs:annotation>
-    <xs:attribute name="description" type="xs:string"/>
+    <!--<xs:attribute name="description" type="xs:string"/>-->
   </xs:complexType>
 
 
@@ -764,12 +764,35 @@
     <xs:annotation>
       <xs:appinfo>
         <scea.dom.editors menuText="cresLod" description="cresLod" image="picoTimelineEditor.Resources.marker.png" category="Timelines" />
-        <scea.dom.editors.attribute name="lodDistance0" displayName="lodDistance0" description="lodDistance0" />
+        <scea.dom.editors.attribute name="nodeName" displayName="Node Name" description="Node name in container:node format" category="General" />
+
+        <scea.dom.editors.attribute name="lod0Distance" displayName="Lod 0 Distance" description="Distance at which mesh switches to lod level 1" category="Key Properties"  />
+        <scea.dom.editors.attribute name="lod1Distance" displayName="Lod 1 Distance" description="Distance at which mesh switches to lod level 2" category="Key Properties"  />
+        <scea.dom.editors.attribute name="lod2Distance" displayName="Lod 2 Distance" description="Distance at which mesh switches to lod level 3" category="Key Properties"  />
+
+        <scea.dom.editors.attribute name="cullDistance" displayName="Cull Distance" description="Distance beyond which object will be visibility-culled" category="Key Properties"  />
+
+        <scea.dom.editors.attribute name="lod0DistanceShadow" displayName="Lod 0 Distance Shadow" description="Distance at which mesh switches to lod level 1 (shadow rendering)" category="Additional Properties"  />
+        <scea.dom.editors.attribute name="lod1DistanceShadow" displayName="Lod 1 Distance Shadow" description="Distance at which mesh switches to lod level 2 (shadow rendering)" category="Additional Properties"  />
+        <scea.dom.editors.attribute name="lod2DistanceShadow" displayName="Lod 2 Distance Shadow" description="Distance at which mesh switches to lod level 3 (shadow rendering)" category="Additional Properties"  />
+
       </xs:appinfo>
     </xs:annotation>
     <xs:complexContent>
       <xs:extension base="settingType">
-        <xs:attribute name="lodDistance0" type="xs:float"/>
+        
+        <xs:attribute name="nodeName" type="xs:string" />
+
+        <xs:attribute name="lod0Distance" type="xs:float" default="-1" />
+        <xs:attribute name="lod1Distance" type="xs:float" default="-1" />
+        <xs:attribute name="lod2Distance" type="xs:float" default="-1" />
+
+        <xs:attribute name="cullDistance" type="xs:float" default="-1" />
+
+        <xs:attribute name="lod0DistanceShadow" type="xs:float" default="-1" />
+        <xs:attribute name="lod1DistanceShadow" type="xs:float" default="-1" />
+        <xs:attribute name="lod2DistanceShadow" type="xs:float" default="-1" />
+
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>
@@ -794,7 +817,7 @@
         </xs:sequence>
         <xs:attribute name="name" type="xs:ID" use="required" />
         <xs:attribute name="length" type="xs:float" default="1000.0"/>
-        <xs:attribute name="color" type="xs:integer" default="-18658"/>
+        <xs:attribute name="color" type="xs:integer" default="-7167004"/>
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>

@@ -266,11 +266,16 @@ namespace picoTimelineEditor
             intervalBlendFactorType.curveChild = intervalBlendFactorType.Type.GetChildInfo("curve");
 
             settingType.Type = getNodeType("timeline", "settingType");
-            settingType.descriptionAttribute = settingType.Type.GetAttributeInfo("description");
 
             cresLodSettingType.Type = getNodeType("timeline", "cresLodSettingType");
-            cresLodSettingType.descriptionAttribute = cresLodSettingType.Type.GetAttributeInfo("description");
-            cresLodSettingType.lodDistance0Attribute = cresLodSettingType.Type.GetAttributeInfo("lodDistance0");
+            cresLodSettingType.nodeNameAttribute = cresLodSettingType.Type.GetAttributeInfo("nodeName");
+            cresLodSettingType.lod0DistanceAttribute = cresLodSettingType.Type.GetAttributeInfo("lod0Distance");
+            cresLodSettingType.lod1DistanceAttribute = cresLodSettingType.Type.GetAttributeInfo("lod1Distance");
+            cresLodSettingType.lod2DistanceAttribute = cresLodSettingType.Type.GetAttributeInfo("lod2Distance");
+            cresLodSettingType.cullDistanceAttribute = cresLodSettingType.Type.GetAttributeInfo("cullDistance");
+            cresLodSettingType.lod0DistanceShadowAttribute = cresLodSettingType.Type.GetAttributeInfo("lod0DistanceShadow");
+            cresLodSettingType.lod1DistanceShadowAttribute = cresLodSettingType.Type.GetAttributeInfo("lod1DistanceShadow");
+            cresLodSettingType.lod2DistanceShadowAttribute = cresLodSettingType.Type.GetAttributeInfo("lod2DistanceShadow");
 
             intervalSettingType.Type = getNodeType("timeline", "intervalSettingType");
             intervalSettingType.startAttribute = intervalSettingType.Type.GetAttributeInfo("start");
@@ -613,14 +618,19 @@ namespace picoTimelineEditor
         public static class settingType
         {
             public static DomNodeType Type;
-            public static AttributeInfo descriptionAttribute;
         }
 
         public static class cresLodSettingType
         {
             public static DomNodeType Type;
-            public static AttributeInfo descriptionAttribute;
-            public static AttributeInfo lodDistance0Attribute;
+            public static AttributeInfo nodeNameAttribute;
+            public static AttributeInfo lod0DistanceAttribute;
+            public static AttributeInfo lod1DistanceAttribute;
+            public static AttributeInfo lod2DistanceAttribute;
+            public static AttributeInfo cullDistanceAttribute;
+            public static AttributeInfo lod0DistanceShadowAttribute;
+            public static AttributeInfo lod1DistanceShadowAttribute;
+            public static AttributeInfo lod2DistanceShadowAttribute;
         }
 
         public static class intervalSettingType

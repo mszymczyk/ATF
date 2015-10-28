@@ -622,14 +622,42 @@ namespace picoTimelineEditor
 
 		#region TransactionContext Members
 
+		protected override void OnBeginning()
+		{
+			//m_inTransaction = true;
+			//m_transactionHasOnlyTimelineSettingChange = true;
+
+			base.OnBeginning();
+		}
+
+		/// <summary>
+		/// Performs custom actions after a transaction is cancelled</summary>
+		protected override void OnCancelled()
+		{
+			base.OnCancelled();
+
+			//m_inTransaction = false;
+		}
+
 		/// <summary>
         /// Performs custom actions after a transaction ends</summary>
 		protected override void OnEnded()
 		{
 			base.OnEnded();
 
-			TimelineEditor.hubService_sendReloadTimeline( this.Cast<TimelineDocument>(), true );
+			//m_inTransaction = false;
+
+			//if ( m_transactionHasOnlyTimelineSettingChange )
+			//{
+			//}
+			//else
+			//{
+				TimelineEditor.hubService_sendReloadTimeline( this.Cast<TimelineDocument>(), true );
+			//}
 		}
+
+		//private bool m_inTransaction;
+		//private bool m_transactionHasOnlyTimelineSettingChange;
 
 		#endregion
 
@@ -992,19 +1020,29 @@ namespace picoTimelineEditor
         {
 			//if (IsTimelineItem(e.DomNode))
                 OnObjectChanged(new ItemChangedEventArgs<object>(e.DomNode));
+
+			//if ( m_inTransaction )
+			//{
+			//	if ( !e.DomNode.Is<TimelineSetting>() )
+			//		m_transactionHasOnlyTimelineSettingChange = false;
+			//}
         }
 
         private void DomNode_ChildInserted(object sender, ChildEventArgs e)
         {
 			//if (IsTimelineItem(e.Child))
                 OnObjectInserted(new ItemInsertedEventArgs<object>(e.Index, e.Child, e.Parent));
+
+				//m_transactionHasOnlyTimelineSettingChange = false;
         }
 
         private void DomNode_ChildRemoved(object sender, ChildEventArgs e)
         {
 			//if (IsTimelineItem(e.Child))
                 OnObjectRemoved(new ItemRemovedEventArgs<object>(e.Index, e.Child, e.Parent));
-        }
+
+				//m_transactionHasOnlyTimelineSettingChange = false;
+		}
 
         private void timelineControl_DragEnter(object sender, DragEventArgs e)
         {

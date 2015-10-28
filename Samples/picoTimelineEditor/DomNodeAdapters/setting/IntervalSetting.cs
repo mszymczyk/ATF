@@ -38,13 +38,13 @@ namespace picoTimelineEditor.DomNodeAdapters
 		//	}
 		//}
 
-		///// <summary>
-		///// Gets and sets the event's color</summary>
-		//public override Color Color
-		//{
-		//	get { return Color.FromArgb( (int)DomNode.GetAttribute( Schema.intervalFaderType.colorAttribute ) ); }
-		//	set { DomNode.SetAttribute( Schema.intervalFaderType.colorAttribute, value.ToArgb() ); }
-		//}
+		/// <summary>
+		/// Gets and sets the event's color</summary>
+		public override Color Color
+		{
+			get { return Color.FromArgb( (int) DomNode.GetAttribute( Schema.intervalSettingType.colorAttribute ) ); }
+			set { DomNode.SetAttribute( Schema.intervalSettingType.colorAttribute, value.ToArgb() ); }
+		}
 
 		/// <summary>
 		/// Performs initialization when the adapter is connected to the diagram annotation's DomNode.
@@ -54,6 +54,16 @@ namespace picoTimelineEditor.DomNodeAdapters
 			base.OnNodeSet();
 
 			//DomNode.AttributeChanged += DomNode_AttributeChanged;
+
+			m_settingList = GetChildList<TimelineSetting>( Schema.intervalSettingType.settingChild );
+			if ( m_settingList.Count > 0 )
+				return;
+
+			//CResLodSetting cresLod = (new DomNode( Schema.cresLodSettingType.Type )).As<CResLodSetting>();
+			//m_settingList.Add( cresLod );
+
+			//CResLodSetting cresLod2 = (new DomNode( Schema.cresLodSettingType.Type )).As<CResLodSetting>();
+			//m_settingList.Add( cresLod2 );
 		}
 
 		//private void DomNode_AttributeChanged( object sender, AttributeEventArgs e )
@@ -115,10 +125,12 @@ namespace picoTimelineEditor.DomNodeAdapters
 		//	}
 		//}
 
-		public IList<ITimelineSetting> Settings
+		public IList<TimelineSetting> Settings
 		{
-			get { return GetChildList<ITimelineSetting>( Schema.intervalSettingType.settingChild ); ; }
+			get { return m_settingList; }
 		}
+
+		private IList<TimelineSetting> m_settingList;
 
 		#region ITimelineObjectCreator Members
 		ITimelineObject ITimelineObjectCreator.Create()
@@ -135,6 +147,19 @@ namespace picoTimelineEditor.DomNodeAdapters
 			return dn.Cast<ITimelineObject>();
 		}
 		#endregion
+
+		public TimelineSetting CreateSetting( DomNodeType type, string defaultName )
+		{
+			TimelineSetting sett = new DomNode( type ).As<TimelineSetting>();
+
+			AttributeInfo idAttribute = type.IdAttribute;
+			if ( idAttribute != null )
+				sett.DomNode.SetAttribute( idAttribute, defaultName );
+
+			Settings.Add( sett );
+
+			return sett;
+		}
 
 		public bool CanParentTo( DomNode parent )
 		{

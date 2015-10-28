@@ -64,7 +64,7 @@ namespace picoTimelineEditor
 			DomNode node = new DomNode( Schema.timelineType.Type, Schema.timelineRootElement );
 			TimelineDocument document = node.Cast<TimelineDocument>();
 
-			D2dTimelineRenderer renderer = new picoD2dTimelineRenderer();
+			picoD2dTimelineRenderer renderer = new picoD2dTimelineRenderer();
 			document.Renderer = renderer;
 			renderer.Init( document.TimelineControl.D2dGraphics );
 

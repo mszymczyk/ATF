@@ -134,6 +134,7 @@ namespace picoTimelineEditor
 				// settings
 				//
 				Schema.intervalSettingType.Type.Define( new ExtensionInfo<IntervalSetting>() );
+				Schema.cresLodSettingType.Type.Define( new ExtensionInfo<CResLodSetting>() );
 
                 // the timeline schema defines only one type collection
                 break;

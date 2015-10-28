@@ -5,6 +5,8 @@ using System.ComponentModel;
 using System.Drawing;
 using System.Globalization;
 using Sce.Atf;
+using Sce.Atf.Applications;
+using Sce.Atf.Adaptation;
 using Sce.Atf.Direct2D;
 using Sce.Atf.Controls.Timelines;
 using picoTimelineEditor.DomNodeAdapters;
@@ -27,6 +29,13 @@ namespace picoTimelineEditor
 			HeaderWidth = 180;
 
 			m_picoTextBrush = graphics.CreateSolidBrush( SystemColors.WindowText );
+		}
+
+
+		public IContextRegistry ContextRegistry
+		{
+			get;
+			set;
 		}
 
 		/// <summary>
@@ -108,6 +117,25 @@ namespace picoTimelineEditor
 							new RectangleF( bounds.X + 1, bounds.Y + 1, bounds.Width - 2, bounds.Height - 2 ),
 							SelectedBrush, 3.0f );
 					}
+
+					// a tiny hack to draw rectangle around selected IntervalSettings even, when selection switched to TimelineSetting
+					//
+					ISelectionContext selCtx = ContextRegistry.GetActiveContext<ISelectionContext>();
+					if ( selCtx != null )
+					{
+						TimelineSetting tiSett = selCtx.LastSelected.As<TimelineSetting>();
+						if ( tiSett != null )
+						{
+							IInterval isett = tiSett.DomNode.Parent.As<IInterval>();
+							if ( object.ReferenceEquals(isett, interval) )
+							{
+								c.Graphics.DrawRectangle(
+									new RectangleF( bounds.X + 1, bounds.Y + 1, bounds.Width - 2, bounds.Height - 2 ),
+									SelectedBrush, 3.0f );
+							}
+						}
+					}
+
 					break;
 				case DrawMode.Collapsed:
 					c.Graphics.FillRectangle( bounds, CollapsedBrush );

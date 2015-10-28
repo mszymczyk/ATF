@@ -109,6 +109,7 @@
     <Compile Include="DomNodeAdapters\keys\LuaScript.cs" />
     <Compile Include="DomNodeAdapters\references\ReferenceChangeLevel.cs" />
     <Compile Include="DomNodeAdapters\references\ReferencePlayTimeline.cs" />
+    <Compile Include="DomNodeAdapters\setting\CResLodSetting.cs" />
     <Compile Include="DomNodeAdapters\setting\IntervalSetting.cs" />
     <Compile Include="DomNodeAdapters\setting\ITimelineSetting.cs" />
     <Compile Include="DomNodeAdapters\sound\KeyCharacterSound.cs" />

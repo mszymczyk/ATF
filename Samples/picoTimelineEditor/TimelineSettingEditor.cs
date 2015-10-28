@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Text;
 using System.Windows.Forms;
+using System.Drawing;
 
 using Sce.Atf;
 using Sce.Atf.Dom;
@@ -22,36 +23,113 @@ namespace picoTimelineEditor
     /// It is useful as a raw view on DOM data for diagnosing DOM problems.</summary>
     [Export(typeof(IInitializable))]
     [Export(typeof(TimelineSettingEditor))]
-    [PartCreationPolicy(CreationPolicy.Any)]
-    public class TimelineSettingEditor : IControlHostClient, IInitializable
+	//[Export(typeof(IContextMenuCommandProvider))]
+	[PartCreationPolicy( CreationPolicy.Any )]
+	public class TimelineSettingEditor : IControlHostClient, IInitializable//, ICommandClient, IContextMenuCommandProvider
     {
         /// <summary>
         /// Constructor</summary>
         /// <param name="controlHostService">Control host service</param>
         [ImportingConstructor]
-        public TimelineSettingEditor(IControlHostService controlHostService, IContextRegistry contextRegistry)
-        {
-            m_controlHostService = controlHostService;
+        public TimelineSettingEditor(IControlHostService controlHostService, IContextRegistry contextRegistry, ICommandService commandService)
+		{
+			m_controlHostService = controlHostService;
 			m_contextRegistry = contextRegistry;
+			m_commandService = commandService;
 
-            m_treeControl = new TreeControl();
-            m_treeControl.Dock = DockStyle.Fill;
-            m_treeControl.AllowDrop = true;
-            m_treeControl.SelectionMode = SelectionMode.MultiExtended;
-            m_treeControl.ImageList = ResourceUtil.GetImageList16();
-            m_treeControl.NodeSelectedChanged += treeControl_NodeSelectedChanged;
+			m_treeControl = new TreeControl();
+			m_treeControl.Dock = DockStyle.Fill;
+			m_treeControl.AllowDrop = true;
+			m_treeControl.SelectionMode = SelectionMode.MultiExtended;
+			m_treeControl.ImageList = ResourceUtil.GetImageList16();
+			m_treeControl.NodeSelectedChanged += treeControl_NodeSelectedChanged;
+			m_treeControl.SelectionChanged += treeControl_SelectionChanged;
+			m_treeControl.MouseUp += treeControl_MouseUp;
 
-            m_treeControlAdapter = new TreeControlAdapter(m_treeControl);
-            m_treeView = new TreeView();
+			m_treeControlAdapter = new TreeControlAdapter( m_treeControl );
+			m_treeView = new TreeView();
 
 			//m_propertyGrid = new Sce.Atf.Controls.PropertyEditing.PropertyGrid();
 			//m_propertyGrid.Dock = DockStyle.Fill;
 
-            m_splitContainer = new SplitContainer();
-            m_splitContainer.Text = "Timeline Setting Editor";
-            m_splitContainer.Panel1.Controls.Add(m_treeControl);
+			m_splitContainer = new SplitContainer();
+			m_splitContainer.Text = "Timeline Setting Editor";
+			//m_splitContainer.Panel1.Controls.Add(m_treeControl);
 			//m_splitContainer.Panel2.Controls.Add(m_propertyGrid);
-        }
+
+			//m_uberControl = new UserControl { Dock = DockStyle.Fill };
+
+			int x = 2, y = 2;
+			var buttonHeight = -1;
+
+			{
+				string[] names = Enum.GetNames( typeof(Command) );
+				m_addButton = CreateSplitButton( names, ref x, ref y, ref buttonHeight );
+				m_addButton.ContextMenuStrip.ItemClicked += splitButtonContextMenuStrip_ItemClicked;
+				m_addButton.Click += splitButton_Click;
+				m_splitContainer.Panel1.Controls.Add( m_addButton );
+			}
+
+			{
+				m_treeControl.Location = new Point( 0, buttonHeight + 2 );
+				m_treeControl.Anchor =
+                        AnchorStyles.Left | AnchorStyles.Top |
+                        AnchorStyles.Right | AnchorStyles.Bottom;
+
+				m_treeControl.Width = m_splitContainer.Panel1.Width;
+				m_treeControl.Height = m_splitContainer.Panel1.Height - buttonHeight - 2;
+
+				m_splitContainer.Panel1.Controls.Add( m_treeControl );
+			}
+
+		}
+
+		private Sce.Atf.Controls.SplitButton CreateSplitButton( string[] items, ref int x, ref int y, ref int height )
+		{
+			//var btn = new Button { Text = text };
+			var splitButton = new Sce.Atf.Controls.SplitButton();
+
+			splitButton.ShowSplit = true;
+			splitButton.ContextMenuStrip = new System.Windows.Forms.ContextMenuStrip();
+			int maxWidth = 0;
+			foreach( string item in items )
+			{
+				splitButton.ContextMenuStrip.Items.Add( item );
+				var size = TextRenderer.MeasureText( item, splitButton.Font );
+				maxWidth = MathUtil.Max<int>( maxWidth, size.Width );
+			}
+
+			splitButton.Text = items[0];
+
+			splitButton.Width = maxWidth + 20;
+
+			splitButton.Location = new Point( x, y );
+			splitButton.Anchor = AnchorStyles.Left | AnchorStyles.Top;
+
+			x += splitButton.Width + 2;
+
+			if ( height == -1 )
+				height = splitButton.Height;
+
+			return splitButton;
+		}
+
+		void splitButtonContextMenuStrip_ItemClicked( object sender, ToolStripItemClickedEventArgs e )
+		{
+			string text = e.ClickedItem.ToString();
+			m_addButton.Text = text;
+
+			splitButton_Click( sender, e );
+		}
+
+		void splitButton_Click( object sender, EventArgs e )
+		{
+			Command command;
+			if ( Enum.TryParse<Command>( m_addButton.Text, out command ) )
+			{
+				DoCommandImpl( command );
+			}
+		}
 
         /// <summary>
         /// Gets or sets the root DomNode to explore</summary>
@@ -73,13 +151,13 @@ namespace picoTimelineEditor
             }
         }
 
-        /// <summary>
-        /// Gets or sets whether DomNode adapters are displayed in the tree view</summary>
-        public bool ShowAdapters
-        {
-            get { return m_treeView.ShowAdapters; }
-            set { m_treeView.ShowAdapters = value; }
-        }
+		///// <summary>
+		///// Gets or sets whether DomNode adapters are displayed in the tree view</summary>
+		//public bool ShowAdapters
+		//{
+		//	get { return m_treeView.ShowAdapters; }
+		//	set { m_treeView.ShowAdapters = value; }
+		//}
 
         /// <summary>
         /// Gets the TreeControl</summary>
@@ -102,6 +180,8 @@ namespace picoTimelineEditor
         public virtual void Initialize()
         {
 			m_contextRegistry.ActiveContextChanged += contextRegistry_ActiveContextChanged;
+
+			//m_commandService.RegisterCommand( Add_CResLod_CommandInfo, this );
 
             m_controlHostService.RegisterControl(m_splitContainer,
                 "Timeline Setting Editor".Localize(),
@@ -140,6 +220,19 @@ namespace picoTimelineEditor
 
         #endregion
 
+		//#region IContextMenuCommandProvider Members
+
+		///// <summary>
+		///// Gets tags for context menu (right click) commands</summary>
+		///// <param name="context">Context containing target object</param>
+		///// <param name="clicked">Right clicked object, or null if none</param>
+		//IEnumerable<object> IContextMenuCommandProvider.GetCommands( object context, object clicked )
+		//{
+		//	return EmptyEnumerable<object>.Instance;
+		//}
+
+		//#endregion
+
 		private void contextRegistry_ActiveContextChanged( object sender, EventArgs e )
 		{
 			//m_curveEditorControl.Context = m_contextRegistry.ActiveContext;
@@ -168,6 +261,14 @@ namespace picoTimelineEditor
 			//m_observableContext = m_contextRegistry.GetActiveContext<IObservableContext>();
 			//if (m_observableContext != null)
 			//	m_observableContext.ItemChanged += ObservableContextItemChanged;
+
+			if ( m_observableContext != null )
+				m_observableContext.ItemRemoved -= ObservableContextItemRemoved;
+			m_observableContext = m_contextRegistry.GetActiveContext<IObservableContext>();
+			if ( m_observableContext != null )
+				m_observableContext.ItemRemoved += ObservableContextItemRemoved;
+
+			m_transactionContext = m_contextRegistry.GetActiveContext<ITransactionContext>();
 		}
 
 		/// <summary>
@@ -230,10 +331,16 @@ namespace picoTimelineEditor
 			if ( intervalSetting != null )
 			{
 				Root = intervalSetting.DomNode;
+				m_splitContainer.Enabled = true;
 			}
 			else
 			{
-				Root = null;
+				TimelineSetting tisett = selected.As<TimelineSetting>();
+				if ( tisett == null )
+				{
+					m_splitContainer.Enabled = false;
+					Root = null;
+				}
 			}
 		}
 
@@ -272,15 +379,71 @@ namespace picoTimelineEditor
             }
         }
 
+		private void treeControl_SelectionChanged( object sender, EventArgs e )
+		{
+			if ( m_selectionContext != null )
+			{
+				List<object> newSelection = new List<object>();
+				foreach ( TreeControl.Node node in m_treeControl.SelectedNodes )
+					//newSelection.Add( MakePath( node ) );
+					newSelection.Add( node.Tag );
+				m_selectionContext.SetRange( newSelection );
+			}
+		}
+
+		void treeControl_MouseUp( object sender, MouseEventArgs e )
+		{
+			if ( m_transactionContext == null )
+				return;
+
+			if ( e.Button == MouseButtons.Right )
+			{
+				TreeControl.Node node = m_treeControl.GetNodeAt( e.Location );
+				if ( node == null )
+					return;
+
+				IntervalSetting intervalSetting = node.Tag.As<IntervalSetting>();
+				if ( intervalSetting != null )
+				{
+					//IEnumerable<object> commands = EmptyEnumerable<object>.Instance;
+					IEnumerable<object> commands = new object[]
+                    {
+                        Command.Add_CResLod
+                    };
+
+					System.Drawing.Point pointOnScreen = m_treeControl.PointToScreen( e.Location );
+					m_commandService.RunContextMenu( commands, pointOnScreen );
+				}
+			}
+		}
+
+
+		/// <summary>
+		/// Performs custom actions on ItemRemoved events</summary>
+		/// <param name="sender">Sender</param>
+		/// <param name="e">Event args</param>
+		void ObservableContextItemRemoved( object sender, ItemRemovedEventArgs<object> e )
+		{
+			if ( ReferenceEquals(e.Item, Root) )
+			{
+				Root = null;
+			}
+		}
+
         private readonly IControlHostService m_controlHostService;
 		private readonly IContextRegistry m_contextRegistry;
-        private readonly TreeControl m_treeControl;
+		private readonly ICommandService m_commandService;
+		private readonly TreeControl m_treeControl;
         private readonly SplitContainer m_splitContainer;
         private readonly TreeControlAdapter m_treeControlAdapter;
 		//private readonly Sce.Atf.Controls.PropertyEditing.PropertyGrid m_propertyGrid;
         private readonly TreeView m_treeView;
 
 		private ISelectionContext m_selectionContext;
+		private IObservableContext m_observableContext;
+		private ITransactionContext m_transactionContext;
+
+		private Sce.Atf.Controls.SplitButton m_addButton;
 
         private class TreeView : ITreeView, IItemView, IObservableContext
         {
@@ -311,11 +474,11 @@ namespace picoTimelineEditor
                 }
             }
 
-            public bool ShowAdapters
-            {
-                get { return m_showAdapters; }
-                set { m_showAdapters = value; }
-            }
+			//public bool ShowAdapters
+			//{
+			//	get { return m_showAdapters; }
+			//	set { m_showAdapters = value; }
+			//}
 
             #region ITreeView Members
 
@@ -329,15 +492,15 @@ namespace picoTimelineEditor
                 DomNode node = parent as DomNode;
                 if (node != null)
                 {
-                    if (m_showAdapters)
-                    {
-                        // get all adapters, and wrap so that the TreeControlAdapter doesn't confuse
-                        //  them with their parent DomNode; remember that the DomNode and its adapters
-                        //  are logically Equal.
-                        IEnumerable<DomNodeAdapter> adapters = node.AsAll<DomNodeAdapter>();
-                        foreach (DomNodeAdapter adapter in adapters)
-                            yield return new Adapter(adapter);
-                    }
+					//if (m_showAdapters)
+					//{
+					//	// get all adapters, and wrap so that the TreeControlAdapter doesn't confuse
+					//	//  them with their parent DomNode; remember that the DomNode and its adapters
+					//	//  are logically Equal.
+					//	IEnumerable<DomNodeAdapter> adapters = node.AsAll<DomNodeAdapter>();
+					//	foreach (DomNodeAdapter adapter in adapters)
+					//		yield return new Adapter(adapter);
+					//}
                     // get child Dom objects
                     foreach (DomNode child in node.Children)
                         yield return child;
@@ -352,35 +515,46 @@ namespace picoTimelineEditor
             {
                 info.IsLeaf = !HasChildren(item);
 
-                DomNode node = item as DomNode;
-                if (node != null && node.ChildInfo != null)
-                {
-                    info.Label = node.ChildInfo.Name;
-                    //info.ImageIndex = info.GetImageList().Images.IndexOfKey(Resources.DomObjectImage);
-                    return;
-                }
+				IntervalSetting intervalSetting = item.As<IntervalSetting>();
+				if ( intervalSetting != null )
+				{
+					info.Label = intervalSetting.Name;
+				}
+				else
+				{
+					TimelineSetting setting = item.Cast<TimelineSetting>();
+					info.Label = setting.Label;
+				}
 
-                Adapter adapter = item as Adapter;
-                if (adapter != null)
-                {
-                    DomNodeAdapter nodeAdapter = adapter.Adaptee as DomNodeAdapter;
-                    StringBuilder sb = new StringBuilder();
+				//DomNode node = item as DomNode;
+				//if (node != null && node.ChildInfo != null)
+				//{
+				//	info.Label = node.ChildInfo.Name;
+				//	//info.ImageIndex = info.GetImageList().Images.IndexOfKey(Resources.DomObjectImage);
+				//	return;
+				//}
 
-                    Type type = nodeAdapter.GetType();
-                    sb.Append(type.Name);
-                    sb.Append(" (");
-                    foreach (Type interfaceType in type.GetInterfaces())
-                    {
-                        sb.Append(interfaceType.Name);
-                        sb.Append(",");
-                    }
-                    sb[sb.Length - 1] = ')'; // remove trailing comma
+				//Adapter adapter = item as Adapter;
+				//if (adapter != null)
+				//{
+				//	DomNodeAdapter nodeAdapter = adapter.Adaptee as DomNodeAdapter;
+				//	StringBuilder sb = new StringBuilder();
 
-                    info.Label = sb.ToString();
-                    //info.ImageIndex = info.GetImageList().Images.IndexOfKey(Resources.DomObjectInterfaceImage);
+				//	Type type = nodeAdapter.GetType();
+				//	sb.Append(type.Name);
+				//	sb.Append(" (");
+				//	foreach (Type interfaceType in type.GetInterfaces())
+				//	{
+				//		sb.Append(interfaceType.Name);
+				//		sb.Append(",");
+				//	}
+				//	sb[sb.Length - 1] = ')'; // remove trailing comma
 
-                    return;
-                }
+				//	info.Label = sb.ToString();
+				//	//info.ImageIndex = info.GetImageList().Images.IndexOfKey(Resources.DomObjectInterfaceImage);
+
+				//	return;
+				//}
             }
 
             #endregion
@@ -455,7 +629,92 @@ namespace picoTimelineEditor
 
             private DomNode m_root;
             private int m_lastRemoveIndex;
-            private bool m_showAdapters = true;
+			//private bool m_showAdapters = true;
         }
+
+		private enum Command
+		{
+			Add_CResLod,
+			Add_Test
+		}
+
+		private void DoCommandImpl( object commandTag )
+		{
+			if ( !(commandTag is Command) )
+				return;
+
+			if ( m_treeControl.Root == null )
+				return;
+
+			IntervalSetting intervalSetting = m_treeControl.Root.Tag.As<IntervalSetting>();
+			if ( intervalSetting == null )
+				return;
+
+			if ( m_transactionContext == null )
+				return;
+
+			switch ( (Command) commandTag )
+			{
+				case Command.Add_CResLod:
+					{
+						m_transactionContext.DoTransaction( delegate
+						{
+							intervalSetting.CreateSetting( Schema.cresLodSettingType.Type, "CResLod" );
+						},
+						"Add CResLod" );
+					}
+					break;
+			}
+		}
+
+		///// <summary>
+		///// Standard Edit/Cut command</summary>
+		//public static CommandInfo Add_CResLod_CommandInfo =
+		//	new CommandInfo(
+		//		Command.Add_CResLod,
+		//		null,
+		//		null,
+		//		"Add CResLod Setting",
+		//		"Creates new CResLod setting and adds it to selected Setting Interval",
+		//		Sce.Atf.Input.Keys.None,
+		//		null );
+
+		//#region ICommandClient Members
+
+		///// <summary>
+		///// Checks whether the client can do the command, if it handles it</summary>
+		///// <param name="commandTag">Command to be done</param>
+		///// <returns>True iff client can do the command</returns>
+		//bool ICommandClient.CanDoCommand( object commandTag )
+		//{
+		//	if ( !(commandTag is Command) )
+		//		return false;
+
+		//	switch ( (Command) commandTag )
+		//	{
+		//		case Command.Add_CResLod:
+		//			return true;
+		//	}
+
+		//	return false;
+		//}
+
+		///// <summary>
+		///// Does the command</summary>
+		///// <param name="commandTag">Command to be done</param>
+		//void ICommandClient.DoCommand( object commandTag )
+		//{
+		//	DoCommandImpl( commandTag );
+		//}
+
+		///// <summary>
+		///// Updates command state for given command</summary>
+		///// <param name="commandTag">Command</param>
+		///// <param name="commandState">Command info to update</param>
+		//void ICommandClient.UpdateCommand( object commandTag, CommandState commandState )
+		//{
+		//}
+
+		//#endregion
     }
 }
