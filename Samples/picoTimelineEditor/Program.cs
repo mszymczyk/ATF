@@ -59,7 +59,7 @@ namespace picoTimelineEditor
             var catalog = new TypeCatalog(
                 typeof(SettingsService),                // persistent settings and user preferences dialog
                 typeof(StatusService),                  // status bar at bottom of main Form
-                typeof(LiveConnectService),             // allows easy interop between apps on same router subnet
+				//typeof(LiveConnectService),             // allows easy interop between apps on same router subnet
                 typeof(Outputs),                        // passes messages to all IOutputWriter components
                 typeof(OutputService),                  // rich text box for displaying error and warning messages. Implements IOutputWriter
                 typeof(CommandService),                 // handles commands in menus and toolbars

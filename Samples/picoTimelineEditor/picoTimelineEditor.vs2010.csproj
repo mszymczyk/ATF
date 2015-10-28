@@ -85,9 +85,6 @@
     <Reference Include="System.Drawing" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
-    <Reference Include="Wws.LiveConnect" Condition="$(Platform)=='x86'">
-      <HintPath>..\..\ThirdParty\Wws.LiveConnect\clr4\x86\Wws.LiveConnect.dll</HintPath>
-    </Reference>
     <Reference Include="Wws.LiveConnect" Condition="$(Platform)=='x64' Or $(Platform)=='AnyCPU'">
       <HintPath>..\..\ThirdParty\Wws.LiveConnect\clr4\x64\Wws.LiveConnect.dll</HintPath>
     </Reference>
