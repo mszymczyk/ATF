@@ -1,6 +1,8 @@
 ﻿//Copyright © 2014 Sony Computer Entertainment America LLC. See License.txt.
 
 using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Drawing;
 using System.Globalization;
@@ -9,6 +11,9 @@ using Sce.Atf.Applications;
 using Sce.Atf.Adaptation;
 using Sce.Atf.Direct2D;
 using Sce.Atf.Controls.Timelines;
+using Sce.Atf.Controls.CurveEditing;
+using Sce.Atf.VectorMath;
+
 using picoTimelineEditor.DomNodeAdapters;
 
 namespace picoTimelineEditor
@@ -29,6 +34,13 @@ namespace picoTimelineEditor
 			HeaderWidth = 180;
 
 			m_picoTextBrush = graphics.CreateSolidBrush( SystemColors.WindowText );
+
+			D2dGradientStop[] gradstops = 
+            { 
+                new D2dGradientStop(Color.Gray, 0),
+                new D2dGradientStop(Color.Black, 1.0f),
+            };
+			m_fillLinearGradientBrush = graphics.CreateLinearGradientBrush( gradstops );
 		}
 
 
@@ -48,6 +60,7 @@ namespace picoTimelineEditor
 				if ( disposing )
 				{
 					m_picoTextBrush.Dispose();
+					m_fillLinearGradientBrush.Dispose();
 				}
 
 				// dispose any unmanaged resources.
@@ -96,6 +109,9 @@ namespace picoTimelineEditor
 							bounds.Height );
 						c.Graphics.FillRectangle( tailPart, endColor );
 					}
+
+					if (interval.Is<ICurveSet>())
+						DrawCurves( interval.As<ICurveSet>(), bounds, c );
 
 					// pico
 					// add line at the left border of interval
@@ -226,9 +242,198 @@ namespace picoTimelineEditor
 			}
         }
 
+		protected void DrawCurves( ICurveSet curveSet, RectangleF bounds, Context c )
+		{
+			IList<ICurve> curveList = curveSet.Curves;
+			if (curveList.Count == 0)
+				return;
+
+			ICurve curve = curveList[0];
+			DrawCurve( curve, bounds, c );
+		}
+
+		//private Pen m_curvePen = new Pen( Color.Black );
+		private PointF m_trans;
+		private PointF m_scale;// = new Pointf( 1, 1 );
+
+		/// <summary>
+		/// Transforms x and y-coordinates from graph space to client space</summary>        
+		/// <param name="x">X-coordinate to be transformed</param>
+		/// <param name="y">Y-coordinate to be transformed</param>
+		/// <returns>Vec2F representing transformed x and y-coordinates in client space</returns>
+		public Vec2F GraphToClient( float x, float y )
+		{
+			Vec2F result = new Vec2F();
+			y = 1.0f - y;
+			result.X = (float) (m_trans.X + x * m_scale.X);
+			result.Y = (float) (m_trans.Y + y * m_scale.Y);
+			//result.Y = (float)Math.Floor( result.Y );
+			return result;
+		}
+
+		protected void DrawCurve( ICurve curve, RectangleF bounds, Context c )
+		{
+			ReadOnlyCollection<IControlPoint> points = curve.ControlPoints;
+			if (points.Count <= 1)
+				return;
+
+			//float rangeX = curve.MaxX;
+			//float rangeY = curve.MaxY;
+			m_trans = new PointF( bounds.X, bounds.Y );
+			m_scale = new PointF( bounds.Width / curve.MaxX, bounds.Height / curve.MaxY );
+
+			//float step = m_tessellation / m_canvas.Zoom.X;
+			float x0 = 0;
+			float x1 = curve.MaxX;
+			IControlPoint fpt = points[0];
+			IControlPoint lpt = points[points.Count - 1];
+			float step = 8.0f / bounds.Width;
+			List<PointF> pointList = new List<PointF>( (int)bounds.Width / 4 );
+			ICurveEvaluator cv = CurveUtils.CreateCurveEvaluator( curve );
+			PointF scrPt = new PointF();
+
+			m_fillLinearGradientBrush.StartPoint = bounds.Location;
+			m_fillLinearGradientBrush.EndPoint = new PointF( bounds.X, bounds.Bottom );
+
+			D2dGraphics g = c.Graphics;
+			g.PushAxisAlignedClip( bounds );
+
+			float strokeWidth = 2;
+
+			// draw pre infinity
+			//if (fpt.X > x0)
+			{
+				float start = x0;
+				float end = Math.Min( fpt.X, x1 );
+				float rangeX = end - start;
+				for (float x = 0; x < rangeX; x += step)
+				{
+					float xv = start + x;
+					float y = cv.Evaluate( xv );
+					scrPt = GraphToClient( xv, y );
+					//scrPt.Y = MathUtil.Clamp( scrPt.Y, minY, maxY );
+					pointList.Add( scrPt );
+				}
+				scrPt = GraphToClient( end, cv.Evaluate( end ) );
+				//scrPt.Y = MathUtil.Clamp( scrPt.Y, minY, maxY );
+				pointList.Add( scrPt );
+				if (pointList.Count > 1)
+				{
+					//g.DrawLines( m_infinityPen, pointList.ToArray() );
+					PointF firstPoint = pointList[0];
+					PointF lastPoint = pointList[pointList.Count-1];
+					pointList.Add( new PointF( lastPoint.X, bounds.Bottom ) );
+					pointList.Add( new PointF( firstPoint.X, bounds.Bottom ) );
+
+					//g.FillPolygon( pointList, Color.Black );
+					g.FillPolygon( pointList, m_fillLinearGradientBrush );
+				}
+			}
+
+			int leftIndex = 0;
+			int rightIndex = points.Count - 1;
+			//ComputeIndices( curve, out leftIndex, out rightIndex );
+			if (curve.CurveInterpolation == InterpolationTypes.Linear)
+			{
+				for (int i = leftIndex; i < rightIndex; i++)
+				{
+					IControlPoint p1 = points[i];
+					IControlPoint p2 = points[i + 1];
+					PointF cp1 = GraphToClient( p1.X, p1.Y );
+					PointF cp2 = GraphToClient( p2.X, p2.Y );
+					//g.DrawLine( m_curvePen, cp1.X, cp1.Y, cp2.X, cp2.Y );
+					//g.DrawLine( cp1.X, cp1.Y, cp2.X, cp2.Y, Color.Black, strokeWidth );
+					g.FillPolygon( pointList, m_fillLinearGradientBrush );
+				}
+			}
+			else
+			{
+				for (int i = leftIndex; i < rightIndex; i++)
+				{
+					IControlPoint p1 = points[i];
+					IControlPoint p2 = points[i + 1];
+					if (p1.TangentOutType == CurveTangentTypes.Stepped)
+					{
+						PointF cp1 = GraphToClient( p1.X, p1.Y );
+						PointF cp2 = GraphToClient( p2.X, p2.Y );
+						//g.DrawLine( m_curvePen, cp1.X, cp1.Y, cp2.X, cp1.Y );
+						g.DrawLine( cp1.X, cp1.Y, cp2.X, cp1.Y, Color.Black, strokeWidth );
+						//g.DrawLine( m_curvePen, cp2.X, cp1.Y, cp2.X, cp2.Y );
+						g.DrawLine( cp2.X, cp1.Y, cp2.X, cp2.Y, Color.Black, strokeWidth );
+					}
+					else if (p1.TangentOutType != CurveTangentTypes.SteppedNext)
+					{
+						float start = Math.Max( p1.X, x0 );
+						float end = Math.Min( p2.X, x1 );
+						pointList.Clear();
+						float rangeX = end - start;
+						for (float x = 0; x < rangeX; x += step)
+						{
+							float xv = start + x;
+							float y = cv.Evaluate( xv );
+							scrPt = GraphToClient( xv, y );
+							//scrPt.Y = MathUtil.Clamp( scrPt.Y, minY, maxY );
+							pointList.Add( scrPt );
+						}
+						scrPt = GraphToClient( end, cv.Evaluate( end ) );
+						//scrPt.Y = MathUtil.Clamp( scrPt.Y, minY, maxY );
+						pointList.Add( scrPt );
+						if (pointList.Count > 1)
+						{
+							//g.DrawLines( m_curvePen, pointList.ToArray() );
+							//g.DrawLines( pointList, Color.Black, strokeWidth );
+							PointF firstPoint = pointList[0];
+							PointF lastPoint = pointList[pointList.Count-1];
+							pointList.Add( new PointF( lastPoint.X, bounds.Bottom ) );
+							pointList.Add( new PointF( firstPoint.X, bounds.Bottom ) );
+							//pointList.Add( new PointF( firstPoint.X, firstPoint.Y) );
+							//g.DrawPolygon( pointList, Color.Black, strokeWidth );
+							//g.FillPolygon( pointList, Color.Black );
+							g.FillPolygon( pointList, m_fillLinearGradientBrush );
+						}
+					}
+				}// for (int i = leftIndex; i < rightIndex; i++)
+			}
+
+			//draw post-infinity.
+			//if (lpt.X < x1)
+			{
+				pointList.Clear();
+				float start = Math.Max( x0, lpt.X );
+				float end = x1;
+				float rangeX = end - start;
+				for (float x = 0; x < rangeX; x += step)
+				{
+					float xv = start + x;
+					float y = cv.Evaluate( xv );
+					scrPt = GraphToClient( xv, y );
+					//scrPt.Y = MathUtil.Clamp( scrPt.Y, minY, maxY );
+					pointList.Add( scrPt );
+				}
+				scrPt = GraphToClient( end, cv.Evaluate( end ) );
+				//scrPt.Y = MathUtil.Clamp( scrPt.Y, minY, maxY );
+				pointList.Add( scrPt );
+				if (pointList.Count > 1)
+				{
+					//g.DrawLines( m_infinityPen, pointList.ToArray() );
+					PointF firstPoint = pointList[0];
+					PointF lastPoint = pointList[pointList.Count-1];
+					pointList.Add( new PointF( lastPoint.X, bounds.Bottom ) );
+					pointList.Add( new PointF( firstPoint.X, bounds.Bottom ) );
+					//g.FillPolygon( pointList, Color.Black );
+					g.FillPolygon( pointList, m_fillLinearGradientBrush );
+				}
+			}
+
+			g.PopAxisAlignedClip();
+		}
+
+		//private float m_tessellation = 4.0f;
+
 		/// <summary>
 		/// The brush used for drawing text on intervals, keys, and markers</summary>
 		protected D2dSolidColorBrush m_picoTextBrush;
+		private D2dLinearGradientBrush m_fillLinearGradientBrush;
 		private bool m_picoDisposed;
     }
 }
