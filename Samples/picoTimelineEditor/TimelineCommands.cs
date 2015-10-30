@@ -497,7 +497,7 @@ namespace picoTimelineEditor
 		{
 			m_autoPlay.contextRegistry_ActiveContextChanged( sender, e );
 
-			m_timelineEditor.hubService_sendSelectTimeline();
+			m_timelineEditor.hubService_sendSelectTimeline( true );
 			m_timelineEditor.hubService_sendPlayPause();
 		}
 

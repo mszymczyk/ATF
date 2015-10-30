@@ -60,7 +60,7 @@ namespace picoTimelineEditor
 						hubService_sendReloadTimeline( document.Cast<TimelineDocument>(), false );
 					}
 
-					hubService_sendSelectTimeline();
+					hubService_sendSelectTimeline( !Playing );
 					hubService_sendPlayPause();
 				}
 				else if ( cmd == "scrubberPosPico" )
@@ -85,7 +85,7 @@ namespace picoTimelineEditor
 			}
 		}
 
-		public void hubService_sendSelectTimeline()
+		public void hubService_sendSelectTimeline( bool sendScrubberPosition )
 		{
 			string docUri = null;
 
@@ -107,7 +107,7 @@ namespace picoTimelineEditor
 			hubMsg.appendString( docUri ); // what timeline
 			m_hubService.send( hubMsg );
 
-			if ( docUri != ".*" )
+			if ( sendScrubberPosition && docUri != ".*" )
 				hubService_sendScrubberPosition();
 		}
 
@@ -117,14 +117,14 @@ namespace picoTimelineEditor
 			hubMsg.appendString( "playPause" ); // command
 			hubMsg.appendInt( Playing ? 1 : 0 );
 
-			float scrubberPosition = 0;
-			TimelineContext context = m_contextRegistry.GetActiveContext<TimelineContext>();
-			if ( context != null )
-			{
-				TimelineDocument document = context.As<TimelineDocument>();
-				scrubberPosition = document.ScrubberManipulator.Position;
-			}
-			hubMsg.appendFloat( scrubberPosition );
+			//float scrubberPosition = 0;
+			//TimelineContext context = m_contextRegistry.GetActiveContext<TimelineContext>();
+			//if ( context != null )
+			//{
+			//	TimelineDocument document = context.As<TimelineDocument>();
+			//	scrubberPosition = document.ScrubberManipulator.Position;
+			//}
+			//hubMsg.appendFloat( scrubberPosition );
 
 			m_hubService.send( hubMsg );
 		}
