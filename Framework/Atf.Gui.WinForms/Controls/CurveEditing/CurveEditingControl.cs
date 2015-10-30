@@ -194,6 +194,22 @@ namespace Sce.Atf.Controls.CurveEditing
             }
         }
 
+		/// <summary>
+		/// Gets or sets drawing-thickness of selected curves</summary>
+		public float SelectedCurveThickness
+		{
+			get { return m_curveControl.SelectedCurveThickness; }
+			set { m_curveControl.SelectedCurveThickness = value; }
+		}
+
+		/// <summary>
+		/// Gets or sets drawing-thickness of unselected curves</summary>
+		public float CurveThickness
+		{
+			get { return m_curveControl.CurveThickness; }
+			set { m_curveControl.CurveThickness = value; }
+		}
+
         /// <summary>
         /// Gets CurveCanvas control</summary>
         protected CurveCanvas CurveCanvas

@@ -86,8 +86,8 @@ namespace picoTimelineEditor.DomNodeAdapters
 			curve.MaxY = float.MaxValue;
 			//curve.CurveColor = Color.Red;
 			curve.CurveColor = Color;
-			curve.PreInfinity = CurveLoopTypes.Cycle;
-			curve.PostInfinity = CurveLoopTypes.Cycle;
+			curve.PreInfinity = CurveLoopTypes.Constant;
+			curve.PostInfinity = CurveLoopTypes.Constant;
 			curve.XLabel = "Time";
 			curve.YLabel = "Value";
 

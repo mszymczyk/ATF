@@ -639,6 +639,22 @@ namespace Sce.Atf.Controls.CurveEditing
             }
         }
 
+		/// <summary>
+		/// Gets or sets drawing-thickness of selected curves</summary>
+		public float SelectedCurveThickness
+		{
+			get { return m_selectedCurveThickness; }
+			set { m_selectedCurveThickness = value; }
+		}
+
+		/// <summary>
+		/// Gets or sets drawing-thickness of unselected curves</summary>
+		public float CurveThickness
+		{
+			get { return m_curveThickness; }
+			set { m_curveThickness = value; }
+		}
+
         #endregion
 
         #region base overrides
@@ -919,7 +935,7 @@ namespace Sce.Atf.Controls.CurveEditing
                 {                
                     if (!curve.Visible)
                         continue;
-                    float thickness = m_editSet.Contains(curve) ? 2.6f : 1.0f;
+                    float thickness = m_editSet.Contains(curve) ? SelectedCurveThickness : CurveThickness;
                     m_renderer.DrawCurve(curve, e.Graphics, thickness);
                 }
 
@@ -2223,6 +2239,8 @@ namespace Sce.Atf.Controls.CurveEditing
         private ReadOnlyCollection<ICurve> m_curves = s_emptyCurves;
         private static readonly ReadOnlyCollection<ICurve> s_emptyCurves = (new List<ICurve>()).AsReadOnly();
         private readonly CurveRenderer m_renderer;
+		private float m_curveThickness;
+		private float m_selectedCurveThickness;
 
         private const float MaxAngle = 1.5706217938697f; // = 89.99 degree
         private const float MinAngle = -1.5706217938697f; // =-89.99 degree        

@@ -266,6 +266,9 @@ namespace picoTimelineEditor
 				m_curveEditor.Control.OnlyEditSelectedCurves = true;
 				m_curveEditor.MultiSelectionOverlay = true;
 				m_curveEditor.Control.CurvesChanged += ( sender, e ) => m_curveEditor.Control.FitAll();
+
+				m_curveEditor.Control.SelectedCurveThickness = 4;
+				m_curveEditor.Control.CurveThickness = 2;
 			}
 
 			m_luaEditorPanel = new Panel();
