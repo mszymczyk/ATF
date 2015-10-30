@@ -55,6 +55,8 @@
     </Compile>
     <Compile Include="Hub\HubServiceCommands.cs" />
     <Compile Include="IFileChangedNotification.cs" />
+    <Compile Include="ILogger.cs" />
+    <Compile Include="ITextureExporter.cs" />
     <Compile Include="picoColor.cs" />
     <Compile Include="Controls\PropertyEditing\CustomEnableAttributePropertyDescriptor.cs" />
     <Compile Include="Controls\PropertyEditing\picoFileUriEditor.cs" />

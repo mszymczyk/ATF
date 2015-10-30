@@ -53,6 +53,10 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\ThirdParty\IronPython\Microsoft.Dynamic.dll</HintPath>
     </Reference>
+    <Reference Include="picoPS4, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\_pico\cur_code\bin\picoPS4.dll</HintPath>
+    </Reference>
     <Reference Include="SharpDX, Version=2.5.1.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\ThirdParty\SharpDX\SharpDX.dll</HintPath>

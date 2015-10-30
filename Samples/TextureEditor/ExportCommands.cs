@@ -16,8 +16,16 @@ using SharpDX.DXGI;
 using System.Threading;
 using System.Collections.Generic;
 
+using pico;
+using picoPS4;
+
 namespace TextureEditor
-{   
+{
+	public class Exporters
+	{
+		public ITextureExporter m_ps4Exporter;
+	}
+
     /// <summary>
 	/// Utility for exporting textures based on metadata
     /// </summary>
@@ -27,6 +35,9 @@ namespace TextureEditor
 		{
 			m_mainForm = mainForm;
 			m_schemaLoader = schemaLoader;
+
+			m_exporters = new Exporters();
+			m_exporters.m_ps4Exporter = new picoPS4.GnfExporter();
 		}
 
 		public void ExportOne( Uri fileUri )
@@ -35,7 +46,7 @@ namespace TextureEditor
 			powin.VisibleChanged += ( sender, msg ) =>
 			{
 				if ( m_bgThread == null )
-					m_bgThread = new BackgroundThread( powin, m_schemaLoader, fileUri, false );
+					m_bgThread = new BackgroundThread( powin, m_schemaLoader, fileUri, false, m_exporters );
 			};
 
 			powin.CancelClicked += ( sender, msg ) =>
@@ -55,7 +66,7 @@ namespace TextureEditor
 			powin.VisibleChanged += ( sender, msg ) =>
 			{
 				if ( m_bgThread == null )
-					m_bgThread = new BackgroundThread( powin, m_schemaLoader, null, batchExport );
+					m_bgThread = new BackgroundThread( powin, m_schemaLoader, null, batchExport, m_exporters );
 			};
 
 			powin.CancelClicked += ( sender, msg ) =>
@@ -74,7 +85,7 @@ namespace TextureEditor
 			}
 		}
 
-		private class BackgroundThread
+		private class BackgroundThread : pico.ILogger
 		{
 			private ProgressOutputWindow m_progressWindow;
 			private SchemaLoader m_schemaLoader;
@@ -85,12 +96,18 @@ namespace TextureEditor
 			private bool m_alreadyStopped;
 			private int m_nErrors;
 
-			public BackgroundThread( ProgressOutputWindow progressWindow, SchemaLoader schemaLoader, Uri fileToExport, bool batchExport )
+			Exporters m_exporters;
+
+			public BackgroundThread( ProgressOutputWindow progressWindow, SchemaLoader schemaLoader, Uri fileToExport, bool batchExport, Exporters exporters )
 			{
 				m_progressWindow = progressWindow;
 				m_schemaLoader = schemaLoader;
 				m_fileToExport = fileToExport;
 				m_batchExport = batchExport;
+
+				m_exporters = exporters;
+				m_exporters.m_ps4Exporter.Logger = this;
+
 				m_thread = new Thread( Run );
 				m_thread.Name = "progress dialog";
 				m_thread.IsBackground = true; //so that the thread can be killed if app dies.
@@ -132,7 +149,7 @@ namespace TextureEditor
 						}
 					}
 
-					AddInfo( "Found " + fileList.Count + " files\n\n" );
+					LogInfo( "Found " + fileList.Count + " files\n\n" );
 
 					int nDone = 0;
 					foreach ( Uri uri in fileList )
@@ -153,21 +170,21 @@ namespace TextureEditor
 					if ( nDone == fileList.Count )
 					{
 						SetProgress( nDone, fileList.Count );
-						AddInfo( "Finished\n" );
+						LogInfo( "Finished\n" );
 					}
 					else
 					{
-						AddError( "Cancelled by user. Finished\n " + nDone + "/" + fileList.Count );
+						LogError( "Cancelled by user. Finished\n " + nDone + "/" + fileList.Count );
 					}
 
 					//if ( m_nWarnings > 0 )
 					//{
-					//	AddInfo( "" + m_nWarnings + " warnings!\n" );
+					//	LogInfo( "" + m_nWarnings + " warnings!\n" );
 					//}
 
 					if ( m_nErrors > 0 )
 					{
-						AddError( "" + m_nErrors + " errors!\n" );
+						LogError( "" + m_nErrors + " errors!\n" );
 					}
 
 					if ( m_batchExport )
@@ -202,23 +219,36 @@ namespace TextureEditor
 				}
 			}
 
-			public void AddInfo( string str )
+			#region ILogger Members
+
+			public void LogInfo( string str )
 			{
 				lock(this)
 				{
 					if ( m_progressWindow != null && m_progressWindow.IsHandleCreated )
-						m_progressWindow.BeginInvoke( new MethodInvoker( () => this.AddInfoThreadUnsafe(str) ) );
+						m_progressWindow.BeginInvoke( new MethodInvoker( () => this.LogInfoThreadUnsafe(str) ) );
 				}
 			}
 
-			public void AddError( string str )
+			public void LogWarning( string str )
 			{
 				lock ( this )
 				{
 					if ( m_progressWindow != null && m_progressWindow.IsHandleCreated )
-						m_progressWindow.BeginInvoke( new MethodInvoker( () => this.AddErrorThreadUnsafe( str ) ) );
+						m_progressWindow.BeginInvoke( new MethodInvoker( () => this.LogInfoThreadUnsafe( str ) ) );
 				}
 			}
+
+			public void LogError( string str )
+			{
+				lock ( this )
+				{
+					if ( m_progressWindow != null && m_progressWindow.IsHandleCreated )
+						m_progressWindow.BeginInvoke( new MethodInvoker( () => this.LogErrorThreadUnsafe( str ) ) );
+				}
+			}
+
+			#endregion
 
 			public void Done()
 			{
@@ -246,12 +276,12 @@ namespace TextureEditor
 				}
 			}
 
-			private void AddInfoThreadUnsafe( string str )
+			private void LogInfoThreadUnsafe( string str )
 			{
 				m_progressWindow.AddInfo( str );
 			}
 
-			private void AddErrorThreadUnsafe( string str )
+			private void LogErrorThreadUnsafe( string str )
 			{
 				m_progressWindow.AddError( str );
 			}
@@ -273,91 +303,85 @@ namespace TextureEditor
 
 			public int ExportUri( Uri metadataUri )
 			{
+				//LogInfo( "Exporting file: " + metadataFilePath + "\n" );
+
 				string metadataFilePath = Path.GetFullPath( metadataUri.LocalPath );
-				AddInfo( "Exporting file: " + metadataFilePath + "\n" );
+				if ( !File.Exists( metadataFilePath ) )
+				{
+					LogError( "Couldn't open file: " + metadataFilePath + "\n" );
+					m_nErrors += 1;
+					return -1;
+				}
 
 				string inputFile = metadataFilePath.Substring( 0, metadataFilePath.Length - ".metadata.".Length + 1 );
-				string outputFileWin_tmp = inputFile.Replace( pico.Paths.PICO_DEMO_data, pico.Paths.PICO_DEMO_dataWin );
-				string outputFileWin = outputFileWin_tmp + ".dds";
 
-				string outputFilePS4 = null;
-				if ( pico.Paths.HAS_PS4_SDK_INSTALLED )
+				if ( !File.Exists( inputFile ) )
 				{
-					string outputFilePS4_tmp = inputFile.Replace( pico.Paths.PICO_DEMO_data, pico.Paths.PICO_DEMO_dataPS4 );
-					outputFilePS4 = outputFilePS4_tmp + ".gnf";
+					LogError( "File " + inputFile + " doesn't exist! (Possible solution: delete .metadata file)\n" );
+					m_nErrors += 1;
+					return -1;
 				}
+
+				DateTime inputFileDT = File.GetLastWriteTime( inputFile );
+				DateTime metadataFileDT = File.GetLastWriteTime( metadataFilePath );
+				DateTime newerDT = inputFileDT >= metadataFileDT ? inputFileDT : metadataFileDT;
 
 				bool exportRequired = false;
 
-				if ( ! File.Exists(inputFile) )
+				bool outputFileWinExists = false;
+				bool outputFileWinIsUpToDate = false;
+
+				string outputFileWin = GetDataWinTexture( inputFile );
+				if ( File.Exists(outputFileWin) )
 				{
-					AddInfo( "File " + inputFile + " doesn't exist!\n" );
-					return 1;
-				}
-
-				DateTime inputFileLwt = File.GetLastWriteTime( inputFile );
-				//DateTime inputFileCt = File.GetCreationTime( inputFile );
-				//DateTime inputFileDT = inputFileLwt >= inputFileCt ? inputFileLwt : inputFileCt;
-				DateTime inputFileDT = inputFileLwt;
-
-				DateTime metadataFileLwt = File.GetLastWriteTime( metadataFilePath );
-				//DateTime metadataFileCt = File.GetCreationTime( metadataFilePath );
-				//DateTime metadataFileDT = metadataFileLwt >= metadataFileCt ? metadataFileLwt : metadataFileCt;
-				DateTime metadataFileDT = metadataFileLwt;
-
-				DateTime newerDT = inputFileDT >= metadataFileDT ? inputFileDT : metadataFileDT;
-
-				if ( File.Exists( outputFileWin ) )
-				{
-					DateTime dt = File.GetLastWriteTime( outputFileWin );
-					//DateTime ct = File.GetCreationTime( outputFileWin );
-					//if ( newerDT > dt || newerDT > ct )
-					if ( newerDT > dt )
+					outputFileWinExists = true;
+					DateTime outputFileWinDT = File.GetLastWriteTime( outputFileWin );
+					if ( newerDT > outputFileWinDT )
 					{
 						exportRequired = true;
 					}
-				}
-				else
-				{
-					exportRequired = true;
-				}
-
-				if ( !exportRequired && File.Exists(outputFilePS4) )
-				{
-					DateTime dt = File.GetLastWriteTime( outputFilePS4 );
-					if ( newerDT > dt )
+					else
 					{
-						exportRequired = true;
+						outputFileWinIsUpToDate = true;
 					}
 				}
-				else
-				{
-					exportRequired = true;
-				}
 
+				bool ps4ExportRequired = false;
 				if ( ! exportRequired )
 				{
-					//AddInfo( "File is up-to-date " + inputFile + "\n" );
+					if ( m_exporters.m_ps4Exporter != null )
+					{
+						if ( m_exporters.m_ps4Exporter.IsExportReqiured( inputFile, newerDT ) )
+						{
+							exportRequired = true;
+							ps4ExportRequired = true;
+						}
+					}
+				}
+
+				if ( !exportRequired )
+				{
+					//LogInfo( "File is up-to-date " + inputFile + "\n" );
 					return 0;
 				}
 
-				if ( File.Exists( metadataFilePath ) )
+				// read existing metadata
+				using ( FileStream stream = File.OpenRead( metadataFilePath ) )
 				{
-					// read existing metadata
-					using ( FileStream stream = File.OpenRead( metadataFilePath ) )
+					var reader = new DomXmlReader( m_schemaLoader );
+					Sce.Atf.Dom.DomNode rootNode = reader.Read( stream, metadataUri );
+					rootNode.InitializeExtensions();
+
+					TextureMetadata tm = rootNode.As<TextureMetadata>();
+
+					if ( !outputFileWinExists || !outputFileWinIsUpToDate )
 					{
-						var reader = new DomXmlReader( m_schemaLoader );
-						Sce.Atf.Dom.DomNode rootNode = reader.Read( stream, metadataUri );
-						rootNode.InitializeExtensions();
-
-						TextureMetadata tm = rootNode.As<TextureMetadata>();
-
 						if ( tm.CopySourceFile )
 						{
 							string dirWin = System.IO.Path.GetDirectoryName( outputFileWin );
 							System.IO.Directory.CreateDirectory( dirWin );
 
-							AddInfo( "Copying " + inputFile + " to " + outputFileWin + "\n" );
+							LogInfo( "Copying " + inputFile + " to " + outputFileWin + "\n" );
 							//System.IO.File.Delete( outputFileWin );
 							System.IO.File.Copy( inputFile, outputFileWin, true );
 							System.IO.File.SetLastWriteTime( outputFileWin, DateTime.Now );
@@ -387,14 +411,14 @@ namespace TextureEditor
 							if ( preset == TextureMetadata.TEXTURE_PRESET_CUSTOM_FORMAT )
 								format = tm.Format;
 
-							else if ( Enum.TryParse<SharpDX.DXGI.Format>(tm.Preset, out format) )
+							else if ( Enum.TryParse<SharpDX.DXGI.Format>( tm.Preset, out format ) )
 							{
 
 							}
 
 							else
 							{
-								AddError( "Invalid format: " + metadataFilePath + "\n" );
+								LogError( "Invalid format: " + metadataFilePath + "\n" );
 								m_nErrors += 1;
 								return 1;
 							}
@@ -417,11 +441,11 @@ namespace TextureEditor
 							// so first resize/genmips to uncompressed file, and then compress
 							//
 							if ( tm.GenMipMaps &&
-								(
+									(
 								   format == Format.BC1_UNorm_SRgb
-								|| format == Format.BC2_UNorm_SRgb
-								|| format == Format.BC3_UNorm_SRgb
-								|| format == Format.BC7_UNorm_SRgb
+									|| format == Format.BC2_UNorm_SRgb
+									|| format == Format.BC3_UNorm_SRgb
+									|| format == Format.BC7_UNorm_SRgb
 								)
 							)
 							{
@@ -465,45 +489,27 @@ namespace TextureEditor
 								//System.IO.File.SetLastWriteTime( outputFileWin, DateTime.Now );
 							}
 						}
+					} // if ( !outputFileWinExists || !outputFileWinIsUpToDate )
 
-						if ( tm.ExportToGnf && outputFilePS4 != null )
+					if ( ps4ExportRequired )
+					{
+						if ( tm.ExportToGnf )
 						{
-							string dirPS4 = System.IO.Path.GetDirectoryName( outputFilePS4 );
-							System.IO.Directory.CreateDirectory( dirPS4 );
-
-							string arg = "-f Auto ";
-							arg += " -i \"" + outputFileWin + "\" ";
-							arg += " -o \"" + outputFilePS4 + "\" ";
-
-							int ires = RunCommand_orbis_image2gnf( arg );
-							if ( ires != 0 )
-							{
-								m_nErrors += 1;
-								return ires;
-							}
-
-							//System.IO.File.SetLastWriteTime( outputFilePS4, DateTime.Now );
+							m_exporters.m_ps4Exporter.Export( inputFile );
 						}
 						else
 						{
-							if ( System.IO.File.Exists( outputFilePS4 ) )
-								System.IO.File.Delete( outputFilePS4 );
+							m_exporters.m_ps4Exporter.Delete( inputFile );
 						}
 					}
+				}
 
-					return 0;
-				}
-				else
-				{
-					AddError( "Couldn't open file: " + metadataFilePath + "\n" );
-					m_nErrors += 1;
-					return 1;
-				}
+				return 0;
 			}
 
 			int RunCommand_texconv( string arg )
 			{
-				AddInfo( "Command: texconv.exe " + arg + "\n" );
+				LogInfo( "Command: texconv.exe " + arg + "\n" );
 
 				System.Diagnostics.Process process = new System.Diagnostics.Process();
 				System.Diagnostics.ProcessStartInfo startInfo = new System.Diagnostics.ProcessStartInfo();
@@ -515,58 +521,19 @@ namespace TextureEditor
 				startInfo.UseShellExecute = false;
 				startInfo.CreateNoWindow = true;
 				process.StartInfo = startInfo;
-				process.OutputDataReceived += ( sender, args ) => AddInfo( "texconv output: " + args.Data + "\n" );
-				process.ErrorDataReceived  += ( sender, args ) => AddError( "texconv output: " + args.Data + "\n" );
-				process.Start();
-				process.BeginOutputReadLine();
-				////
-				//// Read in all the text from the process with the StreamReader.
-				////
-				//using ( StreamReader reader = process.StandardOutput )
-				//{
-				//	string result = reader.ReadToEnd();
-				//	AddInfo( "texconv output: " + result + "\n" );
-				//}
-				process.WaitForExit();
-
-				if ( process.ExitCode != 0 )
-				{
-					AddError( "FAILED!\n" );
-				}
-				else
-				{
-					AddInfo( "Done!\n" );
-				}
-
-				return process.ExitCode;
-			}
-			int RunCommand_orbis_image2gnf( string arg )
-			{
-				AddInfo( "Command: orbis-image2gnf " + arg + "\n" );
-
-				System.Diagnostics.Process process = new System.Diagnostics.Process();
-				System.Diagnostics.ProcessStartInfo startInfo = new System.Diagnostics.ProcessStartInfo();
-				startInfo.WindowStyle = System.Diagnostics.ProcessWindowStyle.Hidden;
-				startInfo.FileName = pico.Paths.orbis_image2gnf_exe;
-				startInfo.Arguments = arg;
-				startInfo.RedirectStandardOutput = true;
-				startInfo.RedirectStandardError = true;
-				startInfo.UseShellExecute = false;
-				startInfo.CreateNoWindow = true;
-				process.StartInfo = startInfo;
-				process.OutputDataReceived += ( sender, args ) => AddInfo( "orbis-image2gnf.exe output: " + args.Data + "\n" );
-				process.ErrorDataReceived  += ( sender, args ) => AddError( "orbis-image2gnf.exe output: " + args.Data + "\n" );
+				process.OutputDataReceived += ( sender, args ) => LogInfo( "texconv output: " + args.Data + "\n" );
+				process.ErrorDataReceived  += ( sender, args ) => LogError( "texconv output: " + args.Data + "\n" );
 				process.Start();
 				process.BeginOutputReadLine();
 				process.WaitForExit();
 
 				if ( process.ExitCode != 0 )
 				{
-					AddError( "FAILED!\n" );
+					LogError( "FAILED!\n" );
 				}
 				else
 				{
-					AddInfo( "Done!\n" );
+					LogInfo( "Done!\n" );
 				}
 
 				return process.ExitCode;
@@ -583,5 +550,6 @@ namespace TextureEditor
 		private MainForm m_mainForm;
 		private SchemaLoader m_schemaLoader;
 		private BackgroundThread m_bgThread;
+		private Exporters m_exporters;
 	}
 }

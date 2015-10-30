@@ -141,7 +141,7 @@ namespace TextureEditor
 			   CommandGroup,
 			   "Export One",
 			   "Exports currently selected texture",
-			   Keys.F,
+			   Keys.R,
 				//null,
 			   Sce.Atf.Resources.ComponentImage,
 			   CommandVisibility.Default,
@@ -153,13 +153,11 @@ namespace TextureEditor
 			   CommandGroup,
 			   "Export All",
 			   "Exports all textures",
-			   Keys.F,
+			   Keys.A,
 				//null,
 			   Sce.Atf.Resources.ComponentsImage,
 			   CommandVisibility.Default,
 			   this );
-
-
 
 			m_sourceTextureGamma = new ToolStripComboBox();
 			m_sourceTextureGamma.DropDownStyle = ComboBoxStyle.DropDownList;

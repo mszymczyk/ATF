@@ -21,16 +21,16 @@ namespace pico
 			picoHub_exe = PICO_ROOT + "bin64\\picoHub.exe";
 			picoLogOutput_exe = PICO_ROOT + "bin\\picoLogOutput.exe";
 
-			string sdkDirEnvVar = Environment.GetEnvironmentVariable( "SCE_ORBIS_SDK_DIR" );
-			if ( sdkDirEnvVar != null && sdkDirEnvVar.Length > 0 )
-			{
-				PICO_DEMO_dataPS4 = PICO_DEMO + "dataPS4\\";
+			//string sdkDirEnvVar = Environment.GetEnvironmentVariable( "SCE_ORBIS_SDK_DIR" );
+			//if ( sdkDirEnvVar != null && sdkDirEnvVar.Length > 0 )
+			//{
+			//	PICO_DEMO_dataPS4 = PICO_DEMO + "dataPS4\\";
 
-				SCE_ORBIS_SDK_DIR = Path.GetFullPath( sdkDirEnvVar + "\\" );
-				orbis_image2gnf_exe = SCE_ORBIS_SDK_DIR + "host_tools\\bin\\orbis-image2gnf.exe";
+			//	SCE_ORBIS_SDK_DIR = Path.GetFullPath( sdkDirEnvVar + "\\" );
+			//	orbis_image2gnf_exe = SCE_ORBIS_SDK_DIR + "host_tools\\bin\\orbis-image2gnf.exe";
 
-				HAS_PS4_SDK_INSTALLED = true;
-			}
+			//	HAS_PS4_SDK_INSTALLED = true;
+			//}
 		}
 
 		public static string UriToPicoDemoPath( Uri uri )
@@ -83,6 +83,38 @@ namespace pico
 			return str;
 		}
 
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="?"></param>
+		/// <returns>
+		/// 1 if file1 is newer than file2
+		/// 0 when files have same dates
+		/// -1 if file2 is newer than file1
+		///	-1 is also returned when one or both files don't exist
+		/// </returns>
+		public static int compareFileDates( string file1, string file2 )
+		{
+			DateTime dt1;
+			if ( File.Exists( file1 ) )
+				dt1 = File.GetLastWriteTime( file1 );
+			else
+				return -1;
+
+			DateTime dt2;
+			if ( File.Exists( file2 ) )
+				dt2 = File.GetLastWriteTime( file2 );
+			else
+				return -1;
+
+			if ( dt1 > dt2 )
+				return 1;
+			else if ( dt2 > dt1 )
+				return -1;
+			else
+				return 0;
+		}
+
 		private static string FixDriveLetter( string path )
 		{
 			if ( path.Length == 0 )
@@ -104,12 +136,12 @@ namespace pico
 		public static readonly string picoHub_exe;
 		public static readonly string picoLogOutput_exe;
 
-		// ps4 stuff
-		//
-		public static readonly bool HAS_PS4_SDK_INSTALLED;
+		//// ps4 stuff
+		////
+		//public static readonly bool HAS_PS4_SDK_INSTALLED;
 
-		public static readonly string PICO_DEMO_dataPS4;
-		public static readonly string SCE_ORBIS_SDK_DIR;
-		public static readonly string orbis_image2gnf_exe;
+		//public static readonly string PICO_DEMO_dataPS4;
+		//public static readonly string SCE_ORBIS_SDK_DIR;
+		//public static readonly string orbis_image2gnf_exe;
 	}
 }
