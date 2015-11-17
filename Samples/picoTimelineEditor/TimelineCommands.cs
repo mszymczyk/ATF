@@ -402,7 +402,8 @@ namespace picoTimelineEditor
 											//
 											List<Sce.Atf.VectorMath.Vec2F> controlPoints = new List<Sce.Atf.VectorMath.Vec2F>();
 
-											for ( int i = curve.ControlPoints.Count-1; i >= 0; --i )
+											//for ( int i = curve.ControlPoints.Count-1; i >= 0; --i )
+											for ( int i = curve.ControlPoints.Count; i-- > 0; )
 											{
 												IControlPoint cp = curve.ControlPoints[i];
 												maxX = MathUtil.Max<float>( maxX, cp.X );

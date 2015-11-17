@@ -1041,15 +1041,33 @@ namespace picoTimelineEditor
 			LuaScript luaScript = selected.As<LuaScript>();
 			if ( luaScript != null )
 			{
+				if ( m_luaEditorCurScript != null )
+					m_luaEditorCurScript.SourceCodeChanged -= luaScript_SourceCodeChanged;
+
+				m_luaEditorCurScript = luaScript;
+				m_luaEditorCurScript.SourceCodeChanged += luaScript_SourceCodeChanged;
+
 				m_luaEditorPanel.Controls.Clear();
 				m_luaEditorPanel.Controls.Add( luaScript.LuaEditorControl );
 				m_luaEditorPanelControlInfo.Name = "Lua Script: " + luaScript.Name;
 			}
 			else
 			{
+				if ( m_luaEditorCurScript != null )
+					m_luaEditorCurScript.SourceCodeChanged -= luaScript_SourceCodeChanged;
+
+				m_luaEditorCurScript = null;
+
 				m_luaEditorPanel.Controls.Clear();
 				m_luaEditorPanelControlInfo.Name = "Lua Script";
 			}
+		}
+		private void luaScript_SourceCodeChanged( object sender, EventArgs e )
+		{
+			DomNode luaScript = sender.As<DomNode>();
+			Sce.Atf.Dom.DomNode root = luaScript.GetRoot();
+			TimelineDocument document = root.Cast<TimelineDocument>();
+			hubService_sendReloadTimeline( document, true );
 		}
 
 		public EditMode EditMode { get { return m_editMode; } }
@@ -1112,6 +1130,7 @@ namespace picoTimelineEditor
 
 		private Panel m_luaEditorPanel;
 		private ControlInfo m_luaEditorPanelControlInfo;
+		private LuaScript m_luaEditorCurScript;
 
 		//// picoHub
 		////

@@ -367,7 +367,7 @@ namespace picoTimelineEditor
 		protected void DrawCurve( IInterval interval, ICurve curve, RectangleF bounds, Context c )
 		{
 			ReadOnlyCollection<IControlPoint> points = curve.ControlPoints;
-			if (points.Count <= 1)
+			if (points.Count < 1)
 				return;
 
 			// not all curves are supported right now

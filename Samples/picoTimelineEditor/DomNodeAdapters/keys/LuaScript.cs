@@ -1,7 +1,9 @@
 //Copyright © 2014 Sony Computer Entertainment America LLC. See License.txt.
 
+using System;
 using System.Windows.Forms;
 
+using Sce.Atf;
 using Sce.Atf.Dom;
 using Sce.Atf.Adaptation;
 using Sce.Atf.Applications;
@@ -59,6 +61,8 @@ namespace picoTimelineEditor.DomNodeAdapters
 							{
 								document.Dirty = true;
 							}
+
+							SourceCodeChanged.Raise( this, EventArgs.Empty );
 						}
 					};
 				}
@@ -86,6 +90,8 @@ namespace picoTimelineEditor.DomNodeAdapters
 		}
 
 		private ISyntaxEditorControl m_luaEditor;
+
+		public event EventHandler SourceCodeChanged;
 	}
 }
 
