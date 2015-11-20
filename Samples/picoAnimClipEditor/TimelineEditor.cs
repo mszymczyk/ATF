@@ -206,7 +206,10 @@ namespace picoAnimClipEditor
                 new BoundPropertyDescriptor(typeof(D2dSnapManipulator), () => D2dSnapManipulator.Color, "Snap Indicator Color", "Appearance",
                     "The color of the indicator to show that a snap will take place"),
                 new BoundPropertyDescriptor(typeof(D2dScaleManipulator), () => D2dScaleManipulator.Color, "Scale Manipulator Color", "Appearance",
-                    "The color of the scale manipulator")            };
+                    "The color of the scale manipulator"),
+                new BoundPropertyDescriptor(typeof(picoTimelineControl), () => picoTimelineControl.CursorStep, "Cursor Step", "Behavior",
+                    "Scrubber and cursor positions are rounded to this value (in milliseconds)")
+			};
             m_settingsService.RegisterUserSettings("Timeline Editor", settings);
             m_settingsService.RegisterSettings(this, settings);
 

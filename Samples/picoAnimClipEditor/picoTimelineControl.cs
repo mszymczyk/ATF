@@ -16,6 +16,16 @@ namespace picoAnimClipEditor
 	/// or more TimelineDocuments.</summary>
 	public class picoTimelineControl : D2dTimelineControl
 	{
+		/// <summary>
+		/// Gets or sets the cursor step, in milliseconds</summary>
+		public static float CursorStep
+		{
+			get { return s_cursorStep; }
+			set { s_cursorStep = MathUtil.Clamp<float>( value, 1.0f, 1000.0f ); }
+		}
+
+		private static float s_cursorStep = 1.0f;
+
 		public picoTimelineControl(
 			ITimelineDocument timelineDocument,
 			D2dTimelineRenderer timelineRenderer,
@@ -34,7 +44,7 @@ namespace picoAnimClipEditor
 		public override float ConstrainFrameOffset( float offset )
 		{
 			//return (float)Math.Round(offset);
-			return (float)MathUtil.Snap( offset, 100.0f );
+			return (float) MathUtil.Snap( offset, CursorStep );
 		}
 
 
