@@ -177,7 +177,7 @@ namespace picoAnimClipEditor
 
 			if ( m_directoryWatcherService != null )
 			{
-				m_directoryWatcherService.Register( pico.Paths.PICO_DEMO_data, new string[] { "*.anim", "*.animdata" }, true );
+				m_directoryWatcherService.Register( pico.Paths.PICO_DEMO_data, new string[] { "*.anim", "*.skel", "*.bnk", "*.animdata" }, true );
 				m_directoryWatcherService.FileChanged += directoryWatcherService_FileChanged;
 			}
 
@@ -934,6 +934,8 @@ namespace picoAnimClipEditor
 
 			if ( ext == ".anim" )
 			{
+				pico.Anim.AnimCache.OnFileChanged( e, ext, picoDemoPath );
+
 				_UpdateAnimRecursively( picoDemoPath, m_animListEditor.TreeView.Root );
 
 				m_hubServiceCommands.ReloadResource( picoDemoPath );
@@ -951,8 +953,13 @@ namespace picoAnimClipEditor
 				picoDemoPath = Path.ChangeExtension( picoDemoPath, ".anim" );
 				_UpdateAnimRecursively( picoDemoPath, m_animListEditor.TreeView.Root );
 			}
-			//else if ( ext == ".bnk" )
-			//{
+			else if ( ext == ".skel" )
+			{
+				pico.Anim.AnimCache.OnFileChanged( e, ext, picoDemoPath );
+			}
+			else if ( ext == ".bnk" )
+			{
+				pico.ScreamInterop.RefreshAllBanks();
 			//	pico.ScreamInterop.RefreshBank( picoDemoPath );
 			//	ISelectionContext selCtx = m_contextRegistry.GetActiveContext<ISelectionContext>();
 			//	if ( selCtx != null )
@@ -963,7 +970,7 @@ namespace picoAnimClipEditor
 			//		selCtx.Set( new object() );
 			//		selCtx.SetRange( oldSelection );
 			//	}
-			//}
+			}
 		}
 
 		private void _UpdateAnimRecursively( string picoDemoPath, object root )

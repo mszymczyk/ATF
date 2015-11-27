@@ -248,11 +248,10 @@
   </xs:complexType>
 
 
-  <xs:complexType name="trackAnimControllerType">
+  <xs:complexType name="groupAnimControllerType">
     <xs:annotation>
       <xs:appinfo>
-        <scea.dom.editors menuText="TrackAnimController" description="TrackAnimController" image="picoTimelineEditor.Resources.track.png" category="pico" />
-        <!--<scea.dom.editors.attribute name="name" displayName="Name" description="Unique Name" />-->
+        <scea.dom.editors menuText="GroupAnimController" description="GroupAnimController" image="picoTimelineEditor.Resources.group.png" category="pico" />
         <scea.dom.editors.attribute name="skelFile" displayName="Skel Filename" description="File name of animation skel"
                                     editor="pico.Controls.PropertyEditing.picoFileUriEditor,pico:Animation Skeleton files (*.skel)|*.skel"
                                     converter="Sce.Atf.Controls.PropertyEditing.ReadOnlyConverter"
@@ -261,13 +260,27 @@
       </xs:appinfo>
     </xs:annotation>
     <xs:complexContent>
+      <xs:extension base="groupType">
+        <xs:attribute name="skelFile" type="xs:string" />
+        <xs:attribute name="rootNode" type="xs:string" />
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+
+  <xs:complexType name="trackAnimControllerType">
+    <xs:annotation>
+      <xs:appinfo>
+        <scea.dom.editors menuText="TrackAnimController" description="TrackAnimController" image="picoTimelineEditor.Resources.track.png" category="pico" />
+        <!--<scea.dom.editors.attribute name="name" displayName="Name" description="Unique Name" />-->
+      </xs:appinfo>
+    </xs:annotation>
+    <xs:complexContent>
       <xs:extension base="trackType">
         <xs:sequence>
           <xs:element name="intervalAnimControllerType" type="intervalAnimControllerType" minOccurs="0" maxOccurs="1" />
         </xs:sequence>
         <!--<xs:attribute name="name" type="xs:ID" use="required" />-->
-        <xs:attribute name="skelFile" type="xs:string" />
-        <xs:attribute name="rootNode" type="xs:string" />
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>
@@ -582,13 +595,15 @@
                                     editor="pico.Controls.PropertyEditing.picoFileUriEditor,pico:Sound banks (*.bnk)|*.bnk"
                                     converter="Sce.Atf.Controls.PropertyEditing.ReadOnlyConverter"
                                     category="Sound" />
-        <scea.dom.editors.attribute name="sound" displayName="Sound Name" description="Sound to be played from sound bank" category="Sound" />
+        <!--<scea.dom.editors.attribute name="sound" displayName="Sound Name" description="Sound to be played from sound bank" category="Sound" />-->
       </xs:appinfo>
     </xs:annotation>
     <xs:complexContent>
       <xs:extension base="keyType">
         <xs:attribute name="soundBank" type="xs:string" />
         <xs:attribute name="sound" type="xs:string" />
+        <xs:attribute name="positional" type="xs:boolean" default="false"/>
+        <xs:attribute name="position" type="xs:string" />
         <!--blue-->
       </xs:extension>
     </xs:complexContent>
@@ -596,7 +611,7 @@
 
 
 
-  <xs:complexType name="keyCharacterSoundType">
+  <!--xs:complexType name="keyCharacterSoundType">
     <xs:annotation>
       <xs:appinfo>
         <scea.dom.editors menuText="CharacterSound" description="CharacterSound" image="picoTimelineEditor.Resources.key.png" category="pico" />
@@ -617,15 +632,72 @@
         <xs:attribute name="position" type="xs:string" default="pelvis" />
       </xs:extension>
     </xs:complexContent>
+  </xs:complexType-->
+  
+  
+  <!--xs:complexType name="intervalCharacterSoundType">
+    <xs:annotation>
+      <xs:appinfo>
+        <scea.dom.editors menuText="CharacterSoundInterval" description="CharacterSoundInterval" image="picoTimelineEditor.Resources.interval.png" category="pico" />
+        <scea.dom.editors.attribute name="color" displayName="Color" description="Display Color"
+                                    editor="Sce.Atf.Controls.PropertyEditing.ColorPickerEditor,Atf.Gui.WinForms"
+                                    converter="Sce.Atf.Controls.PropertyEditing.IntColorConverter" />
+        <scea.dom.editors.attribute name="soundBank" displayName="Sound Bank" description="Sound Bank"
+                                    editor="pico.Controls.PropertyEditing.picoFileUriEditor,pico:Sound banks (*.bnk)|*.bnk"
+                                    converter="Sce.Atf.Controls.PropertyEditing.ReadOnlyConverter"
+                                    category="Sound" />
+      </xs:appinfo>
+    </xs:annotation>
+    <xs:complexContent>
+      <xs:extension base="intervalType">
+        <xs:attribute name="soundBank" type="xs:string" />
+        <xs:attribute name="sound" type="xs:string" />
+        <xs:attribute name="positional" type="xs:boolean" default="false"/>
+        <xs:attribute name="position" type="xs:string" default="pelvis" />
+        <xs:attribute name="color" type="xs:integer" default="-16384"/>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType-->
+
+
+  <xs:complexType name="intervalSoundType">
+    <xs:annotation>
+      <xs:appinfo>
+        <scea.dom.editors menuText="SoundInterval" description="SoundInterval" image="picoTimelineEditor.Resources.interval.png" category="pico" />
+        <scea.dom.editors.attribute name="color" displayName="Color" description="Display Color"
+                                    editor="Sce.Atf.Controls.PropertyEditing.ColorPickerEditor,Atf.Gui.WinForms"
+                                    converter="Sce.Atf.Controls.PropertyEditing.IntColorConverter" />
+        <scea.dom.editors.attribute name="soundBank" displayName="Sound Bank" description="Sound Bank"
+                                    editor="pico.Controls.PropertyEditing.picoFileUriEditor,pico:Sound banks (*.bnk)|*.bnk"
+                                    converter="Sce.Atf.Controls.PropertyEditing.ReadOnlyConverter"
+                                    category="Sound" />
+        <!--<scea.dom.editors.attribute name="sound" displayName="Sound Name" description="Sound to be played from sound bank" category="Sound" />-->
+        <!--<scea.dom.editors.attribute name="positional" displayName="Positional" description="Whether sound is located in space relative to character"
+                                    editor="Sce.Atf.Controls.PropertyEditing.BoolEditor,Atf.Gui.WinForms"
+                                    category="Sound"
+                                    />-->
+      </xs:appinfo>
+    </xs:annotation>
+    <xs:complexContent>
+      <xs:extension base="intervalType">
+        <xs:attribute name="soundBank" type="xs:string" />
+        <xs:attribute name="sound" type="xs:string" />
+        <xs:attribute name="positional" type="xs:boolean" default="false"/>
+        <xs:attribute name="position" type="xs:string" />
+        <xs:attribute name="color" type="xs:integer" default="-16384"/>
+        <!--blue-->
+      </xs:extension>
+    </xs:complexContent>
   </xs:complexType>
   
-
+  
   <!--<xs:complexType name="keyChangeLevelType">
     <xs:annotation>
       <xs:appinfo>
         <scea.dom.editors menuText="ChangeLevel" description="ChangeLevel" image="picoTimelineEditor.Resources.key.png" category="pico" />
         <scea.dom.editors.attribute name="levelName" displayName="Level Name" description="Name of game level to play" />
-        --><!--<scea.dom.editors.attribute name="cutsceneName" displayName="Cutscene Name" description="Name of cutscene to play after new level is entered" category="Sound" />--><!--
+        -->
+  <!--<scea.dom.editors.attribute name="cutsceneName" displayName="Cutscene Name" description="Name of cutscene to play after new level is entered" category="Sound" />--><!--
         <scea.dom.editors.attribute name="cutsceneFile" displayName="Timeline File" description="Timeline to play after new level has been entered"
                                     editor="pico.Controls.PropertyEditing.picoFileUriEditor,pico:Timeline files (*.timeline)|*.timeline"
                                     converter="Sce.Atf.Controls.PropertyEditing.ReadOnlyConverter" />

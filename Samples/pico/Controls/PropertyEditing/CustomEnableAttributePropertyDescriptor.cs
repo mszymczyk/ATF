@@ -96,6 +96,18 @@ namespace pico.Controls.PropertyEditing
 			return readOnly;
 		}
 
+		/// <summary>
+		/// When overridden in a derived class, returns whether resetting an object changes its value</summary>
+		/// <param name="component">The component to test for reset capability</param>
+		/// <returns>True iff resetting the component changes its value</returns>
+		public override bool CanResetValue( object component )
+		{
+			if ( IsReadOnlyComponent(component) )
+				return false;
+
+			return base.CanResetValue( component );
+		}
+
 		//private Func<DomNode, AttributeInfo, bool> m_isReadOnlyPredicate;
 		ICustomEnableAttributePropertyDescriptorCallback m_callback;
 	};

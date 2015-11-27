@@ -7,6 +7,7 @@ using Sce.Atf.Adaptation;
 using Sce.Atf.Controls.Timelines;
 using Sce.Atf.Dom;
 
+using pico;
 using pico.Timeline;
 
 #pragma warning disable 0649 // suppress "field never set" warning
@@ -23,6 +24,8 @@ namespace picoTimelineEditor.DomNodeAdapters
 		protected override void OnNodeSet()
 		{
 			base.OnNodeSet();
+
+			ReloadSkelInfo();
 
 			IList<ITrack> tracks = Tracks;
 			if ( tracks.Count > 0 )
@@ -59,17 +62,53 @@ namespace picoTimelineEditor.DomNodeAdapters
 			set { DomNode.SetAttribute( Schema.groupCharacterControllerType.blendOutDurationAttribute, value ); }
 		}
 
-		#region IGroup Members
-
 		/// <summary>
-		/// Gets and sets the group name</summary>
-		public override string Name
+		/// Gets the track skel filename. Hack!</summary>
+		public string SkelFilename
 		{
-			get { return (string)DomNode.GetAttribute( Schema.groupCameraType.nameAttribute ); }
-			set { DomNode.SetAttribute( Schema.groupCameraType.nameAttribute, value ); }
+			get { return m_skelFilename; }
 		}
 
-		#endregion
+		public void ReloadSkelInfo()
+		{
+			// this is ugly hack but there is no other way of supporting legacy ksiezniczka character nodes
+			//
+			string nodeName = NodeName;
+			if ( nodeName == "ksiezniczka:picoCharacterControllerShape1" )
+			{
+				m_skelFilename = "assets\\ksiezniczkaCharacter\\anim\\princess.skel";
+			}
+			else if ( nodeName == "QueensChamber:picoKsiezniczkaQueenControllerShape1" )
+			{
+				m_skelFilename = "assets\\queen\\anim\\queen.skel";
+			}
+			else if ( nodeName == "monster:picoMonsterControllerShape1" )
+			{
+				m_skelFilename = "assets\\monster\\anim\\monster.skel";
+			}
+			else if ( nodeName == "monster:brotherShape" )
+			{
+				m_skelFilename = "assets\\monster_brother\\anim\\monster_brother.skel";
+			}
+
+			else if ( nodeName == "beachPrincess:picoBeachCharacterControllerShape1" )
+			{
+				m_skelFilename = "assets\\beachPrincessCharacter\\anim\\beachPrincess.skel";
+			}
+
+			else
+			{
+				m_skelFilename = null;
+			}
+		}
+
+		private void DomNode_AttributeChanged( object sender, AttributeEventArgs e )
+		{
+			if ( e.AttributeInfo.Equivalent( Schema.groupCharacterControllerType.nodeNameAttribute ) )
+			{
+				ReloadSkelInfo();
+			}
+		}
 
 		public bool CanParentTo( DomNode parent )
 		{
@@ -88,6 +127,8 @@ namespace picoTimelineEditor.DomNodeAdapters
 
 			return true;
 		}
+
+		private string m_skelFilename;
 	}
 }
 

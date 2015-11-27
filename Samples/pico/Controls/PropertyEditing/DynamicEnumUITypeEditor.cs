@@ -120,6 +120,24 @@ namespace pico.Controls.PropertyEditing
 				DefineEnum( names );
 
 				ListBox listBox = new ListBox();
+
+				// the problem with this control is that it flickers when mouse is hovering over it
+				// tried following solution, but it didn't work, will get back to it later
+				//
+				//// set double buffering
+				//// see for more info http://stackoverflow.com/questions/76993/how-to-double-buffer-net-controls-on-a-form
+				////
+				////Taxes: Remote Desktop Connection and painting
+				////http://blogs.msdn.com/oldnewthing/archive/2006/01/03/508694.aspx
+				//if ( !System.Windows.Forms.SystemInformation.TerminalServerSession )
+				//{
+				//	System.Reflection.PropertyInfo aProp = typeof( System.Windows.Forms.Control ).GetProperty( "DoubleBuffered",
+				//				System.Reflection.BindingFlags.NonPublic | 
+				//				System.Reflection.BindingFlags.Instance );
+
+				//	aProp.SetValue( listBox, true, null );
+				//}
+
 				listBox.DrawMode = DrawMode.OwnerDrawFixed;
 				listBox.DrawItem += listBox_DrawItem;
 				listBox.MouseMove += listBox_MouseMove;

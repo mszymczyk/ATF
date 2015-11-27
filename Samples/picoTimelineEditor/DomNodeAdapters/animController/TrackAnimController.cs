@@ -13,25 +13,25 @@ namespace picoTimelineEditor.DomNodeAdapters
     /// Adapts DomNode to a Track</summary>
     public class TrackAnimController : Track
     {
-        #region ITrack Members
+		//#region ITrack Members
 
-		/// <summary>
-		/// Gets or sets the track root node</summary>
-		public string RootNode
-		{
-			get { return (string)DomNode.GetAttribute( Schema.trackAnimControllerType.rootNodeAttribute ); }
-			set { DomNode.SetAttribute( Schema.trackAnimControllerType.rootNodeAttribute, value ); }
-		}
+		///// <summary>
+		///// Gets or sets the track root node</summary>
+		//public string RootNode
+		//{
+		//	get { return (string)DomNode.GetAttribute( Schema.trackAnimControllerType.rootNodeAttribute ); }
+		//	set { DomNode.SetAttribute( Schema.trackAnimControllerType.rootNodeAttribute, value ); }
+		//}
 
-		/// <summary>
-		/// Gets or sets the track skel filename</summary>
-		public string SkelFilename
-		{
-			get { return (string)DomNode.GetAttribute( Schema.trackAnimControllerType.skelFileAttribute); }
-			set { DomNode.SetAttribute( Schema.trackAnimControllerType.skelFileAttribute, value ); }
-		}
+		///// <summary>
+		///// Gets or sets the track skel filename</summary>
+		//public string SkelFilename
+		//{
+		//	get { return (string)DomNode.GetAttribute( Schema.trackAnimControllerType.skelFileAttribute); }
+		//	set { DomNode.SetAttribute( Schema.trackAnimControllerType.skelFileAttribute, value ); }
+		//}
 
-        #endregion
+		//#endregion
     }
 }
 

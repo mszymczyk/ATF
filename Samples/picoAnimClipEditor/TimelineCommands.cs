@@ -113,28 +113,28 @@ namespace picoAnimClipEditor
 
 			TimelineMenu.GetToolStrip().Items.Add( m_editMode );
 
-			m_refreshSoundNames = new ToolStripButton();
-			m_refreshSoundNames.Enabled = true;
-			m_refreshSoundNames.Name = "RefreshSoundBanks";
-			m_refreshSoundNames.Text = "RefreshSoundBanks".Localize();
-			m_refreshSoundNames.Click += delegate
-			{
-				pico.ScreamInterop.RefreshAllBanks();
+			//m_refreshSoundNames = new ToolStripButton();
+			//m_refreshSoundNames.Enabled = true;
+			//m_refreshSoundNames.Name = "RefreshSoundBanks";
+			//m_refreshSoundNames.Text = "RefreshSoundBanks".Localize();
+			//m_refreshSoundNames.Click += delegate
+			//{
+			//	pico.ScreamInterop.RefreshAllBanks();
 
-				ISelectionContext selCtx = m_contextRegistry.GetActiveContext<ISelectionContext>();
-				if ( selCtx != null )
-				{
-					// ui won't be automatically refreshed after bank refresh
-					// this is a difficult to achieve because we don't know how many components there are using sound banks
-					// changing current selection seems to be a good workaround
-					// user is forced to select given element again (KeySound for instance), this time with refreshed sound names
-					//
-					TimelineDocument document = m_contextRegistry.GetActiveContext<TimelineDocument>();
-					selCtx.Set( document );
-				}
-			};
+			//	ISelectionContext selCtx = m_contextRegistry.GetActiveContext<ISelectionContext>();
+			//	if ( selCtx != null )
+			//	{
+			//		// ui won't be automatically refreshed after bank refresh
+			//		// this is a difficult to achieve because we don't know how many components there are using sound banks
+			//		// changing current selection seems to be a good workaround
+			//		// user is forced to select given element again (KeySound for instance), this time with refreshed sound names
+			//		//
+			//		TimelineDocument document = m_contextRegistry.GetActiveContext<TimelineDocument>();
+			//		selCtx.Set( document );
+			//	}
+			//};
 
-			TimelineMenu.GetToolStrip().Items.Add( m_refreshSoundNames );
+			//TimelineMenu.GetToolStrip().Items.Add( m_refreshSoundNames );
 		}
 
         #endregion
@@ -469,7 +469,7 @@ namespace picoAnimClipEditor
 
 		private TimelineAutoPlay m_autoPlay;
 		private ToolStripComboBox m_editMode;
-		private ToolStripButton m_refreshSoundNames;
+		//private ToolStripButton m_refreshSoundNames;
 
 		public static MenuInfo TimelineMenu =
             new MenuInfo( "Timeline", "Timeline".Localize( "this is the name of a menu" ), "Timeline Commands".Localize() );

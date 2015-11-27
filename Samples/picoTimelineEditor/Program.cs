@@ -129,17 +129,19 @@ namespace picoTimelineEditor
 				AllowDrop = true
             };
 
-			mainForm.Loaded += ( sender, e ) =>
-			{
-				if ( args.Length > 0 )
-				{
-					if ( args[0] == "-batchConvertCutToTimeline" )
-					{
-						picoCutToTimelineBatchConverter batchConverter = new picoCutToTimelineBatchConverter();
-						batchConverter.batchConvert();
-					}
-				}
-			};
+			// converter is no longer needed
+			//
+			//mainForm.Loaded += ( sender, e ) =>
+			//{
+			//	if ( args.Length > 0 )
+			//	{
+			//		if ( args[0] == "-batchConvertCutToTimeline" )
+			//		{
+			//			picoCutToTimelineBatchConverter batchConverter = new picoCutToTimelineBatchConverter();
+			//			batchConverter.batchConvert();
+			//		}
+			//	}
+			//};
 
             var batch = new CompositionBatch();
             batch.AddPart(mainForm);
@@ -153,11 +155,38 @@ namespace picoTimelineEditor
             //  until all MEF composition has been completed.
             container.InitializeAll();
 
+
+			if ( !pico.ScreamInterop.StartUp( new pico.ScreamInterop.LogCallbackType(
+				delegate( int messageType, string text )
+				{
+					Console.Write( text );
+
+					OutputMessageType omt = OutputMessageType.Info;
+					if ( messageType <= 1 )
+						omt = OutputMessageType.Error;
+					else if ( messageType == 2 )
+						omt = OutputMessageType.Warning;
+					else if ( messageType == 3 || messageType == 6 )
+						omt = OutputMessageType.Info;
+					else
+						// ignore
+						return;
+
+					Outputs.WriteLine( omt, text );
+				}
+				) )
+				)
+			{
+				Outputs.WriteLine( OutputMessageType.Error, "Couldn't launch Scream interop native dll" );
+			}
+
             // Show the main form and start message handling. The main Form Load event provides a final chance
             //  for components to perform initialization and configuration.
             Application.Run(mainForm);
 
             container.Dispose();
-        }
+
+			pico.ScreamInterop.ShutDown();
+		}
     }
 }

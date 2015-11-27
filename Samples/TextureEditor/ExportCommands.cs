@@ -345,17 +345,18 @@ namespace TextureEditor
 						outputFileWinIsUpToDate = true;
 					}
 				}
-
-				bool ps4ExportRequired = false;
-				if ( ! exportRequired )
+				else
 				{
-					if ( m_exporters.m_ps4Exporter != null )
+					exportRequired = true;
+				}
+
+				bool ps4ExportRequired = exportRequired;
+				if ( m_exporters.m_ps4Exporter != null && !ps4ExportRequired )
+				{
+					if ( m_exporters.m_ps4Exporter.IsExportReqiured( inputFile, newerDT ) )
 					{
-						if ( m_exporters.m_ps4Exporter.IsExportReqiured( inputFile, newerDT ) )
-						{
-							exportRequired = true;
-							ps4ExportRequired = true;
-						}
+						exportRequired = true;
+						ps4ExportRequired = true;
 					}
 				}
 
@@ -491,7 +492,7 @@ namespace TextureEditor
 						}
 					} // if ( !outputFileWinExists || !outputFileWinIsUpToDate )
 
-					if ( ps4ExportRequired )
+					if ( m_exporters.m_ps4Exporter != null && ps4ExportRequired )
 					{
 						if ( tm.ExportToGnf )
 						{

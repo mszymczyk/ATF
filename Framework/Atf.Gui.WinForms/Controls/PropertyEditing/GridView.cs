@@ -1656,6 +1656,12 @@ namespace Sce.Atf.Controls.PropertyEditing
         /// <param name="property">Property to edit</param>
         private void EditProperty(Property property)
         {
+			// pico extension
+			// disable editing read only properties
+			//
+			if ( property.Context != null && property.Context.IsReadOnly )
+				return;
+
             TurnOnEditingRow();
             if (property.Control != null)
             {

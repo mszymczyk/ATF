@@ -101,7 +101,7 @@ namespace picoTimelineEditor
 				// sound
 				//
 				Schema.keySoundType.Type.Define( new ExtensionInfo<KeySound>() );
-				Schema.keyCharacterSoundType.Type.Define( new ExtensionInfo<KeyCharacterSound>() );
+				Schema.intervalSoundType.Type.Define( new ExtensionInfo<IntervalSound>() );
 
 				// fader
 				//
@@ -116,6 +116,7 @@ namespace picoTimelineEditor
 				Schema.intervalCameraAnimType.Type.Define( new ExtensionInfo<IntervalCameraAnim>() );
 
 				// anim controller
+				Schema.groupAnimControllerType.Type.Define( new ExtensionInfo<GroupAnimController>() );
 				Schema.trackAnimControllerType.Type.Define( new ExtensionInfo<TrackAnimController>() );
 				Schema.intervalAnimControllerType.Type.Define( new ExtensionInfo<IntervalAnimController>() );
 
@@ -303,27 +304,86 @@ namespace picoTimelineEditor
 			}
 
 			{
-				PropertyDescriptorCollection propDescCollection = Schema.keyCharacterSoundType.Type.GetTag<PropertyDescriptorCollection>();
-				var formatEditor = new LongEnumEditor();
-				formatEditor.DefineEnum( new string[] { 
-					"leftHand",
-					"rightHand",
-					"leftFoot",
-					"rightFoot",
-					"head",
-					"pelvis"
-					} );
-				formatEditor.MaxDropDownItems = 12;
-				var apd = new CustomEnableAttributePropertyDescriptor(
-					"Position".Localize(),
-					Schema.keyCharacterSoundType.positionAttribute,
+				PropertyDescriptorCollection propDescCollection = Schema.intervalSoundType.Type.GetTag<PropertyDescriptorCollection>();
+
+				var formatEditor = new DynamicEnumUITypeEditor( new IntervalSoundLister() );
+				formatEditor.MaxDropDownItems = 16;
+				var apd = new AttributePropertyDescriptor(
 					"Sound".Localize(),
-					"Specifies joint on character where to attach sound source".Localize(),
+					Schema.intervalSoundType.soundAttribute,
+					"Sound".Localize(),
+					"Sound to be played from sound bank".Localize(),
 					false,
 					formatEditor
-					 , new CustomEnableAttributePropertyDescriptorCallback( Schema.keyCharacterSoundType.positionalAttribute, CustomEnableAttributePropertyDescriptorCallback.Condition.ReadOnlyIfSetToFalse )
 				);
 				propDescCollection.Add( apd );
+
+
+				var apd2 = new CustomEnableAttributePropertyDescriptor(
+					"Positional".Localize(),
+					Schema.intervalSoundType.positionalAttribute,
+					"Sound".Localize(),
+					"Whether sound is located in space relative to object".Localize(),
+					false,
+					new BoolEditor()
+					, new IntervalAnimPositionalEnabledCallback()
+				);
+				propDescCollection.Add( apd2 );
+
+				var formatEditor3 = new DynamicEnumUITypeEditor( new IntervalAnimSkelLister() );
+				formatEditor3.MaxDropDownItems = 16;
+				var apd3 = new CustomEnableAttributePropertyDescriptor(
+					"Position".Localize(),
+					Schema.intervalSoundType.positionAttribute,
+					"Sound".Localize(),
+					"Specifies joint on object where to attach sound source".Localize(),
+					false,
+					formatEditor3
+						, new IntervalAnimPositionEnabledCallback()
+				);
+				propDescCollection.Add( apd3 );
+			}
+
+			{
+				PropertyDescriptorCollection propDescCollection = Schema.keySoundType.Type.GetTag<PropertyDescriptorCollection>();
+
+				var formatEditor = new DynamicEnumUITypeEditor( new KeySoundLister() );
+				formatEditor.MaxDropDownItems = 16;
+				var apd = new AttributePropertyDescriptor(
+					"Sound".Localize(),
+					Schema.keySoundType.soundAttribute,
+					"Sound".Localize(),
+					"Sound to be played from sound bank".Localize(),
+					false,
+					formatEditor
+				);
+				propDescCollection.Add( apd );
+
+
+				var apd2 = new CustomEnableAttributePropertyDescriptor(
+					"Positional".Localize(),
+					Schema.keySoundType.positionalAttribute,
+					"Sound".Localize(),
+					"Whether sound is located in space relative to object".Localize(),
+					false,
+					new BoolEditor()
+					, new KeyAnimPositionalEnabledCallback()
+				);
+				propDescCollection.Add( apd2 );
+
+
+				var formatEditor3 = new DynamicEnumUITypeEditor( new KeyAnimSkelLister() );
+				formatEditor3.MaxDropDownItems = 16;
+				var apd3 = new CustomEnableAttributePropertyDescriptor(
+					"Position".Localize(),
+					Schema.keySoundType.positionAttribute,
+					"Sound".Localize(),
+					"Specifies joint on object where to attach sound source".Localize(),
+					false,
+					formatEditor3
+						, new KeyAnimPositionEnabledCallback()
+				);
+				propDescCollection.Add( apd3 );
 			}
 		}
 

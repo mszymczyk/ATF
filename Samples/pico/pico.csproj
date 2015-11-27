@@ -44,7 +44,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Anim\AnimCache.cs" />
     <Compile Include="Anim\AnimFileHeader.cs" />
+    <Compile Include="Anim\SkelFileInfo.cs" />
     <Compile Include="Controls\PropertyEditing\CustomPropertyDescriptor.cs" />
     <Compile Include="Controls\PropertyEditing\DynamicEnumUITypeEditor.cs" />
     <Compile Include="Controls\TouchPad.cs">

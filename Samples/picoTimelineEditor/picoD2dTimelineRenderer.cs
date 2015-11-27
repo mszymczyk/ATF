@@ -118,7 +118,7 @@ namespace picoTimelineEditor
 					}
 
 					if ( interval.Is<ICurveSet>() )
-						DrawCurves( interval, interval.As<ICurveSet>(), bounds, c );
+						DrawCurves( interval, interval.As<ICurveSet>(), realPart, c );
 					//if ( interval.Is<IntervalFader>() )
 					//	DrawCurves( interval.As<IntervalFader>(), bounds, c );
 

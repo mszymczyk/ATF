@@ -90,6 +90,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="DomNodeAdapters\animController\GroupAnimController.cs" />
     <Compile Include="DomNodeAdapters\animController\IntervalAnimController.cs" />
     <Compile Include="DomNodeAdapters\animController\TrackAnimController.cs" />
     <Compile Include="DomNodeAdapters\camera\GroupCamera.cs" />
@@ -112,14 +113,12 @@
     <Compile Include="DomNodeAdapters\setting\CResLodSetting.cs" />
     <Compile Include="DomNodeAdapters\setting\IntervalSetting.cs" />
     <Compile Include="DomNodeAdapters\setting\ITimelineSetting.cs" />
-    <Compile Include="DomNodeAdapters\sound\KeyCharacterSound.cs" />
+    <Compile Include="DomNodeAdapters\sound\IntervalSound.cs" />
     <Compile Include="DomNodeAdapters\sound\KeySound.cs" />
     <Compile Include="DomNodeAdapters\text\IntervalText.cs" />
     <Compile Include="DomNodeAdapters\TimelineReference.cs" />
     <Compile Include="DomNodeAdapters\TrackBlendFactor.cs" />
     <Compile Include="HelpAboutCommand.cs" />
-    <Compile Include="picoCutToTimelineBatchConverter.cs" />
-    <Compile Include="picoCutToTimelineConverter.cs" />
     <Compile Include="picoD2dTimelineRenderer.cs" />
     <Compile Include="picoTimelineControl.cs">
       <SubType>Component</SubType>
@@ -210,6 +209,10 @@
     <ProjectReference Include="..\..\Framework\Atf.SyntaxEditorControl\Atf.SyntaxEditorControl.vs2010.csproj">
       <Project>{d1a78912-9ad2-4555-8560-b251a4d751dc}</Project>
       <Name>Atf.SyntaxEditorControl.vs2010</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\picoScreamInterop\picoScreamInterop.csproj">
+      <Project>{9513d8ed-840e-41c8-85cf-9eb49aea7a82}</Project>
+      <Name>picoScreamInterop</Name>
     </ProjectReference>
     <ProjectReference Include="..\pico\pico.csproj">
       <Project>{78c1e637-8be0-46e0-89c1-517659588d9a}</Project>

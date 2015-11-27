@@ -52,12 +52,20 @@ namespace pico
 				return;
 
 			NativeRefreshAllBanks();
+
+			m_bankCache.Clear();
 		}
 
-		public static string[] GetBankSounds( string bankName )
+		public static string[] GetBankSounds( string bankNameOrig )
 		{
 			if ( s_libHandle == IntPtr.Zero )
 				return null;
+
+			string bankName = pico.Paths.CanonicalizePathSimple( bankNameOrig );
+
+			string[] soundNames = null;
+			if ( m_bankCache.TryGetValue( bankName, out soundNames ) )
+				return soundNames;
 
 			IntPtr unmanagedStringArray = IntPtr.Zero;
 			int StringCount = 0;
@@ -75,6 +83,8 @@ namespace pico
 			{
 				managedStringArray[i] = Marshal.PtrToStringAnsi( pIntPtrArray[i] );
 			}
+
+			m_bankCache.Add( bankName, managedStringArray );
 
 			return managedStringArray;
 		}
@@ -104,5 +114,6 @@ namespace pico
 		}
 
 		private static IntPtr s_libHandle;
+		private static Dictionary<string, string[]> m_bankCache = new Dictionary<string, string[]>();
 	}
 }

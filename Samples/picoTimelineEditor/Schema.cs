@@ -136,11 +136,17 @@ namespace picoTimelineEditor
             intervalCameraAnimType.nearClipPlaneAttribute = intervalCameraAnimType.Type.GetAttributeInfo("nearClipPlane");
             intervalCameraAnimType.farClipPlaneAttribute = intervalCameraAnimType.Type.GetAttributeInfo("farClipPlane");
 
+            groupAnimControllerType.Type = getNodeType("timeline", "groupAnimControllerType");
+            groupAnimControllerType.nameAttribute = groupAnimControllerType.Type.GetAttributeInfo("name");
+            groupAnimControllerType.expandedAttribute = groupAnimControllerType.Type.GetAttributeInfo("expanded");
+            groupAnimControllerType.descriptionAttribute = groupAnimControllerType.Type.GetAttributeInfo("description");
+            groupAnimControllerType.skelFileAttribute = groupAnimControllerType.Type.GetAttributeInfo("skelFile");
+            groupAnimControllerType.rootNodeAttribute = groupAnimControllerType.Type.GetAttributeInfo("rootNode");
+            groupAnimControllerType.trackChild = groupAnimControllerType.Type.GetChildInfo("track");
+
             trackAnimControllerType.Type = getNodeType("timeline", "trackAnimControllerType");
             trackAnimControllerType.nameAttribute = trackAnimControllerType.Type.GetAttributeInfo("name");
             trackAnimControllerType.descriptionAttribute = trackAnimControllerType.Type.GetAttributeInfo("description");
-            trackAnimControllerType.skelFileAttribute = trackAnimControllerType.Type.GetAttributeInfo("skelFile");
-            trackAnimControllerType.rootNodeAttribute = trackAnimControllerType.Type.GetAttributeInfo("rootNode");
             trackAnimControllerType.intervalChild = trackAnimControllerType.Type.GetChildInfo("interval");
             trackAnimControllerType.keyChild = trackAnimControllerType.Type.GetChildInfo("key");
             trackAnimControllerType.intervalAnimControllerTypeChild = trackAnimControllerType.Type.GetChildInfo("intervalAnimControllerType");
@@ -216,15 +222,19 @@ namespace picoTimelineEditor
             keySoundType.nameAttribute = keySoundType.Type.GetAttributeInfo("name");
             keySoundType.soundBankAttribute = keySoundType.Type.GetAttributeInfo("soundBank");
             keySoundType.soundAttribute = keySoundType.Type.GetAttributeInfo("sound");
+            keySoundType.positionalAttribute = keySoundType.Type.GetAttributeInfo("positional");
+            keySoundType.positionAttribute = keySoundType.Type.GetAttributeInfo("position");
 
-            keyCharacterSoundType.Type = getNodeType("timeline", "keyCharacterSoundType");
-            keyCharacterSoundType.startAttribute = keyCharacterSoundType.Type.GetAttributeInfo("start");
-            keyCharacterSoundType.descriptionAttribute = keyCharacterSoundType.Type.GetAttributeInfo("description");
-            keyCharacterSoundType.nameAttribute = keyCharacterSoundType.Type.GetAttributeInfo("name");
-            keyCharacterSoundType.soundBankAttribute = keyCharacterSoundType.Type.GetAttributeInfo("soundBank");
-            keyCharacterSoundType.soundAttribute = keyCharacterSoundType.Type.GetAttributeInfo("sound");
-            keyCharacterSoundType.positionalAttribute = keyCharacterSoundType.Type.GetAttributeInfo("positional");
-            keyCharacterSoundType.positionAttribute = keyCharacterSoundType.Type.GetAttributeInfo("position");
+            intervalSoundType.Type = getNodeType("timeline", "intervalSoundType");
+            intervalSoundType.startAttribute = intervalSoundType.Type.GetAttributeInfo("start");
+            intervalSoundType.descriptionAttribute = intervalSoundType.Type.GetAttributeInfo("description");
+            intervalSoundType.nameAttribute = intervalSoundType.Type.GetAttributeInfo("name");
+            intervalSoundType.lengthAttribute = intervalSoundType.Type.GetAttributeInfo("length");
+            intervalSoundType.colorAttribute = intervalSoundType.Type.GetAttributeInfo("color");
+            intervalSoundType.soundBankAttribute = intervalSoundType.Type.GetAttributeInfo("soundBank");
+            intervalSoundType.soundAttribute = intervalSoundType.Type.GetAttributeInfo("sound");
+            intervalSoundType.positionalAttribute = intervalSoundType.Type.GetAttributeInfo("positional");
+            intervalSoundType.positionAttribute = intervalSoundType.Type.GetAttributeInfo("position");
 
             refChangeLevelType.Type = getNodeType("timeline", "refChangeLevelType");
             refChangeLevelType.nameAttribute = refChangeLevelType.Type.GetAttributeInfo("name");
@@ -438,13 +448,22 @@ namespace picoTimelineEditor
             public static AttributeInfo farClipPlaneAttribute;
         }
 
+        public static class groupAnimControllerType
+        {
+            public static DomNodeType Type;
+            public static AttributeInfo nameAttribute;
+            public static AttributeInfo expandedAttribute;
+            public static AttributeInfo descriptionAttribute;
+            public static AttributeInfo skelFileAttribute;
+            public static AttributeInfo rootNodeAttribute;
+            public static ChildInfo trackChild;
+        }
+
         public static class trackAnimControllerType
         {
             public static DomNodeType Type;
             public static AttributeInfo nameAttribute;
             public static AttributeInfo descriptionAttribute;
-            public static AttributeInfo skelFileAttribute;
-            public static AttributeInfo rootNodeAttribute;
             public static ChildInfo intervalChild;
             public static ChildInfo keyChild;
             public static ChildInfo intervalAnimControllerTypeChild;
@@ -547,14 +566,18 @@ namespace picoTimelineEditor
             public static AttributeInfo nameAttribute;
             public static AttributeInfo soundBankAttribute;
             public static AttributeInfo soundAttribute;
+            public static AttributeInfo positionalAttribute;
+            public static AttributeInfo positionAttribute;
         }
 
-        public static class keyCharacterSoundType
+        public static class intervalSoundType
         {
             public static DomNodeType Type;
             public static AttributeInfo startAttribute;
             public static AttributeInfo descriptionAttribute;
             public static AttributeInfo nameAttribute;
+            public static AttributeInfo lengthAttribute;
+            public static AttributeInfo colorAttribute;
             public static AttributeInfo soundBankAttribute;
             public static AttributeInfo soundAttribute;
             public static AttributeInfo positionalAttribute;

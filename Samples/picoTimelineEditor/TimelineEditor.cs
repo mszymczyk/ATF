@@ -97,7 +97,8 @@ namespace picoTimelineEditor
 			// sound
 			//
 			paletteService.AddItem( Schema.keySoundType.Type, "Sound", this );
-			paletteService.AddItem( Schema.keyCharacterSoundType.Type, "Sound", this );
+			//paletteService.AddItem( Schema.intervalCharacterSoundType.Type, "Sound", this );
+			paletteService.AddItem( Schema.intervalSoundType.Type, "Sound", this );
 
 			// anim controller
 			//
@@ -224,7 +225,7 @@ namespace picoTimelineEditor
 
 			if ( m_directoryWatcherService != null )
 			{
-				m_directoryWatcherService.Register( pico.Paths.PICO_DEMO_data, new string[] { "*.anim" }, true );
+				m_directoryWatcherService.Register( pico.Paths.PICO_DEMO_data, new string[] { "*.anim", "*.skel", "*.bnk" }, true );
 				// FileChanged event won't be fired when file is created
 				// there are issues with large files (file is created but not fully copied, etc...)
 				//
@@ -263,6 +264,13 @@ namespace picoTimelineEditor
 
             m_settingsService.RegisterUserSettings("Timeline Editor", settings);
             m_settingsService.RegisterSettings(this, settings);
+
+			var settings2 = new BoundPropertyDescriptor[] {
+                new BoundPropertyDescriptor(typeof(TimelineEditor),
+                    () => TimelineEditor.LastSoundBankFilename,
+                    "LastSoundBankFilename", "Operation", "Last Sound Bank File selected by user")
+			};
+			m_settingsService.RegisterSettings( this, settings2 );
 
 			if (m_curveEditor != null)
 			{
@@ -371,18 +379,26 @@ namespace picoTimelineEditor
         /// <returns>Document, or null if the document couldn't be opened or created</returns>
         public IDocument Open(Uri uri)
         {
-            TimelineDocument document = LoadOrCreateDocument(uri, true); //true: this is a master document
-            if (document != null)
-            {
-                m_controlHostService.RegisterControl(
-                    document.TimelineControl,
-                    document.Cast<TimelineContext>().ControlInfo,
-                    this);
+			try
+			{
+				TimelineDocument document = LoadOrCreateDocument( uri, true ); //true: this is a master document
+				if ( document != null )
+				{
+					m_controlHostService.RegisterControl(
+						document.TimelineControl,
+						document.Cast<TimelineContext>().ControlInfo,
+						this );
 
-                document.TimelineControl.Frame();
-            }
+					document.TimelineControl.Frame();
+				}
 
-            return document;
+				return document;
+			}
+			catch( Exception ex )
+			{
+				InvalidOperationException newEx = new InvalidOperationException( uri + ": " + ex.Message, ex );
+				throw newEx;
+			}
         }
 
         /// <summary>
@@ -638,21 +654,21 @@ namespace picoTimelineEditor
             }
             else if (File.Exists(filePath))
             {
-				if ( Path.GetExtension( filePath ).ToLower() == ".cut" )
-				{
-					//picoCutToTimelineConverter converter = new picoCutToTimelineConverter( uri );
-					//node = converter.Convert();
-					node = new DomNode( Schema.timelineType.Type, Schema.timelineRootElement );
-				}
-				else
-				{
+				//if ( Path.GetExtension( filePath ).ToLower() == ".cut" )
+				//{
+				//	//picoCutToTimelineConverter converter = new picoCutToTimelineConverter( uri );
+				//	//node = converter.Convert();
+				//	node = new DomNode( Schema.timelineType.Type, Schema.timelineRootElement );
+				//}
+				//else
+				//{
 					// read existing document using standard XML reader
 					using ( FileStream stream = new FileStream( filePath, FileMode.Open, FileAccess.Read ) )
 					{
 						DomXmlReader reader = new DomXmlReader( s_schemaLoader );
 						node = reader.Read( stream, uri );
 					}
-				}
+				//}
             }
             else if (isMasterDocument)
             {
@@ -737,13 +753,13 @@ namespace picoTimelineEditor
                 node.InitializeExtensions();
             }
 
-			if ( Path.GetExtension( filePath ).ToLower() == ".cut" )
-			{
-				picoCutToTimelineConverter converter = new picoCutToTimelineConverter( filePath );
-				//node = converter.Convert();
-				converter.Convert( node );
-				//node = new DomNode( Schema.timelineType.Type, Schema.timelineRootElement );
-			}
+			//if ( Path.GetExtension( filePath ).ToLower() == ".cut" )
+			//{
+			//	picoCutToTimelineConverter converter = new picoCutToTimelineConverter( filePath );
+			//	//node = converter.Convert();
+			//	converter.Convert( node );
+			//	//node = new DomNode( Schema.timelineType.Type, Schema.timelineRootElement );
+			//}
 
             return document;
         }
@@ -996,6 +1012,8 @@ namespace picoTimelineEditor
 
 			if ( ext == ".anim" )
 			{
+				pico.Anim.AnimCache.OnFileChanged( e, ext, picoDemoPath );
+
 				m_hubServiceCommands.ReloadResource( picoDemoPath );
 
 				foreach( IDocument document in m_documentRegistry.Documents )
@@ -1003,6 +1021,14 @@ namespace picoTimelineEditor
 					ITimeline timeline = document.As<ITimeline>();
 					timeline.NotifyFileChange( e, ext, picoDemoPath );
 				}
+			}
+			else if ( ext == ".skel" )
+			{
+				pico.Anim.AnimCache.OnFileChanged( e, ext, picoDemoPath );
+			}
+			else if ( ext == ".bnk" )
+			{
+				pico.ScreamInterop.RefreshAllBanks();
 			}
 		}
 
@@ -1127,8 +1153,9 @@ namespace picoTimelineEditor
         public static SchemaLoader s_schemaLoader;
         private static readonly DocumentClientInfo s_info = new DocumentClientInfo(
             "Timeline".Localize(),
-            new string[] { ".timeline", ".cut" },
-            Sce.Atf.Resources.DocumentImage,
+			//new string[] { ".timeline", ".cut" },
+			new string[] { ".timeline" },
+			Sce.Atf.Resources.DocumentImage,
             Sce.Atf.Resources.FolderImage,
             true);
 
@@ -1143,5 +1170,7 @@ namespace picoTimelineEditor
 
 		////Client socket stuff 
 		//System.Net.Sockets.Socket m_picoHubClientSocket;
+		public static string LastSoundBankFilename { get { return ms_LastSoundBankFilename; } set { ms_LastSoundBankFilename = value; } }
+		private static string ms_LastSoundBankFilename = "";
     }
 }

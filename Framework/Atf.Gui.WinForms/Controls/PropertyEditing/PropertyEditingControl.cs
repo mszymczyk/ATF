@@ -154,6 +154,15 @@ namespace Sce.Atf.Controls.PropertyEditing
                     m_textBox.AutoCompleteCustomSource.Clear();
                 }
 
+				// pico extension
+				// disable text box input on properties that are read only
+				// right now don't know the implications, but it seems good idea in general
+				//
+				if ( m_context.IsReadOnly )
+					m_textBox.Enabled = false;
+				else
+					m_textBox.Enabled = true;
+
                 PerformLayout();
                 Invalidate();
             }
@@ -573,7 +582,16 @@ namespace Sce.Atf.Controls.PropertyEditing
                 int width = base.Width;
 
                 UITypeEditor editor = WinFormsPropertyUtils.GetUITypeEditor(m_descriptor, this);
-                if (editor != null)
+				// old code
+				//
+				// if ( editor != null && !m_context.IsReadOnly )
+
+				// pico extension
+				// allow text box to take full width when property is read only
+				// old implementation constrained width when there was editor associated with this property
+				// but read only property can't display UITypeEditor anyway
+				//
+                if (editor != null && !m_context.IsReadOnly)
                 {
                     if (editor.GetPaintValueSupported(this))
                         x += PaintRectTextOffset;
