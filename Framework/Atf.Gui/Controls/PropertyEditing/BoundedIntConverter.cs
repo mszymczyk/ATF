@@ -11,6 +11,15 @@ namespace Sce.Atf.Controls.PropertyEditing
     /// <remarks>First argument, if not empty, is the minimum; second, if not empty, is the maximum</remarks>
     public class BoundedIntConverter : Int32Converter, IAnnotatedParams
     {
+		// misz extension
+		// constructor for setting min/max explicitly
+		//
+		public BoundedIntConverter( int? min, int? max )
+		{
+			m_min = min;
+			m_max = max;
+		}
+
         #region IAnnotatedParams Members
 
         /// <summary>
