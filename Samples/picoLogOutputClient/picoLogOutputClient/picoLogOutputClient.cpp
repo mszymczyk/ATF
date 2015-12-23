@@ -96,6 +96,7 @@ public:
 
 		if (ConnectSocket_ == INVALID_SOCKET) {
 			printf("Unable to connect to server!\n");
+			WSACleanup();
 			return 1;
 		}
 
@@ -111,6 +112,7 @@ public:
 		if (iResult == SOCKET_ERROR) {
 			printf("shutdown failed with error: %d\n", WSAGetLastError());
 			closesocket(ConnectSocket_);
+			WSACleanup();
 			return -1;
 		}
 

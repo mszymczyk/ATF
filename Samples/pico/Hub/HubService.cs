@@ -60,9 +60,13 @@ namespace pico.Hub
 			}
 
 			m_inputThread = new InputThread( this );
+
+			Instance = this;
 		}
 
 		#endregion
+
+		public static HubService Instance { get; set; }
 
 		public bool BlockOutboundTraffic { get; set; }
 		public bool BlockInboundTraffic { get; set; }
@@ -117,6 +121,18 @@ namespace pico.Hub
 			{
 				Outputs.WriteLine( OutputMessageType.Error, "Exception: send failed! " + ex.Message );
 			}
+		}
+
+		public static void sendS( HubMessage msg )
+		{
+			if (Instance != null)
+				Instance.send( msg );
+		}
+
+		public static void sendAlwaysS( HubMessage msg )
+		{
+			if (Instance != null)
+				Instance.sendAlways( msg );
 		}
 
 		public EventHandler< MessagesReceivedEventArgs > MessageReceived;

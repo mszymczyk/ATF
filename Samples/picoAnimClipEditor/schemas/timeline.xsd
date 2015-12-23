@@ -201,6 +201,20 @@
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>
+
+
+
+  <xs:complexType name="intervalTagType">
+    <xs:annotation>
+      <xs:appinfo>
+        <scea.dom.editors menuText="TagInterval" description="TagInterval" image="picoAnimClipEditor.Resources.interval.png" category="pico" />
+      </xs:appinfo>
+    </xs:annotation>
+    <xs:complexContent>
+      <xs:extension base="intervalType">
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
   
   
   

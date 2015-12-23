@@ -88,6 +88,7 @@ namespace picoAnimClipEditor
 				Schema.intervalAnimType.Type.Define( new ExtensionInfo<IntervalAnim>() );
 
 				Schema.keyTagType.Type.Define( new ExtensionInfo<KeyTag>() );
+				Schema.intervalTagType.Type.Define( new ExtensionInfo<IntervalTag>() );
 
 				// sound
 				//
