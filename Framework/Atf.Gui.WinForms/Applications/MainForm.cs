@@ -9,7 +9,7 @@ using System.Text;
 using System.Windows.Forms;
 using System.Xml;
 using System.Linq;
-
+using Sce.Atf.Adaptation;
 using Sce.Atf.Controls.PropertyEditing;
 
 namespace Sce.Atf.Applications
@@ -125,45 +125,69 @@ namespace Sce.Atf.Applications
         /// <param name="e">Event args</param>
         protected override void OnLoad(System.EventArgs e)
         {
-            // TODO:  m_settingsService is intended to be initialized via MEF for ATF 3.0 applications.
-            //        For legacy applications which don't use MEF, it appears these same settings are registered explicitly
-            //        much earlier in ApplicationHostService.cs.  The problem is that we need to ensure we don't try to 
-            //        apply settings until this point, which is an open issue for legacy applications, although the default 
-            //        ISettingsService "gets lucky" and defers callbacks long enough to get by.
-            //        See also other comments in this file labled SCREAM_TOOLBAR_STATE_ISSUE
-            if (m_settingsService != null)
+            try
             {
-                m_settingsService.RegisterSettings(this,
-                    new BoundPropertyDescriptor(this, () => MainFormBounds, "MainFormBounds", null, null),
-                    new BoundPropertyDescriptor(this, () => MainFormWindowState, "MainFormWindowState", null, null));
-
-                if (m_toolStripContainer != null)
+                m_loading = true;                
+                m_showen = false;  // used to test if OnShown is called before finishing OnLoad.
+                
+                // TODO:  m_settingsService is intended to be initialized via MEF for ATF 3.0 applications.
+                //        For legacy applications which don't use MEF, it appears these same settings are registered explicitly
+                //        much earlier in ApplicationHostService.cs.  The problem is that we need to ensure we don't try to 
+                //        apply settings until this point, which is an open issue for legacy applications, although the default 
+                //        ISettingsService "gets lucky" and defers callbacks long enough to get by.
+                //        See also other comments in this file labled SCREAM_TOOLBAR_STATE_ISSUE
+                if (m_settingsService != null)
                 {
                     m_settingsService.RegisterSettings(this,
-                        new BoundPropertyDescriptor(this, () => ToolStripContainerSettings, "ToolStripContainerSettings", null, null));
+                        new BoundPropertyDescriptor(this, () => MainFormBounds, "MainFormBounds", null, null),
+                        new BoundPropertyDescriptor(this, () => MainFormWindowState, "MainFormWindowState", null, null));
+
+                    if (m_toolStripContainer != null)
+                    {
+                        m_settingsService.RegisterSettings(this,
+                            new BoundPropertyDescriptor(this, () => ToolStripContainerSettings, "ToolStripContainerSettings", null, null));
+                    }
                 }
+
+                // deserialize  mainform WindowState here works better with DockPanelSuite; 
+                // this fixes an issue to restore window size causes the form to span dual monitors   
+                // when the program starts maximized
+                m_mainFormLoaded = true;
+                if (m_maximizeWindow)
+                    WindowState = FormWindowState.Maximized;
+
+                // Call base.OnLoad(e) last to ensure Loading event to occur before Loaded event.            
+                base.OnLoad(e);
+                Loading.Raise(this, e);
+
+                // if OnShown already called then we need raise OnLoaded event here.
+                if (m_showen)
+                    Loaded.Raise(this, e);
             }
-
-            base.OnLoad(e);
-
-            // deserialize  mainform WindowState here works better with DockPanelSuite; 
-            // this fixes an issue to restore window size causes the form to span dual monitors   
-            // when the program starts maximized
-            m_mainFormLoaded = true;
-            if (m_maximizeWindow)
-                WindowState = FormWindowState.Maximized;
-
-            Loading.Raise(this, e);
+            finally
+            {
+                m_loading = false;
+            }
         }
+
+        // Note: in some cases OnShown method will be called while still 
+        // inside OnLoad which will mess up the order of Loading and Loaded events.
+        // The following two boolean variables 
+        private bool m_loading; 
+        private bool m_showen; // shown is called.
 
         /// <summary>
         /// Raises the form Shown event</summary>
         /// <param name="e">Event args</param>
         protected override void OnShown(EventArgs e)
         {
-            base.OnShown(e);
-
-            Loaded.Raise(this, e);
+            m_showen = true;
+            base.OnShown(e);            
+            // if m_loading is true then this is called before
+            // OnLoad finshed, so in this case don't raise
+            // Loaded event because we still processing Loading event.
+            if (!m_loading)
+                Loaded.Raise(this, e);
         }
 
         /// <summary>
@@ -247,6 +271,9 @@ namespace Sce.Atf.Applications
             }
         }
 
+
+        
+
         /// <summary>
         /// Gets and sets the ToolStripContainer's state</summary>
         [Browsable(false)]
@@ -262,6 +289,28 @@ namespace Sce.Atf.Applications
                 xmlDoc.AppendChild(xmlDoc.CreateXmlDeclaration("1.0", Encoding.UTF8.WebName, "yes"));
                 XmlElement root = xmlDoc.CreateElement("ToolStripContainerSettings");
                 xmlDoc.AppendChild(root);
+
+
+                // check if tool strip is locked       
+                bool locked = false;
+                var toolStrips = m_toolStripContainer.TopToolStripPanel.Controls.AsIEnumerable<ToolStrip>()
+                        .Concat(m_toolStripContainer.BottomToolStripPanel.Controls.AsIEnumerable<ToolStrip>())
+                        .Concat(m_toolStripContainer.LeftToolStripPanel.Controls.AsIEnumerable<ToolStrip>())
+                        .Concat(m_toolStripContainer.RightToolStripPanel.Controls.AsIEnumerable<ToolStrip>());
+                foreach (var toolStrip in toolStrips)
+                {
+                    // skip invisible or unnamed  toolStrip
+                    if (!toolStrip.Visible || toolStrip.Name == null || toolStrip.Name.Trim().Length == 0)
+                        continue;
+                    locked = toolStrip.GripStyle == ToolStripGripStyle.Hidden
+                        && !toolStrip.AllowItemReorder;
+                    break;
+                }
+
+                if (locked)
+                {
+                    root.SetAttribute("Locked", "true");
+                }
 
                 SavePanelState(m_toolStripContainer.TopToolStripPanel, "TopToolStripPanel", xmlDoc, root);
                 SavePanelState(m_toolStripContainer.LeftToolStripPanel, "LeftToolStripPanel", xmlDoc, root);
@@ -303,6 +352,16 @@ namespace Sce.Atf.Applications
                     XmlElement root = xmlDoc.DocumentElement;
                     if (root == null || root.Name != "ToolStripContainerSettings")
                         throw new InvalidOperationException("Invalid Toolstrip settings");
+
+
+                    if (root.GetAttribute("Locked") == "true")
+                    {
+                        foreach (var toolStrip in toolStrips.Values)
+                        {
+                            toolStrip.GripStyle = ToolStripGripStyle.Hidden;
+                            toolStrip.AllowItemReorder = false;
+                        }                        
+                    }
 
                     // walk xml to restore matching toolstrips and items to their previous state
                     XmlNodeList Panels = root.SelectNodes("ToolStripPanel");

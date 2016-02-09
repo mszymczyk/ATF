@@ -1,5 +1,6 @@
 ﻿//Copyright © 2014 Sony Computer Entertainment America LLC. See License.txt.
 
+using System;
 using System.ComponentModel;
 using System.ComponentModel.Composition;
 using System.Xml.Schema;
@@ -24,7 +25,10 @@ namespace CircuitEditorSample
         {
             // set resolver to locate embedded .xsd file
             SchemaResolver = new ResourceStreamResolver(System.Reflection.Assembly.GetExecutingAssembly(), "CircuitEditorSample/schemas");
-            Load("Circuit.xsd");
+            var schema = Load("Circuit.xsd");
+            var version = schema.Version; // Version will be null if the xsd has no version attribute
+            m_version = string.IsNullOrEmpty(version) ? new Version("1.0") : new Version(version);
+
         }
 
         /// <summary>
@@ -34,6 +38,14 @@ namespace CircuitEditorSample
             get { return m_namespace; }
         }
         private string m_namespace;
+
+        /// <summary>
+        /// Gets the schema version</summary>
+        public Version Version
+        {
+            get { return m_version; }
+        }
+        private Version m_version;
 
         /// <summary>
         /// Gets the schema type collection</summary>
@@ -71,25 +83,26 @@ namespace CircuitEditorSample
                 // ReferenceValidator should be the last validator attached to the root DomNode to fully track
                 // all the DOM editings of all other validators to update references properly 
                 Schema.circuitDocumentType.Type.Define(new ExtensionInfo<ReferenceValidator>());        // tracks references and targets
+                
 
                 // decorate circuit type
                 Schema.circuitType.Type.Define(new ExtensionInfo<GlobalHistoryContext>());
                 Schema.circuitType.Type.Define(new ExtensionInfo<ViewingContext>());                    // manages module and circuit bounds, efficient layout
                 Schema.circuitType.Type.Define(new ExtensionInfo<LayeringContext>());                   // circuit layer hierarchy
                 Schema.circuitType.Type.Define(new ExtensionInfo<PrintableDocument>());                 // printing
+                Schema.circuitType.Type.Define(new ExtensionInfo<ExpressionManager>());                 // printing
+
 
                 // decorate group type
                 Schema.groupType.Type.Define(new ExtensionInfo<CircuitEditingContext>());                    // main editable circuit adapter
                 Schema.groupType.Type.Define(new ExtensionInfo<Group>());
                 Schema.groupType.Type.Define(new ExtensionInfo<ViewingContext>());
 
-                #pragma warning disable 618 //mastered sub-circuits are obsolete
-                Schema.subCircuitType.Type.Define(new ExtensionInfo<SubCircuit>());
-                Schema.subCircuitInstanceType.Type.Define(new ExtensionInfo<SubCircuitInstance>());
-                #pragma warning restore 618
-
                 Schema.connectionType.Type.Define(new ExtensionInfo<WireStyleProvider<Module, Connection, ICircuitPin>>());
-                                  
+
+                // register Expression.
+                Schema.expressionType.Type.Define(new ExtensionInfo<Expression>());
+
                 RegisterCircuitExtensions();
 
                 // types are initialized, register property descriptors on module, folder types
@@ -108,7 +121,20 @@ namespace CircuitEditorSample
                                 Schema.moduleType.nameAttribute, // 'nameAttribute' is unique id, label is user visible name
                                 null,
                                 "Unique ID".Localize(),
-                                true)
+                                true),
+                            new AttributePropertyDescriptor(
+                                "X".Localize(),
+                                Schema.moduleType.xAttribute, 
+                                null,
+                                "location x".Localize(),
+                                false),
+                            new AttributePropertyDescriptor(
+                                "Y".Localize(),
+                                Schema.moduleType.yAttribute, 
+                                null,
+                                "location Y".Localize(),
+                                false),
+
                     }));
 
                 Schema.layerFolderType.Type.SetTag(
@@ -142,6 +168,7 @@ namespace CircuitEditorSample
         {         
             // adapts the default implementation  of circuit types
             Schema.moduleType.Type.Define(new ExtensionInfo<Module>());
+            Schema.moduleType.Type.Define(new ExtensionInfo<ModuleProperties>());
             Schema.connectionType.Type.Define(new ExtensionInfo<Connection>());
             Schema.pinType.Type.Define(new ExtensionInfo<Pin>());
             Schema.groupPinType.Type.Define(new ExtensionInfo<GroupPin>());

@@ -58,6 +58,12 @@ namespace Sce.Atf.Controls.Adaptable.Graphs
         protected abstract AttributeInfo ShowExpandedGroupPinsAttribute { get; }
 
         /// <summary>
+        /// Gets the attribute for the flag which indicates if the group has been validated.</summary>
+        protected virtual AttributeInfo ValidatedAttribute { get { return null; } }
+
+
+
+        /// <summary>
         /// Gets the child info for the circuit elements contained within this group</summary>
         protected abstract ChildInfo ElementChildInfo { get; }
 
@@ -158,6 +164,18 @@ namespace Sce.Atf.Controls.Adaptable.Graphs
             }
             foreach (var connection in Wires)
                 connection.SetPinTarget();
+
+            if (!Validated )
+            {
+                // normally a group node is always validated upon loading. But during version transformations, 
+                // a raw group node could be created to replace old subcircuits, in which case the group is not validated before,
+                // so group pins need regenerated
+                var internalConnections = new List<Wire>();
+                var externalConnections = new List<Wire>();
+                GetSubGraphConnections(internalConnections, externalConnections, externalConnections);
+                UpdateGroupPins(m_elements, internalConnections, externalConnections);
+                Validated = true;
+            }
 
             Info.HiddenInputPins = m_inputs.Where(x => !x.Visible).AsIEnumerable<ICircuitPin>();
             Info.HiddenOutputPins = m_outputs.Where(x => !x.Visible).AsIEnumerable<ICircuitPin>();
@@ -480,6 +498,23 @@ namespace Sce.Atf.Controls.Adaptable.Graphs
         }
 
         /// <summary>
+        /// Gets or sets whether to the group has been validated</summary>
+        public virtual bool Validated
+        {
+            get
+            {
+                if (ValidatedAttribute!= null)
+                    return GetAttribute<bool>(ValidatedAttribute);
+                return true;
+            }
+            set
+            {
+                if (ValidatedAttribute != null)
+                    SetAttribute(ValidatedAttribute, value);
+            }
+        }
+
+        /// <summary>
         /// Gets or sets whether to show the group pins when the group is expanded</summary>
         public virtual bool ShowExpandedGroupPins
         {
@@ -665,7 +700,8 @@ namespace Sce.Atf.Controls.Adaptable.Graphs
                     var grpPin = MatchedGroupPin(connection.InputElement, connection.InputPin.Index, true);
                     if (grpPin == null)
                     {
-                        var inputPin = connection.InputElement.Type.Inputs[connection.InputPin.Index];
+                        //var inputPin = connection.InputElement.Type.Inputs[connection.InputPin.Index];
+                        var inputPin = connection.InputElement.InputPin(connection.InputPin.Index);
                         var groupPin = new DomNode(GroupPinType).As<GroupPin>();
                         groupPin.TypeName = inputPin.TypeName;
                         groupPin.InternalElement = connection.InputElement;
@@ -689,7 +725,8 @@ namespace Sce.Atf.Controls.Adaptable.Graphs
                     var grpPin = MatchedGroupPin(connection.OutputElement, connection.OutputPin.Index, false);
                     if (grpPin == null)
                     {
-                        var outputPin = connection.OutputElement.Type.Outputs[connection.OutputPin.Index];
+                        //var outputPin = connection.OutputElement.Type.Outputs[connection.OutputPin.Index];
+                        var outputPin = connection.OutputElement.OutputPin(connection.OutputPin.Index);
                         var groupPin = new DomNode(GroupPinType).As<GroupPin>();
                         groupPin.TypeName = outputPin.TypeName;
                         groupPin.InternalElement = connection.OutputElement;
@@ -1123,7 +1160,8 @@ namespace Sce.Atf.Controls.Adaptable.Graphs
                 foreach (var grpPin in m_inputs)
                 {
                     var leafModule = grpPin.PinTarget.LeafDomNode.Cast<Element>();
-                    var leafPin = leafModule.Type.Inputs[grpPin.PinTarget.LeafPinIndex];
+                    //var leafPin = leafModule.Type.Inputs[grpPin.PinTarget.LeafPinIndex];
+                    var leafPin = leafModule.Type.GetInputPin(grpPin.PinTarget.LeafPinIndex);
                     if (!leafPin.AllowFanIn)
                     {
                         GroupPin pin = grpPin;
@@ -1148,7 +1186,7 @@ namespace Sce.Atf.Controls.Adaptable.Graphs
                 foreach (var grpPin in m_outputs)
                 {
                     var leafModule = grpPin.PinTarget.LeafDomNode.Cast<Element>();
-                    var leafPin = leafModule.Type.Outputs[grpPin.PinTarget.LeafPinIndex];
+                    var leafPin = leafModule.Type.GetOutputPin(grpPin.PinTarget.LeafPinIndex);
                     if (!leafPin.AllowFanOut)
                     {
                         GroupPin pin = grpPin;

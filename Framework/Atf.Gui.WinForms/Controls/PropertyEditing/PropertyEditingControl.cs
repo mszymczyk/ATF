@@ -1076,7 +1076,6 @@ namespace Sce.Atf.Controls.PropertyEditing
                 if (m_control != null)
                 {
                     Controls.Remove(m_control);
-                    m_control.Resize -= control_Resize;
                     m_control = null;
                 }
                 if (control != null)
@@ -1089,22 +1088,8 @@ namespace Sce.Atf.Controls.PropertyEditing
 
                     m_control.Location = new Point(0, 0);
                     m_control.Visible = true;
-                    m_control.Resize += control_Resize;
                 }
                 Enabled = m_control != null;
-            }
-
-            private void control_Resize(object sender, EventArgs e)
-            {
-                Rectangle bounds = Bounds;
-                bounds.Width = Math.Max(m_parent.Width, m_control.Width);
-                Rectangle workingArea = SystemInformation.WorkingArea;
-                if (bounds.Right > workingArea.Right)
-                    bounds.X -= bounds.Right - workingArea.Right;
-                if (bounds.X < workingArea.Left)
-                    bounds.X = workingArea.Left;
-
-                Bounds = bounds;
             }
 
             private Control m_control;
