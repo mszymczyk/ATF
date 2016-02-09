@@ -81,6 +81,7 @@ namespace picoAnimClipEditor
 
 			// generic
 			paletteService.AddItem( Schema.keyTagType.Type, "Timelines", this );
+			paletteService.AddItem( Schema.intervalTagType.Type, "Timelines", this );
 
 			// sound
 			//

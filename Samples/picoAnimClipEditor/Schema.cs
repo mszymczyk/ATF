@@ -103,6 +103,13 @@ namespace picoAnimClipEditor
             keyTagType.descriptionAttribute = keyTagType.Type.GetAttributeInfo("description");
             keyTagType.nameAttribute = keyTagType.Type.GetAttributeInfo("name");
 
+            intervalTagType.Type = getNodeType("timeline", "intervalTagType");
+            intervalTagType.startAttribute = intervalTagType.Type.GetAttributeInfo("start");
+            intervalTagType.descriptionAttribute = intervalTagType.Type.GetAttributeInfo("description");
+            intervalTagType.nameAttribute = intervalTagType.Type.GetAttributeInfo("name");
+            intervalTagType.lengthAttribute = intervalTagType.Type.GetAttributeInfo("length");
+            intervalTagType.colorAttribute = intervalTagType.Type.GetAttributeInfo("color");
+
             keySoundType.Type = getNodeType("timeline", "keySoundType");
             keySoundType.startAttribute = keySoundType.Type.GetAttributeInfo("start");
             keySoundType.descriptionAttribute = keySoundType.Type.GetAttributeInfo("description");
@@ -235,6 +242,16 @@ namespace picoAnimClipEditor
             public static AttributeInfo startAttribute;
             public static AttributeInfo descriptionAttribute;
             public static AttributeInfo nameAttribute;
+        }
+
+        public static class intervalTagType
+        {
+            public static DomNodeType Type;
+            public static AttributeInfo startAttribute;
+            public static AttributeInfo descriptionAttribute;
+            public static AttributeInfo nameAttribute;
+            public static AttributeInfo lengthAttribute;
+            public static AttributeInfo colorAttribute;
         }
 
         public static class keySoundType

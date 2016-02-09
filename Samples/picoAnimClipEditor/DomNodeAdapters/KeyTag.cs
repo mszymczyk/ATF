@@ -12,14 +12,14 @@ namespace picoAnimClipEditor.DomNodeAdapters
 {
     /// <summary>
     /// Adapts DomNode to a KeyTag</summary>
-	public class KeyTag : DomNodeAdapter, ITimelineValidationCallback
+	public class KeyTag : Key
     {
-		public virtual bool CanParentTo( DomNode parent )
+		public override bool CanParentTo( DomNode parent )
 		{
 			return true;
 		}
 
-		public virtual bool Validate( DomNode parent )
+		public override bool Validate( DomNode parent )
 		{
 			return true;
 		}

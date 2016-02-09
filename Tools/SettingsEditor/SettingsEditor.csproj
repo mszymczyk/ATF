@@ -29,6 +29,7 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|AnyCPU'">
     <OutputPath>..\..\bin\Release.vs2010\</OutputPath>
+    <OutputPath>$(PICO_ROOT)bin\</OutputPath>
     <DefineConstants>TRACE</DefineConstants>
     <Optimize>true</Optimize>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
@@ -71,6 +72,9 @@
   <ItemGroup>
     <Compile Include="Commands.cs" />
     <Compile Include="Compiler\FileWriter.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Commands.cs" />
     <Compile Include="Compiler\SettingsCompiler.cs" />
     <Compile Include="Compiler\SettingsTypes.cs" />
     <Compile Include="Document.cs" />
@@ -130,6 +134,22 @@
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Resources\SelectedPreset.png" />
+    <EmbeddedResource Include="Resources\Adequate.png" />
+    <EmbeddedResource Include="Resources\Angry.png" />
+    <EmbeddedResource Include="Resources\Annoyed.png" />
+    <EmbeddedResource Include="Resources\Capable.png" />
+    <EmbeddedResource Include="Resources\Depressed.png" />
+    <EmbeddedResource Include="Resources\Enthusiastic.png" />
+    <EmbeddedResource Include="Resources\Frustrated.png" />
+    <EmbeddedResource Include="Resources\Happy.png" />
+    <EmbeddedResource Include="Resources\Hostile.png" />
+    <EmbeddedResource Include="Resources\Thrilled.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\Adept.png" />
+    <EmbeddedResource Include="Resources\Apprentice.png" />
+    <EmbeddedResource Include="Resources\Journeyman.png" />
+    <EmbeddedResource Include="Resources\Master.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
