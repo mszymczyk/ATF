@@ -12,6 +12,14 @@ namespace Sce.Atf.Controls.PropertyEditing
     public class BoundedIntConverter : Int32Converter, IAnnotatedParams
     {
 		// misz extension
+		// exception was thrown when launcing DomTreeEditor sample
+		// IAnnotatedParams requires default constructor
+		//
+        public BoundedIntConverter()
+        {
+        }
+
+		// misz extension
 		// constructor for setting min/max explicitly
 		//
 		public BoundedIntConverter( int? min, int? max )

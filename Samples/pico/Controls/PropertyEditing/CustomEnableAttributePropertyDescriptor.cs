@@ -89,7 +89,23 @@ namespace pico.Controls.PropertyEditing
 			m_callback = callback;
 		}
 
-		public override bool IsReadOnlyComponent( object component )
+        public CustomEnableAttributePropertyDescriptor(
+            string name,
+            AttributeInfo attribute,
+            string category,
+            string description,
+            bool isReadOnly,
+            object editor,
+            TypeConverter typeConverter
+            , ICustomEnableAttributePropertyDescriptorCallback callback
+            )
+
+            : base( name, attribute, category, description, isReadOnly, editor, typeConverter )
+        {
+            m_callback = callback;
+        }
+
+        public override bool IsReadOnlyComponent( object component )
 		{
 			DomNode domNode = GetNode( component );
 			bool readOnly =  m_callback.IsReadOnly( domNode, this );
