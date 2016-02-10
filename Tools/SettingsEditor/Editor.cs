@@ -106,9 +106,19 @@ namespace SettingsEditor
 
         Document CreateNewParamFile( Uri settingsFile, string descFile, string shaderOutputPath, bool createNew )
 		{
-			SettingsCompiler compiler = new SettingsCompiler();
-			string descFullPath = Path.GetFullPath(descFile);
-			compiler.ReflectSettings( descFullPath );
+            string descFullPath = Path.GetFullPath( descFile );
+
+            SettingsCompiler compiler;
+            if ( m_reloadInfo != null )
+            {
+                compiler = m_reloadInfo.m_compiler;
+            }
+            else
+            {
+                compiler = new SettingsCompiler();
+			    compiler.ReflectSettings( descFullPath );
+            }
+
             compiler.GenerateHeaderIfChanged( descFullPath, shaderOutputPath );
 
             DynamicSchema dynamicSchema = new DynamicSchema( compiler );
@@ -147,13 +157,17 @@ namespace SettingsEditor
 
 			FileInfo fileInfo = new FileInfo( descFullPath );
 
+            Document document = rootNode.Cast<Document>();
+            document.Schema = schema;
+            document.SchemaLoader = schemaLoader;
+
             DocumentControl control;
             ControlInfo controlInfo;
-            if ( m_controlToUseWhenReloading != null )
+            if ( m_reloadInfo != null )
             {
-                control = m_controlToUseWhenReloading;
+                control = m_reloadInfo.m_documentControl;
                 control.Setup( rootNode, schema );
-                controlInfo = m_controlToUseWhenReloading.ControlInfo;
+                controlInfo = m_reloadInfo.m_documentControl.ControlInfo;
             }
             else
             {
@@ -168,10 +182,7 @@ namespace SettingsEditor
 			//
             controlInfo.IsDocument = true;
 
-			Document document = rootNode.Cast<Document>();
-			document.Schema = schema;
-			document.SchemaLoader = schemaLoader;
-			document.ControlInfo = controlInfo;
+            document.ControlInfo = controlInfo;
             document.Control = control;
 
 			document.DescFilePath = descFullPath;
@@ -192,7 +203,7 @@ namespace SettingsEditor
 			// set active context and select orc object.
 			m_contextRegistry.ActiveContext = rootNode;
 
-            if ( m_controlToUseWhenReloading == null )
+            if ( m_reloadInfo == null )
 			    m_controlHostService.RegisterControl( control, controlInfo, this );
 
 			m_fileWatcherService.Register( descFullPath );
@@ -200,11 +211,11 @@ namespace SettingsEditor
             // if file is being reloaded, try setting last valid selection
             // this might be not possible, because group names might have changed
             //
-            if ( m_groupNameToRestoreAfterFileReload != null )
+            if ( m_reloadInfo != null && m_reloadInfo.m_selectedGroupName != null )
             {
                 foreach( Struct s in rootNode.Subtree.AsIEnumerable<Struct>() )
                 {
-                    if ( s.DomNode.Type.Name == m_groupNameToRestoreAfterFileReload )
+                    if (s.DomNode.Type.Name == m_reloadInfo.m_selectedGroupName)
                     {
                         control.SetSelectedDomNode( s.DomNode );
                     }
@@ -383,7 +394,7 @@ namespace SettingsEditor
 			//doc.UriChanged -= document_UriChanged;
 
 			//DocumentEditingContext editingContext = document.Cast<DocumentEditingContext>();
-            if ( m_controlToUseWhenReloading == null)
+            if ( m_reloadInfo == null )
 			    m_controlHostService.UnregisterControl( doc.Control );
 			m_contextRegistry.RemoveContext( document );
 			m_documentRegistry.Remove( document );
@@ -495,13 +506,36 @@ namespace SettingsEditor
             string shaderFileFull = Globals.GetCodeFullPath( shaderFile );
             return shaderFileFull;
         }
-        
+
+        private class ReloadInfo
+        {
+            public SettingsCompiler m_compiler = null;
+            public DocumentControl m_documentControl = null;
+            public string m_selectedGroupName = null;
+        }
+
 		public void Reload( Document document )
 		{
-            m_controlToUseWhenReloading = document.Control;
-
             Uri settingsFile = document.Uri;
             string descFilePath = document.DescFilePath;
+
+            SettingsCompiler compiler = null;
+            try
+            {
+                compiler = new SettingsCompiler();
+                //string descFullPath = Path.GetFullPath( descFile );
+                compiler.ReflectSettings( descFilePath );
+            }
+            catch (Exception ex)
+            {
+                Outputs.WriteLine( OutputMessageType.Error, string.Format( "Reload failed! Exception while processing '{0}': {1}", descFilePath, ex.Message ) );
+                return;
+            }
+
+            m_reloadInfo = new ReloadInfo();
+            m_reloadInfo.m_compiler = compiler;
+            m_reloadInfo.m_documentControl = document.Control;
+
             m_documentService.Close( document );
             m_descFileToUseWhenCreatingNewDocument = descFilePath;
             ISelectionContext selectionContext = document.As<ISelectionContext>();
@@ -509,14 +543,15 @@ namespace SettingsEditor
             {
                 Struct group = selectionContext.LastSelected.As<Struct>();
                 if ( group != null )
-                    m_groupNameToRestoreAfterFileReload = group.DomNode.Type.Name;
+                    m_reloadInfo.m_selectedGroupName = group.DomNode.Type.Name;
             }
 
             m_documentService.OpenExistingDocument( this, settingsFile );
             m_descFileToUseWhenCreatingNewDocument = null;
-            m_groupNameToRestoreAfterFileReload = null;
+            //m_groupNameToRestoreAfterFileReload = null;
 
-            m_controlToUseWhenReloading = null;
+            //m_controlToUseWhenReloading = null;
+            m_reloadInfo = null;
         }
 
         private void mainForm_DragEnter( object sender, DragEventArgs e )
@@ -640,13 +675,14 @@ namespace SettingsEditor
 		[Import( AllowDefault = false )]
 		private SettingsService m_settingsService = null;
 
-		private string m_descFileToUseWhenCreatingNewDocument = null;
-        private string m_groupNameToRestoreAfterFileReload = null;
+        private string m_descFileToUseWhenCreatingNewDocument = null;
+        //private string m_groupNameToRestoreAfterFileReload = null;
         // we use the same control when reloading description file
         // this way we can keep it's layout and placement in the editor
         // without this, old control is closed and new one is docked in center
         //
-        private DocumentControl m_controlToUseWhenReloading = null;
+        //private DocumentControl m_controlToUseWhenReloading = null;
+        private ReloadInfo m_reloadInfo = null;
 
         [ImportMany]
         private IEnumerable<Lazy<IContextMenuCommandProvider>> m_contextMenuCommandProviders = null;

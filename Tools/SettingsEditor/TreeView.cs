@@ -131,10 +131,10 @@ namespace SettingsEditor
             //    info.IsLeaf = group.Presets.Count == 0 || !settGroup.HasPresets;
             //    info.Label = settGroup.Name;
             //}
-            //else if ( node.Type == Schema.settingsFileType.Type )
-            //{
-            //    info.Label = "Settings";
-            //}
+            else if (node.Type == Root.As<Document>().Schema.settingsFileType.Type)
+            {
+                info.Label = "Settings";
+            }
         }
 
         #endregion

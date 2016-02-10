@@ -7,6 +7,7 @@ using System.Reflection;
 using System.CodeDom.Compiler;
 using System.Text.RegularExpressions;
 using Microsoft.CSharp;
+using Sce.Atf;
 
 namespace SettingsEditor
 {
@@ -214,16 +215,25 @@ namespace SettingsEditor
 				throw new Exception( "Unsupported setting type" );
 		}
 
-        private void WriteFileIfChanged( FileWriter fw, string filepath )
+        private static void WriteFileIfChanged( FileWriter fw, string filepath )
         {
             StringBuilder sb = new StringBuilder();
             foreach (string line in fw.Lines)
                 sb.AppendLine( line );
 
-            string sourceCode = sb.ToString();
-            System.Diagnostics.Debug.WriteLine( sourceCode );
+            string newText = sb.ToString();
+            //System.Diagnostics.Debug.WriteLine( sourceCode );
 
-            File.WriteAllText( filepath, sourceCode );
+            if ( File.Exists(filepath) )
+            {
+                string srcText = File.ReadAllText( filepath );
+                if (srcText == newText)
+                {
+                    return;
+                }
+            }
+
+            File.WriteAllText( filepath, newText );
         }
 
         //private FileWriter BeginNewHeaderFile( bool shaderSettings )
@@ -600,11 +610,16 @@ namespace SettingsEditor
             fw.AddLine( "}; // class " + outputName + "Wrap" );
             fw.AddLine( "" );
 
-            fw.AddLine( "extern " + outputName + "Wrap* g" + outputName + ";" );
-
             fw.EmptyLine();
 
             fw.AddLine( "} // namespace " + outputName + "Namespace" );
+
+            fw.EmptyLine();
+            fw.AddLine( "// Declared this variable in global scope to simplify usage and debugging" );
+            fw.AddLine( "// Visual Studio's debugger doesn't see global variables declared within namespace :(" );
+            fw.AddLine( "// Name clashes shouldn't be a big problem..." );
+            fw.AddLine( "//" );
+            fw.AddLine( "extern " + outputName + "Namespace::" + outputName + "Wrap* g" + outputName + ";" );
 
             if (shaderSettings)
             {
@@ -615,14 +630,16 @@ namespace SettingsEditor
                 fw.EmptyLine();
             }
 
-            StringBuilder sb = new StringBuilder();
-            foreach (string line in fw.Lines)
-                sb.AppendLine( line );
+            WriteFileIfChanged( fw, outputPath );
 
-            string sourceCode = sb.ToString();
-            System.Diagnostics.Debug.WriteLine( sourceCode );
+            //StringBuilder sb = new StringBuilder();
+            //foreach (string line in fw.Lines)
+            //    sb.AppendLine( line );
 
-            File.WriteAllText( outputPath, sourceCode );
+            //string sourceCode = sb.ToString();
+            //System.Diagnostics.Debug.WriteLine( sourceCode );
+
+            //File.WriteAllText( outputPath, sourceCode );
         }
 
         private static string GetNamespaceName( SettingGroup structure )
@@ -783,8 +800,8 @@ namespace SettingsEditor
             fw.AddLine( "" );
 
             fw.IncIndent();
-            fw.AddLine( outputName + "Wrap* g" + outputName + " = nullptr;" );
-            fw.EmptyLine();
+            //fw.AddLine( outputName + "Wrap* g" + outputName + " = nullptr;" );
+            //fw.EmptyLine();
 
             fw.AddLine( "void " + outputName + "Wrap::load( const char* filePath )" );
             fw.AddLine( "{" );
@@ -821,13 +838,13 @@ namespace SettingsEditor
             fw.AddLine( "{" );
             fw.IncIndent();
 
+            fw.AddLine( "SettingsEditor::releaseSettingsFile( __settingsFile_ );" );
+            fw.EmptyLine();
+
             foreach (SettingGroup nestedStructure in rootStructure.NestedStructures)
             {
                 fw.AddLine( "delete m" + nestedStructure.Name + "; m" + nestedStructure.Name + " = nullptr;" );
             }
-            fw.EmptyLine();
-
-            fw.AddLine( "SettingsEditor::releaseSettingsFile( __settingsFile_ );" );
 
             fw.DecIndent();
             fw.AddLine( "}" );
@@ -838,33 +855,40 @@ namespace SettingsEditor
 
             fw.AddLine( "} // namespace " + outputName + "Namespace" );
 
-            StringBuilder sb = new StringBuilder();
-            foreach (string line in fw.Lines)
-                sb.AppendLine( line );
+            fw.EmptyLine();
+            fw.AddLine( outputName + "Namespace::" + outputName + "Wrap* g" + outputName + " = nullptr;" );
+            fw.EmptyLine();
 
-            string sourceCode = sb.ToString();
-            System.Diagnostics.Debug.WriteLine( sourceCode );
+            WriteFileIfChanged( fw, outputPath );
 
-            File.WriteAllText( outputPath, sourceCode );
+            //StringBuilder sb = new StringBuilder();
+            //foreach (string line in fw.Lines)
+            //    sb.AppendLine( line );
+
+            //string sourceCode = sb.ToString();
+            //System.Diagnostics.Debug.WriteLine( sourceCode );
+
+            //File.WriteAllText( outputPath, sourceCode );
         }
 
         // TODO: Layouts are hardcoded for QuickDebug. Change that when we have some other usecases.
         public static void GenerateShaderHeader( List<SettingGroup> settingGroups, string outputName, string outputPath, List<Type> enumTypes )
         {
-            List<string> lines = new List<string>();
+            //List<string> lines = new List<string>();
+            FileWriter fw = new FileWriter();
 
             string headerGuard = camelCaseToUnderscore( outputName ) + "_H";
-            lines.Add( "#ifndef " + headerGuard );
-            lines.Add( "#define " + headerGuard );
-            lines.Add( "" );
-            lines.Add( "#include \"picoShaderDef.h\"" );
-            lines.Add( "" );
-            lines.Add( "#ifdef __GLSL__" );
-            lines.Add( "layout( binding = PICO_OPENGL_QUICKDEBUG_BINDING ) uniform cb_" + outputName );
-            lines.Add( "#else" );
-            lines.Add( "cbuffer cb_" + outputName + " : PICO_DX11_QUICKDEBUG_REGISTER" );
-            lines.Add( "#endif //" );
-            lines.Add( "{" );
+            fw.AddLine( "#ifndef " + headerGuard );
+            fw.AddLine( "#define " + headerGuard );
+            fw.AddLine( "" );
+            fw.AddLine( "#include \"picoShaderDef.h\"" );
+            fw.AddLine( "" );
+            fw.AddLine( "#ifdef __GLSL__" );
+            fw.AddLine( "layout( binding = PICO_OPENGL_QUICKDEBUG_BINDING ) uniform cb_" + outputName );
+            fw.AddLine( "#else" );
+            fw.AddLine( "cbuffer cb_" + outputName + " : PICO_DX11_QUICKDEBUG_REGISTER" );
+            fw.AddLine( "#endif //" );
+            fw.AddLine( "{" );
 
             int bytes = 0;
             foreach (SettingGroup settingGroup in settingGroups)
@@ -906,10 +930,10 @@ namespace SettingsEditor
                             System.Diagnostics.Debug.Assert( false );
                             break;
                     }
-                    lines.Add( "\t" + typeString + " " + setting.Name + ";" );
+                    fw.AddLine( "\t" + typeString + " " + setting.Name + ";" );
                     if ( setting.Type == SettingType.FloatBool )
                     {
-                        lines.Add( "\tbool " + setting.Name + "Enabled;" );
+                        fw.AddLine( "\tbool " + setting.Name + "Enabled;" );
                         bytes += 4;
                     }
                 }
@@ -918,8 +942,8 @@ namespace SettingsEditor
             //if (padding < 4)
             //    lines.Add("\tfloat pad_" + bytes + "[" + padding + "];"); // bytes in name serves as unique name generator.
 
-            lines.Add( "}" );
-            lines.Add( "" );
+            fw.AddLine( "}" );
+            fw.AddLine( "" );
 
             foreach (Type enumType in enumTypes)
             {
@@ -928,21 +952,23 @@ namespace SettingsEditor
                 for (int i = 0; i < enumNames.Length; ++i)
                 {
                     string line = enumType.Name + "_" + enumNames[i] + " " + (int) enumValues.GetValue( i );
-                    lines.Add( "#define " + camelCaseToUnderscore( line ) );
+                    fw.AddLine( "#define " + camelCaseToUnderscore( line ) );
                 }
-                lines.Add( "" );
+                fw.AddLine( "" );
             }
 
-            lines.Add( "#endif // " + headerGuard );
+            fw.AddLine( "#endif // " + headerGuard );
 
-            StringBuilder sb = new StringBuilder();
-            foreach (string line in lines)
-                sb.AppendLine( line );
+            WriteFileIfChanged( fw, outputPath );
 
-            string sourceCode = sb.ToString();
-            System.Diagnostics.Debug.WriteLine( sourceCode );
+            //StringBuilder sb = new StringBuilder();
+            //foreach (string line in lines)
+            //    sb.AppendLine( line );
 
-            File.WriteAllText( outputPath, sourceCode );
+            //string sourceCode = sb.ToString();
+            //System.Diagnostics.Debug.WriteLine( sourceCode );
+
+            //File.WriteAllText( outputPath, sourceCode );
         }
 
         public static string camelCaseToUnderscore( string line )
@@ -968,8 +994,8 @@ namespace SettingsEditor
 			// rebuild is needed if compiler was updated
 			//
 
-			//if ( srcFileInfo.LastWriteTime >= dstFileInfo.LastWriteTime )
-			{
+            if (srcFileInfo.LastWriteTime >= dstFileInfoHeader.LastWriteTime)
+            {
 				//ReflectSettings( filePath );
 				//GenerateHeader( m_reflectedSettings, fileName, outputPath, m_reflectedEnums );
                 if (string.IsNullOrEmpty( shaderOutputPath ))
@@ -984,10 +1010,10 @@ namespace SettingsEditor
                     GenerateShaderHeader( m_rootStructure.NestedStructures, fileName, shaderOutputPath, m_rootStructure.ReflectedEnums );
                 }
             }
-			//else
-			//{
-			//	Outputs.WriteLine( OutputMessageType.Info, "Settings file '{0} is up-to-date", filePath );
-			//}
+            else
+            {
+                Outputs.WriteLine( OutputMessageType.Info, "Settings file '{0} is up-to-date", filePath );
+            }
 		}
 
 		public void ReflectSettings( string filepath )

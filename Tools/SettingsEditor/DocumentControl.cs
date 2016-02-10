@@ -151,7 +151,7 @@ namespace SettingsEditor
 
         private void RootNode_AttributeChanged( object sender, AttributeEventArgs e )
         {
-            Document document = this.As<Document>();
+            Document document = RootNode.As<Document>();
             Struct group = e.DomNode.As<Struct>();
             if ( group != null && e.AttributeInfo.Equivalent( document.Schema.structType.expandedAttribute ) )
             {

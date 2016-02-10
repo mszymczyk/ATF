@@ -105,7 +105,7 @@ namespace SettingsEditor
 
                 writer.Write( DomNode.GetRoot(), stream, Uri, settings );
 
-				Outputs.WriteLine( OutputMessageType.Info, "Saving settings to disk." );
+				Outputs.WriteLine( OutputMessageType.Info, "Saving '" + filePath + "' to disk ( " + DateTime.Now.ToString() + " )" );
 			}
 		}
 
