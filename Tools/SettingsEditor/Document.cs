@@ -107,6 +107,8 @@ namespace SettingsEditor
 
 				Outputs.WriteLine( OutputMessageType.Info, "Saving '" + filePath + "' to disk ( " + DateTime.Now.ToString() + " )" );
 			}
+
+            SaveTime = DateTime.Now;
 		}
 
 		public Schema Schema { get; set; }
@@ -140,6 +142,7 @@ namespace SettingsEditor
 
 		public string PathRelativeToData { get; set; }
 
-		public DateTime LoadedWriteTime { get; set; }
+		public DateTime LoadTime { get; set; }
+        public DateTime SaveTime { get; set; }
     }
 }

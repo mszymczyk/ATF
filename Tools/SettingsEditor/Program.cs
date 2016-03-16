@@ -91,8 +91,8 @@ namespace SettingsEditor
 				typeof( HistoryLister ),                  // visual list of undo/redo stack
 				typeof( FileWatcherService ),                // service to watch for changes to files
 
-                typeof( ZMQHubService ),
-                //typeof( pico.Hub.HubService ),
+                //typeof( ZMQHubService ),
+                typeof( pico.Hub.HubService ),
 
 				//typeof(SchemaLoader),                   // component that loads XML schema and sets up types
                 typeof(Editor),                          // component that manages UI documents

@@ -407,6 +407,14 @@ namespace Sce.Atf.Controls
         }
 
         /// <summary>
+        /// Mouse movement delta. Movement less than this will be ignored.</summary>
+        public int Delta
+        {
+            get { return m_delta; }
+            set { m_delta = MathUtil.Clamp<int>( value, 1, 200 ); }
+        }
+
+        /// <summary>
         /// Handler for mouse enter event</summary>
         /// <param name="e">Event args</param>
         protected override void OnMouseEnter(EventArgs e)
@@ -434,11 +442,12 @@ namespace Sce.Atf.Controls
             if (e.Button == System.Windows.Forms.MouseButtons.Left)
             {
                 int val = e.X - m_currentMouseX;
-                int direction = Math.Sign(val);
-                m_currentMouseX = e.X;
-                if (direction != 0)
+                if ( Math.Abs( val ) >= m_delta )
                 {
-                    Changed(this, new SpinDirectionEventArgs(direction,val));
+                    int direction = Math.Sign( val );
+                    val /= m_delta;
+                    m_currentMouseX = e.X;
+                    Changed( this, new SpinDirectionEventArgs( direction, val ) );
                 }
             }
 
@@ -459,6 +468,8 @@ namespace Sce.Atf.Controls
                 e.Graphics.DrawLine(pen, 0, midy, Width, midy);                
             }          
         }        
+
+        private int m_delta = 1;
     }
 
     #endregion

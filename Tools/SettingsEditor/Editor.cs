@@ -226,6 +226,9 @@ namespace SettingsEditor
             //
             document.SaveImpl();
 
+            document.LoadTime = DateTime.Now;
+            m_fileWatcherService.Register( settingsFile.LocalPath );
+
             return document;
 		}
 
@@ -401,6 +404,7 @@ namespace SettingsEditor
 
 			//m_settingFiles.Remove( document.Uri );
 			m_fileWatcherService.Unregister( doc.DescFilePath );
+            m_fileWatcherService.Unregister( doc.Uri.LocalPath );
 		}
 
 		#endregion
@@ -532,6 +536,8 @@ namespace SettingsEditor
                 return;
             }
 
+            Outputs.WriteLine( OutputMessageType.Info, "Reloading: " + document.Uri.LocalPath );
+
             m_reloadInfo = new ReloadInfo();
             m_reloadInfo.m_compiler = compiler;
             m_reloadInfo.m_documentControl = document.Control;
@@ -598,26 +604,36 @@ namespace SettingsEditor
 		/// <param name="e">FileSystemEventArgs containing event data</param>
 		void fileWatcherService_FileChanged( object sender, FileSystemEventArgs e )
 		{
-			Uri descFileUri = new Uri( e.FullPath );
-			//SettingsFile settingsFile;
-			//if ( m_settingFiles.TryGetValue( uri, out settingsFile ) )
-			//{
-			//	Reload( settingsFile.Document );
-			//}
-			//foreach( Document doc in m_settingFiles.Values )
+			Uri fileUri = new Uri( e.FullPath );
+
 			foreach( Document doc in m_documentRegistry.Documents )
 			{
-				if ( doc.DescFilePath == descFileUri.LocalPath )
+				if ( doc.DescFilePath == fileUri.LocalPath )
 				{
-					FileInfo fileInfo = new FileInfo( doc.DescFilePath );
+					FileInfo fileInfo = new FileInfo( fileUri.LocalPath );
 					DateTime lastWriteTime = fileInfo.LastWriteTime;
-					if (lastWriteTime > doc.LoadedWriteTime)
+					if (lastWriteTime > doc.LoadTime)
 					{
 						Reload( doc );
 					}
 				
 					break;
 				}
+                else if (doc.Uri == fileUri)
+                {
+                    FileInfo fileInfo = new FileInfo( fileUri.LocalPath );
+                    DateTime lastWriteTime = fileInfo.LastWriteTime;
+                    if (lastWriteTime > doc.SaveTime)
+                    {
+                        DialogResult dr = MessageBox.Show( m_mainForm.DialogOwner, string.Format("File\n'{0}'\n has been modified externally. Reload?", fileUri.LocalPath), "External modification detected", MessageBoxButtons.YesNo, MessageBoxIcon.Warning );
+                        if (dr == DialogResult.Yes)
+                        {
+                            Reload( doc );
+                        }
+                    }
+
+                    break;
+                }
 			}
 		}
 

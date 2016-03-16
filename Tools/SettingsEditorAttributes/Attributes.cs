@@ -357,29 +357,31 @@ namespace SettingsEditor
     public class DependsOnAttribute : Attribute
     {
         public readonly string SettingName;
+        public readonly bool Condition = true;
 
-        public DependsOnAttribute( string settingName )
+        public DependsOnAttribute( string settingName, bool condition = true )
         {
             this.SettingName = settingName;
+            this.Condition = condition;
         }
 
-        public static void GetDependsOn( FieldInfo field, out List<string> settings )
+        public static void GetDependsOn( FieldInfo field, out List<Tuple<string, bool>> settings )
         {
-            settings = new List<string>();
+            settings = new List<Tuple<string, bool>>();
 
             foreach ( DependsOnAttribute doa in field.GetCustomAttributes<DependsOnAttribute>() )
             {
-                settings.Add( doa.SettingName );
+                settings.Add( new Tuple<string, bool>( doa.SettingName, doa.Condition ) );
             }
         }
 
-        public static void GetDependsOn( Type type, out List<string> settings )
+        public static void GetDependsOn( Type type, out List<Tuple<string, bool>> settings )
         {
-            settings = new List<string>();
+            settings = new List<Tuple<string, bool>>();
 
             foreach ( DependsOnAttribute doa in type.GetCustomAttributes<DependsOnAttribute>() )
             {
-                settings.Add( doa.SettingName );
+                settings.Add( new Tuple<string, bool>( doa.SettingName, doa.Condition ) );
             }
         }
     }

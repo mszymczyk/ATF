@@ -127,13 +127,14 @@ namespace SettingsEditor
             }
 		}
 
-        static List<Pair<DomNodeType, AttributeInfo>> GetDependsOnListValidated( List<string> dependsOn, DomNodeType dnt, SchemaLoader loader )
+        static List<Tuple<DomNodeType, AttributeInfo, bool>> GetDependsOnListValidated( List<Tuple<string, bool>> dependsOn, DomNodeType dnt, SchemaLoader loader )
         {
-            List<Pair<DomNodeType, AttributeInfo>> validatedList = new List<Pair<DomNodeType, AttributeInfo>>();
+            List<Tuple<DomNodeType, AttributeInfo, bool>> validatedList = new List<Tuple<DomNodeType, AttributeInfo, bool>>();
 
-            foreach( string s in dependsOn )
+            foreach( var tup in dependsOn )
             {
                 bool err = true;
+                string s = tup.Item1;
 
                 if ( s.Contains( ".") )
                 {
@@ -152,7 +153,7 @@ namespace SettingsEditor
                                 if ( ai.Type == AttributeType.BooleanType )
                                 {
                                     err = false;
-                                    validatedList.Add( new Pair<DomNodeType, AttributeInfo>( otherDnt, ai ) );
+                                    validatedList.Add( new Tuple<DomNodeType, AttributeInfo, bool>( otherDnt, ai, tup.Item2 ) );
                                 }
                             }
                         }
@@ -166,7 +167,7 @@ namespace SettingsEditor
                         if ( ai.Type == AttributeType.BooleanType )
                         {
                             err = false;
-                            validatedList.Add( new Pair<DomNodeType, AttributeInfo>( dnt, ai ) );
+                            validatedList.Add( new Tuple<DomNodeType, AttributeInfo, bool>( dnt, ai, tup.Item2 ) );
                         }
                     }
                 }
@@ -181,7 +182,7 @@ namespace SettingsEditor
         }
 
         static private AttributePropertyDescriptor CreateAttributePropertyDescriptor(
-            Setting sett, AttributeInfo ai, object editor, TypeConverter typeConverter, List<Pair<DomNodeType, AttributeInfo>> dependsOn
+            Setting sett, AttributeInfo ai, object editor, TypeConverter typeConverter, List<Tuple<DomNodeType, AttributeInfo, bool>> dependsOn
             )
         {
             AttributePropertyDescriptor apd;
@@ -224,10 +225,10 @@ namespace SettingsEditor
             {
                 PropertyDescriptorCollection propertyDescriptorCollection = dnt.GetTag<PropertyDescriptorCollection>();
 
-                List<Pair<DomNodeType, AttributeInfo>> dependsOn = GetDependsOnListValidated( sett.DependsOn, dnt, Loader );
+                List<Tuple<DomNodeType, AttributeInfo, bool>> dependsOn = GetDependsOnListValidated( sett.DependsOn, dnt, Loader );
                 if ( structure.DependsOn != null )
                 {
-                    List<Pair<DomNodeType, AttributeInfo>> structureDependsOn = GetDependsOnListValidated( structure.DependsOn, dnt, Loader );
+                    List<Tuple<DomNodeType, AttributeInfo, bool>> structureDependsOn = GetDependsOnListValidated( structure.DependsOn, dnt, Loader );
                     dependsOn.AddRange( structureDependsOn );
                 }
 
@@ -443,31 +444,31 @@ namespace SettingsEditor
     {
         public DependsOnNodes()
         {
-             m_dependsOnList = new List<Pair<DomNodeType, AttributeInfo>>();
+            m_dependsOnList = new List<Tuple<DomNodeType, AttributeInfo, bool>>();
         }
 
-        public DependsOnNodes( List<Pair<DomNodeType, AttributeInfo>> dependsOn )
+        public DependsOnNodes( List<Tuple<DomNodeType, AttributeInfo, bool>> dependsOn )
         {
             m_dependsOnList = dependsOn;
         }
 
-        public void Add( DomNodeType dnt, AttributeInfo attrInfo )
+        public void Add( DomNodeType dnt, AttributeInfo attrInfo, bool condition )
         {
-            m_dependsOnList.Add( new Pair<DomNodeType, AttributeInfo>( dnt, attrInfo ) );
+            m_dependsOnList.Add( new Tuple<DomNodeType, AttributeInfo, bool>( dnt, attrInfo, condition ) );
         }
 
         public bool IsReadOnly( DomNode domNode, CustomEnableAttributePropertyDescriptor descriptor )
         {
             DomNode root = domNode.GetRoot();
 
-            foreach ( Pair<DomNodeType, AttributeInfo> p in m_dependsOnList )
+            foreach( Tuple<DomNodeType, AttributeInfo, bool> p in m_dependsOnList )
             {
                 foreach( DomNode dn in root.Subtree )
                 {
-                    if ( dn.Type == p.First )
+                    if ( dn.Type == p.Item1 )
                     {
-                        bool bval = (bool)dn.GetAttribute( p.Second );
-                        if ( !bval )
+                        bool bval = (bool)dn.GetAttribute( p.Item2 );
+                        if ( bval != p.Item3 )
                             return true;
                     }
                 }
@@ -476,7 +477,7 @@ namespace SettingsEditor
             return false;
         }
 
-        List<Pair<DomNodeType, AttributeInfo>> m_dependsOnList;
+        List<Tuple<DomNodeType, AttributeInfo, bool>> m_dependsOnList;
     }
 
 }

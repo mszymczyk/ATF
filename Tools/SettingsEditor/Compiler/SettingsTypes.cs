@@ -44,7 +44,7 @@ namespace SettingsEditor
         public string DisplayName;
         public string Category = "General";
         public String HelpText = "";
-        public List<string> DependsOn { get { return m_dependsOn; } }
+        public List<Tuple<string, bool>> DependsOn { get { return m_dependsOn; } }
 
         public Setting(FieldInfo field, SettingType type, SettingGroup group)
         {
@@ -61,7 +61,7 @@ namespace SettingsEditor
 		public abstract void WriteDeclaration( List<string> lines );
         public abstract void WriteDeclaration( FileWriter fw );
 
-        private List<string> m_dependsOn;
+        private List<Tuple<string, bool>> m_dependsOn;
     }
 
 
@@ -92,7 +92,7 @@ namespace SettingsEditor
         /// </summary>
         public string DomNodeTypeFullName { get { return m_domNodeTypeFullName; } }
 
-        public List<string> DependsOn { get { return m_dependsOn; } }
+        public List<Tuple<string, bool>> DependsOn { get { return m_dependsOn; } }
 
         public bool IsRootLevel { get { return m_parentStructure != null ? false : true; } }
         public bool IsFirstLevel { get { return m_parentStructure == null ? false : m_parentStructure.ParentStructure == null ? true : false; } }
@@ -138,7 +138,7 @@ namespace SettingsEditor
         private List<Type> m_reflectedEnums = new List<Type>();
         private string m_cppFullName;
         private string m_domNodeTypeFullName;
-        private List<string> m_dependsOn;
+        private List<Tuple<string, bool>> m_dependsOn;
     }
 
 

@@ -31,6 +31,11 @@ namespace Sce.Atf.Controls
             DoubleBuffered = true;
             m_min = min;
             m_max = max;
+            int range = max - min;
+            int delta = 200;
+            if (range > 0)
+                delta = 200 / range;
+            delta = MathUtil.Clamp<int>( delta, 1, 200 );
             m_value = MathUtil.Clamp(value, m_min, m_max);
             m_lastChange = m_value;
             m_lastEdit = m_value;
@@ -40,6 +45,7 @@ namespace Sce.Atf.Controls
             m_textBox.Name = "m_textBox";
 
             m_spinner = new CompactSpinner();
+            m_spinner.Delta = delta;
             m_spinner.GotFocus += (sender, e) => m_textBox.Focus();
 
             SuspendLayout();            
